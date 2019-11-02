@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: Define</title>
+	<title>SpikeyBot-Discord Class: Images</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,16 +86,16 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: Define</h1>
+	<h1 class="page-title">Class: Images</h1>
 <section>
 
 <header>
     
         <h2>
-        Define
+        Images
         </h2>
         
-            <div class="class-description">Handles defining word commands.</div>
+            <div class="class-description">Handles fetching images and GIFs from various APIs.</div>
         
     
 </header>
@@ -107,12 +107,16 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="Define"><span class="type-signature"></span>new Define()</h4>
+    <h4 class="name" id="Images"><span class="type-signature"></span>new Images()</h4>
     
     
 </dt>
 <dd>
 
+    
+    <div class="description">
+        Handles fetching images and GIFs from various APIs.
+    </div>
     
 
     
@@ -157,8 +161,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="define.js.html">define.js</a>,
-				 <a href="define.js.html#sunlight-1-line-14">line 14</a>
+				<a href="images.js.html">images.js</a>,
+				 <a href="images.js.html#sunlight-1-line-16">line 16</a>
 			</li>
 		</ul>
 	</dd>
@@ -176,11 +180,6 @@
 
     
 
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Command#event:define</li>
-    </ul>
     
 
     
@@ -220,6 +219,255 @@
         <h3 class="subsection-title">Members</h3>
 
         <dl>
+            
+<hr>
+<dt class="name" id=".imgurHost">
+    <h4 id=".imgurHost"><span class="type-signature">&lt;static> </span>imgurHost<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Fetch the default host information for making a request to
+imgur.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="images.js.html">images.js</a>,
+				 <a href="images.js.html#sunlight-1-line-59">line 59</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_cacheDuration">
+    <h4 id="_cacheDuration"><span class="type-signature">&lt;private> </span>_cacheDuration<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Maximum amount of time to cache a request to Imgur before we
+purge it.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>1 Week</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="images.js.html">images.js</a>,
+				 <a href="images.js.html#sunlight-1-line-36">line 36</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_imgurCache">
+    <h4 id="_imgurCache"><span class="type-signature">&lt;private> </span>_imgurCache<span class="type-signature"> :object</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Cached responses from recent requests to Imgur's API. Mapped
+by request path.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{}</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="images.js.html">images.js</a>,
+				 <a href="images.js.html#sunlight-1-line-28">line 28</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
             
 <hr>
 <dt class="name" id="bot">
@@ -267,6 +515,11 @@ autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#bot">SubModule#bot</a>
+    </li></ul></dd>
     
 
     
@@ -358,6 +611,11 @@ autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#client">SubModule#client</a>
+    </li></ul></dd>
     
 
     
@@ -451,6 +709,11 @@ init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#command">SubModule#command</a>
+    </li></ul></dd>
+    
 
     
 
@@ -541,6 +804,11 @@ version of this submodule.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#commit">SubModule#commit</a>
+    </li></ul></dd>
     
 
     
@@ -633,6 +901,11 @@ autocompletion, updates to current reference at init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#common">SubModule#common</a>
+    </li></ul></dd>
+    
 
     
 
@@ -723,6 +996,11 @@ value for editor autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#Discord">SubModule#Discord</a>
+    </li></ul></dd>
     
 
     
@@ -820,6 +1098,11 @@ value for editor autocompletion, updates to current reference at init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#helpMessage">SubModule#helpMessage</a>
+    </li></ul></dd>
+    
 
     
 
@@ -909,6 +1192,11 @@ value for editor autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#initialized">SubModule#initialized</a>
+    </li></ul></dd>
     
 
     
@@ -1001,6 +1289,11 @@ needs to be reloaded because the file has been modified since loading.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#loadTime">SubModule#loadTime</a>
+    </li></ul></dd>
     
 
     
@@ -1190,6 +1483,11 @@ before begin(), otherwise it is ignored.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#postPrefix">SubModule#postPrefix</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1232,32 +1530,83 @@ before begin(), otherwise it is ignored.
     
 </dd>
 
-        
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
             
 <hr>
-<dt class="name" id="~reqURL">
-    <h4 id="~reqURL"><span class="type-signature">&lt;private, inner, constant> </span>reqURL<span class="type-signature"> :string</span></h4>
-
+<dt>
+    <h4 class="name" id="_commandCookie"><span class="type-signature">&lt;private> </span>_commandCookie(msg)</h4>
+    
     
 </dt>
 <dd>
+
     
     <div class="description">
-        Base url to request from api.
+        Replies with a picture of a cookie.
     </div>
     
 
     
-        <h5>Type:</h5>
-        <ul>
-            <li>
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
                 
-<span class="param-type">string</span>
+<span class="param-type">Discord~Message</span>
 
 
 
-            </li>
-        </ul>
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message that triggered command.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
     
 
     
@@ -1287,13 +1636,6 @@ before begin(), otherwise it is ignored.
 	
 
 	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>https://wordsapiv1.p.rapidapi.com/words/</li>
-		</ul>
-	</dd>
-	
 
 
 
@@ -1302,8 +1644,8 @@ before begin(), otherwise it is ignored.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="define.js.html">define.js</a>,
-				 <a href="define.js.html#sunlight-1-line-37">line 37</a>
+				<a href="images.js.html">images.js</a>,
+				 <a href="images.js.html#sunlight-1-line-171">line 171</a>
 			</li>
 		</ul>
 	</dd>
@@ -1318,15 +1660,338 @@ before begin(), otherwise it is ignored.
 
 
     
+
+    
+
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:cookie</li>
+    
+        <li>Command#event:cookies</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
 </dd>
 
-        </dl>
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_commandImgur"><span class="type-signature">&lt;private> </span>_commandImgur(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Searches Imgur for the given query.
+    </div>
     
 
     
-        <h3 class="subsection-title">Methods</h3>
 
-        <dl>
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Discord~Message</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message that triggered command.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="images.js.html">images.js</a>,
+				 <a href="images.js.html#sunlight-1-line-130">line 130</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:imgur</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_imgurGet"><span class="type-signature">&lt;private> </span>_imgurGet(path, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Performs a get request to Imgur's API at the given path, and
+caches the result before returning it through the callback. If a cached
+response is available that isn't too old, that will immediately be returned
+instead.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The full API path after the domain and API version.
+Includes query parameters.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback once completed or failed. First parameter is
+optional error, second is otherwise the parsed JSON object from Imgur.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="images.js.html">images.js</a>,
+				 <a href="images.js.html#sunlight-1-line-84">line 84</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
             
 <hr>
 <dt>
@@ -1516,6 +2181,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#begin">SubModule#begin</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1663,6 +2333,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#debug">SubModule#debug</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1759,6 +2434,11 @@ register command listeners.</td>
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#end">SubModule#end</a>
+    </li></ul></dd>
     
 
     
@@ -1906,6 +2586,11 @@ register command listeners.</td>
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#error">SubModule#error</a>
+    </li></ul></dd>
     
 
     
@@ -2157,6 +2842,11 @@ specific to the subModule. Must be defined before begin() is called.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#log">SubModule#log</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2257,6 +2947,11 @@ completely, this checks if the module can be stopped and restarted.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#reloadable">SubModule#reloadable</a>
+    </li></ul></dd>
     
 
     
@@ -2456,6 +3151,11 @@ synchronous.</td>
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#save">SubModule#save</a>
+    </li></ul></dd>
     
 
     
@@ -2658,6 +3358,11 @@ doing such may risk putting the module into an uncontrollable state.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#unloadable">SubModule#unloadable</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2836,6 +3541,11 @@ doing such may risk putting the module into an uncontrollable state.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#warn">SubModule#warn</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2862,635 +3572,6 @@ doing such may risk putting the module into an uncontrollable state.
 			<li>
 				<a href="subModule.js.html">subModule.js</a>,
 				 <a href="subModule.js.html#sunlight-1-line-233">line 233</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~commandDefine"><span class="type-signature">&lt;private, inner> </span>commandDefine(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Handle the user asking for a definition.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Discord~Message</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Message that triggered command.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="define.js.html">define.js</a>,
-				 <a href="define.js.html#sunlight-1-line-47">line 47</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Command#event:define</li>
-    </ul>
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~formatSingle"><span class="type-signature">&lt;private, inner> </span>formatSingle(el)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Format a single definition to string format.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>el</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Definition object to format.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="define.js.html">define.js</a>,
-				 <a href="define.js.html#sunlight-1-line-141">line 141</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    Formatted string.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~fUp"><span class="type-signature">&lt;private, inner> </span>fUp(s)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Capitalize first character of string, and lowercase the rest.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>s</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Input.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="define.js.html">define.js</a>,
-				 <a href="define.js.html#sunlight-1-line-166">line 166</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    Output.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~replyDef"><span class="type-signature">&lt;private, inner> </span>replyDef(msg, data)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Format a Discord message reply from the given data.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Discord~Message</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Message to reply to.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Parsed reply from words api.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="define.js.html">define.js</a>,
-				 <a href="define.js.html#sunlight-1-line-101">line 101</a>
 			</li>
 		</ul>
 	</dd>

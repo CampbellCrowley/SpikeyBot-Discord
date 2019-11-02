@@ -460,23 +460,6 @@
       ]
     },
     {
-      "title": "Words",
-      "rows": [
-        {
-          "command": "define",
-          "description": "Lookup the definition to a word.",
-          "aliases": "define, def, definition",
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "define discord",
-              "result": "A reply with a bunch of information about the word will be sent."
-            }
-          ]
-        }
-      ]
-    },
-    {
       "title": "Info",
       "rows": [
         {

@@ -59,6 +59,7 @@
 - whoami (Replies with the user's username, and full tag from different sources)
 - gettime (Replies with the server's timezone and time, as well as GMT)
 - sweep (Removes users from cache that we don't care about at the moment in order to free memory. Only Spikey can do this)
+- cookies (Alias for `imgur cookies`)
 
 # Event Controlled
 - Added to guild

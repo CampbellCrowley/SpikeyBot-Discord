@@ -1,0 +1,39 @@
+{
+  "title": "Search Commands",
+  "description": "Commands that search for stuff for you.",
+  "sections": [
+    {
+      "title": "Text",
+      "rows": [
+        {
+          "command": "define",
+          "description": "Lookup the definition to a word.",
+          "aliases": "define, def, definition",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "define discord",
+              "result": "A reply with a bunch of information about the word will be sent."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Images",
+      "rows": [
+        {
+          "command": "imgur",
+          "description": "Lookup an image on Imgur.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "imgur cute cats",
+              "result": "A reply with a picture that would show up if you searched 'cute cats' on Imgur will be sent."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

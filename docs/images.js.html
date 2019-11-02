@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Modules</title>
+	<title>SpikeyBot-Discord Source: images.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -81,430 +81,197 @@
 <div class="row">
 
 	
-	<div class="col-md-8">
+	<div class="col-md-12">
 	
 		<div id="main">
 			
 
-	<h1 class="page-title">Modules</h1>
+		<h1 class="page-title">Source: images.js</h1>
+    
 <section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+const SubModule = require('./subModule.js');
+const https = require('https');
+const auth = require('../auth.js');
 
-<header>
-    
-        <h2>
-        
-        </h2>
-        
-    
-</header>
+/**
+ * @classdesc Handles fetching images and GIFs from various APIs.
+ * @class
+ * @augments SubModule
+ */
+class Images extends SubModule {
+  /**
+   * @description Handles fetching images and GIFs from various APIs.
+   */
+  constructor() {
+    super();
+    /** @inheritdoc */
+    this.myName = 'Images';
 
+    /**
+     * @description Cached responses from recent requests to Imgur's API. Mapped
+     * by request path.
+     * @private
+     * @type {object}
+     * @default
+     */
+    this._imgurCache = {};
+    /**
+     * @description Maximum amount of time to cache a request to Imgur before we
+     * purge it.
+     * @private
+     * @type {number}
+     * @default 1 Week
+     */
+    this._cacheDuration = 7 * 24 * 60 * 60 * 1000;
 
-<article>
-    <div class="container-overview">
-    
-        
+    this._commandCookie = this._commandCookie.bind(this);
+    this._commandImgur = this._commandImgur.bind(this);
+  }
+  /** @inheritdoc */
+  initialize() {
+    this.command.on(['imgur'], this._commandImgur);
+    this.command.on(['cookie', 'cookies'], this._commandCookie);
+  }
+  /** @inheritdoc */
+  shutdown() {
+    this.command.removeListener('imgur');
+    this.command.removeListener('cookie');
+  }
 
-        
-<dl class="details">
-    
+  /**
+   * @description Fetch the default host information for making a request to
+   * imgur.
+   * @public
+   * @static
+   * @returns {object} Object to pass to https request.
+   */
+  static get imgurHost() {
+    return {
+      protocol: 'https:',
+      host: 'api.imgur.com',
+      path: '/3/',
+      method: 'GET',
+      headers: {
+        'User-Agent': require('./common.js').ua,
+        'Authorization': 'Client-ID ' + auth.imgurID,
+        'Content-Type': 'application/json',
+      },
+    };
+  }
 
-	
+  /**
+   * @description Performs a get request to Imgur's API at the given path, and
+   * caches the result before returning it through the callback. If a cached
+   * response is available that isn't too old, that will immediately be returned
+   * instead.
+   * @private
+   * @param {string} path The full API path after the domain and API version.
+   * Includes query parameters.
+   * @param {Function} cb Callback once completed or failed. First parameter is
+   * optional error, second is otherwise the parsed JSON object from Imgur.
+   */
+  _imgurGet(path, cb) {
+    if (this._imgurCache[path]) {
+      if (Date.now() - this._imgurCache[path].timestamp &lt; this._cacheDuration) {
+        cb(null, this._imgurCache[path].data);
+        return;
+      } else {
+        // update timestamp to prevent multiple requests at the same time before
+        // the first completes.
+        this._imgurCache[path].timestamp = Date.now();
+      }
+    }
+    const host = Images.imgurHost;
+    host.path += path;
+    const req = https.request(host, (res) => {
+      let content = '';
+      res.on('data', (chunk) => content += chunk);
+      res.on('end', () => {
+        if (res.statusCode == 200) {
+          try {
+            content = JSON.parse(content);
+            this._imgurCache[path] = {data: content, timestamp: Date.now()};
+          } catch (err) {
+            this.error('Imgur Unable to parse response to ' + path);
+            console.error(err);
+            cb(err);
+            return;
+          }
+          cb(null, content);
+        } else {
+          this.error('Imgur ' + res.statusCode + ': ' + content);
+          console.error(host);
+          cb(new Error('Imgur Bad Response'));
+        }
+      });
+    });
+    req.end();
+  }
 
-	
+  /**
+   * @description Searches Imgur for the given query.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#imgur
+   */
+  _commandImgur(msg) {
+    const query =
+        '?q=' + encodeURIComponent(msg.text + ' ext:png OR jpg OR gif');
+    const page = Math.floor(Math.random() * 100);
+    const path = 'gallery/search/top/all/' + page + query;
+    this._imgurGet(path, (err, content) => {
+      if (!err) {
+        const list = content.data;
+        if (list.length == 0) {
+          this.common.reply(msg, 'Failed to search for ' + msg.text);
+          return;
+        }
+        const image = list[Math.floor(Math.random() * list.length)];
+        const url = image.images ? image.images[0].link : image.link;
+        const embed = new this.Discord.MessageEmbed({title: image.title});
+        embed.setFooter(image.link);
+        if (image.description) {
+          embed.setDescription(image.description);
+        } else if (
+          image.images &amp;&amp; image.images[0] &amp;&amp; image.images[0].description) {
+          embed.setDescription(image.images[0].description);
+        }
+        embed.setURL(image.link);
+        embed.setImage(url);
+        msg.channel.send(embed).catch(
+            () => this.common.reply(
+                msg, 'Failed to send reply.',
+                'Am I able to embed images and links?'));
+      }
+    });
+  }
 
-	
+  /**
+   * Replies with a picture of a cookie.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#cookie
+   * @listens Command#cookies
+   */
+  _commandCookie(msg) {
+    msg.text = 'cookies';
+    this._commandImgur(msg);
+  }
+}
 
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="ApiEndpoint.html">ApiEndpoint</a></dt>
-            <dd></dd>
-        
-            <dt><a href="ApiRequestBody.html">ApiRequestBody</a></dt>
-            <dd></dd>
-        
-            <dt><a href="BotCommands.html">BotCommands</a></dt>
-            <dd></dd>
-        
-            <dt><a href="ChatBot.html">ChatBot</a></dt>
-            <dd></dd>
-        
-            <dt><a href="CmdScheduling.html">CmdScheduling</a></dt>
-            <dd></dd>
-        
-            <dt><a href="CmdScheduling-ScheduledCommand.html">ScheduledCommand</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Command.html">Command</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Command-CommandSetting.html">CommandSetting</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Command-SingleCommand.html">SingleCommand</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Common.html">Common</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Connect4.html">Connect4</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Connect4_Game.html">Game</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Define.html">Define</a></dt>
-            <dd></dd>
-        
-            <dt><a href="DevCmds.html">DevCmds</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Echo.html">Echo</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Echo-Character.html">Character</a></dt>
-            <dd></dd>
-        
-            <dt><a href="FunTranslators.html">FunTranslators</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HG.html">HG</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HGWeb.html">HGWeb</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames.html">HungryGames</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action.html">Action</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-ActionManager.html">ActionManager</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-ActionStore.html">ActionStore</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-GiveRoleAction.html">GiveRoleAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-RunCommandAction.html">RunCommandAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">SendAutoplayingMessageAlertAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-SendDayEndMessageAction.html">SendDayEndMessageAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-SendDayStartMessageAction.html">SendDayStartMessageAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-SendEventMessageAction.html">SendEventMessageAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-SendMessageAction.html">SendMessageAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-SendPlayerRankMessageAction.html">SendPlayerRankMessageAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-SendStatusListAction.html">SendStatusListAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-SendTeamRankMessageAction.html">SendTeamRankMessageAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-SendVictorAction.html">SendVictorAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Action-TakeRoleAction.html">TakeRoleAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-ArenaEvent.html">ArenaEvent</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Battle.html">Battle</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-ChannelAction.html">ChannelAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Day.html">Day</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions.html">DefaultOptions</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions-BooleanOption.html">BooleanOption</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions-NumberOption.html">NumberOption</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions-ObjectOption.html">ObjectOption</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions-Option.html">Option</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions-SelectOption.html">SelectOption</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Event.html">Event</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-EventContainer.html">EventContainer</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-FinalEvent.html">FinalEvent</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-ForcedOutcome.html">ForcedOutcome</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Game.html">Game</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Grammar.html">Grammar</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-GuildGame.html">GuildGame</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-MemberAction.html">MemberAction</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Messages.html">Messages</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-NormalEvent.html">NormalEvent</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-OutcomeProbabilities.html">OutcomeProbabilities</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Player.html">Player</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Simulator.html">Simulator</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Simulator-Worker.html">Worker</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-StatGroup.html">StatGroup</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-StatManager.html">StatManager</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Stats.html">Stats</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Team.html">Team</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-UserIconUrl.html">UserIconUrl</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-WeaponEvent.html">WeaponEvent</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Images.html">Images</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Main.html">Main</a></dt>
-            <dd></dd>
-        
-            <dt><a href="MainModule.html">MainModule</a></dt>
-            <dd></dd>
-        
-            <dt><a href="MemWatcher.html">MemWatcher</a></dt>
-            <dd></dd>
-        
-            <dt><a href="MessageMaker.html">MessageMaker</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Messages.html">Messages</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Moderation.html">Moderation</a></dt>
-            <dd></dd>
-        
-            <dt><a href="ModLog.html">ModLog</a></dt>
-            <dd></dd>
-        
-            <dt><a href="ModLog-Settings.html">Settings</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Music.html">Music</a></dt>
-            <dd></dd>
-        
-            <dt><a href="NPC.html">NPC</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Patreon.html">Patreon</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Patreon-toExport.html">toExport</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Pets.html">Pets</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Pets-BaseMoves.html">BaseMoves</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Pets-BasePetClasses.html">BasePetClasses</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Pets-BasePets.html">BasePets</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Pets-Constants.html">Constants</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Pets-NPC.html">NPC</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Pets-Pet.html">Pet</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Polling.html">Polling</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Polling-Poll.html">Poll</a></dt>
-            <dd></dd>
-        
-            <dt><a href="RaidBlock.html">RaidBlock</a></dt>
-            <dd></dd>
-        
-            <dt><a href="RaidBlock-RaidSettings.html">RaidSettings</a></dt>
-            <dd></dd>
-        
-            <dt><a href="RoleColors.html">RoleColors</a></dt>
-            <dd></dd>
-        
-            <dt><a href="RoleManager.html">RoleManager</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Sandbox.html">Sandbox</a></dt>
-            <dd></dd>
-        
-            <dt><a href="SMLoader.html">SMLoader</a></dt>
-            <dd></dd>
-        
-            <dt><a href="SpikeyBot.html">SpikeyBot</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Spotify.html">Spotify</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Strings.html">Strings</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Strings-Locale.html">Locale</a></dt>
-            <dd></dd>
-        
-            <dt><a href="SubModule.html">SubModule</a></dt>
-            <dd></dd>
-        
-            <dt><a href="TicTacToe.html">TicTacToe</a></dt>
-            <dd></dd>
-        
-            <dt><a href="TicTacToe_Game.html">Game</a></dt>
-            <dd></dd>
-        
-            <dt><a href="TTS.html">TTS</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Twitch.html">Twitch</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Uno.html">Uno</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Uno_Card.html">Card</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Uno_Game.html">Game</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WebAccount.html">WebAccount</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WebApi.html">WebApi</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WebProxy.html">WebProxy</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WebSettings.html">WebSettings</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WebStats.html">WebStats</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WebUserData.html">WebUserData</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
+module.exports = new Images();
+</pre>
+    </article>
 </section>
+
 
 
 
@@ -514,10 +281,6 @@
 
 	<div class="clearfix"></div>
 
-	
-		<div class="col-md-3">
-			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
-		</div>
 	
 
 </div>
