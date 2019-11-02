@@ -258,8 +258,8 @@ class Images extends SubModule {
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
    * @param {number} [pages=1] Number of potential pages to view.
-   * @listens Command#giphy
    * @param {number} [count=20] Number of results per each page.
+   * @listens Command#giphy
    */
   _commandGiphy(msg, pages = 1, count = 20) {
     const page = Math.floor(Math.random() * pages);
@@ -299,7 +299,7 @@ class Images extends SubModule {
    */
   _commandCookie(msg) {
     msg.text = 'cookies';
-    this._commandImgur(msg, 100);
+    this._commandGiphy(msg, 100);
   }
 }
 
