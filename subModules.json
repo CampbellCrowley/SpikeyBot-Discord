@@ -16,7 +16,8 @@
     "./roleColors.js",
     "./web/stats.js",
     "./web/webApi.js",
-    "./twitch.js"
+    "./twitch.js",
+    "./images.js"
   ],
   "dev": [
     "./main.js",
@@ -49,7 +50,8 @@
     "./hungryGames.js",
     "./web/hg.js",
     "./twitch.js",
-    "./memWatcher.js"
+    "./memWatcher.js",
+    "./images.js"
   ],
   "release": [
     "./moderation.js",
@@ -78,7 +80,8 @@
     "./web/settings.js",
     "./web/proxy.js",
     "./twitch.js",
-    "./memWatcher.js"
+    "./memWatcher.js",
+    "./images.js"
   ],
   "rembot": [
     "./moderation.js",

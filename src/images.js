@@ -125,12 +125,13 @@ class Images extends SubModule {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
+   * @param {number} [pages=1] Number of potential pages to view.
    * @listens Command#imgur
    */
-  _commandImgur(msg) {
+  _commandImgur(msg, pages = 1) {
     const query =
         '?q=' + encodeURIComponent(msg.text + ' ext:png OR jpg OR gif');
-    const page = Math.floor(Math.random() * 100);
+    const page = Math.floor(Math.random() * pages);
     const path = 'gallery/search/top/all/' + page + query;
     this._imgurGet(path, (err, content) => {
       if (!err) {
@@ -170,7 +171,7 @@ class Images extends SubModule {
    */
   _commandCookie(msg) {
     msg.text = 'cookies';
-    this._commandImgur(msg);
+    this._commandImgur(msg, 100);
   }
 }
 
