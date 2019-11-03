@@ -76,6 +76,6 @@
     "start:rem": "node --experimental-worker src/SpikeyBot.js --shards --botname rembot &",
     "docs": "npm run lint && cp README.md docs/ && bash .hooks/make-docs.sh",
     "docs:rm": "npm run lint && rm ./docs/*.html && cp README.md docs/ &&  bash .hooks/make-docs.sh",
-    "update": "exec ssh-agent bash -c \"ssh-add ~/.ssh/sb_id_rsa_nopass && git fetch --all && git reset --hard origin/master && git submodules update && npm i && npm i youtube-dl\"; kill $SSH_AGENT_PID"
+    "update": "exec ssh-agent bash -c \"ssh-add ~/.ssh/sb_id_rsa_nopass && git fetch --all && git reset --hard origin/master && git submodule update && npm i && npm i youtube-dl\"; kill $SSH_AGENT_PID"
   }
 }
