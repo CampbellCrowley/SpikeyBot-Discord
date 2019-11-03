@@ -30,10 +30,10 @@ class MemWatcher extends SubModule {
      * process to suicide.
      * @private
      * @type {number}
-     * @default 1000000 bytes (1MB)
+     * @default 100000000 bytes (100MB)
      * @constant
      */
-    this._threshold = 1 * 1000 * 1000;
+    this._threshold = 100 * 1000 * 1000;
 
     this.check = this.check.bind(this);
     this.suicide = this.suicide.bind(this);
