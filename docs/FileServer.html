@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: TTS</title>
+	<title>SpikeyBot-Discord Class: FileServer</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,16 +86,14 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: TTS</h1>
+	<h1 class="page-title">Class: FileServer</h1>
 <section>
 
 <header>
     
         <h2>
-        TTS
+        FileServer
         </h2>
-        
-            <div class="class-description">Adds text-to-speech support for voice channels.</div>
         
     
 </header>
@@ -107,12 +105,16 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="TTS"><span class="type-signature"></span>new TTS()</h4>
+    <h4 class="name" id="FileServer"><span class="type-signature"></span>new FileServer()</h4>
     
     
 </dt>
 <dd>
 
+    
+    <div class="description">
+        Serves files from web requests.
+    </div>
     
 
     
@@ -157,8 +159,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="tts.js.html">tts.js</a>,
-				 <a href="tts.js.html#sunlight-1-line-20">line 20</a>
+				<a href="web_fileServer.js.html">web/fileServer.js</a>,
+				 <a href="web_fileServer.js.html#sunlight-1-line-16">line 16</a>
 			</li>
 		</ul>
 	</dd>
@@ -176,13 +178,6 @@
 
     
 
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Command#event:tts</li>
-    
-        <li>Command#event:speak</li>
-    </ul>
     
 
     
@@ -269,6 +264,11 @@ autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#bot">SubModule#bot</a>
+    </li></ul></dd>
     
 
     
@@ -360,6 +360,11 @@ autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#client">SubModule#client</a>
+    </li></ul></dd>
     
 
     
@@ -453,6 +458,11 @@ init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#command">SubModule#command</a>
+    </li></ul></dd>
+    
 
     
 
@@ -543,6 +553,11 @@ version of this submodule.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#commit">SubModule#commit</a>
+    </li></ul></dd>
     
 
     
@@ -635,6 +650,11 @@ autocompletion, updates to current reference at init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#common">SubModule#common</a>
+    </li></ul></dd>
+    
 
     
 
@@ -726,6 +746,11 @@ value for editor autocompletion, updates to current reference at init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#Discord">SubModule#Discord</a>
+    </li></ul></dd>
+    
 
     
 
@@ -772,7 +797,7 @@ value for editor autocompletion, updates to current reference at init.
             
 <hr>
 <dt class="name" id="helpMessage">
-    <h4 id="helpMessage"><span class="type-signature"></span>helpMessage<span class="type-signature"> :undefined|string|external:Discord~MessageEmbed</span></h4>
+    <h4 id="helpMessage"><span class="type-signature">&lt;abstract> </span>helpMessage<span class="type-signature"> :undefined|string|external:Discord~MessageEmbed</span></h4>
 
     
 </dt>
@@ -917,6 +942,11 @@ value for editor autocompletion, updates to current reference at init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#initialized">SubModule#initialized</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1009,6 +1039,11 @@ needs to be reloaded because the file has been modified since loading.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#loadTime">SubModule#loadTime</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1055,7 +1090,7 @@ needs to be reloaded because the file has been modified since loading.
             
 <hr>
 <dt class="name" id="myName">
-    <h4 id="myName"><span class="type-signature">&lt;protected> </span>myName<span class="type-signature"> :string</span></h4>
+    <h4 id="myName"><span class="type-signature">&lt;abstract, protected> </span>myName<span class="type-signature"> :string</span></h4>
 
     
 </dt>
@@ -1197,6 +1232,11 @@ before begin(), otherwise it is ignored.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#postPrefix">SubModule#postPrefix</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1223,94 +1263,6 @@ before begin(), otherwise it is ignored.
 			<li>
 				<a href="subModule.js.html">subModule.js</a>,
 				 <a href="subModule.js.html#sunlight-1-line-28">line 28</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="~ttsPermString">
-    <h4 id="~ttsPermString"><span class="type-signature">&lt;private, inner, constant> </span>ttsPermString<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The permission required to use TTS commands.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>tts:all</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="tts.js.html">tts.js</a>,
-				 <a href="tts.js.html#sunlight-1-line-55">line 55</a>
 			</li>
 		</ul>
 	</dd>
@@ -1523,6 +1475,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#begin">SubModule#begin</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1670,6 +1627,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#debug">SubModule#debug</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1766,6 +1728,11 @@ register command listeners.</td>
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#end">SubModule#end</a>
+    </li></ul></dd>
     
 
     
@@ -1914,6 +1881,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#error">SubModule#error</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1972,7 +1944,7 @@ register command listeners.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="initialize"><span class="type-signature">&lt;protected> </span>initialize()</h4>
+    <h4 class="name" id="initialize"><span class="type-signature">&lt;abstract, protected> </span>initialize()</h4>
     
     
 </dt>
@@ -2164,6 +2136,11 @@ specific to the subModule. Must be defined before begin() is called.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#log">SubModule#log</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2264,6 +2241,11 @@ completely, this checks if the module can be stopped and restarted.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#reloadable">SubModule#reloadable</a>
+    </li></ul></dd>
     
 
     
@@ -2464,6 +2446,11 @@ synchronous.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#save">SubModule#save</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2522,7 +2509,7 @@ synchronous.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="shutdown"><span class="type-signature">&lt;protected> </span>shutdown()</h4>
+    <h4 class="name" id="shutdown"><span class="type-signature">&lt;abstract, protected> </span>shutdown()</h4>
     
     
 </dt>
@@ -2664,6 +2651,11 @@ doing such may risk putting the module into an uncontrollable state.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#unloadable">SubModule#unloadable</a>
+    </li></ul></dd>
     
 
     
@@ -2843,6 +2835,11 @@ doing such may risk putting the module into an uncontrollable state.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#warn">SubModule#warn</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2886,151 +2883,6 @@ doing such may risk putting the module into an uncontrollable state.
 
     
 
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~commandTTS"><span class="type-signature">&lt;private, inner> </span>commandTTS(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Joins a user's voice channel and speaks the given message.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Discord~Message</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Message that triggered command.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="tts.js.html">tts.js</a>,
-				 <a href="tts.js.html#sunlight-1-line-66">line 66</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Command#event:tts</li>
-    
-        <li>Command#event:speak</li>
-    </ul>
     
 
     

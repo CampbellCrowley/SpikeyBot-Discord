@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Source: pets/NPC.js</title>
+	<title>SpikeyBot-Discord Source: web/fileServer.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,40 +86,32 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: pets/NPC.js</h1>
+		<h1 class="page-title">Source: web/fileServer.js</h1>
     
 <section>
     <article>
         <pre
             class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
-// Author: Campbell Crowley (dev@campbellcrowley.com)
-const Pet = require('Pet.js');
+// Author: Campbell Crowley (web@campbellcrowley.com)
+// const fs = require('fs');
+// const http = require('http');
+const SubModule = require('../subModule.js');
 
 /**
- * @description Creates a Pet with random stats for battling against a player.
- * @memberof Pets
- * @inner
- * @augments Pets~Pet
+ * @description Serves files from web requests.
+ * @class
+ * @augments SubModule
  */
-class NPC extends Pet {
+class FileServer extends SubModule {
   /**
-   * @description Create an NPC based off the opponent data, or at the given
-   * level.
-   * @param {number|Pets~Pet} base Amount of XP to give this npc, or a pet to
-   * base the data off of.
-   * @param {Pets~BasePets} pets Information of available pets.
-   * // @param {Pets~BaseMoves} moves Information of base moves.
+   * @description Serves files from web requests.
    */
-  constructor(base, pets /* , moves*/) {
-    const pet = pets.random();
-    super(null, pet.name, pet.id);
-
-    this.xp = 0;
-    this.addXP((base instanceof Pet) ? base.xp : base, true);
+  constructor() {
+    super();
   }
 }
 
-module.exports = NPC;
+module.exports = new FileServer();
 </pre>
     </article>
 </section>
