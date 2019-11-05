@@ -677,8 +677,8 @@ Common.connectSQL = function(force = false) {
     user: auth.sqlUsername,
     password: auth.sqlPassword,
     host: auth.sqlHost,
-    database: 'appusers',
-    port: 3306,
+    database: auth.sqlDatabase,
+    port: auth.sqlPort,
   });
   global.sqlCon.on('error', (e) => {
     if (this.error) {

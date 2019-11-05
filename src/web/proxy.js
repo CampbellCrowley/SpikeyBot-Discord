@@ -631,7 +631,7 @@ function WebProxy() {
         const ud = WebUserData.from(JSON.parse(data));
         ud.setSession(loginInfo.session, loginInfo.expiration_date);
 
-        const now = dateFormat(new Date(), 'yyyy-mm-dd\'T\'HH:MM:ss.l\'Z\'');
+        const now = dateFormat(new Date(), 'yyyy-mm-dd HH:MM:ss');
         const toSend = global.sqlCon.format(
             'INSERT INTO Discord (id) values (?) ON DUPLICATE KEY UPDATE ?',
             [ud.id, {lastLogin: now}]);
