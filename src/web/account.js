@@ -31,8 +31,7 @@ function WebAccount() {
   this.myName = 'WebAccount';
 
   const app = http.createServer(handler);
-  const io = socketIo(
-      app, {path: '/www.spikeybot.com/socket.io/', serveClient: false});
+  const io = socketIo(app, {path: '/socket.io/', serveClient: false});
 
   app.on('error', function(err) {
     if (err.code === 'EADDRINUSE') {

@@ -50,8 +50,7 @@ function WebSettings() {
 
   let ioClient;
   const app = http.createServer(handler);
-  const io = socketIo(
-      app, {path: '/www.spikeybot.com/socket.io/', serveClient: false});
+  const io = socketIo(app, {path: '/socket.io/', serveClient: false});
 
   app.on('error', function(err) {
     if (io) io.close();
@@ -264,7 +263,7 @@ function WebSettings() {
     ioClient = require('socket.io-client')(
         self.common.isRelease ? 'http://localhost:8020' :
                                 'http://localhost:8021',
-        {path: '/www.spikeybot.com/socket.io/control/', reconnectionDelay: 0});
+        {path: '/socket.io/control/', reconnectionDelay: 0});
     clientSocketConnection(ioClient);
   }
 

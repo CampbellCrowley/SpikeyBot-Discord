@@ -54,7 +54,7 @@ function HGWeb() {
     ioClient = require('socket.io-client')(
         self.common.isRelease ? 'http://localhost:8011' :
                                 'http://localhost:8013',
-        {path: '/www.spikeybot.com/socket.io/hg/', reconnectionDelay: 0});
+        {path: '/socket.io/hg/', reconnectionDelay: 0});
     clientSocketConnection(ioClient);
   }
 
@@ -121,8 +121,7 @@ function HGWeb() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    io = socketIo(
-        app, {path: '/www.spikeybot.com/socket.io/', serveClient: false});
+    io = socketIo(app, {path: '/socket.io/', serveClient: false});
     app.listen(self.common.isRelease ? 8011 : 8013, '127.0.0.1');
     io.on('connection', socketConnection);
   };
