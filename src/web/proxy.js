@@ -65,12 +65,12 @@ function WebProxy() {
   };
 
   const pathPorts = {
-    '/www.spikeybot.com/socket.io/dev/hg/': 8013,
-    '/www.spikeybot.com/socket.io/hg/': 8011,
-    '/www.spikeybot.com/socket.io/dev/account/': 8015,
-    '/www.spikeybot.com/socket.io/account/': 8014,
-    '/www.spikeybot.com/socket.io/dev/control/': 8021,
-    '/www.spikeybot.com/socket.io/control/': 8020,
+    '/socket.io/dev/hg/': 8013,
+    '/socket.io/hg/': 8011,
+    '/socket.io/dev/account/': 8015,
+    '/socket.io/account/': 8014,
+    '/socket.io/dev/control/': 8021,
+    '/socket.io/control/': 8020,
   };
 
   /**
@@ -251,8 +251,7 @@ function WebProxy() {
   }
 
   const app = http.createServer(handler);
-  const io = socketIo(
-      app, {path: '/www.spikeybot.com/socket.io/', serveClient: false});
+  const io = socketIo(app, {path: '/socket.io/', serveClient: false});
 
   let aborted = false;
 
