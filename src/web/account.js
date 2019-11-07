@@ -31,7 +31,7 @@ function WebAccount() {
   this.myName = 'WebAccount';
 
   const app = http.createServer(handler);
-  const io = socketIo(app, {path: '/socket.io/', serveClient: false});
+  const io = socketIo(app, {path: '/socket.io/'});
 
   app.on('error', function(err) {
     if (err.code === 'EADDRINUSE') {

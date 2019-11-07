@@ -251,7 +251,7 @@ function WebProxy() {
   }
 
   const app = http.createServer(handler);
-  const io = socketIo(app, {path: '/socket.io/', serveClient: false});
+  const io = socketIo(app, {path: '/socket.io/'});
 
   let aborted = false;
 

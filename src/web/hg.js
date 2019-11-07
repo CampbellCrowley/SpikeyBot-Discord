@@ -121,7 +121,7 @@ function HGWeb() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    io = socketIo(app, {path: '/socket.io/', serveClient: false});
+    io = socketIo(app, {path: '/socket.io/'});
     app.listen(self.common.isRelease ? 8011 : 8013, '127.0.0.1');
     io.on('connection', socketConnection);
   };
