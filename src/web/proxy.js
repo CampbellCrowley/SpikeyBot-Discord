@@ -349,15 +349,16 @@ function WebProxy() {
     const rateHistory = {};
 
     self.common.logDebug(
-        'Socket connected (' + Object.keys(sockets).length + '): ' + ipName,
+        'Socket connected (' + Object.keys(sockets).length + '): ' + reqPath +
+            ' ' + ipName,
         socket.id);
-    sockets[socket.id] = socket;
     if (!pathPorts[reqPath]) {
       self.common.error(
           'Client requested unknown endpoint: ' + reqPath, socket.id);
       socket.disconnect();
       return;
     }
+    sockets[socket.id] = socket;
     const server = sIOClient('http://localhost:' + pathPorts[reqPath], {
       path: reqPath,
       extraHeaders:
