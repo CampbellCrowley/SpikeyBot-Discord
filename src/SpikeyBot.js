@@ -1530,6 +1530,7 @@ function SpikeyBot() {
    * @private
    */
   function saveAll() {
+    common.logDebug('Saving all bot data to file...');
     for (let i = 0; i < mainModules.length; i++) {
       if (typeof mainModules[i].save === 'function') {
         try {
