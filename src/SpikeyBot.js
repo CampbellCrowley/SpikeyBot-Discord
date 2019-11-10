@@ -1534,7 +1534,14 @@ function SpikeyBot() {
     for (let i = 0; i < mainModules.length; i++) {
       if (typeof mainModules[i].save === 'function') {
         try {
+          const start = Date.now();
           mainModules[i].save('async');
+          const delta = Date.now() - start;
+          if (delta > 10) {
+            common.logWarning(
+                mainModuleNames[i] + ' took an excessive ' + delta +
+                'ms to start saving data!');
+          }
         } catch (err) {
           common.error('Saving failed for mainModule ' + mainModuleNames[i]);
           console.error(err);
