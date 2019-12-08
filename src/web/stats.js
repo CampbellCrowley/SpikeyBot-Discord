@@ -98,7 +98,7 @@ function WebStats() {
   const apiHosts = [
     {
       protocol: 'https:',
-      host: 'discordbots.org',
+      host: 'top.gg',
       path: '/api/bots/{id}/stats',
       method: 'POST',
       headers: {
