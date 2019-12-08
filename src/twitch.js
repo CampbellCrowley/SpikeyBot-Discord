@@ -36,6 +36,7 @@ class Twitch extends SubModule {
     this._commandTwitch = this._commandTwitch.bind(this);
     this._commandSubscribe = this._commandSubscribe.bind(this);
     this._commandUnSubscribe = this._commandUnSubscribe.bind(this);
+    this._commandResub = this._commandResub.bind(this);
     this._resubCheck = this._resubCheck.bind(this);
     this.webhookHandler = this.webhookHandler.bind(this);
     this._handleChannelDelete = this._handleChannelDelete.bind(this);
@@ -64,7 +65,7 @@ class Twitch extends SubModule {
                 'delete', 'del', 'd', 'silent', 'mute',
               ],
               this._commandUnSubscribe, perms),
-          new this.command.SingleCommand(['resub'], this._resubCheck, perms),
+          new this.command.SingleCommand(['resub'], this._commandResub, perms),
         ]));
     this.client.on('channelDelete', this._handleChannelDelete);
     this.client.on('guildDelete', this._handleGuildDelete);
@@ -566,18 +567,49 @@ class Twitch extends SubModule {
   }
 
   /**
+   * @description Trigger the bot to check for need to resubscribe to channel
+   * subscriptions. Specifying the `--force` flag will force all resubscriptions
+   * to be attempted even if they aren't expired yet.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#twitch_resub
+   */
+  _commandResub(msg) {
+    if (!this.common.trustedIds.includes(msg.author.id)) {
+      this.comon.reply(msg, 'Sorry, but you can\'t do that.');
+      return;
+    }
+    const force = msg.text.indexOf('--force') > -1;
+    this._resubCheck(force);
+    this.common.reply(msg, `Triggered resub (forced: ${force})`);
+  }
+
+  /**
    * @description Check our database for webhook subscriptions that are about to
    * expire, and re-subscribe to them.
    * @private
+   * @param {boolean} [force=false] Force all subscriptions to be resubscribed,
+   * even if they have not expired yet. THIS CAN LEAD TO EXCEEDING RATE LIMITS.
+   * This will not check or limit the number of resubs that occur. Only use
+   * inteligently.
    */
-  _resubCheck() {
-    const toSend = global.sqlCon.format(
-        'SELECT DISTINCT id,streamChangedState,login,lastModified,' +
-            'displayName,expiresAt FROM TwitchUsers INNER JOIN TwitchDiscord ' +
-            'ON id=twitchId WHERE TwitchUsers.bot=? AND TwitchDiscord.bot=? ' +
-            'AND (TIMESTAMPDIFF(DAY, expiresAt, NOW()) > -2 OR ' +
-            'TIMESTAMPDIFF(DAY, expiresAt, NOW()) IS NULL)',
-        [this.client.user.id, this.client.user.id]);
+  _resubCheck(force) {
+    let str;
+    if (force) {
+      str = 'SELECT DISTINCT id,streamChangedState,login,lastModified,' +
+          'displayName,expiresAt FROM TwitchUsers INNER JOIN TwitchDiscord ' +
+          'ON id=twitchId WHERE TwitchUsers.bot=? AND TwitchDiscord.bot=?';
+    } else {
+      str = 'SELECT DISTINCT id,streamChangedState,login,lastModified,' +
+          'displayName,expiresAt FROM TwitchUsers INNER JOIN TwitchDiscord ' +
+          'ON id=twitchId WHERE TwitchUsers.bot=? AND TwitchDiscord.bot=? ' +
+          'AND (TIMESTAMPDIFF(DAY, expiresAt, NOW()) > -2 OR ' +
+          'TIMESTAMPDIFF(DAY, expiresAt, NOW()) IS NULL)';
+    }
+    const toSend =
+        global.sqlCon.format(str, [this.client.user.id, this.client.user.id]);
     global.sqlCon.query(toSend, (err, rows) => {
       if (err) {
         this.error('Failed to fetch twitch alerts about to expire.');
