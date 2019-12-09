@@ -560,9 +560,11 @@ class WebApi extends SubModule {
       if (parsed.data && parsed.data.length === 0) {
         const user = link && link.match(/user_id=(\d+)/);
         this.common.logDebug(
-            `Empty webhook from Twitch: ${content} User: (${user})`, ip);
+            `Empty webhook from Twitch: ${content} User: (${user && user[1]})`,
+            ip);
         res.writeHead(204);
         res.end();
+        if (user && user[1]) this._twitchStreamEnd(user[1]);
         return;
       } else if (!data) {
         this.common.logDebug(
@@ -574,7 +576,7 @@ class WebApi extends SubModule {
       this.common.logDebug('Twitch Webhook: ' + content, ip);
       res.writeHead(204);
       res.end();
-      this._fetchWebhookMetadata(data.user_id, data.game_id, content);
+      this._fetchWebhookMetadata(data.user_id, data.game_id, content, data);
     });
   }
   /**
@@ -585,16 +587,32 @@ class WebApi extends SubModule {
    * @param {string} gameId The Twitch game ID the user is playing.
    * @param {string} content Full content string from the webhook to
    * re-broadcast to shards.
+   * @param {object} [data={}] Parsed content to object. Allows for additional
+   * metadata to be stored and to prevent duplicate alerts.
    */
-  _fetchWebhookMetadata(userId, gameId, content) {
+  _fetchWebhookMetadata(userId, gameId, content, data={}) {
     let ids;
 
-    const numTotal = 2;
+    const numTotal = 3;
     let numDone = 0;
     const self = this;
     const check = function() {
       if (++numDone < numTotal) return;
       self._twitchFinal(ids, content);
+    };
+
+    const insert = function(skip) {
+      let str = 'INSERT INTO TwitchStreams SET user=?, game=?, title=?';
+      if (startTime) str += ', startTime=FROM_UNIXTIME(?)';
+      const toSend = global.sqlCon.format(
+          str, [userId, gameId || '', title, new Date(startTime).getTime()]);
+      global.sqlCon.query(toSend, (err) => {
+        if (err) {
+          self.error('Failed to insert stream database info: ' + userId);
+          console.error(err);
+        }
+        if (!skip) check();
+      });
     };
 
     if (gameId && gameId.length > 0) {
@@ -614,6 +632,45 @@ class WebApi extends SubModule {
       }
       ids = JSON.stringify(rows.map((el) => el.channel));
       check();
+    });
+
+    const title = data.title || null;
+    const startTime = data.started_at || null;
+    const str = 'SELECT * FROM TwitchStreams WHERE user=? AND game=? AND ' +
+        'TIMESTAMPDIFF(MINUTE, startTime, NOW()) < 60 && title=?';
+    const toSend2 = global.sqlCon.format(str, [userId, gameId, title]);
+    global.sqlCon.query(toSend2, (err, rows) => {
+      if (err) {
+        this.error('Failed to check stream history database info: ' + userId);
+        console.error(err);
+        return;
+      }
+      if (rows && rows.length > 0) {
+        this.debug(
+            'Aborting twitch alert due to recent identical alert: ' + userId);
+        insert(true);
+        return;
+      }
+      insert();
+    });
+  }
+  /**
+   * @description Handle a user's stream ending.
+   * @private
+   * @param {string} userId The user's ID of which the stream has ended.
+   */
+  _twitchStreamEnd(userId) {
+    const str =
+        'UPDATE TwitchStreams SET endTime=FROM_UNIXTIME(?) WHERE user=? ' +
+        'ORDER BY id DESC LIMIT 1';
+    const toSend = global.sqlCon.format(str, [Date.now(), userId]);
+    global.sqlCon.query(toSend, (err) => {
+      if (err) {
+        this.error('Failed to update stream end time database info: ' + userId);
+        console.error(err);
+      } else {
+        this.debug('Updated stream end time: ' + userId);
+      }
     });
   }
   /**
