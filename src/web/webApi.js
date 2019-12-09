@@ -558,7 +558,9 @@ class WebApi extends SubModule {
       }
       const data = parsed.data && parsed.data[0];
       if (parsed.data && parsed.data.length === 0) {
-        this.common.logDebug('Empty webhook from Twitch: ' + content, ip);
+        const user = link && link.match(/user_id=(\d+)/);
+        this.common.logDebug(
+            `Empty webhook from Twitch: ${content} User: (${user})`, ip);
         res.writeHead(204);
         res.end();
         return;
