@@ -66,6 +66,7 @@ const math = mathjs.create(mathjs.all, {matrix: 'Array'});
  * @listens Command#toggleMute
  * @listens Command#toggleBanMessages
  * @listens Command#toggleRigged
+ * @listens Command#toggleDad
  * @listens Command#perms
  * @listens Command#stats
  * @listens Command#lookup
@@ -156,6 +157,14 @@ function Main() {
    * @type {object.<boolean>}
    */
   const disabledRiggedCounter = {};
+
+  /**
+   * The guilds that have disabled the Dad Bot messages.
+   *
+   * @private
+   * @type {object.<boolean>}
+   */
+  const disabledDadBot = {};
 
   /**
    * The guilds with auto-smite enabled, and members who have mentioned
@@ -353,6 +362,9 @@ function Main() {
     self.command.on(
         new self.command.SingleCommand(
             'togglerigged', commandToggleRiggedCounter, adminOnlyOpts));
+    self.command.on(
+        new self.command.SingleCommand(
+            'toggledad', commandToggleDad, adminOnlyOpts));
     self.command.on('sendto', commandSendTo);
     self.command.on(['thanks', 'thx', 'thankyou', 'thank'], commandThankYou);
     self.command.on('listcommands', commandListCommands);
@@ -438,6 +450,7 @@ function Main() {
             disabledAutoSmite[g.id] = parsed.disabledAutoSmite || false;
             disabledBanMessage[g.id] = parsed.disabledBanMessage || false;
             disabledRiggedCounter[g.id] = parsed.disabledRiggedCounter || false;
+            disabledDadBot[g.id] = parsed.disabledDadBot || false;
           });
       fs.readFile(
           `${self.common.guildSaveDir}${g.id}/banCache.json`, (err, file) => {
@@ -725,6 +738,7 @@ function Main() {
         disabledAutoSmite: disabledAutoSmite[g.id],
         disabledBanMessage: disabledBanMessage[g.id],
         disabledRiggedCounter: disabledRiggedCounter[g.id],
+        disabledDadBot: disabledDadBot[g.id],
       };
       if (opt == 'async') {
         self.common.mkAndWrite(filename, dir, JSON.stringify(obj));
@@ -964,6 +978,25 @@ function Main() {
       self.common.reply(msg, 'Disabled showing rigged counter.');
     }
   }
+
+  /**
+   * Toggles sending a message when a user says "I'm something" and Dad Bot
+   * replies.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#toggleDad
+   */
+  function commandToggleDad(msg) {
+    if (disabledDadBot[msg.guild.id]) {
+      disabledDadBot[msg.guild.id] = false;
+      self.common.reply(msg, 'Enabled showing replies to Dad Bot.');
+    } else {
+      disabledDadBot[msg.guild.id] = true;
+      self.common.reply(msg, 'Disabled showing replies to Dad Bot.');
+    }
+  }
   /**
    * Handle receiving a message for use on auto-muting users who spam @everyone.
    *
@@ -1018,18 +1051,20 @@ function Main() {
       }
     }
 
-    const word = msg.content.match(/(say){0}.*\bi'?m\s+(.*)/i);
-    if (word) {
-      const dadId = '503720029456695306';
-      if (msg.channel.members.get(dadId)) {
-        msg.channel
-            .awaitMessages(
-                (m) => m.author.id === dadId,
-                {max: 1, time: 10000, errors: ['time']})
-            .then(() => {
-              msg.channel.send('Hi Dad, I\'m Spikey!');
-            })
-            .catch(() => {});
+    if (!disabledDadBot[msg.guild.id]) {
+      const word = msg.content.match(/(say){0}.*\bi'?m\s+(.*)/i);
+      if (word) {
+        const dadId = '503720029456695306';
+        if (msg.channel.members.get(dadId)) {
+          msg.channel
+              .awaitMessages(
+                  (m) => m.author.id === dadId,
+                  {max: 1, time: 10000, errors: ['time']})
+              .then(() => {
+                msg.channel.send('Hi Dad, I\'m Spikey!');
+              })
+              .catch(() => {});
+        }
       }
     }
 

@@ -156,6 +156,17 @@
           ]
         },
         {
+          "command": "toggledad",
+          "description": "Turn on or off showing a reply to Dad Bot saying \"Hi Dad, I'm Spikey!\".",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "toggledad"
+            }
+          ]
+        },
+        {
           "command": "togglechatbot",
           "description": "Turn on or off the Chatbot features (@'ing the bot causing it to reply).",
           "validOnlyInGuild": true,
