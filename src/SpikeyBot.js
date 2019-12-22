@@ -1252,7 +1252,7 @@ function SpikeyBot() {
       }
       rebooting = true;
     }
-    if ((!msg && silent) || msg.author.id === common.spikeyId) {
+    if ((!msg && silent) || common.trustedIds.includes(msg.author.id)) {
       const content = (msg || {content: ''}).content;
       const force = content.indexOf(' force') > -1;
       const doHardReboot = content.indexOf('hard') > -1;
