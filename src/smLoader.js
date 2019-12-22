@@ -131,7 +131,14 @@ function SMLoader() {
   this.save = function(...args) {
     for (const i in subModules) {
       if (subModules[i] && subModules[i].save) {
+        const start = Date.now();
         subModules[i].save.apply(null, args);
+        const delta = Date.now() - start;
+        if (delta > 10) {
+          this.common.logWarning(
+              subModuleNames[i] + ' took an excessive ' + delta +
+              'ms to start saving data!');
+        }
       }
     }
   };

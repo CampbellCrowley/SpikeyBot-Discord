@@ -1018,7 +1018,7 @@ function Main() {
       }
     }
 
-    const word = msg.content.match(/\bi'?m\s+(.*)/i);
+    const word = msg.content.match(/(say){0}.*\bi'?m\s+(.*)/i);
     if (word) {
       const dadId = '503720029456695306';
       if (msg.channel.members.get(dadId)) {
