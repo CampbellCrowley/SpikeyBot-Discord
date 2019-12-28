@@ -50,7 +50,6 @@
     "./hungryGames.js",
     "./web/hg.js",
     "./twitch.js",
-    "./memWatcher.js",
     "./images.js"
   ],
   "release": [

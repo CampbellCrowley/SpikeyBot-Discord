@@ -136,8 +136,7 @@ function SMLoader() {
         const delta = Date.now() - start;
         if (delta > 10) {
           this.common.logWarning(
-              subModuleNames[i] + ' took an excessive ' + delta +
-              'ms to start saving data!');
+              i + ' took an excessive ' + delta + 'ms to start saving data!');
         }
       }
     }
