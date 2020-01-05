@@ -121,7 +121,12 @@
               "result": "The matching RGB color will be applied."
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "title": "Bot Settings",
+      "rows": [
         {
           "command": "togglemute",
           "description": "Turn on or off automatically preventing a person from using @everyone if they spam it.",
