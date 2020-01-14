@@ -38,6 +38,7 @@
 - airhorn (Plays airhorn sound)
 - rickroll (Plays Rick Astley in voice channel)
 - kokomo (Alias for `play kokomo`)
+- felix (Alias for `play felix`, which plays a sound clip of Felix saying "Don't touch me, I'm violent")
 - updategame (Changes bot's status)
 - reboot (Triggers a graceful shutdown of the entire bot. Assumes the parent process will restart automatically)
 - reload (Gracefully unloads all sub-modules, and re-loads and initializes them)
@@ -58,6 +59,7 @@
 - whoami (Replies with the user's username, and full tag from different sources)
 - gettime (Replies with the server's timezone and time, as well as GMT)
 - sweep (Removes users from cache that we don't care about at the moment in order to free memory. Only Spikey can do this)
+- cookies (Alias for `imgur cookies`)
 
 # Event Controlled
 - Added to guild
@@ -75,13 +77,13 @@ Hungry Games requires a MariaDB server to be available for storage of all events
 1) Have a server/computer
     - SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.
 2) Install [NodeJS](https://nodejs.org/)
-    - The bot is currently running on NodeJS [v10.16.3](https://nodejs.org/dist/v10.16.3/). Other versions may work, but are untested.
+    - The bot is currently running on NodeJS [v10.17.0](https://nodejs.org/dist/v10.17.0/). Other versions may work, but are untested.
 3) Download source code
     - Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.
 4) Install system dependencies
     - `sudo apt install make libtool autoconf g++ ffmpeg` are required for the default installation.
 5) Install dependencies via NPM
-    - Current version of NPM used is `v6.12.0`, but almost any version should be fine.
+    - Current version of NPM used is `v6.12.1`, but almost any version should be fine.
     - In the `SpikeyBot-Discord` directory, run `npm install`.
 6) Get a bot token from Discord
     - A token for the bot that you are trying to run from [Discord](https://discordapp.com/developers/applications/) is required.

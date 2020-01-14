@@ -2,6 +2,7 @@
 // Author: Campbell Crowley (web@campbellcrowley.com)
 const http = require('http');
 const socketIo = require('socket.io');
+const Discord = require('discord.js');
 // const crypto = require('crypto');
 const common = require('./common.js');
 const path = require('path');
@@ -37,12 +38,29 @@ class ShardingMaster {
     this._socketConnection = this._socketConnection.bind(this);
 
     /**
+     * @description The timestamp the last time the recommended shard count was
+     * requested.
+     * @private
+     * @type {number}
+     * @default
+     */
+    this._shardNumTimestamp = 0;
+    /**
+     * @description The number of shards recommended by Discord from our last
+     * request.
+     * @private
+     * @type {number}
+     * @default
+     */
+    this._detectedNumShards = -1;
+
+    /**
      * @description The currently known shards mapped by their name, containing
      * some information about them including their public key.
      * @private
-     * @type {object.<{key: string, stats: ShardStatus}>}
+     * @type {?object.<{key: string, stats: ShardStatus}>}
      */
-    this._knownUsers = {};
+    this._knownUsers = null;
     this._updateUsers();
     fs.watchFile(usersFile, {persistent: false}, (curr, prev) => {
       if (prev.mtime < curr.mtime) this._updateUsers();
@@ -50,9 +68,9 @@ class ShardingMaster {
     /**
      * @description The current config for sharding.
      * @private
-     * @type {ShardMasterConfig}
+     * @type {?ShardMasterConfig}
      */
-    this._config = {};
+    this._config = null;
     this._updateConfig();
     fs.watchFile(configFile, {persistent: false}, (curr, prev) => {
       if (prev.mtime < curr.mtime) this._updateConfig();
@@ -60,9 +78,9 @@ class ShardingMaster {
     /**
      * @description The current authentication information.
      * @private
-     * @type {object}
+     * @type {?object}
      */
-    this._auth = {};
+    this._auth = null;
     this._updateAuth();
     fs.watchFile(authFile, {persistent: false}, (curr, prev) => {
       if (prev.mtime < curr.mtime) this._updateAuth();
@@ -75,6 +93,14 @@ class ShardingMaster {
      * @type {object.<Socket>}
      */
     this._sockets = {};
+    /**
+     * Map of the currently connected sockets for each shard, mapped by the
+     * shard names.
+     *
+     * @private
+     * @type {object.<ShardSocket>}
+     */
+    this._shardSockets = {};
 
     /**
      * Webserver instance.
@@ -144,6 +170,7 @@ class ShardingMaster {
     delete require.cache[require.resolve(file)];
     try {
       this._auth = require(file);
+      this._refreshShardStatus();
     } catch (err) {
       common.error(`Failed to parse ${file}`);
       console.error(err);
@@ -152,16 +179,65 @@ class ShardingMaster {
 
   /**
    * @description The config was changed or may differ from the current setup,
-   * attempt to make changes to match the current setup the the requested
+   * attempt to make changes to match the current setup the requested
    * configuration.
    * @private
    */
   _refreshShardStatus() {
+    // const goal = this.getGoalShardCount();
+    // const current = this.getCurrentShardCount();
+    // const known = this.getKnownShardCount();
+  }
+  /**
+   * @description Fetch the current goal number of shards we are attempting to
+   * keep alive. Returns -1 if goal has not been set yet, or is otherwise
+   * unavailable.
+   * @public
+   * @returns {number} The number of shards we are attempting to create, -1 if
+   * the value is otherwise unknown.
+   */
+  getGoalShardCount() {
+    const now = Date.now();
+
     if (this._config.autoDetectNumShards) {
-      if (this._config.numShards) {
-        return;
+      this._config.numShards = this._detectedNumShards;
+
+      if (now - this._config.autoDetectInterval > this._shardNumTimestamp) {
+        const token = this._auth[this._config.botName];
+
+        if (!token) {
+          if (this._auth) {
+            common.logWarning(
+                'Unable to fetch shard count due to no bot token.');
+          }
+          return this._config.numShards;
+        }
+
+        this._shardNumTimestamp = now;
+        Discord.util.fetchRecommendedShards(token, 1250)
+            .then((num) => {
+              const updated = this._detectedNumShards != num;
+              this._detectedNumShards = num;
+              if (updated) this._refreshShardStatus();
+            })
+            .catch((err) => {
+              common.error(
+                  'Unable to fetch shard count due to failed request.');
+              console.error(err);
+            });
       }
     }
+    return this._config.numShards;
+  }
+
+  /**
+   * @description Fetches the current number of shards connected to us that we
+   * are controlling.
+   * @public
+   * @returns {number} The current number of shards we are controlling.
+   */
+  getCurrentShardCount() {
+
   }
 
   /**
@@ -268,6 +344,9 @@ class ShardingMaster {
   }
 }
 
+ShardingMaster.ShardMasterConfig = require(configFile);
+ShardingMaster.ShardStatus = require('./ShardStatus.js');
+
 if (require.main === module) {
   console.log('Started via CLI, booting up...');
   const manager = new ShardingMaster(process.argv[2]);
@@ -275,3 +354,5 @@ if (require.main === module) {
   process.on('SIGINT', manager.exit);
   process.on('SIGTERM', manager.exit);
 }
+
+module.exports = ShardingMaster;

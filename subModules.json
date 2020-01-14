@@ -50,7 +50,8 @@
     "./hungryGames.js",
     "./web/hg.js",
     "./twitch.js",
-    "./images.js"
+    "./images.js",
+    "./memWatcher.js"
   ],
   "release": [
     "./moderation.js",

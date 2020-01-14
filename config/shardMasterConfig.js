@@ -6,6 +6,9 @@
  * during runtime if it is edited. Relevant settings may be sent to each shard
  * during each initial setup.
  * @class
+ * @memberof ShardingMaster
+ * @inner
+ * @static
  */
 class ShardMasterConfig {
   /**
@@ -30,6 +33,14 @@ class ShardMasterConfig {
      */
     this.autoDetectNumShards = true;
     /**
+     * @description The interval to check for how many shards we should have at
+     * one time, in milliseconds.
+     * @public
+     * @default
+     * @type {number}
+     */
+    this.autoDetectInterval = 24 * 60 * 60 * 1000;
+    /**
      * @description The name of the bot that corresponds to the token to use in
      * `../auth.js`.
      * @default
@@ -42,9 +53,18 @@ class ShardMasterConfig {
      * online shall work.
      * @default
      * @public
-     * @type {HeartbeatConfig}
+     * @type {ShardMasterConfig~HeartbeatConfig}
      */
     this.heartbeat = new HeartbeatConfig();
+
+    /**
+     * @description Configuration specifying how to alert admins about important
+     * system updates.
+     * @default
+     * @public
+     * @type {ShardMasterConfig~MailConfig}
+     */
+    this.mail = new MailConfig();
   }
 }
 
@@ -54,7 +74,9 @@ class ShardMasterConfig {
  * during each initial setup. These settings are related to heartbeat and uptime
  * management. This is included in {@link ShardMasterConfig}.
  * @class
- * @memberof ShardMasterConfig
+ * @memberof ShardingMaster.ShardMasterConfig
+ * @inner
+ * @static
  */
 class HeartbeatConfig {
   /**
@@ -126,6 +148,47 @@ class HeartbeatConfig {
   }
 }
 
+/**
+ * @description Configuration for the Shard Master. This config will be updated
+ * during runtime if it is edited. Relevant settings may be sent to each shard
+ * during each initial setup. These settings are related to informing sysadmins
+ * of important updates.
+ * @class
+ * @memberof ShardingMaster.ShardMasterConfig
+ * @inner
+ * @static
+ */
+class MailConfig {
+  /**
+   * @description Create config object.
+   */
+  constructor() {
+    /**
+     * @description Is the mail system enabled. It must also be configured
+     * properly on the system in order for it to work.
+     * @public
+     * @default
+     * @type {boolean}
+     */
+    this.enabled = true;
+    /**
+     * @description The command that will be used to send the email.
+     * @public
+     * @default
+     * @type {string}
+     */
+    this.command = 'mail';
+    /**
+     * @description Additional arguments to pass to the mail command.
+     * @public
+     * @default
+     * @type {string[]}
+     */
+    this.args = ['sysadmin@spikeybot.com', '-s Automated Sharding Update'];
+  }
+}
+
 ShardMasterConfig.HeartbeatConfig = HeartbeatConfig;
+ShardMasterConfig.MailConfig = MailConfig;
 
 module.exports = ShardMasterConfig;
