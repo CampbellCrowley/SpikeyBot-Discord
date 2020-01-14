@@ -20,6 +20,9 @@ module.exports = {
     'jsdoc',
     '@typescript-eslint',
   ],
+  'globals': {
+    'BigInt': true,
+  },
   'rules': {
     'no-console': 'off',
     'no-constant-condition': [

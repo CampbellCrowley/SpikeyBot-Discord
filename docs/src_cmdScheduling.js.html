@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Source: src/cmdScheduling.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="EE.html">EE</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Events.html">Events</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-Action.html">HungryGames~Action</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardMasterConfig.html">ShardMasterConfig</a></li><li><a href="ShardMasterConfig.HeartbeatConfig.html">ShardMasterConfig.HeartbeatConfig</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: src/cmdScheduling.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// Copyright 2018 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+const fs = require('fs');
+const mkdirp = require('mkdirp');
+const MessageMaker = require('./lib/MessageMaker.js');
+
+require('./subModule.js')
+    .extend(CmdScheduling);  // Extends the SubModule class.
+
+/**
+ * @classdesc Provides interface for scheduling a specific time or interval for
+ * a command to be run.
+ * @class
+ * @augments SubModule
+ * @listens Command#schedule
+ * @listens Command#sch
+ * @listens Command#sched
+ * @listens Command#scheduled
+ */
+function CmdScheduling() {
+  const self = this;
+
+  /** @inheritdoc */
+  this.myName = 'CmdScheduling';
+
+  /** @inheritdoc */
+  this.initialize = function() {
+    const adminOnlyOpts = new self.command.CommandSetting({
+      validOnlyInGuild: true,
+      defaultDisabled: true,
+      permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
+          self.Discord.Permissions.FLAGS.MANAGE_GUILD |
+          self.Discord.Permissions.FLAGS.BAN_MEMBERS,
+    });
+    self.command.on(
+        new self.command.SingleCommand(
+            ['schedule', 'sch', 'sched', 'scheduled'], commandSchedule,
+            adminOnlyOpts));
+
+    const now = Date.now();
+    self.client.guilds.forEach((g) => {
+      fs.readFile(self.common.guildSaveDir + g.id + saveSubDir, (err, data) => {
+        if (err &amp;&amp; err.code == 'ENOENT') return;
+        if (err) {
+          self.warn('Failed to load scheduled command: ' + g.id);
+          return;
+        }
+        try {
+          const parsed = JSON.parse(data);
+          if (!parsed || parsed.length == 0) {
+            self.warn('Failed to parse scheduled commands: ' + g.id);
+            return;
+          }
+          if (!schedules[g.id]) schedules[g.id] = [];
+          for (let i = 0; i &lt; parsed.length; i++) {
+            if (parsed[i].bot != self.client.user.id) continue;
+            if (parsed[i].time &lt; now) {
+              while (parsed[i].repeatDelay > 0 &amp;&amp;
+                     parsed[i].time &lt; now - parsed[i].repeatDelay) {
+                parsed[i].time += parsed[i].repeatDelay;
+              }
+            }
+            registerScheduledCommand(new ScheduledCommand(parsed[i]), g.id);
+          }
+        } catch (err) {
+          self.error('Failed to parse data for guild commands: ' + g.id);
+          console.error(err);
+        }
+      });
+    });
+
+    longInterval = self.client.setInterval(reScheduleCommands, maxTimeout);
+  };
+  /**
+   * @inheritdoc
+   * @fires CmdScheduling#shutdown
+   * */
+  this.shutdown = function() {
+    self.command.deleteEvent('schedule');
+    if (longInterval) self.client.clearInterval(longInterval);
+    for (const i in schedules) {
+      if (!schedules[i] || !schedules[i].length) continue;
+      schedules[i].forEach((el) => el.cancel());
+    }
+    fireEvent('shutdown');
+    listeners = {};
+  };
+  /**
+   * @override
+   * @inheritdoc
+   */
+  this.save = function(opt) {
+    self.client.guilds.forEach((g) => {
+      const dir = self.common.guildSaveDir + g.id;
+      const filename = dir + saveSubDir;
+      if (opt === 'async') {
+        fs.unlink(filename, () => {
+          if (schedules[g.id] &amp;&amp; schedules[g.id].length) {
+            schedules[g.id] = schedules[g.id].filter((el) => !el.complete);
+            const data = schedules[g.id].map((el) => el.toJSON());
+            writeSaveData(g.id, data, opt);
+          }
+        });
+      } else {
+        try {
+          fs.unlinkSync(filename);
+        } catch (err) {
+          if (err.code !== 'ENOENT') {
+            this.error('Failed to unlink sCmd data: ' + g.id);
+            console.error(err);
+          }
+        }
+        if (schedules[g.id] &amp;&amp; schedules[g.id].length) {
+          schedules[g.id] = schedules[g.id].filter((el) => !el.complete);
+          const data = schedules[g.id].map((el) => el.toJSON());
+          writeSaveData(g.id, data, opt);
+        }
+      }
+    });
+  };
+
+  /**
+   * Write save data for a guild.
+   *
+   * @private
+   *
+   * @param {string|number} i The guild ID.
+   * @param {object} data The data to write.
+   * @param {string} [opt='sync'] See {@link save}.
+   */
+  function writeSaveData(i, data, opt) {
+    const dir = self.common.guildSaveDir + i;
+    const filename = dir + saveSubDir;
+    if (opt === 'async') {
+      mkdirp(dir, (err) => {
+        if (err) {
+          self.error('Failed to make directory: ' + dir);
+          console.log(err);
+          return;
+        }
+        fs.readFile(filename, (err, rec) => {
+          if (!err &amp;&amp; rec) {
+            try {
+              const parsed = JSON.parse(rec);
+              if (parsed &amp;&amp; parsed.length > 0) {
+                data = rec.filter((el) => el.bot != self.client.user.id)
+                    .concat(data);
+              }
+            } catch (e) {
+              // No data exists.
+            }
+          }
+          const finalData = JSON.stringify(data);
+          fs.writeFile(filename, finalData, (err) => {
+            if (err) {
+              self.error('Failed to write file: ' + filename);
+              console.error(err);
+            }
+          });
+        });
+      });
+    } else {
+      try {
+        mkdirp.sync(dir);
+      } catch (err) {
+        self.error('Failed to make directory: ' + dir);
+        console.log(err);
+        return;
+      }
+      try {
+        const rec = fs.readFileSync(filename);
+        const parsed = JSON.parse(rec);
+        if (parsed &amp;&amp; parsed.length > 0) {
+          data = rec.filter((el) => el.bot != self.client.user.id).concat(data);
+        }
+      } catch (err) {
+        // No data exists.
+      }
+      try {
+        fs.writeFileSync(filename, JSON.stringify(data));
+      } catch (err) {
+        self.error('Failed to write file: ' + filename);
+        console.error(err);
+      }
+    }
+  }
+
+  /**
+   * Interval that runs every maxTimeout milliseconds in order to re-schedule
+   * commands that were beyond the max timeout duration.
+   *
+   * @private
+   * @type {Interval}
+   */
+  let longInterval;
+
+  /**
+   * The maximum amount of time to set a Timeout for. The JS limit is 24 days
+   * (iirc), after which, Timeouts do not work properly.
+   *
+   * @private
+   * @constant
+   * @default 14 Days
+   * @type {number}
+   */
+  const maxTimeout = 14 * 24 * 60 * 60 * 1000;
+
+  /**
+   * The filename in the guild directory to save the scheduled commands.
+   *
+   * @private
+   * @constant
+   * @default
+   * @type {string}
+   */
+  const saveSubDir = '/scheduledCmds.json';
+
+  /**
+   * The possible characters that can make up an ID of a scheduled command.
+   *
+   * @private
+   * @constant
+   * @default
+   * @type {string}
+   */
+  const idChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  /**
+   * The color to use for embeds sent from this submodule.
+   *
+   * @private
+   * @constant
+   * @default
+   * @type {number[]}
+   */
+  const embedColor = [50, 255, 255];
+
+  /**
+   * Minimum allowable amount of time in milliseconds from when the scheduled
+   * command is registered to when it runs.
+   *
+   * @public
+   * @constant
+   * @default 10 Seconds
+   * @type {number}
+   */
+  this.minDelay = 10000;
+
+  /**
+   * Minimum allowable amount of time in milliseconds from when the scheduled
+   * command is run to when it run may run again.
+   *
+   * @public
+   * @constant
+   * @default 30 Seconds
+   * @type {number}
+   */
+  this.minRepeatDelay = 30000;
+
+  /**
+   * Currently registered event listeners, mapped by event name.
+   *
+   * @private
+   * @type {object.&lt;Array.&lt;Function>>}
+   */
+  let listeners = {};
+
+  /**
+   * All of the currently loaded commands to run. Mapped by Guild ID, then
+   * sorted arrays by time to run next command.
+   *
+   * @private
+   * @type {object.&lt;Array.&lt;CmdScheduling.ScheduledCommand>>}
+   */
+  const schedules = {};
+
+  /**
+   * @classdesc Stores information about a specific command that is scheduled.
+   * @class
+   *
+   * @public
+   * @param {string|object} cmd The command to run, or an object instance of
+   * this class (exported using toJSON, then parsed into an object).
+   * @param {string|number|Discord~TextChannel} channel The channel or channel
+   * id of where to run the command.
+   * @param {string|number|Discord~Message} message The message or message id
+   * that created this scheduled command.
+   * @param {number} time The unix timestamp at which to run the command.
+   * @param {?number} repeatDelay The delay in milliseconds at which to run the
+   * command again, or null if it does not repeat.
+   *
+   * @property {string} cmd The command to run.
+   * @property {number|string} bot The id of the bot instantiating this command.
+   * @property {Discord~TextChannel} channel The channel or channel id of where
+   * to run the command.
+   * @property {string|number} channelId The id of the channel where the message
+   * was sent.
+   * @property {?Discord~Message} message The message that created this
+   * scheduled command, or null if the message was deleted.
+   * @property {string|number} messageId The id of the message sent.
+   * @property {number} time The unix timestamp at which to run the command.
+   * @property {number} [repeatDelay=0] The delay in milliseconds at which to
+   * run the command again. 0 to not repeat.
+   * @property {string} id Random base 36, 3-character long id of this command.
+   * @property {boolean} complete True if the command has been run, and will not
+   * run again.
+   * @property {Timeout} timeout The current timeout registered to run the
+   * command.
+   * @property {Discord~GuildMember} member The author of this ScheduledCommand.
+   * @property {string|number} memberId The id of the member.
+   */
+  function ScheduledCommand(cmd, channel, message, time, repeatDelay = 0) {
+    const myself = this;
+    if (typeof cmd === 'object') {
+      channel = cmd.channel;
+      message = cmd.message;
+      time = cmd.time;
+      repeatDelay = cmd.repeatDelay;
+      this.id = cmd.id;
+      this.member = cmd.member;
+      cmd = cmd.cmd;
+    } else {
+      this.member = message.member;
+      this.id = '';
+    }
+    if (!this.id || this.id.length &lt; 3) {
+      this.id = '';
+      for (let i = 0; i &lt; 3; i++) {
+        this.id += idChars.charAt(Math.floor(Math.random() * idChars.length));
+      }
+    }
+    this.cmd = cmd;
+    this.channel = channel;
+    this.channelId = typeof channel === 'object' ? channel.id : channel;
+    this.message = message;
+    this.messageId = typeof message === 'object' ? message.id : message;
+    this.time = time;
+    this.repeatDelay = repeatDelay;
+    this.memberId =
+        typeof this.member === 'object' ? this.member.id : this.member;
+
+    this.bot = self.client.user.id;
+    this.complete = false;
+
+    /**
+     * Update channel and message with their associated IDs.
+     *
+     * @private
+     */
+    function getReferences() {
+      if (!myself.channel || typeof myself.channel !== 'object') {
+        myself.channel = self.client.channels.get(myself.channelId);
+      }
+      if (!myself.channel || typeof myself.channel !== 'object' ||
+          myself.channel.deleted) {
+        self.debug(
+            'Cancelling command due to channel not existing: ' +
+            myself.channelId + '@' + myself.memberId + ': ' + myself.cmd);
+        myself.cancel();
+        return;
+      }
+      if (!myself.message || typeof myself.message !== 'object') {
+        myself.message = myself.channel.messages.get(myself.messageId);
+        if (!myself.message) {
+          myself.channel.messages.fetch(myself.messageId)
+              .then((msg) => {
+                if (!msg) throw new Error();
+                myself.message = msg;
+                myself.member = msg.member;
+                myself.memberId = msg.member.id;
+              })
+              .catch(() => {
+                self.debug(
+                    'Failed to find message: ' + myself.channelId + '@' +
+                    myself.memberId + ' ' + myself.messageId + ': ' +
+                    myself.cmd);
+                myself.message = makeMessage(
+                    myself.memberId, myself.channel.guild.id, myself.channel.id,
+                    myself.cmd);
+                myself.member = myself.message.member;
+                myself.memberId = myself.member.id;
+              });
+        } else {
+          myself.member = myself.message.member;
+          myself.memberId = myself.message.member.id;
+        }
+      }
+      if (!myself.member || typeof myself.member !== 'object') {
+        myself.member = myself.channel.members.get(myself.memberId);
+        if (!myself.member) {
+          myself.channel.guild.members.fetch(myself.memberId)
+              .then((m) => {
+                myself.member = m;
+              })
+              .catch((err) => {
+                self.error(
+                    'Failed to find member with id: ' + myself.memberId +
+                    ' in guild: ' + myself.channel.guild.id);
+                console.error(err);
+              });
+        }
+      }
+    }
+
+    /**
+     * Trigger the command to be run immediately. Automatically fired at the
+     * scheduled time. Does not cancel the normally scheduled command.
+     * Re-schedules the command if the command should repeat.
+     *
+     * @public
+     */
+    this.go = function() {
+      if (myself.complete) {
+        self.error('Command triggered after being completed!', myself.id);
+        self.client.clearTimeout(myself.timeout);
+        return;
+      }
+      const now = Date.now();
+      getReferences();
+      if (!myself.channel || !myself.channel.send) {
+        self.error(
+            'ScheduledCmdFailed No Channel: ' + myself.channel.id +
+            '@' + myself.memberId + ' ' + myself.cmd);
+        myself.complete = true;
+        self.client.clearTimeout(myself.timeout);
+        return;
+      } else if (!myself.message) {
+        self.error(
+            'ScheduledCmdFailed No Message: ' + myself.channel.guild.id + '#' +
+            myself.channel.id + '@' + myself.memberId + ' ' + myself.cmd);
+        return;
+      } else if (!myself.message.channel || !myself.message.channel.send) {
+        self.warn(
+            'ScheduledCmdWarning No Message Channel: ' +
+            myself.channel.guild.id + '#' + myself.channel.id + '@' +
+            myself.memberId + ' ' + myself.cmd);
+        myself.message.channel = myself.channel;
+      }
+      if (!myself.message.guild.members ||
+          typeof myself.message.guild.members.get !== 'function') {
+        self.error(
+            'ScheduledCmdFailed No Members Channel: ' +
+            myself.channel.guild.id + '#' + myself.channel.id + '@' +
+            myself.memberId + ' ' + myself.cmd);
+        return;
+      }
+      myself.message.content = myself.cmd;
+      myself.message.fabricated = true;
+      const cmd = self.command.find(myself.cmd, myself.message);
+      if (!cmd) {
+        self.error(
+            'Unknown ScheduledCmd: ' + myself.message.channel.id + '@' +
+            myself.message.author.id + ' ' + myself.cmd + ' ' +
+            myself.message.content);
+        return;
+      }
+      if (cmd.getFullName() === self.command.find('sch').getFullName()) {
+        self.error(
+            'Recursive ScheduledCmd: ' + myself.message.channel.id + '@' +
+            myself.message.author.id + ' ' + myself.message.content);
+        return;
+      }
+      self.debug(
+          'ScheduledCmd: ' + myself.message.channel.id + '@' +
+          myself.message.author.id + ' ' + myself.message.content);
+      try {
+        self.command.trigger(myself.message);
+      } catch (err) {
+        self.error(
+            'Failed to trigger ScheduledCmd: ' + myself.message.channel.id +
+            '@' + myself.message.author.id + ' ' + myself.message.content);
+        console.error(err);
+      }
+      // If the command was fired at the scheduled time, or if it was fired
+      // manually and the the scheduled time is in less than a second, then
+      // consider the scheduled command to have been completed.
+      if (myself.time - 1000 &lt;= now) {
+        self.client.clearTimeout(myself.timeout);
+        if (myself.repeatDelay > 0) {
+          myself.complete = false;
+          myself.time += myself.repeatDelay;
+          sortGuildCommands(myself.message.guild.id);
+          myself.setTimeout();
+        } else {
+          myself.complete = true;
+        }
+      }
+    };
+
+    /**
+     * Cancel this command and remove Timeout.
+     *
+     * @public
+     */
+    this.cancel = function() {
+      self.client.clearTimeout(myself.timeout);
+      myself.complete = true;
+    };
+
+    /**
+     * Schedule the Timeout event to call the command at the scheduled time. If
+     * the scheduled time to run the command is more than 2 weeks in the future,
+     * the command is not scheduled, and this function must be called manually
+     * (less than 2 weeks) before the scheduled time for the command to run.
+     *
+     * @public
+     */
+    this.setTimeout = function() {
+      if (myself.complete) {
+        return;  // Command was completed, and should no longer run.
+      }
+      if (myself.time - Date.now() &lt;= maxTimeout) {
+        self.client.clearTimeout(myself.timeout);
+        try {
+          myself.timeout =
+              self.client.setTimeout(myself.go, myself.time - Date.now());
+        } catch (err) {
+          self.error(
+              'ScheduledCmd Failed: ' + myself.channelId + '@' +
+              myself.memberId + ' ' + myself.cmd);
+          return;
+        }
+        self.debug(
+            'ScheduledCmd Scheduled: ' + myself.channelId + '@' +
+            myself.memberId + ' ' + myself.cmd);
+      }
+    };
+
+    /**
+     * Export the relevant data to recreate this object, as a JSON object.
+     *
+     * @public
+     * @returns {object} JSON formatted object.
+     */
+    this.toJSON = function() {
+      return {
+        bot: self.client.user.id,
+        cmd: myself.cmd,
+        time: myself.time,
+        repeatDelay: myself.repeatDelay,
+        id: myself.id,
+        channel: myself.channelId,
+        message: myself.messageId,
+        member: myself.memberId,
+      };
+    };
+
+    getReferences();
+    setTimeout(() => this.setTimeout());
+  }
+  this.ScheduledCommand = ScheduledCommand;
+
+  /**
+   * Register a created {@link CmdScheduling.ScheduledCommand}.
+   *
+   * @private
+   * @fires CmdScheduling#commandRegistered
+   *
+   * @param {CmdScheduling.ScheduledCommand} sCmd The ScheduledCommand object to
+   * register.
+   * @param {string} [gId] Guild ID if message has not yet been found, or to
+   * override the ID found in the given object.
+   * @returns {boolean} True if succeeded, False if too close to existing
+   * command.
+   */
+  function registerScheduledCommand(sCmd, gId) {
+    if (!gId) gId = sCmd.message.guild.id;
+    if (!schedules[gId]) {
+      schedules[gId] = [sCmd];
+    } else {
+      for (let i = 0; i &lt; schedules[gId].length; i++) {
+        if (Math.abs(schedules[gId][i].time - sCmd.time) &lt; 5000) {
+          sCmd.cancel();
+          return false;
+        }
+      }
+      schedules[gId].push(sCmd);
+    }
+    if (sCmd.message) {
+      fireEvent('commandRegistered', sCmd, sCmd.message.guild.id);
+    }
+    return true;
+  }
+  /**
+   * Register a created {@link CmdScheduling.ScheduledCommand}.
+   *
+   * @public
+   * @see {@link CmdScheduling~registerScheduledCommand}
+   */
+  this.registerScheduledCommand = registerScheduledCommand;
+
+  /**
+   * Allow user to schedule command to be run, or view currently scheduled
+   * commands.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#schedule
+   */
+  function commandSchedule(msg) {
+    if (!msg.text || !msg.text.trim()) {
+      replyWithSchedule(msg);
+      return;
+    } else if (msg.text.match(/(cancel|remove|delete)/)) {
+      cancelAndReply(msg);
+      return;
+    }
+
+    const splitCmd = msg.text.trim().split(msg.prefix);
+    if (!splitCmd || splitCmd.length &lt; 2 || splitCmd[0].trim().length == 0) {
+      self.common.reply(
+          msg,
+          'Oops! Please ensure you have formatted that correctly.\nI wasn\'t' +
+              ' able to understand it properly.');
+      return;
+    }
+
+    let delay = splitCmd.splice(0, 1)[0];
+    const cmd = msg.prefix + splitCmd.join(msg.prefix);
+    let repeat = 0;
+
+    const invalid = self.command.validate(cmd.split(/\s/)[0], msg);
+    if (invalid) {
+      self.common.reply(
+          msg, 'That command doesn\'t seem to be a usable command.\n' + cmd,
+          invalid);
+      return;
+    }
+
+    if (self.command.find(splitCmd[0]).getFullName() ===
+        self.command.find('sch').getFullName()) {
+      self.common.reply(msg, 'Commands may not be recursive.', invalid);
+      return;
+    }
+
+
+    if (delay.match(/every|repeat/)) {
+      const splitTimes = delay.match(/^(.*?)(every|repeat)(.*)$/);
+      delay = splitTimes[1];
+      repeat = splitTimes[3];
+    }
+
+    delay = stringToMilliseconds(delay);
+
+    /* if (delay &lt; self.minDelay) {
+      self.common.reply(msg, 'Sorry, but delays must be more than 10 seconds.');
+      return;
+    } */
+
+    repeat = stringToMilliseconds(repeat);
+
+    if (repeat &amp;&amp; repeat &lt; self.minRepeatDelay) {
+      self.common.reply(
+          msg, 'Sorry, but repeat delays must be more than 30 seconds.');
+      return;
+    }
+
+    const newCmd =
+        new ScheduledCommand(cmd, msg.channel, msg, delay + Date.now(), repeat);
+
+    if (!registerScheduledCommand(newCmd)) {
+      self.common.reply(
+          msg, 'Sorry, but commands must be separated by at least 5 seconds.');
+      return;
+    }
+
+    const embed = new self.Discord.MessageEmbed();
+    embed.setTitle('Created Scheduled Command (' + newCmd.id + ')');
+    embed.setColor(embedColor);
+    let desc = 'Runs in ' + formatDelay(delay);
+    if (repeat) {
+      desc += '\nRepeats every ' + formatDelay(repeat);
+    }
+    embed.setDescription(desc);
+    embed.addField(
+        'To cancel:', `\`${msg.prefix}sch cancel ${newCmd.id}\``, true);
+    embed.setFooter(cmd);
+
+    msg.channel.send(self.common.mention(msg), embed);
+  }
+
+  /**
+   * Sort all scheduled commands in a guild by the next time they will run.
+   *
+   * @private
+   * @param {string|number} id The guild id of which to sort the commands.
+   */
+  function sortGuildCommands(id) {
+    const c = schedules[id];
+    if (!c) return;
+
+    let unsorted = true;
+    while (unsorted) {
+      unsorted = false;
+      let spliced;
+      for (let i = 1; i &lt; c.length; i++) {
+        if (!spliced &amp;&amp; c[i - 1].time > c[0].time) {
+          spliced = c.splice(i - 1, 1)[0];
+          if (c[c.length - 1].time &lt; spliced.time) {
+            c.push(spliced);
+            spliced = null;
+            i--;
+          }
+        } else if (spliced &amp;&amp; c[i].time &lt; spliced.time) {
+          c.splice(i + 1, 0, spliced);
+          unsorted = true;
+          break;
+        }
+      }
+    }
+  }
+
+  /**
+   * Given a user-inputted string, convert to a number of milliseconds. Input
+   * can be on most common time units up to a week.
+   *
+   * @private
+   *
+   * @param {string} str The input string to parse.
+   * @returns {number} Number of milliseconds parsed from string.
+   */
+  function stringToMilliseconds(str) {
+    let sum = 0;
+    str = (str + '')
+        .replace(/\b(and|repeat|every|after|in)\b/g, '')
+        .trim()
+        .toLowerCase();
+
+    const reg = /([0-9.]+)([^a-z]*)([a-z]*)/g;
+    let res;
+    while ((res = reg.exec(str)) !== null) {
+      sum += numberToUnit(res[1], res[3]);
+    }
+    if (!sum &amp;&amp; str) {
+      sum = numberToUnit(1, str);
+    }
+    /**
+     * Convert a number and a unit to the corresponding number of milliseconds.
+     *
+     * @private
+     * @param {number} num The number associated with the unit.
+     * @param {string} unit The current unit associated with the num.
+     * @returns {number} The given number in milliseconds.
+     */
+    function numberToUnit(num, unit) {
+      switch (unit) {
+        case 's':
+        case 'sec':
+        case 'second':
+        case 'seconds':
+          return num * 1000;
+        case 'm':
+        case 'min':
+        case 'minute':
+        case 'minutes':
+          return num * 60 * 1000;
+        case 'h':
+        case 'hr':
+        case 'hour':
+        case 'hours':
+          return num * 60 * 60 * 1000;
+        case 'd':
+        case 'dy':
+        case 'day':
+        case 'days':
+          return num * 24 * 60 * 60 * 1000;
+        case 'w':
+        case 'wk':
+        case 'week':
+        case 'weeks':
+          return num * 7 * 24 * 60 * 60 * 1000;
+        default:
+          return 0;
+      }
+    }
+    return sum;
+  }
+
+  /**
+   * Returns an array of references to scheduled commands in a guild.
+   *
+   * @public
+   *
+   * @param {string|number} gId The guild id of which to get the commands.
+   * @returns {null|CmdScheduling.ScheduledCommand[]} Null if none, or the array
+   * of ScheduledCommands.
+   */
+  function getScheduledCommandsInGuild(gId) {
+    let list = schedules[gId];
+    if (!list) return null;
+    list = list.filter((el) => !el.complete);
+    if (!list || list.length == 0) return null;
+    return list;
+  }
+  this.getScheduledCommandsInGuild = getScheduledCommandsInGuild;
+
+
+  /**
+   * Find all scheduled commands for a certain guild, and reply to the message
+   * with the list of commands.
+   *
+   * @private
+   * @param {Discord~Message} msg The message to reply to.
+   */
+  function replyWithSchedule(msg) {
+    const embed = new self.Discord.MessageEmbed();
+    embed.setTitle('Scheduled Commands');
+    embed.setColor(embedColor);
+    let list = getScheduledCommandsInGuild(msg.guild.id);
+    if (!list) {
+      embed.setDescription('No commands are scheduled.');
+    } else {
+      const n = Date.now();
+      list = list.map((el) => {
+        return '**' + el.id + '**: In ' + formatDelay(el.time - n) +
+            (el.repeatDelay ?
+                 (', repeats every ' + formatDelay(el.repeatDelay)) :
+                 '') +
+            (el.message &amp;&amp; ' by &lt;@' + el.message.author.id + '>: ') + el.cmd;
+      });
+      embed.setDescription(list.join('\n'));
+    }
+    if (msg.author.id == self.common.spikeyId) {
+      const keys = Object.keys(schedules);
+      let total = 0;
+      keys.forEach((k) => {
+        total += Object.keys(schedules[k]).length;
+      });
+      embed.setFooter(total);
+    }
+    msg.channel.send(self.common.mention(msg), embed).catch((err) => {
+      self.error('Failed to send reply in channel: ' + msg.channel.id);
+      console.error(err);
+    });
+  }
+
+  /**
+   * Cancel a scheduled command in a guild.
+   *
+   * @private
+   * @fires CmdScheduling#commandCancelled
+   *
+   * @param {string|number} gId The guild id of which to cancel the command.
+   * @param {string|number} cmdId The ID of the command to cancel.
+   * @returns {?CmdScheduling.ScheduledCommand} Null if failed, or object that
+   * was cancelled.
+   */
+  function cancelCmd(gId, cmdId) {
+    const list = schedules[gId];
+    if (!list || list.length == 0) return null;
+    if (!cmdId) return null;
+    cmdId = (cmdId + '').toUpperCase();
+    for (let i = 0; i &lt; list.length; i++) {
+      if (list[i].complete) continue;
+      if (list[i].id == cmdId) {
+        const removed = list.splice(i, 1)[0];
+        removed.cancel();
+        fireEvent('commandCancelled', removed.id, removed.message.guild.id);
+        return removed;
+      }
+    }
+    return null;
+  }
+  /**
+   * Cancel a scheduled command in a guild.
+   *
+   * @public
+   * @see {@link CmdScheduling~cancelCmd}
+   */
+  this.cancelCmd = cancelCmd;
+
+  /**
+   * Find a scheduled command with the given ID, and remove it from commands to
+   * run.
+   *
+   * @private
+   * @param {Discord~Message} msg The message to reply to.
+   */
+  function cancelAndReply(msg) {
+    const embed = new self.Discord.MessageEmbed();
+    embed.setColor(embedColor);
+    const list = schedules[msg.guild.id];
+    if (!list || list.length == 0) {
+      embed.setTitle('Cancelling Failed');
+      embed.setDescription('There are no scheduled commands in this guild.');
+    } else {
+      let idSearch = msg.text.match(/(cancel|remove|delete)\W+(\w{3,})\b/);
+      if (!idSearch) {
+        embed.setTitle('Cancelling Failed');
+        embed.setDescription('Please specify a scheduled command ID.');
+      } else {
+        idSearch = idSearch[2];
+        const removed = cancelCmd(msg.guild.id, idSearch);
+        if (!removed) {
+          embed.setTitle('Cancelling Failed');
+          embed.setDescription(
+              'Unable to find scheduled command with ID: ' + idSearch);
+        } else {
+          embed.setTitle('Cancelling Succeeded');
+          embed.setDescription(
+              'Removed scheduled command ID: ' + idSearch + ', ' + removed.cmd);
+        }
+      }
+    }
+
+    msg.channel.send(self.common.mention(msg), embed).catch((err) => {
+      self.error('Failed to send reply in channel: ' + msg.channel.id);
+      console.error(err);
+    });
+  }
+
+  /**
+   * Reschedule all future commands that are beyond maxTimeout.
+   */
+  function reScheduleCommands() {
+    for (const g in schedules) {
+      if (!schedules[g] || !schedules[g].length) continue;
+      for (let i = 0; i &lt; schedules[g].length; i++) {
+        let abort = false;
+        for (let j = 0; j &lt; schedules[g].length; j++) {
+          if (i == j) continue;
+          if (Math.abs(schedules[g][i].time - schedules[g][j].time) &lt; 5000) {
+            abort = true;
+            break;
+          }
+        }
+        if (abort) {
+          schedules[g][i].cancel();
+          schedules[g].splice(i, 1);
+        } else {
+          schedules[g][i].setTimeout();
+        }
+      }
+    }
+  }
+
+  /**
+   * Format a duration in milliseconds into a human readable string.
+   *
+   * @private
+   *
+   * @param {number} msecs Duration in milliseconds.
+   * @returns {string} Formatted string.
+   */
+  function formatDelay(msecs) {
+    let output = '';
+    let unit = 7 * 24 * 60 * 60 * 1000;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' week' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 7;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' day' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 24;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' hour' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 60;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' minute' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 60;
+    if (msecs >= unit) {
+      const num = Math.round(msecs / unit);
+      output += num + ' second' + (num == 1 ? '' : 's') + '';
+    }
+    return output.replace(/,\s$/, '');
+  }
+
+  /**
+   * Register an event handler for the given name with the given handler.
+   *
+   * @public
+   * @param {string} name The event name to listen for.
+   * @param {Function} handler The function to call when the event is fired.
+   */
+  this.on = function(name, handler) {
+    if (typeof handler !== 'function') {
+      throw (new Error('Handler must be a function.'));
+    }
+    if (!listeners[name]) listeners[name] = [];
+    listeners[name].push(handler);
+  };
+
+  /**
+   * Remove an event handler for the given name.
+   *
+   * @public
+   * @param {string} name The event name to remove the handler for.
+   * @param {Function} [handler] THe specific handler to remove, or null for
+   * all.
+   */
+  this.removeListener = function(name, handler) {
+    if (!listeners[name]) return;
+    if (!handler) {
+      delete listeners[name];
+    } else {
+      for (let i = 0; i &lt; listeners[name].length; i++) {
+        if (listeners[name][i] == handler) {
+          listeners[name].splice(i, 1);
+        }
+      }
+      if (listeners[name].length == 0) delete listeners[name];
+    }
+  };
+
+  /**
+   * @description Fires a given event with the associated data.
+   *
+   * @private
+   * @param {string} name The name of the event to fire.
+   * @param {*} data The arguments to pass into the function calls.
+   */
+  function fireEvent(name, ...data) {
+    for (let i = 0; listeners[name] &amp;&amp; i &lt; listeners[name].length; i++) {
+      try {
+        listeners[name][i](...data);
+      } catch (err) {
+        self.error('Error in firing event: ' + name);
+        console.error(err);
+      }
+    }
+  }
+  /**
+   * Forms a Discord~Message similar object from given IDs.
+   *
+   * @private
+   * @param {string} uId The id of the user who wrote this message.
+   * @param {string} gId The id of the guild this message is in.
+   * @param {string} cId The id of the channel this message was 'sent' in.
+   * @param {string} msg The message content.
+   * @returns {?MessageMaker} The created message-like object, or null if
+   * invalid channel.
+   */
+  function makeMessage(uId, gId, cId, msg) {
+    if (!cId) return null;
+    const message = new MessageMaker(self, uId, gId, cId, msg);
+    return message.guild ? message : null;
+  }
+}
+module.exports = new CmdScheduling();
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
+	
+		on Monday, January 13, 2020 6:17 PM (-08:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

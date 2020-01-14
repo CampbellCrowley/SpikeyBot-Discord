@@ -1,3 +1,5 @@
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (web@campbellcrowley.com)
 const http = require('http');
 const socketIo = require('socket.io');
 const auth = require('../../auth.js');
@@ -30,16 +32,16 @@ function HGWeb() {
   const app = http.createServer(handler);
   let io;
 
-  app.on('error', function(err) {
+  app.on('error', (err) => {
     if (io) io.close();
     if (app) app.close();
     if (err.code === 'EADDRINUSE') {
-      self.warn(
+      this.warn(
           'HGWeb failed to bind to port because it is in use. (' + err.port +
           ')');
       startClient();
     } else {
-      self.error('HGWeb failed to bind to port for unknown reason.', err);
+      this.error('HGWeb failed to bind to port for unknown reason.', err);
     }
   });
 

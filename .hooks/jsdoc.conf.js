@@ -11,6 +11,7 @@ module.exports = {
   source: {
     include: [
       'src/',
+      'config/',
     ],
     exclude: [
       'node_modules/',
@@ -20,8 +21,8 @@ module.exports = {
   templates: {
     systemName: 'SpikeyBot-Discord',
     copyright: '<small>Website Contact: <a href="mailto:web@spikeybot.com">' +
-        'web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019, ' +
-        'Campbell Crowley. <a href="https://docs.google.com/document/d/' +
+        'web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020,' +
+        ' Campbell Crowley. <a href="https://docs.google.com/document/d/' +
         '1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">' +
         'Privacy Policy</a></small>',
     navType: 'inline',

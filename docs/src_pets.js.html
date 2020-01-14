@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Source: src/pets.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="EE.html">EE</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Events.html">Events</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-Action.html">HungryGames~Action</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardMasterConfig.html">ShardMasterConfig</a></li><li><a href="ShardMasterConfig.HeartbeatConfig.html">ShardMasterConfig.HeartbeatConfig</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: src/pets.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+const fs = require('fs');
+const SubModule = require('./subModule.js');
+
+delete require.cache[require.resolve('./locale/Strings.js')];
+const Strings = require('./locale/Strings.js');
+
+delete require.cache[require.resolve('./pets/Constants.js')];
+delete require.cache[require.resolve('./pets/Pet.js')];
+delete require.cache[require.resolve('./pets/BasePets.js')];
+delete require.cache[require.resolve('./pets/BaseMoves.js')];
+delete require.cache[require.resolve('./pets/BasePetClasses.js')];
+const Constants = require('./pets/Constants.js');
+const Pet = require('./pets/Pet.js');
+const BasePets = require('./pets/BasePets.js');
+const BaseMoves = require('./pets/BaseMoves.js');
+const BasePetClasses = require('./pets/BasePetClasses.js');
+
+const confirm = '✅';
+const cancel = '❌';
+
+/**
+ * @description Manages pet related commands.
+ * @listens Command#pet
+ * @augments SubModule
+ */
+class Pets extends SubModule {
+  /**
+   * @description SubModule managing pet related commands.
+   */
+  constructor() {
+    super();
+    /** @inheritdoc */
+    this.myName = 'Pets';
+    /** @inheritdoc */
+    this.postPrefix = 'pet ';
+
+    /**
+     * @description All pets currently cached. Mapped by user ID, then pet ID.
+     * Only one pet is allowed per user at this time, but this future proofing
+     * in case users will be able to have multiples in the future.
+     * @private
+     * @type {object.&lt;object.&lt;Pet>>}
+     * @default
+     */
+    this._pets = {};
+
+    /**
+     * @description Cache of IDs that are currently being released to disk, but
+     * are not loaded anymore. Used for {@link Pets._releasePet} to prevent
+     * saving multiple times. If the ID exists, it will be true.
+     * @private
+     * @type {object.&lt;boolean>}
+     * @default
+     */
+    this._releasing = {};
+
+    /**
+     * @description Instance of {@link Pets~BasePets}.
+     * @private
+     * @type {Pets~BasePets}
+     * @default
+     * @constant
+     */
+    this._basePets = new BasePets();
+    /**
+     * @description Instance of {@link Pets~BaseMoves}.
+     * @private
+     * @type {Pets~BaseMoves}
+     * @default
+     * @constant
+     */
+    this._baseMoves = new BaseMoves();
+
+    /**
+     * @description Instance of locale string manager.
+     * @private
+     * @type {Strings}
+     * @default
+     * @constant
+     */
+    this._strings = new Strings('pets');
+    this._strings.purge();
+
+    this._getAllPets = this._getAllPets.bind(this);
+    this._getPet = this._getPet.bind(this);
+    this._commandPet = this._commandPet.bind(this);
+    this._commandAdopt = this._commandAdopt.bind(this);
+    this._commandAbandon = this._commandAbandon.bind(this);
+    this._releasePet = this._releasePet.bind(this);
+    this._saveSingle = this._saveSingle.bind(this);
+    this._checkPurge = this._checkPurge.bind(this);
+  }
+  /** @inheritdoc */
+  initialize() {
+    this.command.on(
+        new this.command.SingleCommand(['pet'], this._commandPet, null, [
+          new this.command.SingleCommand(['adopt', 'new'], this._commandAdopt),
+          new this.command.SingleCommand(['abandon'], this._commandAbandon),
+        ]));
+
+    this._basePets.initialize();
+    this._baseMoves.initialize();
+
+    /**
+     * @description Release pet from memory.
+     * @see {@link Pet._releasePet}
+     */
+    this.client.releasePet = this._releasePet;
+  }
+  /** @inheritdoc */
+  shutdown() {
+    this.command.removeListener('pet');
+    this.client.releasePet = null;
+    this._basePets.shutdown();
+    this._baseMoves.shutdown();
+  }
+  /** @inheritdoc */
+  save(opt) {
+    if (!this.initialized) return;
+
+    const list = Object.values(this._pets).reduce((a, c) => {
+      return a = a.concat(Object.values(c));
+    }, []);
+
+    list.forEach((obj) => {
+      this._saveSingle(obj, opt);
+    });
+  }
+  /**
+   * @description Reply to msg with locale strings.
+   * @private
+   *
+   * @param {external:Discord~Message} msg Message to reply to.
+   * @param {?string} titleKey String key for the title, or null for default.
+   * @param {string} bodyKey String key for the body message.
+   * @param {string} [rep] Placeholder replacements for the body only.
+   * @returns {Promise&lt;external:Discord~Message>} Message send promise from
+   * {@link external:Discord}.
+   */
+  _reply(msg, titleKey, bodyKey, ...rep) {
+    return this.common.reply(
+        msg, this._strings.get(titleKey, msg.locale),
+        this._strings.get(bodyKey, msg.locale, rep));
+  }
+
+  /**
+   * @description Save a single pet object to disk, and purge if stale.
+   * @private
+   * @param {Pet} obj The pet object to save.
+   * @param {string} [opt='sync'] Either 'sync' or 'async'.
+   * @param {Function} [cb] Optional callback that fires with no arguments on
+   * completion.
+   */
+  _saveSingle(obj, opt = 'sync', cb) {
+    const dir = `${this.common.userSaveDir}${obj.owner}/pets/`;
+    const filename = `${dir}${obj.id}.json`;
+    if (opt == 'async') {
+      this.common.mkAndWrite(
+          filename, dir, JSON.stringify(obj.serializable), () => {
+            this._checkPurge(obj);
+            if (typeof cb === 'function') cb();
+          });
+    } else {
+      this.common.mkAndWriteSync(
+          filename, dir, JSON.stringify(obj.serializable));
+      this._checkPurge(obj);
+      if (typeof cb === 'function') cb();
+    }
+  }
+
+  /**
+   * @description Check if pet is purgable from memory, and purges if possible.
+   * @private
+   * @param {Pet} obj Pet object to potentially purge.
+   */
+  _checkPurge(obj) {
+    if (Date.now() - obj._lastInteractTime > 5 * 60 * 1000) {
+      delete this._pets[obj.owner][obj.id];
+    }
+  }
+
+  /**
+   * @description User typed the pet command.
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#pet
+   */
+  _commandPet(msg) {
+    this._getAllPets(msg.author, (err, pets) => {
+      if (err) {
+        this.common.reply(msg, err);
+        return;
+      }
+      if (pets.length == 0) {
+        this._reply(msg, 'title', 'noPet', `${msg.prefix}${this.postPrefix}`);
+      } else {
+        // Temporary.
+        this.common.reply(
+            msg, 'Pets',
+            JSON.stringify(pets.map((el) => el.serializable), null, 2));
+      }
+    });
+  }
+
+  /**
+   * @description User requested to adopt a new pet.
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#pet_adopt
+   */
+  _commandAdopt(msg) {
+    this._getAllPets(msg.author, (err, pets) => {
+      if (err) {
+        this.common.reply(msg, err);
+        return;
+      }
+      if (pets.length == 0) {
+        const match = msg.text.match(/^\s*(\w+)\s+(\w{1,16})$/);
+        const species = match &amp;&amp; this._basePets.get(match[1]);
+        if (!match) {
+          this._reply(msg, 'noSpecies', 'availableSpeciesInfo');
+          return;
+        } else if (!species) {
+          this._reply(msg, 'invalidSpecies', 'availableSpeciesInfo');
+          return;
+        } else if (!match[2] || match[2].length &lt; 3) {
+          this._reply(msg, 'invalidName', 'nameInstructions', 3, 16);
+          return;
+        }
+        let reactMessage;
+        this._reply(
+            msg, 'title', 'confirmAdopt', match[1], match[2], confirm,
+            cancel)
+            .then((m) => {
+              reactMessage = m;
+              return m.react(confirm).then(() => m.react(cancel));
+            })
+            .then(() => {
+              return reactMessage.awaitReactions((reaction, user) => {
+                return user.id == msg.author.id &amp;&amp;
+                    (reaction.emoji.name == confirm ||
+                     reaction.emoji.name == cancel);
+              }, {max: 1, time: 30000});
+            })
+            .then((reactions) => {
+              reactMessage.reactions.removeAll().catch(() => {});
+              if (reactions.size == 0) {
+                reactMessage.edit(
+                    this._strings.get('commandTimedOut', msg.locale));
+                return;
+              } else if (reactions.first().emoji.name == cancel) {
+                reactMessage.edit(this._strings.get('cancelled', msg.locale));
+                return;
+              }
+              reactMessage.edit(this._strings.get('confirmed', msg.locale));
+              const newPet = new Pet(msg.author.id, match[2], match[1]);
+              this._saveSingle(newPet, 'async', () => {
+                this._reply(
+                    msg, 'title', 'adoptionConfirmed', species.name, match[2]);
+              });
+            });
+      } else {
+        this._reply(msg, 'title', 'alreadyHavePet');
+      }
+    });
+  }
+
+  /**
+   * @description User requested to abandon a pet.
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#pet_abandon
+   */
+  _commandAbandon(msg) {
+    this._getAllPets(msg.author, (err, pets) => {
+      if (err) {
+        this.common.reply(msg, err);
+        return;
+      }
+      if (pets.length == 0) {
+        this.common.reply(
+            msg, 'Pets',
+            'You don\'t have a pet that you can abandon.\nYou can adopt a new' +
+                ' one with `' + msg.prefix + this.postPrefix + 'adopt`');
+        return;
+      }
+      let reactMessage;
+      this.common
+          .reply(
+              msg, 'Are you sure?',
+              'This cannot be undone, your pet will never forgive you if you ' +
+                  'abandon them.\n' + confirm + ': yes, ' + cancel + ': no')
+          .then((m) => {
+            reactMessage = m;
+            m.react(confirm).then(() => m.react(cancel));
+          })
+          .then(() => {
+            return reactMessage.awaitReactions((reaction, user) => {
+              return user.id == msg.author.id &amp;&amp;
+                  (reaction.emoji.name == confirm ||
+                   reaction.emoji.name == cancel);
+            }, {max: 1, time: 30000});
+          })
+          .then((reactions) => {
+            reactMessage.reactions.removeAll().catch(() => {});
+            if (reactions.size == 0) {
+              reactMessage.edit('Timed out, enter command again.');
+              return;
+            } else if (reactions.first().emoji.name == cancel) {
+              reactMessage.edit('Cancelled');
+              return;
+            }
+            reactMessage.edit('Confirmed');
+            const uId = msg.author.id;
+            const pId = pets[0].id;
+
+            const fName = `${this.common.userSaveDir}${uId}/pets/${pId}.json`;
+            fs.unlink(fName, (err) => {
+              if (err) {
+                this.error('Failed to delete pet file: ' + fName);
+                console.error(err);
+                return;
+              }
+              const pet = this._pets[uId][pId];
+              this.common.reply(
+                  msg, 'Pet Abandoned', `${pet.name} (${pet.species})`);
+              delete this._pets[uId][pId];
+            });
+          });
+    });
+  }
+
+  /**
+   * @description Get an array of all of a user's pets.
+   * @private
+   * @param {external:Discord~User} user Discord user to fetch all pets for.
+   * @param {Function} cb Callback with first argument as optional error, and
+   * second as array of Pet objects.
+   */
+  _getAllPets(user, cb) {
+    const dir = `${this.common.userSaveDir}${user.id}/pets/`;
+
+    fs.readdir(dir, (err, files) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          cb(null, []);
+          return;
+        }
+        cb(err);
+        return;
+      }
+      let numDone = 0;
+      let numTotal = 0;
+      const list = [];
+      const done = function(err, pet) {
+        numDone++;
+        if (!err) list.push(pet);
+        if (numDone >= numTotal) {
+          cb(null, list);
+        }
+      };
+      for (const file of files) {
+        const filename = file.match(/^(.*)\.json$/);
+        if (!filename) continue;
+        numTotal++;
+        this._getPet(user, filename[1], done);
+      }
+      if (numTotal === 0) {
+        cb(null, []);
+      }
+    });
+  }
+
+  /**
+   * @description Fetch a user's pet.
+   * @private
+   * @param {external:Discord~User} user A user of which to fetch the pet for.
+   * @param {string} pId The pet ID to fetch.
+   * @param {Function} cb Callback once complete. First argument is optional
+   * error, second is parsed Pet object.
+   */
+  _getPet(user, pId, cb) {
+    const uId = user.id;
+    const obj = this._pets[uId] &amp;&amp; this._pets[uId][pId];
+    if (obj) {
+      obj.touch();
+      cb(null, obj);
+      return;
+    }
+
+    const fname = `${this.common.userSaveDir}${uId}/pets/${pId}.json`;
+
+    const self = this;
+
+    const read = function() {
+      fs.readFile(fname, (err, data) => {
+        if (err) {
+          cb(err);
+          return;
+        }
+        let parsed;
+        try {
+          parsed = Pet.from(JSON.parse(data));
+        } catch (err) {
+          cb(err);
+          return;
+        }
+        if (!self._pets[uId]) self._pets[uId] = {};
+        self._pets[uId][pId] = parsed;
+        cb(null, parsed);
+      });
+    };
+
+    if (this.client.shard) {
+      const toSend = `this.releasePet('${uId}', '${pId}')`;
+      const release = function() {
+        self.client.shard.broadcastEval(toSend)
+            .then((res) => {
+              const wait = res.find((el) => !el);
+              if (wait) {
+                self.client.setTimeout(release, 100);
+              } else {
+                read();
+              }
+            })
+            .catch((err) => {
+              self.error(
+                  'Failed to release pet from other shards: ' + uId + ' ' +
+                  pId);
+              console.error(err);
+              cb('Failed to release pet from other shards.');
+            });
+      };
+      release();
+    } else {
+      read();
+    }
+  }
+
+  /**
+   * @description Force a pet to be saved to file and removed from memory
+   * immediately. File IO is still asynchronous. This is used to release pets
+   * from other shards, and returns true if pet has been completely released to
+   * disk.
+   * @private
+   * @param {string} uId The ID of the user.
+   * @param {string} pId THe ID of the pet.
+   * @returns {boolean} True if fully released, false if not done yet.
+   */
+  _releasePet(uId, pId) {
+    const releaseId = `${uId}_${pId}`;
+    if (!this._pets[uId] || !this._pets[uId][pId]) {
+      return !this._releasing[releaseId];
+    }
+
+    this._releasing[releaseId] = true;
+
+    this._saveSingle(this._pets[uId][pId], 'async', () => {
+      delete this._releasing[releaseId];
+    });
+
+    delete this._pets[uId][pId];
+
+    return false;
+  }
+}
+
+Pets.Pet = Pet;
+Pets.BasePets = BasePets;
+Pets.BaseMoves = BaseMoves;
+Pets.BasePetClasses = BasePetClasses;
+Pets.Constants = Constants;
+Pets.Strings = Strings;
+
+module.exports = new Pets();
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
+	
+		on Monday, January 13, 2020 6:17 PM (-08:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

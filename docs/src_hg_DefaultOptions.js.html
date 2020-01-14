@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Source: src/hg/DefaultOptions.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="EE.html">EE</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Events.html">Events</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-Action.html">HungryGames~Action</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardMasterConfig.html">ShardMasterConfig</a></li><li><a href="ShardMasterConfig.HeartbeatConfig.html">ShardMasterConfig.HeartbeatConfig</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: src/hg/DefaultOptions.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+
+/**
+ * Option base.
+ *
+ * @memberof HungryGames~DefaultOptions
+ * @inner
+ */
+class Option {
+  /**
+   * @description Default option constructor.
+   * @param {*} value Value of this option.
+   * @param {?string} [comment=null] Comment/description for the user about this
+   * option.
+   * @param {?string} [category=null] Category this option falls under for
+   * showing user.
+   */
+  constructor(value, comment = null, category = null) {
+    this._value = value;
+    if (comment != null &amp;&amp; typeof comment !== 'string') {
+      throw new Error('Comment is not a string');
+    }
+    this._comment = comment;
+    if (category != null &amp;&amp; typeof category !== 'string') {
+      throw new Error('Category is not a string');
+    }
+    this._category = category;
+  }
+  /**
+   * @description Get the value of this option.
+   * @public
+   * @type {*}
+   */
+  get value() {
+    return this._value;
+  }
+  /**
+   * @description Get the description of this option.
+   * @public
+   * @type {?string}
+   */
+  get comment() {
+    return this._comment;
+  }
+  /**
+   * @description Get the category of this option.
+   * @public
+   * @type {?string}
+   */
+  get category() {
+    return this._category;
+  }
+
+  /**
+   * @returns {string[]} Array of all keys for this option.
+   */
+  get keys() {
+    const all = Object.entries(Object.getOwnPropertyDescriptors(this));
+    const output = [];
+    for (const one of all) {
+      output.push(one[0].slice(1));
+    }
+    return output;
+  }
+  /**
+   * @returns {HungryGames~DefaultOptions~Option} All variables of this option
+   * fetched through their getters.
+   */
+  get entries() {
+    const keys = this.keys;
+    const output = {};
+    for (const k of keys) {
+      output[k] = this[k];
+    }
+    return output;
+  }
+}
+
+/**
+ * Number option.
+ *
+ * @memberof HungryGames~DefaultOptions
+ * @inner
+ * @augments HungryGames~DefaultOptions~Option
+ */
+class NumberOption extends Option {
+  /**
+   * @description Stores a number value with optional range.
+   * @param {number} value Value of this option.
+   * @param {?string} [comment=null] Comment/description for the user about this
+   * option.
+   * @param {?string} [category=null] Category this option falls under for
+   * showing user.
+   * @param {{min: number, max: number}} [range] Allowed range of this value.
+   */
+  constructor(value, comment, category, range) {
+    if (typeof value !== 'number' || isNaN(value)) {
+      throw new Error('Value is not a number');
+    }
+    super(value, comment, category);
+    if (range) {
+      this._range = {min: range.min, max: range.max};
+    } else {
+      this._range = null;
+    }
+  }
+  /**
+   * @description Get the range of allowable values for this option.
+   * @returns {?{min: number, max: number}} Allowable range of values.
+   */
+  get range() {
+    return this._range;
+  }
+}
+/**
+ * Boolean option.
+ *
+ * @memberof HungryGames~DefaultOptions
+ * @inner
+ * @augments HungryGames~DefaultOptions~Option
+ */
+class BooleanOption extends Option {
+  /**
+   * @description Stores a boolean.
+   * @param {boolean} value Value of this option.
+   * @param {?string} [comment=null] Comment/description for the user about this
+   * option.
+   * @param {?string} [category=null] Category this option falls under for
+   * showing user.
+   */
+  constructor(value, comment, category) {
+    if (typeof value !== 'boolean') throw new Error('Value is not a boolean');
+    super(value, comment, category);
+  }
+}
+
+/**
+ * Object option. Shallow copies passed value and range.
+ *
+ * @memberof HungryGames~DefaultOptions
+ * @inner
+ * @augments HungryGames~DefaultOptions~Option
+ */
+class ObjectOption extends Option {
+  /**
+   * @description Stores any object. Shallow copies the object using
+   * object.assign.
+   * @param {object} value Value of this option.
+   * @param {?string} [comment=null] Comment/description for the user about this
+   * option.
+   * @param {?string} [category=null] Category this option falls under for
+   * showing user.
+   * @param {{min: number, max: number}} [range] Range of allowable values for
+   * this option.
+   */
+  constructor(value, comment, category, range) {
+    if (typeof value !== 'object') throw new Error('Value is not an object');
+    value = Object.assign({}, value);
+    super(value, comment, category);
+    if (range) {
+      this._range = {min: range.min, max: range.max};
+    } else {
+      this._range = null;
+    }
+  }
+  /**
+   * @description Get the range of allowable values for this option.
+   * @returns {?{min: number, max: number}} Allowable range of values.
+   */
+  get range() {
+    return this._range;
+  }
+}
+
+/**
+ * One of multiple choices option.
+ *
+ * @memberof HungryGames~DefaultOptions
+ * @inner
+ * @augments HungryGames~DefaultOptions~Option
+ */
+class SelectOption extends Option {
+  /**
+   * @description Allows an option from a set of possible values.
+   * @param {string} value Value of this option.
+   * @param {?string} [comment=null] Comment/description for the user about this
+   * option.
+   * @param {?string} [category=null] Category this option falls under for
+   * showing user.
+   * @param {string[]} values Possible values.
+   */
+  constructor(value, comment, category, values) {
+    if (!values || !Array.isArray(values)) {
+      throw new Error('Values is not array of strings');
+    }
+    let included = false;
+    for (let i = 0; i &lt; values.length; i++) {
+      if (typeof values[i] !== 'string') {
+        throw new Error('Values is not array of strings');
+      } else if (values[i] === value) {
+        included = true;
+      }
+    }
+    if (!included) throw new Error('Value is not in given values');
+    super(value, comment, category);
+    this._values = values.slice(0);
+  }
+  /**
+   * @description Get possible values for this option.
+   * @returns {string[]} Array of possible values.
+   */
+  get values() {
+    return this._values;
+  }
+}
+
+/**
+ * Default options for a HungryGames.
+ *
+ * @memberof HungryGames
+ * @inner
+ */
+class DefaultOptions {
+  /**
+   * @description Creates a set of default options for a HungryGames.
+   */
+  constructor() {
+    this._bloodbathOutcomeProbs = new ObjectOption(
+        {kill: 30, wound: 6, thrive: 8, revive: 0, nothing: 56},
+        'Relative probabilities of choosing an event with each outcome. This ' +
+            'is for the bloodbath events.',
+        'probabilities');
+    this._playerOutcomeProbs = new ObjectOption(
+        {kill: 22, wound: 4, thrive: 8, revive: 6, nothing: 60},
+        'Relative probabilities of choosing an event with each outcome. This ' +
+            'is for normal daily events.',
+        'probabilities');
+    this._arenaOutcomeProbs = new ObjectOption(
+        {kill: 64, wound: 10, thrive: 5, revive: 6, nothing: 15},
+        'Relative Probabilities of choosing an event with each outcome. This ' +
+            'is for the special arena events.',
+        'probabilities');
+    this._arenaEvents = new BooleanOption(
+        true,
+        'Are arena events possible. (Events like wolf mutts, or a volcano ' +
+            'erupting.)',
+        'probabilities');
+    this._includeBots = new BooleanOption(
+        false, 'Should bots be included in the games. If this is false, bots ' +
+            'cannot be added manually.',
+        'players');
+    this._excludeNewUsers = new BooleanOption(
+        false, 'Should new users who join your server be excluded from the ' +
+            'games by default. True will add all new users to the blacklist, ' +
+            'false will put all new users into the next game automatically.',
+        'players');
+    this._allowNoVictors = new BooleanOption(
+        false,
+        'Should it be possible to end a game without any winners. If true, ' +
+            'it is possible for every player to die, causing the game to end ' +
+            'with everyone dead. False forces at least one winner.',
+        'other');
+    this._bleedDays = new NumberOption(
+        2, 'Number of days a user can bleed before they can die.', 'other');
+    this._battleHealth = new NumberOption(
+        5, 'The amount of health each user gets for a battle.', 'other',
+        {min: 1, max: 10});
+    this._teamSize = new NumberOption(
+        0, 'Maximum size of teams when automatically forming teams. 0 to ' +
+            'disable teams',
+        'players');
+    this._teammatesCollaborate = new SelectOption(
+        'always',
+        'Will teammates work together. If disabled, teammates can kill ' +
+            'eachother, and there will only be 1 victor. If enabled, ' +
+            'teammates cannot kill eachother, and the game ends when one TEAM' +
+            ' is remaining, not one player. Untilend means teammates work ' +
+            'together until the end of the game, this means only there will ' +
+            'be only 1 victor.',
+        'players', ['disabled', 'always', 'untilend']);
+    this._useEnemyWeapon = new BooleanOption(
+        false,
+        'This will allow the attacker in an event to use the victim\'s ' +
+            'weapon against them.',
+        'players');
+    this._mentionVictor = new BooleanOption(
+        false,
+        'Should the victor of the game (can be team), be tagged/mentioned ' +
+            'so they get notified?',
+        'messages');
+    this._mentionAll = new SelectOption(
+        'disabled',
+        'Should a user be mentioned every time something happens to them ' +
+            'in the game? (can be disabled, for all events, or for when the ' +
+            'user dies)',
+        'messages', ['disabled', 'all', 'death']);
+    this._mentionEveryoneAtStart = new BooleanOption(
+        false, 'Should @everyone be mentioned when the game is started?',
+        'messages');
+    this._useNicknames = new BooleanOption(
+        true, 'Should we use user\'s custom server nicknames instead of ' +
+            'their account username? Names only change when a new game is ' +
+            'created.',
+        'messages');
+    this._delayEvents = new NumberOption(
+        3500, 'Delay in milliseconds between each event being printed.',
+        'other', {min: 1500, max: 30000}, 'time');
+    this._delayDays = new NumberOption(
+        7000, 'Delay in milliseconds between each day being printed.', 'other',
+        {min: 2500, max: 129600000},  // 1.5 days
+        'time');
+    this._probabilityOfArenaEvent = new NumberOption(
+        0.25, 'Probability each day that an arena event will happen.',
+        'probabilities', {min: 0, max: 1}, 'percent');
+    this._probabilityOfBleedToDeath = new NumberOption(
+        0.5, 'Probability that after bleedDays a player will die. If they ' +
+            'don\'t die, they will heal back to normal.',
+        'probabilities', {min: 0, max: 1}, 'percent');
+    this._probabilityOfBattle = new NumberOption(
+        0.05,
+        'Probability of an event being replaced by a battle between two ' +
+            'players.',
+        'probabilities', {min: 0, max: 1}, 'percent');
+    this._probabilityOfUseWeapon = new NumberOption(
+        0.75,
+        'Probability of each player using their weapon each day if they ' +
+            'have one.',
+        'probabilities', {min: 0, max: 1}, 'percent');
+    this._eventAvatarSizes = new ObjectOption(
+        {avatar: 64, underline: 4, gap: 4},
+        'The number of pixels each player\'s avatar will be tall and wide, ' +
+            'the underline status height, and the gap between each avatar. ' +
+            'This is for all normal events and arena event messages.',
+        'messages', {min: 0, max: 512});
+    this._battleAvatarSizes = new ObjectOption(
+        {avatar: 32, underline: 4, gap: 4},
+        'The number of pixels each player\'s avatar will be tall and wide, ' +
+            'the underline status height, and the gap between each avatar. ' +
+            'This is for each battle turn.',
+        'messages', {min: 0, max: 512});
+    this._victorAvatarSizes = new ObjectOption(
+        {avatar: 80, underline: 4, gap: 4},
+        'The number of pixels each player\'s avatar will be tall and wide, ' +
+            'the underline status height, and the gap between each avatar. ' +
+            'This is when announcing the winners of the game.',
+        'messages', {min: 0, max: 512});
+    this._numDaysShowDeath = new NumberOption(
+        -1,
+        'The number of days after a player has died to show them as dead in' +
+            ' the status list after each day. -1 will always show dead ' +
+            'players. 0 will never show dead players. 1 will only show them ' +
+            'for the day they died. 2 will show them for 2 days.',
+        'messages', {min: -1, max: 100});
+    this._showLivingPlayers = new BooleanOption(
+        true,
+        'Include the living players in the status updates. Instead of only ' +
+            'wounded or dead players.',
+        'messages');
+    this._customEventWeight = new NumberOption(
+        2, 'The relative weight of custom events. 2 means custom events are ' +
+            'twice as likely to be chosen.',
+        'probabilities', {min: 0, max: 1000});
+    this._anonForceOutcome = new BooleanOption(
+        false, 'Forced outcomes will use existing events instead of saying ' +
+            '"The game makers" did it.',
+        'other');
+    this._disableOutput = new BooleanOption(
+        false, 'Debugging purposes only. I mean, you can enable it, but it ma' +
+            'kes the games really boring. Up to you ¯\\_(ツ)_/¯',
+        'other');
+  }
+
+  /**
+   * @description Get bloodbathOutcomeProbs.
+   * @returns {ObjectOption} Prob opts.
+   */
+  get bloodbathOutcomeProbs() {
+    return this._bloodbathOutcomeProbs;
+  }
+  /**
+   * @description Get playerOutcomeProbs.
+   * @returns {ObjectOption} Prob opts.
+   */
+  get playerOutcomeProbs() {
+    return this._playerOutcomeProbs;
+  }
+  /**
+   * @description Get arenaOutcomeProbs.
+   * @returns {ObjectOption} Prob opts.
+   */
+  get arenaOutcomeProbs() {
+    return this._arenaOutcomeProbs;
+  }
+  /**
+   * @description Get arenaEvents.
+   * @returns {BooleanOption} Option value.
+   */
+  get arenaEvents() {
+    return this._arenaEvents;
+  }
+  /**
+   * @description Get includeBots.
+   * @returns {BooleanOption} Option value.
+   */
+  get includeBots() {
+    return this._includeBots;
+  }
+  /**
+   * @description Get excludeNewUsers.
+   * @returns {BooleanOption} Option value.
+   */
+  get excludeNewUsers() {
+    return this._excludeNewUsers;
+  }
+  /**
+   * @description Get allowNoVictors.
+   * @returns {BooleanOption} Option value.
+   */
+  get allowNoVictors() {
+    return this._allowNoVictors;
+  }
+  /**
+   * @description Get bleedDays.
+   * @returns {NumberOption} Option value.
+   */
+  get bleedDays() {
+    return this._bleedDays;
+  }
+  /**
+   * @description Get battleHealth.
+   * @returns {NumberOption} Option value.
+   */
+  get battleHealth() {
+    return this._battleHealth;
+  }
+  /**
+   * @description Get teamSize.
+   * @returns {NumberOption} Option value.
+   */
+  get teamSize() {
+    return this._teamSize;
+  }
+  /**
+   * @description Get teammatesCollaborate.
+   * @returns {BooleanOption} Option value.
+   */
+  get teammatesCollaborate() {
+    return this._teammatesCollaborate;
+  }
+  /**
+   * @description Get useEnemyWeapon.
+   * @returns {BooleanOption} Option value.
+   */
+  get useEnemyWeapon() {
+    return this._useEnemyWeapon;
+  }
+  /**
+   * @description Get mentionVictor.
+   * @returns {BooleanOption} Option value.
+   */
+  get mentionVictor() {
+    return this._mentionVictor;
+  }
+  /**
+   * @description Get mentionAll.
+   * @returns {SelectOption} Option value.
+   */
+  get mentionAll() {
+    return this._mentionAll;
+  }
+  /**
+   * @description Get mentionEveryoneAtStart.
+   * @returns {BooleanOption} Option value.
+   */
+  get mentionEveryoneAtStart() {
+    return this._mentionEveryoneAtStart;
+  }
+  /**
+   * @description Get useNicknames.
+   * @returns {BooleanOption} Option value.
+   */
+  get useNicknames() {
+    return this._useNicknames;
+  }
+  /**
+   * @description Get delayEvents.
+   * @returns {NumberOption} Option value.
+   */
+  get delayEvents() {
+    return this._delayEvents;
+  }
+  /**
+   * @description Get delayDays.
+   * @returns {NumberOption} Option value.
+   */
+  get delayDays() {
+    return this._delayDays;
+  }
+  /**
+   * @description Get probabilityOfArenaEvent.
+   * @returns {NumberOption} Option value.
+   */
+  get probabilityOfArenaEvent() {
+    return this._probabilityOfArenaEvent;
+  }
+  /**
+   * @description Get probabilityOfBleedToDeath.
+   * @returns {NumberOption} Option value.
+   */
+  get probabilityOfBleedToDeath() {
+    return this._probabilityOfBleedToDeath;
+  }
+  /**
+   * @description Get probabilityOfBattle.
+   * @returns {NumberOption} Option value.
+   */
+  get probabilityOfBattle() {
+    return this._probabilityOfBattle;
+  }
+  /**
+   * @description Get probabilityOfUseWeapon.
+   * @returns {NumberOption} Option value.
+   */
+  get probabilityOfUseWeapon() {
+    return this._probabilityOfUseWeapon;
+  }
+  /**
+   * @description Get eventAvatarSizes.
+   * @returns {ObjectOption} Option value.
+   */
+  get eventAvatarSizes() {
+    return this._eventAvatarSizes;
+  }
+  /**
+   * @description Get battleAvatarSizes.
+   * @returns {ObjectOption} Option value.
+   */
+  get battleAvatarSizes() {
+    return this._battleAvatarSizes;
+  }
+  /**
+   * @description Get victorAvatarSizes.
+   * @returns {ObjectOption} Option value.
+   */
+  get victorAvatarSizes() {
+    return this._victorAvatarSizes;
+  }
+  /**
+   * @description Get numDaysShowDeath.
+   * @returns {NumberOption} Option value.
+   */
+  get numDaysShowDeath() {
+    return this._numDaysShowDeath;
+  }
+  /**
+   * @description Get showLivingPlayers.
+   * @returns {BooleanOption} Option value.
+   */
+  get showLivingPlayers() {
+    return this._showLivingPlayers;
+  }
+  /**
+   * @description Get customEventWeight.
+   * @returns {NumberOption} Option value.
+   */
+  get customEventWeight() {
+    return this._customEventWeight;
+  }
+  /**
+   * @description Get anonForceOutcome.
+   * @returns {BooleanOption} Option value.
+   */
+  get anonForceOutcome() {
+    return this._anonForceOutcome;
+  }
+  /**
+   * @description Get disableOutput.
+   * @returns {BooleanOption} Option value.
+   */
+  get disableOutput() {
+    return this._disableOutput;
+  }
+
+  /**
+   * @returns {string[]} Array of all default option keys.
+   */
+  get keys() {
+    const all = Object.entries(Object.getOwnPropertyDescriptors(this));
+    const output = [];
+    for (const one of all) {
+      if (one[1].value instanceof Option) {
+        output.push(one[0].slice(1));
+      }
+    }
+    return output;
+  }
+  /**
+   * @returns {object&lt;HungryGames~DefaultOptions~Option>} All options in this
+   * object.
+   */
+  get entries() {
+    const keys = this.keys;
+    const output = {};
+    for (const k of keys) {
+      output[k] = this[k].entries;
+    }
+    return output;
+  }
+}
+
+module.exports = DefaultOptions;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
+	
+		on Monday, January 13, 2020 6:17 PM (-08:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

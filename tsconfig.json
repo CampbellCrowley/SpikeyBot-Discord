@@ -8,7 +8,7 @@
   },
   "include": [
     "src/**/*.js",
-    "src/**/*.ts",
+    "config/**/*.js",
     "test/main-test.js",
     "strings/**/*.js",
     "*.js",

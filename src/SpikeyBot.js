@@ -237,6 +237,15 @@ function SpikeyBot() {
    * @type {number}
    */
   let numShards = 0;
+  /**
+   * The shard ID of this process. This is passed from the Shard Master in some
+   * form, or specified manually via `--shardid=` cli argument.
+   *
+   * @private
+   * @default
+   * @type {?number}
+   */
+  let shardId = null;
 
   /**
    * Number of bytes to allocate for each shard memory. Passed as
@@ -346,6 +355,13 @@ function SpikeyBot() {
       }
       if (!shardMem) {
         throw new Error(`Bad Memory Amount '${process.argv[i]}'`);
+      }
+    } else if (process.argv[i].startsWith('--shardid')) {
+      if (process.argv[i].indexOf('=') > -1) {
+        shardId = process.argv[i].split('=')[1] * 1 || null;
+      }
+      if (!shardId) {
+        throw new Error(`Bad Shard ID '${process.argv[i]}'`);
       }
     } else if (process.argv[i] === '--backup') {
       isBackup = true;
