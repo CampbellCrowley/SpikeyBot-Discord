@@ -53,7 +53,8 @@ class ShardMasterConfig {
      * received from shards in milliseconds.
      * @public
      * @default
-     * @type {number} 5 Minutes
+     * @type {number}
+     * @default 5 Minutes
      */
     this.tsPrecision = 1000 * 60 * 5;
 
