@@ -320,8 +320,9 @@ class HungryGames {
    * and whether to include bots.
    *
    * @public
-   * @param {external:Discord~Collection<external:Discord~GuildMember>} members
-   * All members in guild.
+   * @param {
+   *   external:Discord~Collection<external:Discord~GuildMember>
+   * } members All members in guild.
    * @param {string[]} excluded Array of ids of users that should not be
    * included in the games.
    * @param {boolean} bots Should bots be included in the games.

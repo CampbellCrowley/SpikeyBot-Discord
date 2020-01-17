@@ -14,8 +14,11 @@ class RunCommandAction extends ChannelAction {
   /**
    * @description Create an action that will send a message to the game channel.
    * @param {string} msg The command string.
-   * @param {string|external:Discord~User|external:Discord~GuildMember} author
-   * The Discord user ID to run this command as.
+   * @param {
+   *   string|
+   *   external:Discord~User|
+   *   external:Discord~GuildMember
+   * } author The Discord user ID to run this command as.
    */
   constructor(msg, author) {
     super((hg, game, channel) => {
@@ -71,8 +74,11 @@ class RunCommandAction extends ChannelAction {
   /**
    * @description Update the author with a new value.
    * @public
-   * @param {string|external:Discord~User|external:Discord~GuildMember} author
-   * The new author or ID.
+   * @param {
+   *   string|
+   *   external:Discord~User|
+   *   external:Discord~GuildMember
+   * } author The new author or ID.
    * @returns {?string} The new author ID, or null if failed for some reason.
    */
   set author(author) {

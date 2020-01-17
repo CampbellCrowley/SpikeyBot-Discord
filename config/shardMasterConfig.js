@@ -49,6 +49,32 @@ class ShardMasterConfig {
      */
     this.botName = 'release';
     /**
+     * @description The largest acceptable difference in timestamp values
+     * received from shards in milliseconds.
+     * @public
+     * @default
+     * @type {number} 5 Minutes
+     */
+    this.tsPrecision = 1000 * 60 * 5;
+
+    /**
+     * @description The maximum number of connection attempts within {@link
+     * connTime} before the IP address is blocked.
+     * @public
+     * @default
+     * @type {number}
+     */
+    this.connCount = 10;
+    /**
+     * @description The duration in milliseconds to store connection attempt
+     * history.
+     * @public
+     * @default
+     * @type {number}
+     */
+    this.connTime = 60000;
+
+    /**
      * @description Configuration specifying how detecting if shards are still
      * online shall work.
      * @default
@@ -72,7 +98,8 @@ class ShardMasterConfig {
  * @description Configuration for the Shard Master. This config will be updated
  * during runtime if it is edited. Relevant settings may be sent to each shard
  * during each initial setup. These settings are related to heartbeat and uptime
- * management. This is included in {@link ShardMasterConfig}.
+ * management. This is included in {@link ShardMasterConfig}. This interval is
+ * also used to update shard configuration if necessary.
  * @class
  * @memberof ShardingMaster.ShardMasterConfig
  * @inner
