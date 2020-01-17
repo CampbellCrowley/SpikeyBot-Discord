@@ -112,7 +112,7 @@ class Battle extends HungryGames.Event {
                 (obj, index) => '`' +
                     (useNicknames ? (obj.nickname || obj.name) : obj.name) +
                     '`: ' + Math.max((maxHealth - userHealth[index]), 0) + 'HP')
-            .sort((a, b) => a.id - b.id)
+            .sort()
             .join(', ');
     finalEvent.attacks.push(
         HungryGames.NormalEvent.finalize(
@@ -194,7 +194,7 @@ class Battle extends HungryGames.Event {
                     (useNicknames ? (obj.nickname || obj.name) : obj.name) +
                     '`: ' + health + 'HP' + prePost;
               })
-              .sort((a, b) => a.id - b.id)
+              .sort()
               .join(', ');
       let messageText = eventTry.message;
       if (duplicateCount > 0) {
