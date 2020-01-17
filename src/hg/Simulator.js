@@ -857,6 +857,57 @@ Simulator._validateEventRequirements = function(
  */
 Simulator._probabilityEvent = function(
     eventPool, probabilityOpts, customWeight = 1, recurse = 0) {
+  const vOut = Simulator._pickWeightedOutcome(probabilityOpts);
+  const aOut = Simulator._pickWeightedOutcome(probabilityOpts);
+
+  const finalPool = [];
+
+  for (let i = 0; i < eventPool.length; i++) {
+    if (eventPool[i].attacker.outcome == aOut &&
+        eventPool[i].victim.outcome == vOut) {
+      finalPool.push(i);
+    }
+  }
+  if (finalPool.length == 0) {
+    if (recurse < 10) {
+      return Simulator._probabilityEvent(
+          eventPool, probabilityOpts, customWeight, recurse + 1);
+    } else {
+      /* self.error(
+          'Failed to find event with probabilities: ' +
+          JSON.stringify(probabilityOpts) + ' from ' + eventPool.length +
+          ' events. Victim: ' + vOut + ' Attacker: ' + aOut); */
+      return Math.floor(Math.random() * eventPool.length);
+    }
+  } else {
+    let total = finalPool.length;
+    if (customWeight !== 1) {
+      finalPool.forEach((el) => {
+        if (eventPool[el].custom) total += customWeight - 1;
+      });
+    }
+    const pick = Math.random() * total;
+    return finalPool.find((el) => {
+      total -= eventPool[el].custom ? customWeight : 1;
+      return total < pick;
+    });
+  }
+};
+
+/**
+ * @description Pick an outcome given the probability options.
+ * @private
+ * @static
+ * @param {{
+ *   kill: number,
+ *   wound: number,
+ *   thrive: number,
+ *   nothing: number
+ * }} probabilityOpts The probabilities of each type of event being used.
+ * @returns {string} The outcome. One of "dies", "revived", "thrives",
+ * "wounded", or "nothing".
+ */
+Simulator._pickWeightedOutcome = function(probabilityOpts) {
   let probTotal = 0;
   if (typeof probabilityOpts.kill === 'number') {
     probTotal += probabilityOpts.kill;
@@ -887,50 +938,13 @@ Simulator._probabilityEvent = function(
   const value = Math.random() * probTotal;
 
   let type;
-  if (value > (probTotal -= probabilityOpts.nothing)) type = null;
+  if (value > (probTotal -= probabilityOpts.nothing)) type = 'nothing';
   else if (value > (probTotal -= probabilityOpts.revive)) type = 'revived';
   else if (value > (probTotal -= probabilityOpts.thrive)) type = 'thrives';
   else if (value > (probTotal -= probabilityOpts.wound)) type = 'wounded';
   else type = 'dies';
 
-  const finalPool = [];
-
-  for (let i = 0; i < eventPool.length; i++) {
-    if (type && (eventPool[i].attacker.outcome == type ||
-                 eventPool[i].victim.outcome == type)) {
-      finalPool.push(i);
-    } else if (
-      !type && eventPool[i].attacker.outcome == 'nothing' &&
-        eventPool[i].victim.outcome == 'nothing') {
-      finalPool.push(i);
-    }
-  }
-  if (finalPool.length == 0) {
-    if (recurse < 10) {
-      return Simulator._probabilityEvent(
-          eventPool, probabilityOpts, customWeight, recurse + 1);
-    } else {
-      /* self.error(
-          'Failed to find event with probabilities: ' +
-          JSON.stringify(probabilityOpts) + ' from ' + eventPool.length +
-          ' events.'); */
-      return Math.floor(Math.random() * eventPool.length);
-    }
-  } else {
-    let total = finalPool.length;
-    if (customWeight != 1) {
-      finalPool.forEach((el) => {
-        if (eventPool[el].custom) total += customWeight - 1;
-      });
-    }
-    const pick = Math.random() * total;
-    return finalPool.find((el) => {
-      total -= eventPool[el].custom ? customWeight : 1;
-      if (total < pick) return true;
-      return false;
-    });
-    // return finalPool[Math.floor(Math.random() * finalPool.length)];
-  }
+  return type;
 };
 
 /**
