@@ -7,15 +7,15 @@ const crypto = require('crypto');
 const common = require('./common.js');
 const path = require('path');
 const fs = require('fs');
+const spawn = require('child_process').spawn;
 
 const usersFile = path.resolve(__dirname + '/../../save/knownShards.json');
 const configFile =
     path.resolve(__dirname + '/../../config/shardMasterConfig.js');
 const authFile = path.resolve(__dirname + '/../../auth.js');
-const privKeyFile =
-    path.resolve(__dirname + '/../../save/shards/shardMaster.priv');
-const pubKeyFile =
-    path.resolve(__dirname + '/../../save/shards/shardMaster.pub');
+const shardDir = path.resolve(__dirname + '/../../save/shards/');
+const privKeyFile = shardDir + 'shardMaster.priv';
+const pubKeyFile = shardDir + 'shardMaster.pub';
 
 const signAlgorithm = 'RSA-SHA256';
 const keyType = 'rsa';
@@ -276,6 +276,32 @@ class ShardingMaster {
       }
     });
   }
+  /**
+   * @description Write updated known list of users to disk.
+   * @private
+   */
+  _saveUsers() {
+    const file = usersFile;
+    const dir = path.dirname(file);
+    const serializable = {};
+    for (const prop in this._knownUsers) {
+      if (!this._knownUsers[prop]) continue;
+      serializable[prop] = this._knownUsers[prop].serializable;
+    }
+    let str;
+    try {
+      str = JSON.stringify(serializable);
+    } catch (err) {
+      common.error(`Failed to stringify known users file: ${file}`);
+      console.error(err);
+      return;
+    }
+    common.mkAndWrite(file, dir, str, (err) => {
+      if (!err) return;
+      common.error(`Failed to save known users to file: ${file}`);
+      console.error(err);
+    });
+  }
 
   /**
    * @description Update the configuration from file.
@@ -334,18 +360,13 @@ class ShardingMaster {
     const configuring = [];
 
     if (goal > known) {
-      // TODO: Generate new shard keys and configuration. Then email them to
-      // sysadmins.
+      this.generateShardConfig();
     }
     if (goal > current) {
       common.logWarning(
           `${goal} shards are queued to startup but only ${current}` +
           ' shards are available!');
     }
-
-    // TODO: Handle temporary socket disconnects to shards. If the shard is
-    // still online and hasn't hit the heartbeat timeout yet, don't start a new
-    // shard until we're sure the other one has died completely.
 
     const foundIds = [];
     correct.sort((a, b) => b.bootTime - a.bootTime);
@@ -470,9 +491,11 @@ class ShardingMaster {
     if (typeof goal !== 'number' || goal < 0) {
       goal = this.getGoalShardCount();
     }
+    const now = Date.now();
     return Object.values(this._knownUsers)
         .filter(
-            (el) => el.goalShardCount === goal && this._shardSockets[el.id]);
+            (el) => el.goalShardCount === goal &&
+                el.lastSeen > now - this._config.heartbeat.assumeDeadAfter);
   }
   /**
    * @description Get references to all shards currently NOT configured for the
@@ -487,9 +510,11 @@ class ShardingMaster {
     if (typeof goal !== 'number' || goal < 0) {
       goal = this.getGoalShardCount();
     }
+    const now = Date.now();
     return Object.values(this._knownUsers)
         .filter(
-            (el) => el.goalShardCount !== goal && this._shardSockets[el.id]);
+            (el) => el.goalShardCount !== goal &&
+                el.lastSeen > now - this._config.heartbeat.assumeDeadAfter);
   }
   /**
    * @description Get list of IDs for shards that do not exist, but need to.
@@ -696,7 +721,16 @@ class ShardingMaster {
         console.error(err);
         return;
       }
-      user.stats = status;
+      if (!user.stats) {
+        user.stats = new ShardingMaster.ShardStatus(userId);
+      } else {
+        if (status.id && status.id !== userId) {
+          common.logWarning(
+              'User changed ID after handshake! This will be ignored, but ' +
+              'should not happen! ' + userId + ' --> ' + status.id);
+        }
+        user.stats.update(status);
+      }
       // TODO: Update StatusInfo current shard configuration.
     });
   }
@@ -716,6 +750,159 @@ class ShardingMaster {
    */
   static generateKeyPair(cb) {
     crypto.generateKeyPair(keyType, keyOptions, cb);
+  }
+
+  /**
+   * @description Generate a unique name for a new shard.
+   * @private
+   * @returns {string} New unique shard name.
+   */
+  _generateShardName() {
+    const alp = 'abcdefghijklmnopqrstuvwxyz';
+    const tmp = new Array(3);
+    let out = '';
+    do {
+      out = tmp.map(() => alp[Math.floor(Math.random() * alp.length)]).join('');
+    } while (!this._knownUsers[out]);
+    return out;
+  }
+
+  /**
+   * @description Creates a configuration for a new shard. This config contains
+   * the shard's key-pair, name, and the host information to find this
+   * master. This file will be saved directly to disk, as well as emailed to
+   * sysadmins.
+   * @public
+   */
+  generateShardConfig() {
+    const made = new ShardingMaster.ShardInfo(this._generateShardName());
+    this._knownUsers[made.id] = made;
+    ShardingMaster.generateKeyPair((err, pub, priv) => {
+      if (err) {
+        delete this._knownUsers[made.id];
+        common.error('Failed to generate key-pair!');
+        console.error(err);
+        ShardingMaster._sendShardCreateFailEmail(
+            this._config.mail, 'Failed to generate key-pair!', err);
+        return;
+      }
+      made.key = pub;
+      const config = {
+        host: this._config.remoteHost,
+        pubKey: pub,
+        privKey: priv,
+        id: made.id,
+        signAlgorithm: signAlgorithm,
+      };
+      const dir = shardDir;
+      const file = `${shardDir}${made.id}_config.json`;
+      const str = JSON.stringify(config, null, 2);
+      common.mkAndWrite(file, dir, str, (err) => {
+        if (err) {
+          common.error('Failed to save new shard config to disk: ' + file);
+          console.error(err);
+          delete this._knownUsers[made.id];
+          ShardingMaster._sendShardCreateFailEmail(
+              this._config.mail,
+              'Failed to save new shard config to disk: ' + file, err);
+        } else {
+          ShardingMaster._sendShardCreateEmail(this._config.mail, file, made);
+        }
+      });
+    });
+  }
+
+  /**
+   * @description Send the newly created config to sysadmins.
+   * @private
+   * @static
+   * @param {ShardingMaster.ShardMasterConfig.MailConfig} conf Mail config
+   * object.
+   * @param {string} filename The path to the file of the shard's configuration
+   * to send to sysadmins.
+   * @param {ShardingMaster.ShardInfo} [info] Shard info of created shard for
+   * additional information to sysadmins.
+   */
+  static _sendShardCreateEmail(conf, filename, info) {
+    if (!conf.enabled) return;
+    const str = conf._sendShardCreateEmail.replace(/{\w+}/g, (m) => {
+      switch (m) {
+        case 'date':
+          return new Date().toString();
+        case 'id':
+          return info && info.id || m;
+        case 'pubkey':
+          return info && info.key || m;
+        default:
+          return m;
+      }
+    });
+    const args = conf.args.concat(['-A', filename]);
+    ShardingMaster._sendEmail(conf.command, args, conf.spawnOpts, str);
+  }
+
+  /**
+   * @description Send an email to sysadmins alerting them that a new shard must
+   * be created, but we were unable to for some reason.
+   * @private
+   * @static
+   * @param {ShardingMaster.ShardMasterConfig.MailConfig} conf Mail config
+   * object.
+   * @param {...Error|string} [errs] The error generated with information as to
+   * why creation failed.
+   */
+  static _sendShardCreateFailEmail(conf, ...errs) {
+    if (!conf.enabled) return;
+    const str = conf._sendShardCreateFailEmail.replace(/{\w+}/g, (m) => {
+      switch (m) {
+        case 'date':
+          return new Date().toString();
+        case 'errors':
+          return errs.map((err) => {
+            if (err instanceof Error) {
+              return `${err.code}: ${err.message}\n${err.stack}`;
+            } else if (typeof err === 'string') {
+              return err;
+            } else {
+              return JSON.stringify(err, null, 2);
+            }
+          }).join('\n\n===== ERROR SPLIT =====\n\n');
+        default:
+          return m;
+      }
+    });
+    ShardingMaster._sendEmail(conf.command, conf.args, conf.spawnOpts, str);
+  }
+
+  /**
+   * @description Sends an email given the raw inputs.
+   * @private
+   * @static
+   * @param {string} cmd The command to run to start the mail process.
+   * @param {string[]} args The arguments to pass.
+   * @param {object} opts Options to pass to spawn.
+   * @param {string} stdin The data to write to stdin of the process.
+   */
+  static _sendEmail(cmd, args, opts, stdin) {
+    const proc = spawn(cmd, args, opts);
+    proc.on('error', (err) => {
+      common.error('Failed to spawn mail process.');
+      console.error(err);
+    });
+    proc.stderr.on('data', (data) => {
+      common.logWarning(`Mail: ${data.toString()}`);
+    });
+    proc.stdout.on('data', (data) => {
+      common.logDebug(`Mail: ${data.toString()}`);
+    });
+    proc.on('close', (code) => {
+      common.logDebug('Send email. Exited with ' + code);
+    });
+
+    if (stdin && stdin.length > 0) {
+      proc.stdin.write(stdin);
+      proc.stdin.end();
+    }
   }
 
   /**

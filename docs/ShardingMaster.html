@@ -1382,6 +1382,623 @@ shard names.
             
 <hr>
 <dt>
+    <h4 class="name" id="._sendEmail"><span class="type-signature">&lt;private, static> </span>_sendEmail(cmd, args, opts, stdin)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Sends an email given the raw inputs.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>cmd</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The command to run to start the mail process.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The arguments to pass.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>opts</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Options to pass to spawn.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>stdin</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The data to write to stdin of the process.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-886">line 886</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="._sendShardCreateEmail"><span class="type-signature">&lt;private, static> </span>_sendShardCreateEmail(conf, filename [, info])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Send the newly created config to sysadmins.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>conf</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Mail config
+object.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>filename</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The path to the file of the shard's configuration
+to send to sysadmins.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>info</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Shard info of created shard for
+additional information to sysadmins.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-826">line 826</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="._sendShardCreateFailEmail"><span class="type-signature">&lt;private, static> </span>_sendShardCreateFailEmail(conf [, errs])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Send an email to sysadmins alerting them that a new shard must
+be created, but we were unable to for some reason.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>conf</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Mail config
+object.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>errs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Error</span>
+|
+
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The error generated with information as to
+why creation failed.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-854">line 854</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
     <h4 class="name" id=".generateKeyPair"><span class="type-signature">&lt;static> </span>generateKeyPair(cb)</h4>
     
     
@@ -1490,7 +2107,7 @@ private key.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-717">line 717</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-751">line 751</a>
 			</li>
 		</ul>
 	</dd>
@@ -1522,6 +2139,118 @@ private key.</td>
     
 
     
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_generateShardName"><span class="type-signature">&lt;private> </span>_generateShardName()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Generate a unique name for a new shard.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-760">line 760</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    New unique shard name.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
 
     
 </dd>
@@ -1648,7 +2377,7 @@ given goal number of shards, and are connected and controllable.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-469">line 469</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-490">line 490</a>
 			</li>
 		</ul>
 	</dd>
@@ -1823,7 +2552,7 @@ and don't need updating.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-501">line 501</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-526">line 526</a>
 			</li>
 		</ul>
 	</dd>
@@ -1998,7 +2727,7 @@ given goal number of shards, but ARE connected and controllable.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-486">line 486</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-509">line 509</a>
 			</li>
 		</ul>
 	</dd>
@@ -2161,7 +2890,7 @@ correctly and DO need updating.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-528">line 528</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-553">line 553</a>
 			</li>
 		</ul>
 	</dd>
@@ -2350,7 +3079,7 @@ response.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-542">line 542</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-567">line 567</a>
 			</li>
 		</ul>
 	</dd>
@@ -2529,7 +3258,95 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-319">line 319</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-345">line 345</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_saveUsers"><span class="type-signature">&lt;private> </span>_saveUsers()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Write updated known list of users to disk.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-283">line 283</a>
 			</li>
 		</ul>
 	</dd>
@@ -2670,7 +3487,7 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-727">line 727</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-914">line 914</a>
 			</li>
 		</ul>
 	</dd>
@@ -2811,7 +3628,7 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-568">line 568</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-593">line 593</a>
 			</li>
 		</ul>
 	</dd>
@@ -2899,7 +3716,7 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-301">line 301</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-327">line 327</a>
 			</li>
 		</ul>
 	</dd>
@@ -2987,7 +3804,7 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-284">line 284</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-310">line 310</a>
 			</li>
 		</ul>
 	</dd>
@@ -3163,7 +3980,98 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-745">line 745</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-932">line 932</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="generateShardConfig"><span class="type-signature"></span>generateShardConfig()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Creates a configuration for a new shard. This config contains
+the shard's key-pair, name, and the host information to find this
+master. This file will be saved directly to disk, as well as emailed to
+sysadmins.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-777">line 777</a>
 			</li>
 		</ul>
 	</dd>
@@ -3314,7 +4222,7 @@ the goal number of shards.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-456">line 456</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-477">line 477</a>
 			</li>
 		</ul>
 	</dd>
@@ -3427,7 +4335,7 @@ are controlling.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-434">line 434</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-455">line 455</a>
 			</li>
 		</ul>
 	</dd>
@@ -3541,7 +4449,7 @@ unavailable.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-394">line 394</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-415">line 415</a>
 			</li>
 		</ul>
 	</dd>
@@ -3655,7 +4563,7 @@ may talk to us.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-444">line 444</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-465">line 465</a>
 			</li>
 		</ul>
 	</dd>
@@ -3767,7 +4675,7 @@ may talk to us.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-557">line 557</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-582">line 582</a>
 			</li>
 		</ul>
 	</dd>
@@ -3874,7 +4782,7 @@ may talk to us.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Friday, January 17, 2020 1:32 PM (-08:00)
+		on Friday, January 17, 2020 3:59 PM (-08:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

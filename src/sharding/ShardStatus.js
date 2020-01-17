@@ -40,6 +40,15 @@ class ShardStatus {
      */
     this.stopTime = 0;
     /**
+     * @description The goal Discord shard ID of this shard. Similar to
+     * {@link ShardingMaster.ShardInfo~goalShardId}, and is used to ensure
+     * messages were received properly.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.goalShardId = 0;
+    /**
      * @description The current Discord shard ID of this shard. Similar to
      * {@link ShardingMaster.ShardInfo~currentShardId}, and will in most cases
      * update that value once received by the master.
@@ -47,14 +56,21 @@ class ShardStatus {
      * @type {number}
      * @default
      */
-    this.shardId = 0;
+    this.currentShardId = 0;
+    /**
+     * @description The goal Discord shard count this is configured for.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.goalShardCount = 0;
     /**
      * @description The current Discord shard count this is configured for.
      * @public
      * @type {number}
      * @default
      */
-    this.shardCount = 0;
+    this.currentShardCount = 0;
     /**
      * @description The timestamp at which this status was generated. This
      * defaults to `Date.now()`, but is expected to be overridden to a more
@@ -155,6 +171,20 @@ class ShardStatus {
       out[prop] = obj[prop];
     }
     return out;
+  }
+
+  /**
+   * @description Update the current object with values received.
+   * @public
+   * @param {object} obj The object with values to copy over.
+   */
+  update(obj) {
+    for (const prop of Object.keys(this)) {
+      if (prop === 'id') continue;
+      if (typeof this[prop] === 'function') continue;
+      if (typeof this[prop] !== typeof obj[prop]) continue;
+      this[prop] = obj[prop];
+    }
   }
 }
 module.exports = ShardStatus;

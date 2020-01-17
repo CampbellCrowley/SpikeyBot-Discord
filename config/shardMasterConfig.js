@@ -59,8 +59,8 @@ class ShardMasterConfig {
     this.tsPrecision = 1000 * 60 * 5;
 
     /**
-     * @description The maximum number of connection attempts within {@link
-     * connTime} before the IP address is blocked.
+     * @description The maximum number of connection attempts within
+     * {@link connTime} before the IP address is blocked.
      * @public
      * @default
      * @type {number}
@@ -74,6 +74,20 @@ class ShardMasterConfig {
      * @type {number}
      */
     this.connTime = 60000;
+
+    /**
+     * @description Host information for remote shards to use in order to be
+     * able to find us.
+     * @public
+     * @type {object}
+     * @default
+     */
+    this.remoteHost = {
+      host: 'kamino.spikeybot.com',
+      port: 443,
+      protocol: 'https:',
+      path: '/socket.io/',
+    };
 
     /**
      * @description Configuration specifying how detecting if shards are still
@@ -173,6 +187,15 @@ class HeartbeatConfig {
      * @default
      */
     this.expectRebootAfter = 125000;
+    /**
+     * @description The timeout after the master does not receive an update from
+     * the shard to assume the shard has died, and we can begin recovery
+     * procedueres (milliseconds).
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.assumeDeadAfter = 300000;
   }
 }
 
@@ -213,6 +236,37 @@ class MailConfig {
      * @type {string[]}
      */
     this.args = ['sysadmin@spikeybot.com', '-s Automated Sharding Update'];
+    /**
+     * @description Options to pass to the spawn function when calling the
+     * command.
+     * @see {@link
+     * https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options}
+     * @public
+     * @type {object}
+     * @default
+     */
+    this.spawnOpts = {env: null, timeout: 120000};
+    /**
+     * @description The message to send in the email when a shard config file
+     * was created successfully and has been attached to the emai.
+     * @public
+     * @type {string}
+     * @default
+     */
+    this.shardConfigCreateMessage =
+        'Hello!\n\nA config file for a new shard was generated at {date}.' +
+        '\n\nID: {id}\nPubKey: {pubkey}\n\nYours Truly,\nSpikeyBot Sharding ' +
+        'Master.';
+    /**
+     * @description The message to send in the email when a shard config file
+     * was created successfully and has been attached to the emai.
+     * @public
+     * @type {string}
+     * @default
+     */
+    this.shardConfigCreateFailMessage =
+        'Hello!\n\nA config file for a new shard failed to be generated at ' +
+        '{date}.\n\n{errors}\n\nYours Truly,\nSpikeyBot Sharding Master.';
   }
 }
 

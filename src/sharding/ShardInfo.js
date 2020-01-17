@@ -26,6 +26,14 @@ class ShardInfo {
      */
     this.id = id;
     /**
+     * @description The public key identifying this shard, used for signing and
+     * verification.
+     * @public
+     * @type {?string}
+     * @default
+     */
+    this.key = null;
+    /**
      * @description Timestamp of the last time the shard has been seen. This
      * will be 0 if the shard has never attempted to communicate with the
      * master.
@@ -94,6 +102,37 @@ class ShardInfo {
      * @default
      */
     this.currentShardCount = -1;
+    /**
+     * @description ShardStatus instance for this shard if it's been received.
+     * @public
+     * @type {?ShardingMaster.ShardStatus}
+     * @default
+     */
+    this.stats = null;
+  }
+
+  /**
+   * @description Get the version of this object that can be converted to a
+   * string. Additionally, this will only contain the data intended to be saved
+   * to disk. `stats` will be excluded, and is intended to be saved separately.
+   * @public
+   * @returns {object} Serializable version of ShardInfo.
+   */
+  get serializable() {
+    const all = Object.entries(Object.getOwnPropertyDescriptors(this));
+    const output = {};
+    for (const one of all) {
+      if (typeof one[1].value === 'function' || one[0].startsWith('_')) {
+        continue;
+      } else if (one[0] === 'stats') {
+        continue;
+      } else if (one[1].value && one[1].value.serializable) {
+        output[one[0]] = one[1].value.serializable;
+      } else {
+        output[one[0]] = one[1].value;
+      }
+    }
+    return output;
   }
 
   /**

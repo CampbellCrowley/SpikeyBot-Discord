@@ -323,7 +323,7 @@ boot up.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
-				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-52">line 52</a>
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-60">line 60</a>
 			</li>
 		</ul>
 	</dd>
@@ -405,7 +405,7 @@ created, and sent to a sysadmin.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
-				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-44">line 44</a>
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-52">line 52</a>
 			</li>
 		</ul>
 	</dd>
@@ -489,7 +489,7 @@ values, but any value less than 2 is semantically the identical.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
-				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-96">line 96</a>
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-104">line 104</a>
 			</li>
 		</ul>
 	</dd>
@@ -571,7 +571,7 @@ than 0 means the shard is currently shutdown.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
-				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-76">line 76</a>
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-84">line 84</a>
 			</li>
 		</ul>
 	</dd>
@@ -655,7 +655,7 @@ semantically the identical.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
-				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-86">line 86</a>
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-94">line 94</a>
 			</li>
 		</ul>
 	</dd>
@@ -737,7 +737,7 @@ less than 0 means the shard should be shutdown.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
-				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-68">line 68</a>
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-76">line 76</a>
 			</li>
 		</ul>
 	</dd>
@@ -838,6 +838,88 @@ less than 0 means the shard should be shutdown.
         
             
 <hr>
+<dt class="name" id="key">
+    <h4 id="key"><span class="type-signature">&lt;nullable> </span>key<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The public key identifying this shard, used for signing and
+verification.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-35">line 35</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
 <dt class="name" id="lastSeen">
     <h4 id="lastSeen"><span class="type-signature"></span>lastSeen<span class="type-signature"> :number</span></h4>
 
@@ -901,7 +983,160 @@ master.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
-				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-36">line 36</a>
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-44">line 44</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="serializable">
+    <h4 id="serializable"><span class="type-signature"></span>serializable<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Get the version of this object that can be converted to a
+string. Additionally, this will only contain the data intended to be saved
+to disk. `stats` will be excluded, and is intended to be saved separately.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-121">line 121</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="stats">
+    <h4 id="stats"><span class="type-signature">&lt;nullable> </span>stats<span class="type-signature"> :<a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        ShardStatus instance for this shard if it's been received.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-111">line 111</a>
 			</li>
 		</ul>
 	</dd>
@@ -983,7 +1218,7 @@ shut down.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
-				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-60">line 60</a>
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-68">line 68</a>
 			</li>
 		</ul>
 	</dd>
@@ -1161,7 +1396,7 @@ it may be passed here instead.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
-				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-124">line 124</a>
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-163">line 163</a>
 			</li>
 		</ul>
 	</dd>
@@ -1275,7 +1510,7 @@ the shard.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardInfo.js.html">src/sharding/ShardInfo.js</a>,
-				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-107">line 107</a>
+				 <a href="src_sharding_ShardInfo.js.html#sunlight-1-line-146">line 146</a>
 			</li>
 		</ul>
 	</dd>
@@ -1383,7 +1618,7 @@ should currently be configured.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Friday, January 17, 2020 1:32 PM (-08:00)
+		on Friday, January 17, 2020 3:59 PM (-08:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
