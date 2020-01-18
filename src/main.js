@@ -677,6 +677,7 @@ function Main() {
     self.command.removeListener('lookup');
     self.command.removeListener('togglebanmessages');
     self.command.removeListener('togglerigged');
+    self.command.removeListener('toggledad');
     self.command.removeListener('sendto');
     self.command.removeListener('thanks');
     self.command.removeListener('listcommands');
@@ -791,6 +792,7 @@ function Main() {
         '\\[ws\\] \\[connection\\] Sending a heartbeat|' +
         '\\[WS => Shard \\d+\\] Sending a heartbeat|' +
         '\\[WS => Shard \\d+\\] Heartbeat acknowledged|' +
+        '\\[WS => Shard \\d+\\] \\[HeartbeatTimer\\] Sending a heartbeat|' +
         '\\[WS => Manager\\] There are \\d+ unavailable guilds.|' +
         '\\[VOICE)');
     if (info.match(hbRegex)) {
