@@ -160,7 +160,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="src_web_fileServer.js.html">src/web/fileServer.js</a>,
-				 <a href="src_web_fileServer.js.html#sunlight-1-line-16">line 16</a>
+				 <a href="src_web_fileServer.js.html#sunlight-1-line-20">line 20</a>
 			</li>
 		</ul>
 	</dd>
@@ -1289,6 +1289,331 @@ before begin(), otherwise it is ignored.
             
 <hr>
 <dt>
+    <h4 class="name" id="_handler"><span class="type-signature">&lt;private> </span>_handler(req, res)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Handles all http requests.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">http.IncomingMessage</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The client's request.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">http.ServerResponse</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Our response to the client.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_web_fileServer.js.html">src/web/fileServer.js</a>,
+				 <a href="src_web_fileServer.js.html#sunlight-1-line-54">line 54</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_isPathAcceptable"><span class="type-signature">&lt;private> </span>_isPathAcceptable(file)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Check if given path to a file is allowed to be served to a
+client request.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>file</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The filename to check.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_web_fileServer.js.html">src/web/fileServer.js</a>,
+				 <a href="src_web_fileServer.js.html#sunlight-1-line-118">line 118</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    If the filename is allowed.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
     <h4 class="name" id="begin"><span class="type-signature"></span>begin(Discord, client, command, common, bot)</h4>
     
     
@@ -1944,7 +2269,7 @@ register command listeners.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="initialize"><span class="type-signature">&lt;abstract, protected> </span>initialize()</h4>
+    <h4 class="name" id="initialize"><span class="type-signature">&lt;protected> </span>initialize()</h4>
     
     
 </dt>
@@ -2509,7 +2834,7 @@ synchronous.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="shutdown"><span class="type-signature">&lt;abstract, protected> </span>shutdown()</h4>
+    <h4 class="name" id="shutdown"><span class="type-signature">&lt;protected> </span>shutdown()</h4>
     
     
 </dt>
@@ -2948,7 +3273,7 @@ doing such may risk putting the module into an uncontrollable state.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Friday, January 17, 2020 4:32 PM (-08:00)
+		on Friday, January 17, 2020 5:25 PM (-08:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

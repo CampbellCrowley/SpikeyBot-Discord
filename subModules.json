@@ -51,7 +51,8 @@
     "./web/hg.js",
     "./twitch.js",
     "./images.js",
-    "./memWatcher.js"
+    "./memWatcher.js",
+    "./web/fileServer.js"
   ],
   "release": [
     "./moderation.js",
