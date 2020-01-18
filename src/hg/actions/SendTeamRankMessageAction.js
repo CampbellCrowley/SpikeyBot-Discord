@@ -53,7 +53,7 @@ class SendTeamRankMessageAction extends ChannelAction {
           return `${prefix}\`${shortName}\``;
         });
         if (splitEmbeds) {
-          game.currentGame.teams.reverse().forEach((el) => {
+          game.currentGame.teams.forEach((el) => {
             teamRankEmbed.addField(
                 `${el.rank}) ${el.name}`,
                 statusList.splice(0, el.players.length)
@@ -93,18 +93,13 @@ class SendTeamRankMessageAction extends ChannelAction {
    * @param {HungryGames~GuildGame} game The game to sort.
    */
   _sortTeams(game) {
-    game.currentGame.teams.sort((a, b) => b.rank - a.rank);
+    game.currentGame.teams.sort((a, b) => a.rank - b.rank);
     game.currentGame.includedUsers.sort((a, b) => {
-      const aTeam = game.currentGame.teams.find((team) => {
-        return team.players.findIndex((player) => {
-          return player == a.id;
-        }) > -1;
-      });
-      const bTeam = game.currentGame.teams.find((team) => {
-        return team.players.findIndex((player) => {
-          return player == b.id;
-        }) > -1;
-      });
+      const aTeam = game.currentGame.teams.find(
+          (team) => team.players.find((p) => p == a.id));
+      const bTeam = game.currentGame.teams.find(
+          (team) => team.players.find((p) => p == b.id));
+
       if (!aTeam || !bTeam || aTeam.id == bTeam.id) {
         const aN = ((game.options.useNicknames && a.nickname) || a.name)
             .toLocaleLowerCase();
@@ -114,7 +109,7 @@ class SendTeamRankMessageAction extends ChannelAction {
         if (aN > bN) return 1;
         return 0;
       } else {
-        return aTeam.id - bTeam.id;
+        return aTeam.rank - bTeam.rank;
       }
     });
   }
