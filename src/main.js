@@ -846,8 +846,11 @@ function Main() {
    * @listens Discord~Client#guildCreate
    */
   function onGuildCreate(guild) {
-    self.log('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
-    if (guild.memberCount > 100) return;
+    const old = fs.existsSync(self.common.guildSaveDir + guild.id);
+    self.log(
+        'ADDED TO ' + (old ? 'OLD' : 'NEW') + ' GUILD: ' + guild.id + ': ' +
+        guild.name);
+    if (old || guild.memberCount > 100) return;
     let channel = null;
     let pos = -1;
     try {
