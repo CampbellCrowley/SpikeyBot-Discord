@@ -180,13 +180,16 @@ class HeartbeatConfig {
     this.requestRebootAfter = 120000;
     /**
      * @description The timeout after the shard does not receive an update from
-     * the master to reboot, as we may be able to assume the bot was intended to
-     * be shut down completely, and we have lost communication (milliseconds).
+     * the master to reboot. This is the threshold that once crossed, the master
+     * assumes the shard is rebooting or has otherwise lost connection, and
+     * stops sending reboot requests. The shard is not considered completely
+     * dead yet, and will not be replaced until after the {@link
+     * assumeDeadAfter} timeout.
      * @public
      * @type {number}
      * @default
      */
-    this.expectRebootAfter = 125000;
+    this.expectRebootAfter = 180000;
     /**
      * @description The timeout after the master does not receive an update from
      * the shard to assume the shard has died, and we can begin recovery

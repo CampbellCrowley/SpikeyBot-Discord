@@ -43,6 +43,14 @@ class ShardInfo {
      */
     this.lastSeen = 0;
     /**
+     * @description The last time at which a valid heartbeat was received from
+     * the shard indicating that it is still alive.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.lastHeartbeat = 0;
+    /**
      * @description The timestamp at which the information for this shard was
      * created, and sent to a sysadmin.
      * @public

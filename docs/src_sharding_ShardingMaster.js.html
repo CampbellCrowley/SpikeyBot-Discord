@@ -212,6 +212,32 @@ class ShardingMaster {
     this._loadMasterKeys();
 
     /**
+     * @description The timestamp at which the next heartbeat event is to fire.
+     * @private
+     * @type {number}
+     * @default
+     */
+    this._nextHeartbeatTime = Date.now();
+    /**
+     * @description The timestamp at which the heartbeat interval loop was most
+     * recently started. This is used when
+     * {@link ShardingMaster.ShardMasterConfig.HeartbeatConfig~disperse} is
+     * being used in order to only update one shard for each heartbeat event.
+     * @private
+     * @type {number}
+     * @default
+     */
+    this._heartbeatLoopStartTime = Date.now();
+
+    /**
+     * @description Timeout for heartbeat interval loop.
+     * @private
+     * @type {?number}
+     * @default
+     */
+    this._hbTimeout = null;
+
+    /**
      * @description History of recent connections ordered by oldest to latest.
      * Each index contains an array of length 2, storing the IP address and the
      * timestamp of a connection attempt. This is used to start ignoring an IP
@@ -223,7 +249,7 @@ class ShardingMaster {
     this._ipConnectHistory = [];
 
     /**
-     * Map of all currently connected sockets.
+     * Map of all currently connected sockets mapped by socket.id.
      *
      * @private
      * @type {object.&lt;Socket>}
@@ -461,20 +487,38 @@ class ShardingMaster {
           ' shards are available!');
     }
 
+    const hbConf = this._config.heartbeat;
+    const now = Date.now();
+
     const foundIds = [];
     correct.sort((a, b) => b.bootTime - a.bootTime);
     for (let i = 0; i &lt; correct.length; ++i) {
       const el = correct[i];
 
+      if (now - el.lastHeartbeat > hbConf.requestRebootAfter &amp;&amp;
+          now - el.lastHeartbeat &lt; hbConf.expectRebootAfter) {
+        common.logWarning(
+            'Shard has not responded for too long, enqueuing shutdown: ' +
+            el.id + ' ' + el.goalShardId);
+        const s = correct.splice(i, 1)[0];
+        i--;
+        configuring.push(s);
+        s.stopTime = now;
+        s.goalShardId = -1;
+        s.goalShardCount = -1;
+        continue;
+      }
+
       const match = foundIds.find(
           (f) => f.shardId === el.goalShardId &amp;&amp; f.count === el.goalShardCount);
       if (match) {
         common.logWarning(
-            'Found multiple shards configured the same way! Killing the ' +
-            'oldest one.');
+            'Found multiple shards configured the same way! ' +
+            'Enqueuing shutdown request: ' + el.id + ' ' + el.goalShardId);
         const s = correct.splice(i, 1)[0];
         i--;
         configuring.push(s);
+        s.stopTime = now;
         s.goalShardId = -1;
         s.goalShardCount = -1;
       } else {
@@ -490,12 +534,51 @@ class ShardingMaster {
 
       const s = incorrect.splice(0, 1)[0];
       configuring.push(s);
+      s.bootTime = now;
       s.goalShardId = el;
       s.goalShardCount = goal;
     });
 
-    // TODO: Send new configurations to shards if necessary. Ensure
-    // `this._config` is obeyed.
+    if (now >= this._nextHeartbeatTime) {
+      // Send all shutdown requests asap, as they do not have their own
+      // timeslot.
+      for (let i = 0; i &lt; configuring.length; ++i) {
+        if (configuring[i].goalShardId >= 0) continue;
+        this._sendHeartbeatRequest(configuring[i]);
+        configuring.splice(i, 1);
+        i--;
+      }
+
+      if (now - hbConf.interval > this._heartbeatLoopStartTime) {
+        this._heartbeatLoopStartTime += hbConf.interval;
+      }
+
+      if (hbConf.updateStyle === 'pull') {
+        if (hbConf.disperse) {
+          const updateId = Math.floor(
+              ((now - this._heartbeatLoopStartTime) / hbConf.interval) * goal);
+
+          const delta = Math.floor(hbConf.interval / goal);
+          this._nextHeartbeatTime += delta;
+
+          this._sendHeartbeatRequest(updateId);
+        } else {
+          this._nextHeartbeatTime += hbConf.interval;
+
+          Object.keys(this._knownUsers).forEach((el) => {
+            if (el.goalShardId &lt; 0) return;
+            this._sendHeartbeatRequest(el);
+          });
+        }
+      } else {
+        this._nextHeartbeatTime += hbConf.interval;
+      }
+
+      if (this._hbTimeout) clearTimeout(this._hbTimeout);
+      this._hbTimeout = setTimeout(
+          () => this._refreshShardStatus(),
+          Date.now() - this._nextHeartbeatTime);
+    }
   }
   /**
    * @description Fetch the current goal number of shards we are attempting to
@@ -588,7 +671,8 @@ class ShardingMaster {
     return Object.values(this._knownUsers)
         .filter(
             (el) => el.goalShardCount === goal &amp;&amp;
-                el.lastSeen > now - this._config.heartbeat.assumeDeadAfter);
+                el.lastHeartbeat >
+                    now - this._config.heartbeat.assumeDeadAfter);
   }
   /**
    * @description Get references to all shards currently NOT configured for the
@@ -824,7 +908,78 @@ class ShardingMaster {
         }
         user.stats.update(status);
       }
-      // TODO: Update StatusInfo current shard configuration.
+      if (user.stats.goalShardId != user.goalShardId) {
+        common.logWarning(
+            'Shard goal state is incorrect! ' + user.id + ' Received: ' +
+            user.stats.goalShardId + ', expected: ' + user.goalShardId);
+      }
+      if (this._config.heartbeat.useMessageStats) {
+        if (user.stats.messageCountDelta > 0) {
+          user.lastHeartbeat = user.lastSeen;
+        }
+      } else {
+        user.lastHeartbeat = user.lastSeen;
+      }
+
+      user.currentShardId = user.stats.currentShardId;
+      user.currentShardCount = user.stats.currentShardCount;
+
+      if (this._config.heartbeat.updateStyle === 'push') {
+        this._sendHeartbeatRequest(user);
+      }
+      // TODO: Store history of shard status for historic purposes.
+    });
+
+    socket.on('broadcastEval', (script, cb) => {
+      this._broadcastToShards(script, cb);
+    });
+  }
+
+  /**
+   * @description Broadcast a message to all connected shards.
+   * @private
+   * @param {...*} msg The message arguments to send. Passed directly to emit
+   * function. Last argument must be a callback function. Callback once all
+   * shards have replied. First argument is optional error message, second will
+   * be an array of responses, indexed by shard ID.
+   */
+  _broadcastToShards(...msg) {
+    const cb = msg[msg.length - 1];
+    const sockets = Object.entries(this._shardSockets);
+    const num = sockets.length;
+    const out = new Array(num);
+    let numDone = 0;
+    let err = null;
+    /**
+     * @description Fired for each compeleted response from a shard. Fires the
+     * callback once all respses have been received, or an error has been
+     * raised.
+     * @private
+     */
+    function done() {
+      numDone++;
+      if (err &amp;&amp; numDone &lt;= num) {
+        cb(err);
+        numDone = num + 1;
+      } else if (numDone == num) {
+        cb(null, out);
+      }
+    }
+    sockets.forEach((ent) => {
+      const id = this._knownUsers[ent[0]].currentShardId;
+      if (id &lt; 0) {
+        done();
+        return;
+      }
+      ent[1].emit('evalRequest', msg, (error, res) => {
+        if (error) {
+          err = error;
+          done();
+          return;
+        }
+        out[id] = res;
+        done();
+      });
     });
   }
 
@@ -884,6 +1039,7 @@ class ShardingMaster {
         host: this._config.remoteHost,
         pubKey: pub,
         privKey: priv,
+        masterPubKey: this._pubKey,
         id: made.id,
         signAlgorithm: signAlgorithm,
       };
@@ -999,6 +1155,44 @@ class ShardingMaster {
   }
 
   /**
+   * @description Format and send the request for a shard heartbeat.
+   * @private
+   * @param {number|ShardingMaster.ShardInfo} user Either the goal shard ID, or
+   * the shard user information.
+   */
+  _sendHeartbeatRequest(user) {
+    let updating;
+    if (typeof user === 'number' &amp;&amp; !isNaN(user)) {
+      updating = this._getShardById(user);
+    } else {
+      updating = user;
+    }
+    if (!updating || !updating.id) {
+      const num = typeof user === 'number' ? user : (user &amp;&amp; user.goalShardId);
+      common.error('Unable to find user with goal shard ID: ' + num);
+      return;
+    }
+    const socket = this._shardSockets[updating.id];
+    if (!socket) {
+      common.logWarning(
+          'Failed to send request for heartbeat to shard ' + updating.id);
+    } else {
+      const req = updating.request();
+      req.config = {
+        botName: this._config.botName,
+        heartbeat: {
+          updateStyle: this._config.heartbeat.updateStyle,
+          interval: this._config.heartbeat.interval,
+          expectRebootAfter: this._config.heartbeat.expectRebootAfter,
+          assumeDeadAfter: this._config.heartbeat.assumeDeadAfter,
+        },
+      };
+      socket.emit('update', req);
+      common.logDebug('Sent heartbeat request to ' + updating.id);
+    }
+  }
+
+  /**
    * @description Server has encountered an error, and must close.
    * @private
    * @this bound
@@ -1023,6 +1217,7 @@ class ShardingMaster {
    * @public
    */
   exit() {
+    if (this._hbTimeout) clearTimeout(this._hbTimeout);
     if (this._io) this._io.close();
     if (this._app) this._app.close();
     fs.unwatchFile(usersFile);
@@ -1090,7 +1285,7 @@ module.exports = ShardingMaster;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Friday, January 17, 2020 5:29 PM (-08:00)
+		on Sunday, January 19, 2020 4:21 PM (-08:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

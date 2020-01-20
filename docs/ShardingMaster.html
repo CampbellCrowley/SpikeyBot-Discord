@@ -434,7 +434,7 @@ connections.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-154">line 154</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-180">line 180</a>
 			</li>
 		</ul>
 	</dd>
@@ -698,6 +698,171 @@ request.
         
             
 <hr>
+<dt class="name" id="_hbTimeout">
+    <h4 id="_hbTimeout"><span class="type-signature">&lt;private, nullable> </span>_hbTimeout<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Timeout for heartbeat interval loop.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-145">line 145</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_heartbeatLoopStartTime">
+    <h4 id="_heartbeatLoopStartTime"><span class="type-signature">&lt;private> </span>_heartbeatLoopStartTime<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The timestamp at which the heartbeat interval loop was most
+recently started. This is used when
+ShardingMaster.ShardMasterConfig.HeartbeatConfig~disperse is
+being used in order to only update one shard for each heartbeat event.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-137">line 137</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
 <dt class="name" id="_io">
     <h4 id="_io"><span class="type-signature">&lt;private> </span>_io<span class="type-signature"> :socketIo.Server</span></h4>
 
@@ -759,7 +924,7 @@ request.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-162">line 162</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-188">line 188</a>
 			</li>
 		</ul>
 	</dd>
@@ -850,7 +1015,7 @@ address if too many connection attempts are made within a short time.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-130">line 130</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-156">line 156</a>
 			</li>
 		</ul>
 	</dd>
@@ -933,6 +1098,87 @@ some information about them including their public key.
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
 				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-93">line 93</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_nextHeartbeatTime">
+    <h4 id="_nextHeartbeatTime"><span class="type-signature">&lt;private> </span>_nextHeartbeatTime<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The timestamp at which the next heartbeat event is to fire.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-127">line 127</a>
 			</li>
 		</ul>
 	</dd>
@@ -1274,7 +1520,7 @@ shard names.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-146">line 146</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-172">line 172</a>
 			</li>
 		</ul>
 	</dd>
@@ -1302,7 +1548,7 @@ shard names.
 <dd>
     
     <div class="description">
-        Map of all currently connected sockets.
+        Map of all currently connected sockets mapped by socket.id.
     </div>
     
 
@@ -1355,7 +1601,7 @@ shard names.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-138">line 138</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-164">line 164</a>
 			</li>
 		</ul>
 	</dd>
@@ -1559,7 +1805,7 @@ shard names.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-886">line 886</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1042">line 1042</a>
 			</li>
 		</ul>
 	</dd>
@@ -1776,7 +2022,7 @@ additional information to sysadmins.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-826">line 826</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-982">line 982</a>
 			</li>
 		</ul>
 	</dd>
@@ -1966,7 +2212,7 @@ why creation failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-854">line 854</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1010">line 1010</a>
 			</li>
 		</ul>
 	</dd>
@@ -2107,7 +2353,7 @@ private key.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-751">line 751</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-906">line 906</a>
 			</li>
 		</ul>
 	</dd>
@@ -2122,6 +2368,159 @@ private key.</td>
 			<li><a href="https://nodejs.org/api/crypto.html#crypto_crypto_generatekeypair_type_options_callback">https://nodejs.org/api/crypto.html#crypto_crypto_generatekeypair_type_options_callback</a></li>
 			</ul>
 	</dd>
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_broadcastToShards"><span class="type-signature">&lt;private> </span>_broadcastToShards(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Broadcast a message to all connected shards.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The message arguments to send. Passed directly to emit
+function. Last argument must be a callback function. Callback once all
+shards have replied. First argument is optional error message, second will
+be an array of responses, indexed by shard ID.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-853">line 853</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
 	
 
 	
@@ -2202,7 +2601,7 @@ private key.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-760">line 760</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-915">line 915</a>
 			</li>
 		</ul>
 	</dd>
@@ -2377,7 +2776,7 @@ given goal number of shards, and are connected and controllable.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-490">line 490</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-573">line 573</a>
 			</li>
 		</ul>
 	</dd>
@@ -2552,7 +2951,7 @@ and don't need updating.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-526">line 526</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-610">line 610</a>
 			</li>
 		</ul>
 	</dd>
@@ -2727,7 +3126,7 @@ given goal number of shards, but ARE connected and controllable.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-509">line 509</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-593">line 593</a>
 			</li>
 		</ul>
 	</dd>
@@ -2890,7 +3289,7 @@ correctly and DO need updating.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-553">line 553</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-637">line 637</a>
 			</li>
 		</ul>
 	</dd>
@@ -3079,7 +3478,7 @@ response.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-567">line 567</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-651">line 651</a>
 			</li>
 		</ul>
 	</dd>
@@ -3168,7 +3567,7 @@ generated, and the newly generated keys will be used.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-173">line 173</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-199">line 199</a>
 			</li>
 		</ul>
 	</dd>
@@ -3258,7 +3657,7 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-345">line 345</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-371">line 371</a>
 			</li>
 		</ul>
 	</dd>
@@ -3346,7 +3745,149 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-283">line 283</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-309">line 309</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_sendHeartbeatRequest"><span class="type-signature">&lt;private> </span>_sendHeartbeatRequest(user)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Format and send the request for a shard heartbeat.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type"><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Either the goal shard ID, or
+the shard user information.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1070">line 1070</a>
 			</li>
 		</ul>
 	</dd>
@@ -3487,7 +4028,7 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-914">line 914</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1108">line 1108</a>
 			</li>
 		</ul>
 	</dd>
@@ -3628,7 +4169,7 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-593">line 593</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-677">line 677</a>
 			</li>
 		</ul>
 	</dd>
@@ -3716,7 +4257,7 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-327">line 327</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-353">line 353</a>
 			</li>
 		</ul>
 	</dd>
@@ -3804,7 +4345,7 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-310">line 310</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-336">line 336</a>
 			</li>
 		</ul>
 	</dd>
@@ -3892,7 +4433,7 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-255">line 255</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-281">line 281</a>
 			</li>
 		</ul>
 	</dd>
@@ -3980,7 +4521,7 @@ configuration.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-932">line 932</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1126">line 1126</a>
 			</li>
 		</ul>
 	</dd>
@@ -4071,7 +4612,7 @@ sysadmins.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-777">line 777</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-932">line 932</a>
 			</li>
 		</ul>
 	</dd>
@@ -4222,7 +4763,7 @@ the goal number of shards.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-477">line 477</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-560">line 560</a>
 			</li>
 		</ul>
 	</dd>
@@ -4335,7 +4876,7 @@ are controlling.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-455">line 455</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-538">line 538</a>
 			</li>
 		</ul>
 	</dd>
@@ -4449,7 +4990,7 @@ unavailable.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-415">line 415</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-498">line 498</a>
 			</li>
 		</ul>
 	</dd>
@@ -4563,7 +5104,7 @@ may talk to us.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-465">line 465</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-548">line 548</a>
 			</li>
 		</ul>
 	</dd>
@@ -4675,7 +5216,7 @@ may talk to us.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-582">line 582</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-666">line 666</a>
 			</li>
 		</ul>
 	</dd>
@@ -4782,7 +5323,7 @@ may talk to us.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Friday, January 17, 2020 5:29 PM (-08:00)
+		on Sunday, January 19, 2020 4:21 PM (-08:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
