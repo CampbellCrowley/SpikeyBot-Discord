@@ -4,7 +4,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const Discord = require('discord.js');
 const crypto = require('crypto');
-const common = require('./common.js');
+const common = require('../common.js');
 const path = require('path');
 const fs = require('fs');
 const spawn = require('child_process').spawn;
@@ -851,7 +851,7 @@ class ShardingMaster {
    * be an array of responses, indexed by shard ID.
    */
   _broadcastToShards(...msg) {
-    const cb = msg[msg.length - 1];
+    const cb = msg.splice(msg.length - 1, 1)[0];
     const sockets = Object.entries(this._shardSockets);
     const num = sockets.length;
     const out = new Array(num);
@@ -951,7 +951,7 @@ class ShardingMaster {
         signAlgorithm: signAlgorithm,
       };
       const dir = shardDir;
-      const file = `${shardDir}${made.id}_config.json`;
+      const file = `${shardDir}shard_${made.id}_config.json`;
       const str = JSON.stringify(config, null, 2);
       common.mkAndWrite(file, dir, str, (err) => {
         if (err) {
@@ -1087,6 +1087,8 @@ class ShardingMaster {
       const req = updating.request();
       req.config = {
         botName: this._config.botName,
+        nodeArgs: this._config.shardNodeLaunchArgs,
+        botArgs: this._config.shardBotLaunchArgs,
         heartbeat: {
           updateStyle: this._config.heartbeat.updateStyle,
           interval: this._config.heartbeat.interval,

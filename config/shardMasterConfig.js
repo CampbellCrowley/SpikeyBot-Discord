@@ -49,6 +49,22 @@ class ShardMasterConfig {
      */
     this.botName = 'release';
     /**
+     * @description CLI args to pass to NodeJS when spawning a shard.
+     * @public
+     * @type {string[]}
+     * @default
+     */
+    this.shardNodeLaunchArgs =
+        ['--experimental-worker', '--max-old-space-size=2048'];
+    /**
+     * @description Arguments to pass to the bot's scripts when the shard is
+     * started.
+     * @public
+     * @type {string[]}
+     * @default
+     */
+    this.shardBotLaunchArgs = [];
+    /**
      * @description The largest acceptable difference in timestamp values
      * received from shards in milliseconds.
      * @public

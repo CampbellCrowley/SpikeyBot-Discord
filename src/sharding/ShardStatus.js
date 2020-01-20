@@ -47,7 +47,7 @@ class ShardStatus {
      * @type {number}
      * @default
      */
-    this.goalShardId = 0;
+    this.goalShardId = -1;
     /**
      * @description The current Discord shard ID of this shard. Similar to
      * {@link ShardingMaster.ShardInfo~currentShardId}, and will in most cases
@@ -56,21 +56,21 @@ class ShardStatus {
      * @type {number}
      * @default
      */
-    this.currentShardId = 0;
+    this.currentShardId = -1;
     /**
      * @description The goal Discord shard count this is configured for.
      * @public
      * @type {number}
      * @default
      */
-    this.goalShardCount = 0;
+    this.goalShardCount = -1;
     /**
      * @description The current Discord shard count this is configured for.
      * @public
      * @type {number}
      * @default
      */
-    this.currentShardCount = 0;
+    this.currentShardCount = -1;
     /**
      * @description The timestamp at which this status was generated. This
      * defaults to `Date.now()`, but is expected to be overridden to a more

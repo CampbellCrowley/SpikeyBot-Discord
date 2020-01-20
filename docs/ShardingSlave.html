@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: StatManager</title>
+	<title>SpikeyBot-Discord Class: ShardingSlave</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,15 +86,13 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: StatManager</h1>
+	<h1 class="page-title">Class: ShardingSlave</h1>
 <section>
 
 <header>
     
         <h2>
-            <span class="ancestors"><a href="HungryGames.html">HungryGames</a>~</span>
-        
-        StatManager
+        ShardingSlave
         </h2>
         
     
@@ -107,7 +105,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="StatManager"><span class="type-signature"></span>new StatManager(game)</h4>
+    <h4 class="name" id="ShardingSlave"><span class="type-signature"></span>new ShardingSlave()</h4>
     
     
 </dt>
@@ -115,7 +113,8 @@
 
     
     <div class="description">
-        Constructor.
+        Starts the slave, and attempts to connect to the master
+immediately. Throws errors if setup is incorrect.
     </div>
     
 
@@ -124,56 +123,6 @@
     
 
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>game</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Parent game.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
     
 
     
@@ -211,8 +160,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_hg_StatManager.js.html">src/hg/StatManager.js</a>,
-				 <a href="src_hg_StatManager.js.html#sunlight-1-line-15">line 15</a>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-28">line 28</a>
 			</li>
 		</ul>
 	</dd>
@@ -260,15 +209,15 @@
         <dl>
             
 <hr>
-<dt class="name" id="game">
-    <h4 id="game"><span class="type-signature">&lt;constant> </span>game<span class="type-signature"> :<a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span></h4>
+<dt class="name" id="_config">
+    <h4 id="_config"><span class="type-signature">&lt;private, constant> </span>_config<span class="type-signature"> :object</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Parent game to reference by default.
+        Parsed config file from disk.
     </div>
     
 
@@ -277,7 +226,7 @@
         <ul>
             <li>
                 
-<span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
+<span class="param-type">object</span>
 
 
 
@@ -320,8 +269,497 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_hg_StatManager.js.html">src/hg/StatManager.js</a>,
-				 <a href="src_hg_StatManager.js.html#sunlight-1-line-22">line 22</a>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-43">line 43</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_privKey">
+    <h4 id="_privKey"><span class="type-signature">&lt;private, constant> </span>_privKey<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The private key identifying this shard.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-73">line 73</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_settings">
+    <h4 id="_settings"><span class="type-signature">&lt;private, nullable> </span>_settings<span class="type-signature"> :object</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The settings the master has told us to operate with. This
+includes the botName, heartbeat settings, as well as shard ID and count.
+Null until a connection is established.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-51">line 51</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_socket">
+    <h4 id="_socket"><span class="type-signature">&lt;private, constant> </span>_socket<span class="type-signature"> :socketIo.Socket</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The socket.io socket used to communicate with the master.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">socketIo.Socket</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-96">line 96</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_status">
+    <h4 id="_status"><span class="type-signature">&lt;private> </span>_status<span class="type-signature"> :<a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current status information about this shard. This is
+sent to the master as a heartbeat.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-81">line 81</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="id">
+    <h4 id="id"><span class="type-signature">&lt;constant> </span>id<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        This slave's ID/Name.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-59">line 59</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="pubKey">
+    <h4 id="pubKey"><span class="type-signature">&lt;constant> </span>pubKey<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The public key of this shard.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-66">line 66</a>
 			</li>
 		</ul>
 	</dd>
@@ -348,7 +786,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="createGroup"><span class="type-signature"></span>createGroup( [metadata] [, cb])</h4>
+    <h4 class="name" id="_childMessage"><span class="type-signature">&lt;private> </span>_childMessage(message)</h4>
     
     
 </dt>
@@ -356,7 +794,7 @@
 
     
     <div class="description">
-        Create a new stat group.
+        Handle a message from the child.
     </div>
     
 
@@ -379,8 +817,6 @@
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
         
 
@@ -393,13 +829,13 @@
 
         <tr>
             
-                <td class="name"><code>metadata</code></td>
+                <td class="name"><code>message</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="global.html#HGStatMetadata">HGStatMetadata</a></span>
+<span class="param-type">object</span>
 
 
 
@@ -407,55 +843,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last">Metadata to store with stat group.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Callback function once completed. Only argument is
-the created group.</td>
+            <td class="description last">A parsed JSON object or primitive value.</td>
         </tr>
 
     
@@ -499,8 +890,8 @@ the created group.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_hg_StatManager.js.html">src/hg/StatManager.js</a>,
-				 <a href="src_hg_StatManager.js.html#sunlight-1-line-144">line 144</a>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-204">line 204</a>
 			</li>
 		</ul>
 	</dd>
@@ -533,7 +924,7 @@ the created group.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="fetchGroup"><span class="type-signature"></span>fetchGroup( [id], cb)</h4>
+    <h4 class="name" id="_evalRequest"><span class="type-signature">&lt;private> </span>_evalRequest(args, cb)</h4>
     
     
 </dt>
@@ -541,7 +932,7 @@ the created group.</td>
 
     
     <div class="description">
-        Fetch a {@HungryGames~StatGroup} reference.
+        Master has requested shard evaluates a script.
     </div>
     
 
@@ -564,11 +955,7 @@ the created group.</td>
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -580,13 +967,13 @@ the created group.</td>
 
         <tr>
             
-                <td class="name"><code>id</code></td>
+                <td class="name"><code>args</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Array.&lt;*></span>
 
 
 
@@ -594,26 +981,10 @@ the created group.</td>
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    'global'
-                
-                </td>
-            
 
-            <td class="description last">The ID of the group to fetch.</td>
+            <td class="description last">Array of arguments from broadcast.</td>
         </tr>
 
     
@@ -634,23 +1005,11 @@ the created group.</td>
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">Callback with optional error argument, otherwise
-second argument is the group reference.</td>
+            <td class="description last">Callback function with optional error, otherwise
+success message is second parameter.</td>
         </tr>
 
     
@@ -694,8 +1053,8 @@ second argument is the group reference.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_hg_StatManager.js.html">src/hg/StatManager.js</a>,
-				 <a href="src_hg_StatManager.js.html#sunlight-1-line-120">line 120</a>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-127">line 127</a>
 			</li>
 		</ul>
 	</dd>
@@ -728,7 +1087,7 @@ second argument is the group reference.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="fetchGroupList"><span class="type-signature"></span>fetchGroupList(cb)</h4>
+    <h4 class="name" id="_generateHeartbeat"><span class="type-signature">&lt;private> </span>_generateHeartbeat()</h4>
     
     
 </dt>
@@ -736,7 +1095,361 @@ second argument is the group reference.</td>
 
     
     <div class="description">
-        Fetch IDs of all created groups.
+        Fetch stats necessary for heartbeat message to the master,
+then sends the message.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-215">line 215</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_socketConnected"><span class="type-signature">&lt;private> </span>_socketConnected()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Socket connected event handler.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-110">line 110</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_socketDisconnected"><span class="type-signature">&lt;private> </span>_socketDisconnected()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Socket disconnected event handler.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-117">line 117</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_spawnChild"><span class="type-signature">&lt;private> </span>_spawnChild()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Spawn the child process with the current settings available.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-169">line 169</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_updateRequest"><span class="type-signature">&lt;private> </span>_updateRequest(settings)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Master has sent a status update, and potentially expects a
+response.
     </div>
     
 
@@ -771,13 +1484,13 @@ second argument is the group reference.</td>
 
         <tr>
             
-                <td class="name"><code>cb</code></td>
+                <td class="name"><code>settings</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">function</span>
+<span class="param-type">object</span>
 
 
 
@@ -788,8 +1501,7 @@ second argument is the group reference.</td>
 
             
 
-            <td class="description last">Callback with optional error argument, otherwise
-second argument is array of IDs as strings.</td>
+            <td class="description last">Current settings for operation.</td>
         </tr>
 
     
@@ -833,8 +1545,8 @@ second argument is array of IDs as strings.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_hg_StatManager.js.html">src/hg/StatManager.js</a>,
-				 <a href="src_hg_StatManager.js.html#sunlight-1-line-159">line 159</a>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-141">line 141</a>
 			</li>
 		</ul>
 	</dd>
@@ -867,7 +1579,7 @@ second argument is array of IDs as strings.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="parseDay"><span class="type-signature"></span>parseDay()</h4>
+    <h4 class="name" id="exit"><span class="type-signature"></span>exit()</h4>
     
     
 </dt>
@@ -875,7 +1587,7 @@ second argument is array of IDs as strings.</td>
 
     
     <div class="description">
-        Update stats based on the current day data of the given game.
+        Cleanup and fully shutdown gracefully.
     </div>
     
 
@@ -921,8 +1633,8 @@ second argument is array of IDs as strings.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_hg_StatManager.js.html">src/hg/StatManager.js</a>,
-				 <a href="src_hg_StatManager.js.html#sunlight-1-line-29">line 29</a>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-223">line 223</a>
 			</li>
 		</ul>
 	</dd>
