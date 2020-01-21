@@ -3,9 +3,10 @@
 const socketIo = require('socket.io-client');
 const common = require('../common.js');
 const crypto = require('crypto');
-const spawn = require('spawn');
+const {fork, exec} = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const auth = require('../../auth.js');
 
 const ShardingMaster = require('./ShardingMaster.js');
 
@@ -80,6 +81,23 @@ class ShardingSlave {
      */
     this._status = new ShardingMaster.ShardStatus(this.id);
 
+    /**
+     * @description Timeout for respawn request.
+     * @private
+     * @type {?number}
+     * @default
+     */
+    this._respawnTimeout = null;
+
+    /**
+     * @description Ongoing promises for calls to
+     * {@link external:Discord}'s Shard#eval, mapped by the script they were
+     * called with.
+     * @type {Map<string, Promise>}
+     * @private
+     */
+    this._evals = new Map();
+
     const host = this._config.host;
     const now = Date.now();
     const sign = crypto.createSign(this._config.signAlgorithm);
@@ -99,8 +117,9 @@ class ShardingSlave {
     });
     this._socket.on('connect', () => this._socketConnected());
     this._socket.on('disconnect', () => this._socketDisconnected());
-    this._socket.on('evalRequest', () => this._evalRequest());
+    this._socket.on('evalRequest', (...args) => this._evalRequest(...args));
     this._socket.on('update', () => this._updateRequest());
+    this._socket.on('respawn', (...args) => this._respawnChild(...args));
   }
 
   /**
@@ -120,17 +139,63 @@ class ShardingSlave {
   /**
    * @description Master has requested shard evaluates a script.
    * @private
-   * @param {Array.<*>} args Array of arguments from broadcast.
+   * @param {string} script Script to evaluate on the shard.
    * @param {Function} cb Callback function with optional error, otherwise
    * success message is second parameter.
    */
-  _evalRequest(args, cb) {
+  _evalRequest(script, cb) {
     if (!this._child) {
       cb('Not Running');
       return;
     }
-    cb('Not Implemented');
-    // TODO: Implement IPC for eval request and response.
+    if (this._evals.has(script)) {
+      this._evals.get(script)
+          .then((res) => cb(null, res))
+          .catch((err) => cb(err));
+      return;
+    }
+    const promise = new Promise((resolve, reject) => {
+      const listener = (message) => {
+        if (!message || message._eval !== script) return;
+        this._child.removeListener('message', listener);
+        this._evals.delete(script);
+        if (!message._error) {
+          resolve(message._result);
+        } else {
+          reject(message._error);
+        }
+      };
+
+      this._child.on('message', listener);
+
+      this._child.send({_eval: script}, (err) => {
+        if (!err) return;
+        this._child.removeListener('message', listener);
+        this._evals.delete(script);
+        reject(err);
+      });
+    });
+    this._evals.set(script, promise);
+    promise.then((res) => cb(null, res)).catch((err) => cb(err));
+  }
+  /**
+   * @description Trigger the child process to be killed and restarted.
+   * @private
+   * @param {number} [delay] Time to wait before actually respawning in
+   * milliseconds.
+   */
+  _respawnChild(delay) {
+    if (!this._respawnTimeout && delay) {
+      this._respawnTimeout = setTimeout(() => this._respawnChild(), delay);
+      return;
+    }
+    clearTimeout(this._respawnTimeout);
+    if (this._child) {
+      this._child.kill('SIGTERM');
+      this._status.stopTime = Date.now();
+    } else if (this._status.goalShardId >= 0) {
+      this._spawnChild();
+    }
   }
   /**
    * @description Master has sent a status update, and potentially expects a
@@ -148,9 +213,11 @@ class ShardingSlave {
 
     if (s.currentShardId != s.goalShardId ||
         s.currentShardCount != s.goalShardCount) {
-      if (s.currentShardId >= 0) {
-        this._child.kill('SIGTERM');
-        s.stopTime = Date.now();
+      if (s.goalShardId < -1) {
+        this.exit();
+        return;
+      } else if (s.currentShardId >= 0) {
+        this._respawnChild();
       } else {
         this._spawnChild();
       }
@@ -169,31 +236,60 @@ class ShardingSlave {
   _spawnChild() {
     if (this._status.goalShardId < 0) return;
     common.log('Spawning child shard #' + this._status.goalShardId);
-    this._child = spawn(
-        'node',
-        [
-          ...(this._settings.nodeArgs || []),
-          'src/SpikeyBot.js',
-          `--shardid=${this._status.goalShardId}`,
-          ...(this._settings.botArgs || []),
-        ],
-        {
-          cwd: botCWD,
-          detached: false,
-        });
-    this._child.on('error', (err) => {
-      this._child = null;
-      common.error('Failed to spawn child process!');
-      console.error(err);
-      this._status.goalShardId = -1;
-      this._status.goalShardCount = -1;
+    this._status.reset();
+    const botFullName = this._settings.botName;
+    const botName =
+        ['release', 'dev'].includes(botFullName) ? null : botFullName;
+    const env = Object.assign({}, process.env, {
+      SHARDING_MANAGER: true,
+      SHARDS: this._status.goalShardId,
+      SHARD_COUNT: this._status.goalShardCount,
+      DISCORD_TOKEN: auth[botFullName],
     });
-    this._child.on('exit', (code, signal) => {
-      common.log('Child exited with code ' + code + ' (' + signal + ')');
-      this._child = null;
-      if (this._status.goalShardId >= 0) this._spawnChild();
+    if (botName) {
+      const index = this._settings.botArgs.findIndex(
+          (el) => el.match(/--botname=(\w+)$/));
+      if (index >= 0) {
+        this._settings.botArgs[index] = `--botname=${botName}`;
+      } else {
+        this._settings.botArgs.push(`--botname=${botName}`);
+      }
+    }
+    this._child = fork('src/SpikeyBot.js', this._settings.botArgs || [], {
+      execArgv: this._settings.nodeArgs || [],
+      env: env,
+      cwd: botCWD,
+      detached: false,
+      stdio: 'inherit',
     });
+    this._child.on('error', (...args) => this._handleError(...args));
+    this._child.on('exit', (...args) => this._handleExit(...args));
     this._child.on('message', (...args) => this._childMessage(...args));
+    this._status.startTime = Date.now();
+  }
+
+  /**
+   * @description Handle an error during spawning of child.
+   * @private
+   * @param {Error} err Error emitted by EventEmitter.
+   */
+  _handleError(err) {
+    this._child = null;
+    common.error('Failed to fork child process!');
+    console.error(err);
+    this._status.goalShardId = -1;
+    this._status.goalShardCount = -1;
+  }
+  /**
+   * @description Handle the child processes exiting.
+   * @private
+   * @param {number} code Process exit code.
+   * @param {string} signal Process kill signal.
+   */
+  _handleExit(code, signal) {
+    common.log('Child exited with code ' + code + ' (' + signal + ')');
+    this._child = null;
+    if (this._status.goalShardId >= 0) this._spawnChild();
   }
 
   /**
@@ -202,9 +298,72 @@ class ShardingSlave {
    * @param {object} message A parsed JSON object or primitive value.
    */
   _childMessage(message) {
-    console.log(message);
-    // TODO: Handle messages from child. These will most commonly be responses
-    // to eval requests.
+    if (message) {
+      if (message._ready) {
+        // Shard became ready.
+        return;
+      } else if (message._disconnect) {
+        // Shard disconnected.
+        return;
+      } else if (message._reconnecting) {
+        // Shard attempting to reconnect.
+        return;
+      } else if (message._sFetchProp) {
+        // Shard is requesting a property fetch. I don't use this so I haven't
+        // bothered to implement it.
+        return;
+      } else if (message._sEval) {
+        this.broadcastEval(message._sEval, (err, res) => {
+          if (err) {
+            this._child.send({_sEval: message._sEval, _error: err});
+          } else {
+            this._child.send({_sEval: message._sEval, _result: res});
+          }
+        });
+        return;
+      } else if (message._sRespawnAll) {
+        this.respawnAll(() => {});
+        return;
+      }
+    }
+    common.logDebug(`Shard Message: ${JSON.stringify(message)}`);
+  }
+
+  /**
+   * @description Fire a broadcast to all shards requesting eval of given
+   * script.
+   * @see {@link ShardingMaster~_broadcastToShards}
+   * @public
+   * @param {string} script The script to evaluate.
+   * @param {Function} cb Callback once all shards have completed or there was
+   * an error. First argument is optional error, second will otherwise be array
+   * of responses indexed by shard IDs.
+   */
+  broadcastEval(script, cb) {
+    if (!this._socket.connected) {
+      common.logWarning(
+          'Requested eval broadcast while disconnected from master!');
+      cb('Disconnected from master!');
+      // TODO: Resend this request once reconnected instead of failing.
+    } else {
+      this._socket.emit('broadcastEval', script, cb);
+    }
+  }
+  /**
+   * @description Kills all running shards and respawns them.
+   * @see {@link ShardingMaster.respawnAll}
+   * @param {Function} [cb] Callback once all shards have been rebooted or an
+   * error has occurred.
+   */
+  respawnAll(cb) {
+    if (!this._socket.connected) {
+      common.logWarning(
+          'Requested Respawn All while disconnected from master!');
+      cb('Disconnected from master!');
+      // TODO: Resend this request once reconnected instead of failing.
+    } else {
+      this._socket.emit('respawnAll', cb);
+    }
   }
 
   /**
@@ -213,7 +372,108 @@ class ShardingSlave {
    * @private
    */
   _generateHeartbeat() {
-    // TODO: Fetch stats and send heartbeat.
+    const hbEvalReq = 'this.getStats()';
+
+    this._evalRequest(hbEvalReq, (...args) => this._hbEvalResHandler(...args));
+  }
+  /**
+   * @description Handler for response to status fetching for a heartbeat
+   * request.
+   * @private
+   * @param {?Error|string} err Optional error message.
+   * @param {*} res Response from eval.
+   */
+  _hbEvalResHandler(err, res) {
+    const now = Date.now();
+    const s = this._status;
+
+    this._fetchDiskStats((err, stats) => {
+      const delta = (s.timestamp > s.startTime) ? now - s.timestamp : 0;
+      s.timestamp = now;
+      s.timeDelta = delta;
+      s.memHeapUsed = res.memory.heapUsed;
+      s.memHeapTotal = res.memory.heapTotal;
+      s.memRSS = res.memory.rss;
+      s.memExternal = res.memory.external;
+      if (s.cpuLoad.length !== res.cpus.length) {
+        s.cpuLoad = new Array(res.cpus.length);
+      }
+      res.cpus.forEach((el, i) => {
+        const t = el.times;
+        let total = 0;
+        let prevTotal = 0;
+        for (const c in t) {
+          if (!c) continue;
+          total += t[c];
+          prevTotal += (s.cpus[i] || el).times[c];
+        }
+        const totalDiff = total - prevTotal;
+        s.cpuLoad[i] = t.user / totalDiff;
+      });
+      s.cpus = res.cpus;
+      s.messageCountDelta = s.messageCountTotal - res.numMessages;
+      s.messageCountTotal = res.numMessages;
+      s.storageUsedTotal = stats.root;
+      s.storageUsedUsers = stats.save;
+
+      this._socket.emit('status', s);
+    });
+  }
+
+  /**
+   * @description Fetch disk storage information about the bot. If a value was
+   * unable to be fetched, it will return a `null` value instead of a string.
+   * @private
+   * @param {Function} cb Callback with first argument as optional error,
+   * otherwise the second is an object containing stats about different
+   * directories.
+   */
+  _fetchDiskStats(cb) {
+    // Resolve the absolute path to the project root.
+    const root = path.resolve(`${__dirname}/../..`);
+    // Paths relative to project root.
+    const dirs = [
+      ['save', './save/'],
+      // ['docs', './docs/'],
+      // ['img', './img/'],
+      // ['sounds', './sounds/'],
+      // ['node_modules', './node_modules/'],
+      ['root', './'],
+    ];
+
+    const opts = {
+      env: null,
+      timeout: 5000,
+      cwd: root,
+    };
+
+    let numDone = 0;
+    const out = {};
+
+    /**
+     * @description Fired at completion of obtaining directory information for
+     * each in the `dir` array. Fires callback once all are complete.
+     * @private
+     */
+    function done() {
+      if (++numDone === dirs.length) return;
+      cb(null, out);
+    }
+
+    dirs.forEach((el) => {
+      const name = el[0];
+      const dir = el[1];
+      exec(`du -sh ${dir}`, opts, (err, stdout) => {
+        if (err) {
+          common.logWarning('Failed to fetch save directory size.');
+          console.error(err);
+          out[name] = null;
+        } else {
+          out[name] = stdout.toString().trim().split('\t')[0];
+        }
+        done();
+      });
+    });
   }
 
   /**
@@ -222,8 +482,15 @@ class ShardingSlave {
    */
   exit() {
     if (this._socket) this._socket.close();
-    // TODO: Don't exit until child has shutdown, as we don't want to leave it
-    // orphaned.
+    if (this._status.goalShardId >= 0) {
+      this._status.goalShardId = -2;
+      this._status.goalShardCount = -2;
+    }
+    this._child.kill();
+
+    // Send heartbeat notifying of our imminent death.
+    this._generateHeartbeat();
+
     process.exit(0);
   }
 }

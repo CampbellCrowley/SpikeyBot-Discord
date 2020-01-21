@@ -106,19 +106,38 @@ class ShardStatus {
      */
     this.messageCountTotal = 0;
     /**
-     * @description The amount of memory the shard is currently using in bytes.
+     * @description The amount of memory in use of the shard's heap in bytes.
      * @public
      * @type {number}
      * @default
      */
-    this.memUsage = 0;
+    this.memHeapUsed = 0;
     /**
-     * @description The total memory available to the shard in bytes.
+     * @description The total memory currently available to the shard's heap in
+     * bytes. This value will expand as the total is reached, until the
+     * configured max has been reached, at which it will crash due to failing to
+     * allocate more memory.
      * @public
      * @type {number}
      * @default
      */
-    this.memAvailable = 0;
+    this.memHeapTotal = 0;
+    /**
+     * @description Resident Set Size. Total allocated memory for the entire
+     * process.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.memRSS = 0;
+    /**
+     * @description Memory usage of C++ objects bound to JavaScript objects
+     * managed by V8.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.memExternal = 0;
     /**
      * @description The percentage of time each CPU core has been used since the
      * last status update.
@@ -127,6 +146,25 @@ class ShardStatus {
      * @default
      */
     this.cpuLoad = [0];
+    /**
+     * @description Raw values from the OS about CPU times. Each element in the
+     * array is a single processor thread (hyperthreading can increase the count
+     * above the number of cores). From `os.cpus()`. Used to calculate
+     * {@link cpuLoad}.
+     * @public
+     * @type {Array.<{
+     *   model: string,
+     *   speed: number,
+     *   times: {
+     *     user: number,
+     *     nice: number,
+     *     sys: number,
+     *     idle: number,
+     *     irq: number
+     *   }
+     * }>}
+     */
+    this.cpus = [];
     /**
      * @description The average ping time from the shard to Discord since the
      * last status update.
@@ -149,6 +187,27 @@ class ShardStatus {
      * @type {number}
      * @default
      */
+    this.storageUsedUsers = 0;
+  }
+
+  /**
+   * @description Reset all necessary values to clear the state of the previous
+   * instance.
+   * @public
+   */
+  reset() {
+    this.timestamp = Date.now();
+    this.timeDelta = 0;
+    this.messageCountDelta = 0;
+    this.messageCountTotal = 0;
+    this.memHeapUsed = 0;
+    this.memHeapTotal = 0;
+    this.memRSS = 0;
+    this.memExternal = 0;
+    this.cpuLoad = [0];
+    this.cpus = [];
+    this.ping = 0;
+    this.storageUsedTotal = 0;
     this.storageUsedUsers = 0;
   }
 

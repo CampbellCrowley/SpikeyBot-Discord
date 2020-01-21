@@ -25,6 +25,9 @@ const keyOptions = {
   privateKeyEncoding: {type: 'pkcs8', format: 'pem'},
 };
 
+// TODO: Implement update command which will pull the latest version from github
+// across all shards, even if they are not currently in use.
+
 /**
  * @description The master that manages the shards below it. This is what
  * specifies how many shards may start, which shard has which ID, as well as
@@ -838,28 +841,28 @@ class ShardingMaster {
     });
 
     socket.on('broadcastEval', (script, cb) => {
-      this._broadcastToShards(script, cb);
+      this.broadcastEvalToShards(script, cb);
     });
+    socket.on('respawnAll', (...args) => this.respawnAll(...args));
   }
 
   /**
    * @description Broadcast a message to all connected shards.
-   * @private
-   * @param {...*} msg The message arguments to send. Passed directly to emit
-   * function. Last argument must be a callback function. Callback once all
-   * shards have replied. First argument is optional error message, second will
-   * be an array of responses, indexed by shard ID.
+   * @public
+   * @param {string} script Text for each shard to evaluate.
+   * @param {Function} cb Callback once all shards have replied. First argument
+   * is optional error message, second will be an array of responses, indexed by
+   * shard ID.
    */
-  _broadcastToShards(...msg) {
-    const cb = msg.splice(msg.length - 1, 1)[0];
+  broadcastEvalToShards(script, cb) {
     const sockets = Object.entries(this._shardSockets);
     const num = sockets.length;
     const out = new Array(num);
     let numDone = 0;
     let err = null;
     /**
-     * @description Fired for each compeleted response from a shard. Fires the
-     * callback once all respses have been received, or an error has been
+     * @description Fired for each completed response from a shard. Fires the
+     * callback once all responses have been received, or an error has been
      * raised.
      * @private
      */
@@ -878,7 +881,7 @@ class ShardingMaster {
         done();
         return;
       }
-      ent[1].emit('evalRequest', msg, (error, res) => {
+      ent[1].emit('evalRequest', script, (error, res) => {
         if (error) {
           err = error;
           done();
@@ -888,6 +891,32 @@ class ShardingMaster {
         done();
       });
     });
+  }
+
+  /**
+   * @description Kills all running shards and respawns them.
+   * @param {Function} [cb] Callback once all shards have been rebooted or an
+   * error has occurred.
+   */
+  respawnAll(cb) {
+    const list = Object.values(this._knownUsers);
+    let i = 0;
+    list.forEach((info) => {
+      if (info.goalShardId < 0 || info.goalShardId !== info.currentShardId) {
+        return;
+      }
+      const socket = this._shardSockets[info.id];
+      if (socket) {
+        socket.emit('respawn', i * this._config.respawnDelay);
+      } else {
+        common.logWarning(
+            'Unable to respawn shard #' + info.goalShardId + ' ' + info.id +
+            ' due to socket disconnect.');
+        // TODO: Resend this request once reconnected instead of failing.
+      }
+      i++;
+    });
+    cb();
   }
 
   /**

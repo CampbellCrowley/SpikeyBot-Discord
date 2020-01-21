@@ -92,6 +92,14 @@ class ShardMasterConfig {
     this.connTime = 60000;
 
     /**
+     * @description Delay between shard reboot requests in milliseconds.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.respawnDelay = 5000;
+
+    /**
      * @description Host information for remote shards to use in order to be
      * able to find us.
      * @public

@@ -9,6 +9,8 @@ const MessageMaker = require('../lib/MessageMaker.js');
 
 require('../subModule.js').extend(HGWeb);  // Extends the SubModule class.
 
+// TODO: Support shards on multiple different nodes.
+
 /**
  * @classdesc Creates a web interface for managing the Hungry Games. Expects
  * ../hungryGames.js is loaded or will be loaded.

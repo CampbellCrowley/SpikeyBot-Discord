@@ -330,7 +330,91 @@ last status update.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
-				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-129">line 129</a>
+				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-148">line 148</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="cpus">
+    <h4 id="cpus"><span class="type-signature"></span>cpus<span class="type-signature"> :Array.&lt;{model: string, speed: number, times: {user: number, nice: number, sys: number, idle: number, irq: number}}></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Raw values from the OS about CPU times. Each element in the
+array is a single processor thread (hyperthreading can increase the count
+above the number of cores). From `os.cpus()`. Used to calculate
+cpuLoad.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Array.&lt;{model: string, speed: number, times: {user: number, nice: number, sys: number, idle: number, irq: number}}></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
+				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-167">line 167</a>
 			</li>
 		</ul>
 	</dd>
@@ -759,15 +843,16 @@ messages were received properly.
         
             
 <hr>
-<dt class="name" id="memAvailable">
-    <h4 id="memAvailable"><span class="type-signature"></span>memAvailable<span class="type-signature"> :number</span></h4>
+<dt class="name" id="memExternal">
+    <h4 id="memExternal"><span class="type-signature"></span>memExternal<span class="type-signature"> :number</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The total memory available to the shard in bytes.
+        Memory usage of C++ objects bound to JavaScript objects
+managed by V8.
     </div>
     
 
@@ -820,7 +905,7 @@ messages were received properly.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
-				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-121">line 121</a>
+				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-140">line 140</a>
 			</li>
 		</ul>
 	</dd>
@@ -840,15 +925,99 @@ messages were received properly.
         
             
 <hr>
-<dt class="name" id="memUsage">
-    <h4 id="memUsage"><span class="type-signature"></span>memUsage<span class="type-signature"> :number</span></h4>
+<dt class="name" id="memHeapTotal">
+    <h4 id="memHeapTotal"><span class="type-signature"></span>memHeapTotal<span class="type-signature"> :number</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The amount of memory the shard is currently using in bytes.
+        The total memory currently available to the shard's heap in
+bytes. This value will expand as the total is reached, until the
+configured max has been reached, at which it will crash due to failing to
+allocate more memory.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
+				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-124">line 124</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="memHeapUsed">
+    <h4 id="memHeapUsed"><span class="type-signature"></span>memHeapUsed<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The amount of memory in use of the shard's heap in bytes.
     </div>
     
 
@@ -902,6 +1071,88 @@ messages were received properly.
 			<li>
 				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
 				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-114">line 114</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="memRSS">
+    <h4 id="memRSS"><span class="type-signature"></span>memRSS<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Resident Set Size. Total allocated memory for the entire
+process.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
+				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-132">line 132</a>
 			</li>
 		</ul>
 	</dd>
@@ -1147,7 +1398,7 @@ last status update.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
-				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-137">line 137</a>
+				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-175">line 175</a>
 			</li>
 		</ul>
 	</dd>
@@ -1391,7 +1642,7 @@ directory in bytes.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
-				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-145">line 145</a>
+				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-183">line 183</a>
 			</li>
 		</ul>
 	</dd>
@@ -1472,7 +1723,7 @@ directory in bytes.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
-				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-152">line 152</a>
+				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-190">line 190</a>
 			</li>
 		</ul>
 	</dd>
@@ -1816,7 +2067,7 @@ it may be passed here instead.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
-				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-165">line 165</a>
+				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-224">line 224</a>
 			</li>
 		</ul>
 	</dd>
@@ -1865,6 +2116,95 @@ it may be passed here instead.</td>
 
 
         
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="reset"><span class="type-signature"></span>reset()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Reset all necessary values to clear the state of the previous
+instance.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
+				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-198">line 198</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -1978,7 +2318,7 @@ it may be passed here instead.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardStatus.js.html">src/sharding/ShardStatus.js</a>,
-				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-181">line 181</a>
+				 <a href="src_sharding_ShardStatus.js.html#sunlight-1-line-240">line 240</a>
 			</li>
 		</ul>
 	</dd>
@@ -2061,7 +2401,7 @@ it may be passed here instead.</td>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Sunday, January 19, 2020 8:23 PM (-08:00)
+		on Monday, January 20, 2020 6:23 PM (-08:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

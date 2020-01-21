@@ -230,22 +230,24 @@ function SpikeyBot() {
   let enableSharding = false;
   /**
    * The number of shards to use if sharding is enabled. 0 to let Discord
-   * decide. Set from `--shards=#` cli argument.
+   * decide. Set from `--shards=#` cli argument, or `SHARD_COUNT` environment
+   * variable.
    *
    * @private
    * @default
    * @type {number}
    */
-  let numShards = 0;
+  let numShards = process.env.SHARD_COUNT || 0;
   /**
    * The shard ID of this process. This is passed from the Shard Master in some
-   * form, or specified manually via `--shardid=` cli argument.
+   * form, or specified manually via `--shardid=` cli argument or `SHARDS`
+   * environment variable.
    *
    * @private
    * @default
    * @type {?number}
    */
-  let shardId = null;
+  let shardId = process.env.SHARDS;
 
   /**
    * Number of bytes to allocate for each shard memory. Passed as
@@ -345,7 +347,6 @@ function SpikeyBot() {
     } else if (process.argv[i] === '--test') {
       testInstance = true;
     } else if (process.argv[i].startsWith('--shards')) {
-      enableSharding = true;
       if (process.argv[i].indexOf('=') > -1) {
         numShards = process.argv[i].split('=')[1] * 1 || 0;
       }
@@ -358,9 +359,9 @@ function SpikeyBot() {
       }
     } else if (process.argv[i].startsWith('--shardid')) {
       if (process.argv[i].indexOf('=') > -1) {
-        shardId = process.argv[i].split('=')[1] * 1 || null;
+        shardId = process.argv[i].split('=')[1] * 1;
       }
-      if (!shardId) {
+      if (!isNaN(shardId) || shardId < 0) {
         throw new Error(`Bad Shard ID '${process.argv[i]}'`);
       }
     } else if (process.argv[i] === '--backup') {
@@ -379,6 +380,9 @@ function SpikeyBot() {
       throw new Error(`Unrecognized argument '${process.argv[i]}'`);
     }
   }
+
+
+  enableSharding = numShards && shardId === undefined;
 
   const isDev = setDev;
 
@@ -416,9 +420,8 @@ function SpikeyBot() {
     const manager = new Discord.ShardingManager('./src/SpikeyBot.js', {
       token: (botName && auth[botName]) || (setDev ? auth.dev : auth.release),
       totalShards: numShards || 'auto',
-      shardArgs: process.argv.slice(2).filter((arg) => {
-        return !arg.startsWith('--shards') && !arg.startsWith('--delay');
-      }),
+      shardArgs: process.argv.slice(2).filter(
+          (arg) => !arg.startsWith('--shards') && !arg.startsWith('--delay')),
       execArgv: argv,
     });
     manager.on('shardCreate', (shard) => {
@@ -432,15 +435,11 @@ function SpikeyBot() {
         // hard reboot. Is this feasible?
         if (msg === 'reboot hard force') {
           common.logWarning('TRIGGERED HARD REBOOT!');
-          manager.shards.forEach((s) => {
-            s.process.kill('SIGHUP');
-          });
+          manager.shards.forEach((s) => s.process.kill('SIGHUP'));
           process.exit(-1);
         } else if (msg === 'reboot hard') {
           common.logWarning('TRIGGERED HARD REBOOT!');
-          manager.shards.forEach((s) => {
-            s.process.kill('SIGHUP');
-          });
+          manager.shards.forEach((s) => s.process.kill('SIGHUP'));
           process.exit(-1);
         } else if (typeof msg === 'string' && msg.startsWith('reboot')) {
           const idList = msg.match(/\b\d+\b/g);
@@ -685,7 +684,7 @@ function SpikeyBot() {
         updateGame('Running unit test...');
       } else if (isDev) {
         updateGame(`Version: ${self.version}`);
-      } else if (botName === 'rembot' || botName === 'mikubot') {
+      } else if (self.getFullBotName() !== 'release') {
         updateGame('');
       } else if (isBackup) {
         // updateGame('OFFLINE', 'PLAYING');
@@ -896,6 +895,12 @@ function SpikeyBot() {
    * @listens Discord~Client#message
    */
   function onMessage(msg) {
+    if (typeof client.totalMessageCount !== 'number' ||
+        isNaN(client.totalMessageCount)) {
+      client.totalMessageCount = 0;
+    }
+    client.totalMessageCount++;
+
     // Message was sent by Discord, not a user.
     if (msg.system) return;
     if (testInstance) {

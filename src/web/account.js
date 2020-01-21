@@ -20,6 +20,7 @@ const patreonOAuthClient =
 
 require('../subModule.js').extend(WebAccount);  // Extends the SubModule class.
 
+// TODO: Support shards on multiple different nodes.
 
 /**
  * @classdesc Manages the account webpage.

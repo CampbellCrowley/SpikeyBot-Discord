@@ -7,6 +7,8 @@ const MessageMaker = require('../lib/MessageMaker.js');
 
 require('../subModule.js').extend(WebSettings);  // Extends the SubModule class.
 
+// TODO: Support shards on multiple different nodes.
+
 /**
  * @classdesc Manages changing settings for the bot from a website.
  * @class

@@ -5,6 +5,8 @@ const https = require('https');
 const auth = require('../../auth.js');
 require('../subModule.js').extend(WebStats);  // Extends the SubModule class.
 
+// TODO: Support shards on multiple different nodes.
+
 /**
  * @classdesc Handles sending the bot's stats to http client requests, and
  * discordbots.org.

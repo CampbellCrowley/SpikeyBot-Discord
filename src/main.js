@@ -1,4 +1,4 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const emojiChecker = require('./lib/twemojiChcker.js');
 const childProcess = require('child_process');
@@ -3130,9 +3130,12 @@ function Main() {
    * Fetch our statistics about the bot on this shard.
    *
    * @private
+   * @param {boolean} [full=false] Include all available stats about the system.
+   * This adds information about CPU load. Disk storage cannot be collected here
+   * due to the synchronous nature of this function.
    * @returns {object} The statistics we collected.
    */
-  function getStats() {
+  function getStats(full = false) {
     const startTime = Date.now();
     const out = {
       numGuilds: 0,
@@ -3143,12 +3146,18 @@ function Main() {
       numEmojis: 0,
       numVerified: 0,
       numPartnered: 0,
+      numMessages: self.client.totalMessageCount,
+      cpus: null,
+      ping: self.client.ws.ping,
       uptime: '0 days',
       memory: process.memoryUsage(),
-      activities: {},
       version: `${version}#${commit.slice(0, 7)}`,
       shardId: (self.client.shard || {id: 0}).id,
     };
+
+    if (full) {
+      out.cpus = require('os').cpus();
+    }
 
     out.numGuilds = self.client.guilds.size;
 

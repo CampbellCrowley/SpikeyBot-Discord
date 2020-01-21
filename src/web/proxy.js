@@ -17,6 +17,8 @@ require('../subModule.js').extend(WebProxy);  // Extends the SubModule class.
 delete require.cache[require.resolve('./WebUserData.js')];
 const WebUserData = require('./WebUserData.js');
 
+// TODO: Support shards on multiple different nodes.
+
 /**
  * @classdesc Proxy for account authentication.
  * @class

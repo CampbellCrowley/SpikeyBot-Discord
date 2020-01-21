@@ -18,6 +18,8 @@ const ApiRequestBody = require('./ApiRequestBody.js');
 const basicAuth = 'Basic ' +
     (auth.commandUsername + ':' + auth.commandPassword).toString('base64');
 
+// TODO: Support shards on multiple different nodes.
+
 /**
  * @classdesc Handles receiving webhooks and other API requests from external
  * services.
