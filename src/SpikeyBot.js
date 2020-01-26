@@ -109,6 +109,14 @@ function SpikeyBot() {
    * @type {boolean}
    */
   let testInstance = false;
+  /**
+   * Do everything normally, except don't ever actually attempt to login
+   * to Discord.
+   *
+   * @private
+   * @type {boolean}
+   */
+  let noLogin = process.env.SHARDING_MASTER;
 
   /**
    * The filename of the Command mainModule.
@@ -239,15 +247,14 @@ function SpikeyBot() {
    */
   let numShards = process.env.SHARD_COUNT || 0;
   /**
-   * The shard ID of this process. This is passed from the Shard Master in some
-   * form, or specified manually via `--shardid=` cli argument or `SHARDS`
-   * environment variable.
+   * The shard ID of this process. This is passed from the Shard Master using
+   * the `SHARDS` environment variable.
    *
    * @private
    * @default
    * @type {?number}
    */
-  let shardId = process.env.SHARDS;
+  const shardId = process.env.SHARDS;
 
   /**
    * Number of bytes to allocate for each shard memory. Passed as
@@ -346,6 +353,8 @@ function SpikeyBot() {
       minimal = true;
     } else if (process.argv[i] === '--test') {
       testInstance = true;
+    } else if (process.argv[i] === '--nologin') {
+      noLogin = true;
     } else if (process.argv[i].startsWith('--shards')) {
       if (process.argv[i].indexOf('=') > -1) {
         numShards = process.argv[i].split('=')[1] * 1 || 0;
@@ -356,13 +365,6 @@ function SpikeyBot() {
       }
       if (!shardMem) {
         throw new Error(`Bad Memory Amount '${process.argv[i]}'`);
-      }
-    } else if (process.argv[i].startsWith('--shardid')) {
-      if (process.argv[i].indexOf('=') > -1) {
-        shardId = process.argv[i].split('=')[1] * 1;
-      }
-      if (!isNaN(shardId) || shardId < 0) {
-        throw new Error(`Bad Shard ID '${process.argv[i]}'`);
       }
     } else if (process.argv[i] === '--backup') {
       isBackup = true;
@@ -1686,10 +1688,12 @@ function SpikeyBot() {
     fs.readFile(guildFile, onFileRead(id));
   }
 
-  if (delayBoot > 0) {
-    setTimeout(login, delayBoot);
-  } else {
-    login();
+  if (!noLogin) {
+    if (delayBoot > 0) {
+      setTimeout(login, delayBoot);
+    } else {
+      login();
+    }
   }
 
   process.on('SIGINT', exit);

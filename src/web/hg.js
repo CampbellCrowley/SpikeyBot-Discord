@@ -9,8 +9,6 @@ const MessageMaker = require('../lib/MessageMaker.js');
 
 require('../subModule.js').extend(HGWeb);  // Extends the SubModule class.
 
-// TODO: Support shards on multiple different nodes.
-
 /**
  * @classdesc Creates a web interface for managing the Hungry Games. Expects
  * ../hungryGames.js is loaded or will be loaded.
@@ -31,21 +29,29 @@ function HGWeb() {
    */
   const imageBuffer = {};
 
-  const app = http.createServer(handler);
+  let app;
   let io;
+  if (!this.common.isSlave) {
+    app = http.createServer(handler);
 
-  app.on('error', (err) => {
-    if (io) io.close();
-    if (app) app.close();
-    if (err.code === 'EADDRINUSE') {
-      this.warn(
-          'HGWeb failed to bind to port because it is in use. (' + err.port +
-          ')');
-      startClient();
-    } else {
-      this.error('HGWeb failed to bind to port for unknown reason.', err);
-    }
-  });
+    app.on('error', (err) => {
+      if (io) io.close();
+      if (app) app.close();
+      if (err.code === 'EADDRINUSE') {
+        this.warn(
+            'HGWeb failed to bind to port because it is in use. (' + err.port +
+            ')');
+        if (!this.common.isMaster) {
+          this.log(
+              'Restarting into client mode due to server already bound ' +
+              'to port.');
+          startClient();
+        }
+      } else {
+        this.error('HGWeb failed to bind to port for unknown reason.', err);
+      }
+    });
+  }
 
   /**
    * Start a socketio client connection to the primary running server.
@@ -53,12 +59,17 @@ function HGWeb() {
    * @private
    */
   function startClient() {
-    self.log(
-        'Restarting into client mode due to server already bound to port.');
-    ioClient = require('socket.io-client')(
-        self.common.isRelease ? 'http://localhost:8011' :
-                                'http://localhost:8013',
-        {path: '/socket.io/hg/', reconnectionDelay: 0});
+    const client = require('socket.io-client');
+    if (self.common.isSlave) {
+      const host = self.common.masterHost;
+      ioClient =
+          client(`${host.protocol}//${host.host}`, {path: `${host.path}hg/`});
+    } else {
+      ioClient = client(
+          self.common.isRelease ? 'http://localhost:8011' :
+                                  'http://localhost:8013',
+          {path: '/socket.io/hg/', reconnectionDelay: 0});
+    }
     clientSocketConnection(ioClient);
   }
 
@@ -125,9 +136,13 @@ function HGWeb() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    io = socketIo(app, {path: '/socket.io/'});
-    app.listen(self.common.isRelease ? 8011 : 8013, '127.0.0.1');
-    io.on('connection', socketConnection);
+    if (self.common.isSlave) {
+      startClient();
+    } else {
+      io = socketIo(app, {path: '/socket.io/'});
+      app.listen(self.common.isRelease ? 8011 : 8013, '127.0.0.1');
+      io.on('connection', socketConnection);
+    }
   };
 
   /**
@@ -201,7 +216,7 @@ function HGWeb() {
         socket.id);
     sockets[socket.id] = socket;
 
-    // @TODO: Replace this authentication with gpg key-pairs;
+    // @TODO: Replace this authentication with asymmetric key signatures.
     socket.on('vaderIAmYourSon', (verification, cb) => {
       if (verification === auth.hgWebSiblingVerification) {
         siblingSockets[socket.id] = socket;
@@ -636,7 +651,7 @@ function HGWeb() {
    * @returns {boolean} True if this shard has this guild.
    */
   function checkMyGuild(gId) {
-    const g = self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.get(gId);
     return (g && true) || false;
   }
 
@@ -865,20 +880,23 @@ function HGWeb() {
       obj[1].emit('fetchGuilds', userData, socket.id, done);
     });
 
+    if (self.common.isMaster) {
+      done([]);
+      return;
+    }
+
     try {
       let guilds = [];
       if (userData.guilds && userData.guilds.length > 0) {
         userData.guilds.forEach((el) => {
-          const g = self.client.guilds.get(el.id);
+          const g = self.client && self.client.guilds.get(el.id);
           if (!g) return;
           guilds.push(g);
         });
       } else {
-        guilds = self.client.guilds
-            .filter((obj) => {
-              return obj.members.get(userData.id);
-            })
-            .array();
+        guilds = self.client &&
+            self.client.guilds.filter((obj) => obj.members.get(userData.id))
+                .array();
       }
       const strippedGuilds = stripGuilds(guilds, userData);
       done(strippedGuilds);
@@ -911,9 +929,7 @@ function HGWeb() {
           }, {});
       let uOpts = self.command.getUserSettings(g.id) || {};
       uOpts = Object.entries(uOpts)
-          .filter((el) => {
-            return el[0].startsWith('hg');
-          })
+          .filter((el) => el[0].startsWith('hg'))
           .reduce(
               (p, c) => {
                 p[c[0]] = c[1];
@@ -928,19 +944,16 @@ function HGWeb() {
       newG.id = g.id;
       newG.bot = self.client.user.id;
       newG.ownerId = g.ownerID;
-      newG.members = g.members.map((m) => {
-        return m.id;
-      });
+      newG.members = g.members.map((m) => m.id);
       newG.defaultSettings = dOpts;
       newG.userSettings = uOpts;
       newG.channels =
           g.channels
-              .filter((c) => {
-                if (!member) return false;
-                return userData.id == self.common.spikeyId ||
-                    c.permissionsFor(member).has(
-                        self.Discord.Permissions.FLAGS.VIEW_CHANNEL);
-              })
+              .filter(
+                  (c) => member &&
+                      (userData.id == self.common.spikeyId ||
+                       c.permissionsFor(member).has(
+                           self.Discord.Permissions.FLAGS.VIEW_CHANNEL)))
               .map((c) => {
                 return {
                   id: c.id,
@@ -977,10 +990,8 @@ function HGWeb() {
       return;
     }
 
-    const guild = self.client.guilds.get(gId);
-    if (!guild) {
-      return;
-    }
+    const guild = self.client && self.client.guilds.get(gId);
+    if (!guild) return;
     if (userData.id != self.common.spikeyId &&
         !guild.members.get(userData.id)) {
       cb(null);
@@ -1002,7 +1013,7 @@ function HGWeb() {
    */
   this.fetchMember = function fetchMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId, null, 'players')) return;
-    const g = self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.get(gId);
     if (!g) return;
     const m = g.members.get(mId);
     if (!m) return;
@@ -1027,7 +1038,7 @@ function HGWeb() {
    */
   this.fetchRoles = function fetchRoles(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null)) return;
-    const g = self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.get(gId);
     if (!g) return;
 
     const roles = g.roles.array();
@@ -1052,7 +1063,7 @@ function HGWeb() {
    */
   this.fetchChannel = function fetchChannel(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, '')) return;
-    const g = self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.get(gId);
     if (!g) return;
     const m = g.members.get(userData.id);
     const channel = g.channels.get(cId);
@@ -1120,7 +1131,7 @@ function HGWeb() {
     if (!userData) {
       return;
     } else {
-      g = self.client.guilds.get(gId);
+      g = self.client && self.client.guilds.get(gId);
       if (!g) {
         // Request is probably fulfilled by another sibling.
         return;
@@ -1181,7 +1192,7 @@ function HGWeb() {
       replyNoPerm(socket, 'fetchNextDay');
       return;
     }
-    const g = self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.get(gId);
     const m = g.members.get(userData.id);
     if (!m) {
       if (typeof cb === 'function') cb('NO_PERM');

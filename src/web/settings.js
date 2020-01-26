@@ -1,4 +1,4 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (web@campbellcrowley.com)
 const http = require('http');
 const auth = require('../../auth.js');
@@ -6,8 +6,6 @@ const socketIo = require('socket.io');
 const MessageMaker = require('../lib/MessageMaker.js');
 
 require('../subModule.js').extend(WebSettings);  // Extends the SubModule class.
-
-// TODO: Support shards on multiple different nodes.
 
 /**
  * @classdesc Manages changing settings for the bot from a website.
@@ -22,7 +20,11 @@ function WebSettings() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    app.listen(self.common.isRelease ? 8020 : 8021, '127.0.0.1');
+    if (self.common.isSlave) {
+      startClient();
+    } else {
+      app.listen(self.common.isRelease ? 8020 : 8021, '127.0.0.1');
+    }
     setTimeout(updateModuleReferences, 100);
 
     self.command.addEventListener('settingsChanged', handleSettingsChanged);
@@ -51,21 +53,31 @@ function WebSettings() {
   };
 
   let ioClient;
-  const app = http.createServer(handler);
-  const io = socketIo(app, {path: '/socket.io/'});
+  let app;
+  let io;
+  if (!this.common.isSlave) {
+    app = http.createServer(handler);
+    io = socketIo(app, {path: '/socket.io/'});
 
-  app.on('error', function(err) {
-    if (io) io.close();
-    if (app) app.close();
-    if (err.code === 'EADDRINUSE') {
-      self.warn(
-          'Settings failed to bind to port because it is in use. (' + err.port +
-          ')');
-      startClient();
-    } else {
-      console.error('Settings failed to bind to port for unknown reason.', err);
-    }
-  });
+    app.on('error', (err) => {
+      if (io) io.close();
+      if (app) app.close();
+      if (err.code === 'EADDRINUSE') {
+        this.warn(
+            'Settings failed to bind to port because it is in use. (' +
+            err.port + ')');
+        if (!this.common.isMaster) {
+          self.log(
+              'Restarting into client mode due to server already bound ' +
+              'to port.');
+          startClient();
+        }
+      } else {
+        console.error(
+            'Settings failed to bind to port for unknown reason.', err);
+      }
+    });
+  }
   /**
    * @description Function calls handlers for requested commands.
    * @typedef WebSettings~SocketFunction
@@ -260,12 +272,17 @@ function WebSettings() {
    * @private
    */
   function startClient() {
-    self.log(
-        'Restarting into client mode due to server already bound to port.');
-    ioClient = require('socket.io-client')(
-        self.common.isRelease ? 'http://localhost:8020' :
-                                'http://localhost:8021',
-        {path: '/socket.io/control/', reconnectionDelay: 0});
+    const client = require('socket.io-client');
+    if (self.common.isSlave) {
+      const host = self.common.masterHost;
+      ioClient = client(
+          `${host.protocol}//${host.host}`, {path: `${host.path}control/`});
+    } else {
+      ioClient = client(
+          self.common.isRelease ? 'http://localhost:8020' :
+                                  'http://localhost:8021',
+          {path: '/socket.io/control/'});
+    }
     clientSocketConnection(ioClient);
   }
 
@@ -546,7 +563,7 @@ function WebSettings() {
    * @returns {boolean} True if this shard has this guild.
    */
   function checkMyGuild(gId) {
-    const g = self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.get(gId);
     return (g && true) || false;
   }
 
@@ -586,7 +603,7 @@ function WebSettings() {
    */
   function checkChannelPerm(userData, gId, cId) {
     if (!userData) return false;
-    const g = self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.get(gId);
     if (!g) return false;
     if (userData.id == self.common.spikeyId) return true;
     const m = g.members.get(userData.id);
@@ -727,20 +744,23 @@ function WebSettings() {
       obj.emit('fetchGuilds', userData, socket.id, done);
     });
 
+    if (self.common.isMaster) {
+      done([]);
+      return;
+    }
+
     try {
       let guilds = [];
       if (userData.guilds && userData.guilds.length > 0) {
         userData.guilds.forEach((el) => {
-          const g = self.client.guilds.get(el.id);
+          const g = self.client && self.client.guilds.get(el.id);
           if (!g) return;
           guilds.push(g);
         });
       } else {
-        guilds = self.client.guilds
-            .filter((obj) => {
-              return obj.members.get(userData.id);
-            })
-            .array();
+        guilds = self.client &&
+            self.client.guilds.filter((obj) => obj.members.get(userData.id))
+                .array();
       }
       const strippedGuilds = stripGuilds(guilds, userData);
       socket.cachedGuilds = strippedGuilds.map((g) => g.id);
@@ -811,7 +831,7 @@ function WebSettings() {
       return;
     }
 
-    const guild = self.client.guilds.get(gId);
+    const guild = self.client && self.client.guilds.get(gId);
     if (!guild) return;
     if (userData.id != self.common.spikeyId &&
         !guild.members.get(userData.id)) {
@@ -836,7 +856,7 @@ function WebSettings() {
   this.fetchMember = function fetchMember(userData, socket, gId, mId, cb) {
     if (typeof cb !== 'function') return;
     if (!checkPerm(userData, gId, null, 'players')) return;
-    const g = self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.get(gId);
     if (!g) return;
     const m = g.members.get(mId);
     if (!m) {
@@ -903,15 +923,14 @@ function WebSettings() {
     let guilds = [];
     if (userData.guilds && userData.guilds.length > 0) {
       userData.guilds.forEach((el) => {
-        const g = self.client.guilds.get(el.id);
+        const g = self.client && self.client.guilds.get(el.id);
         if (!g) return;
         guilds.push(g);
       });
     } else {
-      guilds = self.client.guilds.filter((obj) => {
-        return userData.id == self.common.spikeyId ||
-            obj.members.get(userData.id);
-      });
+      guilds = self.client.guilds.filter(
+          (obj) => userData.id == self.common.spikeyId ||
+              obj.members.get(userData.id));
     }
     const cmdDefaults = self.command.getDefaultSettings();
     const modLog = self.bot.getSubmodule('./modLog.js');
@@ -1056,6 +1075,7 @@ function WebSettings() {
    */
   this.fetchScheduledCommands = function fetchScheduledCommands(
       userData, socket, cb) {
+    if (self.common.isMaster) return;
     if (!userData) {
       if (!socket.fake && typeof cb === 'function') cb('Not signed in.', null);
       return;
@@ -1064,9 +1084,7 @@ function WebSettings() {
     if (guilds) {
       guilds.map((el) => self.client.guilds.get(el.id));
     } else {
-      guilds = self.client.guilds.filter((obj) => {
-        return obj.members.get(userData.id);
-      });
+      guilds = self.client.guilds.filter((obj) => obj.members.get(userData.id));
     }
     const sCmds = {};
     updateModuleReferences();

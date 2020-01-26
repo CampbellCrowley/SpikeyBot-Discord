@@ -1,11 +1,11 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const http = require('http');
 const https = require('https');
 const auth = require('../../auth.js');
 require('../subModule.js').extend(WebStats);  // Extends the SubModule class.
 
-// TODO: Support shards on multiple different nodes.
+// TODO: Update this to support master/slave with stats API.
 
 /**
  * @classdesc Handles sending the bot's stats to http client requests, and
@@ -21,7 +21,11 @@ function WebStats() {
   const app = http.createServer(handler);
   /** @inheritdoc */
   this.initialize = function() {
-    app.listen(self.common.isRelease ? 8016 : 8017, '127.0.0.1');
+    if (self.common.isSlave) {
+      self.debug('Starting in minimal mode.');
+    } else {
+      app.listen(self.common.isRelease ? 8016 : 8017, '127.0.0.1');
+    }
     postTimeout = self.client.setTimeout(
         postUpdatedCount, self.common.isRelease ? 30000 : 5000);
   };
@@ -31,14 +35,14 @@ function WebStats() {
     if (postTimeout) self.client.clearTimeout(postTimeout);
   };
 
-  app.on('error', function(err) {
+  app.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
-      self.debug(
+      this.debug(
           'Stats failed to bind to port, starting in minimal mode. (' +
           err.port + ')');
       if (app) app.close();
     } else {
-      self.error('Webhooks failed to bind to port for unknown reason.', err);
+      this.error('Webhooks failed to bind to port for unknown reason.', err);
     }
   });
 
@@ -115,7 +119,7 @@ function WebStats() {
       },
       _allShards: false,
     },
-    {
+    /* {
       protocol: 'https:',
       host: 'discordbotlist.com',
       path: '/api/bots/{id}/stats',
@@ -131,7 +135,7 @@ function WebStats() {
         'users': 'shardUserCount',
       },
       _allShards: true,
-    },
+    }, */
     {
       protocol: 'https:',
       host: 'discord.bots.gg',

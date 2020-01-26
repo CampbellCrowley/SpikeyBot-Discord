@@ -63,6 +63,70 @@ function Common() {
    * @type {boolean}
    */
   this.isTest = false;
+  /**
+   * @description Is this a shard that is being managed by our sharding system.
+   * If this is true, webservers should not attempt to become the master, and
+   * instead attempt to connect to the sharding master server. This is specified
+   * using the `SHARDING_SLAVE` environment variable.
+   *
+   * @public
+   * @type {boolean}
+   * @default false
+   */
+  this.isSlave = (process.env.SHARDING_SLAVE && true) || false;
+  /**
+   * @description Is this a shard that is being managed by our sharding system,
+   * and is the master that all children (siblings) will be connecting to. If
+   * this is true, webservers should attempt to become the master, and not
+   * fallback to a client sibling. This is specified using the `SHARDING_MASTER`
+   * environment variable.
+   *
+   * @public
+   * @type {boolean}
+   * @default false
+   */
+  this.isMaster =
+      (!this.isSlave && process.env.SHARDING_MASTER && true) || false;
+  /**
+   * @description The network host information where the master node is located
+   * for connecting sibling sockets to. This will be populated if `isSlave` is
+   * true.
+   *
+   * @private
+   * @type {?object}
+   * @default
+   */
+  this.masterHost = null;
+
+  if (this.isSlave) {
+    const configDir = './config/';
+    const files = fs.readdirSync(configDir);
+    const file = files.find((el) => el.match(Common.shardConfigRegex));
+    if (!file) {
+      this.error(
+          'Failed to find shard config file required for sibling sockets.');
+    } else {
+      let data;
+      try {
+        data = fs.readFileSync(file);
+      } catch (err) {
+        this.error(
+            'Failed to read shard config file required for sibling sockets.');
+        console.error(err);
+      }
+      if (data) {
+        try {
+          const parsed = JSON.parse(data);
+          this.masterHost = parsed.host;
+        } catch (err) {
+          this.error(
+              'Failed to parse shard config file required for sibling ' +
+              'sockets.');
+          console.error(err);
+        }
+      }
+    }
+  }
 
   /**
    * Initialize variables and settings for logging properly.
@@ -548,10 +612,30 @@ Common.prototype.mention = function(msg) {
 /**
  * Creates formatted string for mentioning the author of msg.
  *
- * @param {Discord~Message} msg Message to format a mention for the author of.
+ * @param {Discord~Message|Discord~UserResolvable} msg Message to format a
+ * mention for the author of.
  * @returns {string} Formatted mention string.
  */
 Common.mention = Common.prototype.mention;
+
+/**
+ * @description Regular expression the name of the config file will match for a
+ * shard configuration.
+ *
+ * @type {RegExp}
+ * @constant
+ * @default
+ */
+Common.prototype.shardConfigRegex = /^shard_[a-z]+_config\.json$/;
+/**
+ * @description Regular expression the name of the config file will match for a
+ * shard configuration.
+ *
+ * @type {RegExp}
+ * @constant
+ * @default
+ */
+Common.shardConfigRegex = Common.prototype.shardConfigRegex;
 
 
 /**

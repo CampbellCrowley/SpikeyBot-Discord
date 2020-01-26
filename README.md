@@ -73,17 +73,16 @@
 # Self-Hosting
 The bot is not designed to be easily hosted by others, but still may be done.  
 The below steps outline the minimum required to get the SpikeyBot to run.  
-Hungry Games requires a MariaDB server to be available for storage of all events. If this database is not setup properly, HG may run into problems, and is not tested.  
 1) Have a server/computer
     - SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.
 2) Install [NodeJS](https://nodejs.org/)
-    - The bot is currently running on NodeJS [v10.17.0](https://nodejs.org/dist/v10.17.0/). Other versions may work, but are untested.
+    - The bot is currently running on NodeJS [v10.18.1](https://nodejs.org/dist/v10.18.1/). Other versions may work, but are untested.
 3) Download source code
     - Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.
 4) Install system dependencies
     - `sudo apt install make libtool autoconf g++ ffmpeg` are required for the default installation.
 5) Install dependencies via NPM
-    - Current version of NPM used is `v6.12.1`, but almost any version should be fine.
+    - Current version of NPM used is `v6.13.4`, but almost any version should be fine.
     - In the `SpikeyBot-Discord` directory, run `npm install`.
 6) Get a bot token from Discord
     - A token for the bot that you are trying to run from [Discord](https://discordapp.com/developers/applications/) is required.
@@ -97,6 +96,22 @@ Hungry Games requires a MariaDB server to be available for storage of all events
     - Errors about `gApiCredentials.json` missing can be suppressed by removing `./tts.js` and `./chatbot.js` from `./subModules.json` since these require special authentication from Google's API. (https://console.cloud.google.com/)
     - All website related subModules will not work, and related errors can be suppressed by removing all subModules that start with `./web/` from `./subModules.json`.
     - If you are **not** running with `--shards` and wish to use the Hungry Games submodule, you must run node with `--experimental-worker`.
+
+Hungry Games requires a MariaDB server to be available for storage of all events. If this database is not setup properly, HG may run into problems, and is not tested.  
+
+## CLI Arguments
+All arguments are optional for normal usage.
+
+`--dev`: Flips `isRelease` in `./src/common.js`, and changes which ports are used for webservers.  
+`--botname=BOTNAME`: Overwrites the name of the bot token to use in the `./auth.js` file.  
+`--minimal`: Starts the bot normally, but doesn't change the bot's presence, manage reboot/crash handling, command logging, or any default commands in `SpikeyBot` (not MainModule commands).  
+`--test`: Bot will go into unit testing mode.  
+`--nologin`: Bot will not attempt to login to Discord, but will continue to do everything else normally, including loading MainModules. If this is used, most SubModules will not do anything as they rely on a connection to Discord to be made. This is to support a single process that acts as the master node of webservers.  
+`--shards[=NUMSHARDS]`: Specifies that we wish to use Discord.js built-in sharding. The number of shards does not need to be specified if we wish to use Discord.js' suggested number of shards.  
+`--shardmem=MEMBYTES`: The number of bytes to allocate for each shard's heap.  
+`--backup`: Runs the back as a fallback node. It will not attempt to load any MainModules, and essentially does nothing, but sets the default presence to DND in order to signify that the bot is unnavailable. This is intended to be expanded in its features to take over when a shard went offline, but that may no longer be feasible.  
+`--delay[=5000]`: Time in milliseconds to wait after ready before contacting Discord to login, or start shards.  
+`--inspect`: Passes `--inspect` to the NodeJS process of spawned shards.  
 
 # Development
 - Unit tests exist
@@ -129,3 +144,6 @@ Hungry Games requires a MariaDB server to be available for storage of all events
       - Events and most messages are also read from file.
     - Timers settings are saved.
     - Music queues are *not* saved, but may continue playing after unloading submodule.
+- Ports
+  - Webservers and endpoints each bind to their own ports.
+  - [Google Doc of port bindings](https://docs.google.com/spreadsheets/d/1Di555A6Tt52FF943FOkCHvOAOxBufi0oQoi63wnrdqk/edit?usp=sharing)

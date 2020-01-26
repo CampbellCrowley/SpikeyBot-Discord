@@ -1,4 +1,4 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const http = require('http');
@@ -17,8 +17,6 @@ const ApiRequestBody = require('./ApiRequestBody.js');
 
 const basicAuth = 'Basic ' +
     (auth.commandUsername + ':' + auth.commandPassword).toString('base64');
-
-// TODO: Support shards on multiple different nodes.
 
 /**
  * @classdesc Handles receiving webhooks and other API requests from external
@@ -102,6 +100,11 @@ class WebApi extends SubModule {
 
   /** @inheritdoc */
   initialize() {
+    if (this.common.isSlave) {
+      this.error(
+          'This submodule will not work on a slave shard. Refusing to start.');
+      return;
+    }
     this._app = http.createServer(this._handler);
     setTimeout(() => {
       this._app.listen(this.common.isRelease ? 8018 : 8019, '127.0.0.1');

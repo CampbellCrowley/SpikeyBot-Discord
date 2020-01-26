@@ -30,7 +30,7 @@ class ShardingSlave {
     common.begin(false, true);
 
     const files = fs.readdirSync(configDir);
-    const file = files.find((el) => el.match(/^shard_[a-z]+_config\.json$/));
+    const file = files.find((el) => el.match(common.shardConfigRegex));
     if (!file) {
       throw new Error('Failed to find shard config file required for boot.');
     }
@@ -120,6 +120,8 @@ class ShardingSlave {
     this._socket.on('evalRequest', (...args) => this._evalRequest(...args));
     this._socket.on('update', () => this._updateRequest());
     this._socket.on('respawn', (...args) => this._respawnChild(...args));
+    this._socket.on('writeFile', (...args) => this._receiveMasterFile(...args));
+    this._socket.on('getFile', (...args) => this._sendMasterFile(...args));
   }
 
   /**
@@ -242,6 +244,7 @@ class ShardingSlave {
         ['release', 'dev'].includes(botFullName) ? null : botFullName;
     const env = Object.assign({}, process.env, {
       SHARDING_MANAGER: true,
+      SHARDING_SLAVE: true,
       SHARDS: this._status.goalShardId,
       SHARD_COUNT: this._status.goalShardCount,
       DISCORD_TOKEN: auth[botFullName],
@@ -266,6 +269,57 @@ class ShardingSlave {
     this._child.on('exit', (...args) => this._handleExit(...args));
     this._child.on('message', (...args) => this._childMessage(...args));
     this._status.startTime = Date.now();
+  }
+
+  /**
+   * @description We received a file from the sharding master that it intends
+   * for us to write to disk at the given filename relative to the project root.
+   *
+   * @private
+   * @param {string} filename Filename relative to project directory.
+   * @param {string|Buffer} data The data to write to the file.
+   */
+  _receiveMasterFile(filename, data) {
+    const file = path.resolve(`${botCWD}${filename}`);
+    if (!file.startsWith(botCWD)) {
+      this.logWarning('Master sent file outside of project directory: ' + file);
+      return;
+    }
+    fs.writeFile(file, data, (err) => {
+      if (err) {
+        this.error('Failed to write file from master to disk: ' + file);
+        console.error(err);
+      } else {
+        this.logDebug('Wrote file from master to disk: ' + file);
+      }
+    });
+  }
+
+  /**
+   * @description Sharding master has requested one of our files.
+   *
+   * @private
+   * @param {string} filename Filename relative to project directory.
+   * @param {Function} cb Callback to send the error or file back on.
+   */
+  _sendMasterFile(filename, cb) {
+    const file = path.resolve(`${botCWD}${filename}`);
+    if (!file.startsWith(botCWD)) {
+      this.logWarning(
+          'Master requested file outside of project directory: ' + file);
+      cb(null);
+      return;
+    }
+    fs.readFile(file, (err, data) => {
+      if (err) {
+        this.error('Failed to read file that master requested disk: ' + file);
+        console.error(err);
+        cb(null);
+      } else {
+        this.logDebug('Sending file to master from disk: ' + file);
+        cb(data);
+      }
+    });
   }
 
   /**

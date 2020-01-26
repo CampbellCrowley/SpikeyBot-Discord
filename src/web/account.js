@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (web@campbellcrowley.com)
 const fs = require('fs');
 const http = require('http');
@@ -20,8 +20,6 @@ const patreonOAuthClient =
 
 require('../subModule.js').extend(WebAccount);  // Extends the SubModule class.
 
-// TODO: Support shards on multiple different nodes.
-
 /**
  * @classdesc Manages the account webpage.
  * @class
@@ -31,19 +29,23 @@ function WebAccount() {
   const self = this;
   this.myName = 'WebAccount';
 
-  const app = http.createServer(handler);
-  const io = socketIo(app, {path: '/socket.io/'});
+  let app;
+  let io;
+  if (!self.common.isSlave) {
+    app = http.createServer(handler);
+    io = socketIo(app, {path: '/socket.io/'});
 
-  app.on('error', function(err) {
-    if (err.code === 'EADDRINUSE') {
-      self.debug(
-          'Accounts failed to bind to port because it is in use. (' + err.port +
-          ')');
-      self.shutdown(true);
-    } else {
-      self.error('Account failed to bind to port for unknown reason.', err);
-    }
-  });
+    app.on('error', function(err) {
+      if (err.code === 'EADDRINUSE') {
+        self.debug(
+            'Accounts failed to bind to port because it is in use. (' +
+            err.port + ')');
+        self.shutdown(true);
+      } else {
+        self.error('Account failed to bind to port for unknown reason.', err);
+      }
+    });
+  }
 
   /**
    * The filename in the user's directory of the file where the settings related
@@ -140,6 +142,10 @@ function WebAccount() {
 
   /** @inheritdoc */
   this.initialize = function() {
+    if (self.common.isSlave) {
+      self.error('Proxy not starting due to this being a slave shard.');
+      return;
+    }
     app.listen(self.common.isRelease ? 8014 : 8015, '127.0.0.1');
     self.bot.accounts = toExport;
     self.common.connectSQL();

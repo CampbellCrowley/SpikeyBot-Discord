@@ -40,13 +40,13 @@ const keyOptions = {
 class ShardingMaster {
   /**
    * @description Start the webserver.
-   * @param {number} [port=8080] Port to listen for shard connections.
+   * @param {number} [port=8024] Port to listen for shard connections.
    * @param {string} [address='127.0.0.1'] Address to listen for shard
    * connections.
    * @param {string} [path='/socket.io/'] Path prefix to watch for socket
    * connections.
    */
-  constructor(port = 8080, address = '127.0.0.1', path = '/socket.io/') {
+  constructor(port = 8024, address = '127.0.0.1', path = '/socket.io/') {
     common.begin(false, true);
 
     this._serverError = this._serverError.bind(this);

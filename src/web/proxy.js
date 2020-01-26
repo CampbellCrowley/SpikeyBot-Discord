@@ -1,8 +1,9 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (web@campbellcrowley.com)
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
+const httpProxy = require('http-proxy');
 const socketIo = require('socket.io');
 const sIOClient = require('socket.io-client');
 const querystring = require('querystring');
@@ -17,7 +18,10 @@ require('../subModule.js').extend(WebProxy);  // Extends the SubModule class.
 delete require.cache[require.resolve('./WebUserData.js')];
 const WebUserData = require('./WebUserData.js');
 
-// TODO: Support shards on multiple different nodes.
+const proxyOpts = {
+  ws: true,
+  xfwd: false,
+};
 
 /**
  * @classdesc Proxy for account authentication.
@@ -73,6 +77,8 @@ function WebProxy() {
     '/socket.io/account/': 8014,
     '/socket.io/dev/control/': 8021,
     '/socket.io/control/': 8020,
+    '/dev': 8023,
+    '_fallback': 8022,
   };
 
   /**
@@ -144,6 +150,10 @@ function WebProxy() {
 
   /** @inheritdoc */
   this.initialize = function() {
+    if (self.common.isSlave) {
+      self.error('Proxy not starting due to this being a slave shard.');
+      return;
+    }
     app.listen(self.common.isRelease ? 8010 : 8012, '127.0.0.1');
     self.common.connectSQL();
   };
@@ -253,6 +263,7 @@ function WebProxy() {
   }
 
   const app = http.createServer(handler);
+  const proxy = httpProxy.createProxyServer(proxyOpts);
   const io = socketIo(app, {path: '/socket.io/'});
 
   let aborted = false;
@@ -270,15 +281,18 @@ function WebProxy() {
   });
 
   /**
-   * Handler for all http requests. Should never be called.
+   * Handler for all http requests. Proxies all requests to file server.
    *
    * @private
    * @param {http.IncomingMessage} req The client's request.
    * @param {http.ServerResponse} res Our response to the client.
    */
   function handler(req, res) {
-    res.writeHead(418);
-    res.end('TEAPOT');
+    if (req.url.startsWith('/dev')) {
+      proxy.web(req, res, {target: `http://localhost:${pathPorts['/dev']}`});
+    } else {
+      proxy.web(req, res, {target: `http://localhost:${pathPorts._fallback}`});
+    }
   }
 
   /**
@@ -725,10 +739,8 @@ function WebProxy() {
     host = host || tokenHost;
     const req = https.request(host, (response) => {
       let content = '';
-      response.on('data', function(chunk) {
-        content += chunk;
-      });
-      response.on('end', function() {
+      response.on('data', (chunk) => content += chunk);
+      response.on('end', () => {
         if (response.statusCode == 200) {
           cb(null, content);
         } else {

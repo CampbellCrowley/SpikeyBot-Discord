@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 
 /**
@@ -17,7 +17,7 @@ class MessageMaker {
    * @param {?string} msg The message content.
    */
   constructor(self, uId, gId, cId, msg) {
-    const g = self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.get(gId);
     const prefix = self.bot.getPrefix(gId);
     /**
      * @description Always true. Can be used to check if this message was
@@ -34,7 +34,7 @@ class MessageMaker {
      * @type {external:Discord~User}
      * @constant
      */
-    this.author = self.client.users.get(uId);
+    this.author = self.client && self.client.users.get(uId);
     /**
      * @description Discord.JS Client.
      * @public
@@ -62,7 +62,8 @@ class MessageMaker {
      * @type {external:Discord~TextChannel|external:Discord~DMChannel}
      * @constant
      */
-    this.channel = g && g.channels.get(cId) || self.client.channels.get(uId);
+    this.channel = (g && g.channels.get(cId)) ||
+        (self.client && self.client.channels.get(uId));
     /**
      * @description Message content without command prefix.
      * @public
