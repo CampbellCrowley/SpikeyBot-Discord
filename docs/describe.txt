@@ -1,4 +1,5 @@
 MariaDB [appusers]> describe Discord; describe HGEvents; describe HGStats; describe TwitchDiscord; describe TwitchGames; describe TwitchStreams; describe TwitchUsers;
+Discord
 +-------------+--------------+------+-----+---------------------+-------+
 | Field       | Type         | Null | Key | Default             | Extra |
 +-------------+--------------+------+-----+---------------------+-------+
@@ -12,6 +13,7 @@ MariaDB [appusers]> describe Discord; describe HGEvents; describe HGStats; descr
 +-------------+--------------+------+-----+---------------------+-------+
 7 rows in set (0.002 sec)
 
+HGEvents
 +--------------+------------------+------+-----+---------------------+-------------------------------+
 | Field        | Type             | Null | Key | Default             | Extra                         |
 +--------------+------------------+------+-----+---------------------+-------------------------------+
@@ -25,6 +27,7 @@ MariaDB [appusers]> describe Discord; describe HGEvents; describe HGStats; descr
 +--------------+------------------+------+-----+---------------------+-------------------------------+
 7 rows in set (0.001 sec)
 
+HGStats
 +-------------+------------------+------+-----+---------+-------+
 | Field       | Type             | Null | Key | Default | Extra |
 +-------------+------------------+------+-----+---------+-------+
@@ -45,6 +48,7 @@ MariaDB [appusers]> describe Discord; describe HGEvents; describe HGStats; descr
 +-------------+------------------+------+-----+---------+-------+
 14 rows in set (0.002 sec)
 
+TwitchDiscord
 +----------+-------------+------+-----+---------+-------+
 | Field    | Type        | Null | Key | Default | Extra |
 +----------+-------------+------+-----+---------+-------+
@@ -56,6 +60,7 @@ MariaDB [appusers]> describe Discord; describe HGEvents; describe HGStats; descr
 +----------+-------------+------+-----+---------+-------+
 5 rows in set (0.001 sec)
 
+TwitchGames
 +--------------+--------------+------+-----+---------------------+-------------------------------+
 | Field        | Type         | Null | Key | Default             | Extra                         |
 +--------------+--------------+------+-----+---------------------+-------------------------------+
@@ -66,6 +71,7 @@ MariaDB [appusers]> describe Discord; describe HGEvents; describe HGStats; descr
 +--------------+--------------+------+-----+---------------------+-------------------------------+
 4 rows in set (0.001 sec)
 
+TwitchStreams
 +-----------+------------------+------+-----+---------------------+-------------------------------+
 | Field     | Type             | Null | Key | Default             | Extra                         |
 +-----------+------------------+------+-----+---------------------+-------------------------------+
@@ -78,6 +84,7 @@ MariaDB [appusers]> describe Discord; describe HGEvents; describe HGStats; descr
 +-----------+------------------+------+-----+---------------------+-------------------------------+
 6 rows in set (0.001 sec)
 
+TwitchUsers
 +--------------------+-------------+------+-----+---------------------+-------------------------------+
 | Field              | Type        | Null | Key | Default             | Extra                         |
 +--------------------+-------------+------+-----+---------------------+-------------------------------+
