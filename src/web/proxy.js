@@ -79,6 +79,8 @@ function WebProxy() {
     '/socket.io/control/': 8020,
     '/dev': 8023,
     '_fallback': 8022,
+    '/master/': 8024,
+    '/dev/master/': 8025,
   };
 
   /**

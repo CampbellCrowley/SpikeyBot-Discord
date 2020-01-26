@@ -1,0 +1,92 @@
+MariaDB [appusers]> describe Discord; describe HGEvents; describe HGStats; describe TwitchDiscord; describe TwitchGames; describe TwitchStreams; describe TwitchUsers;
++-------------+--------------+------+-----+---------------------+-------+
+| Field       | Type         | Null | Key | Default             | Extra |
++-------------+--------------+------+-----+---------------------+-------+
+| id          | char(22)     | NO   | PRI | NULL                |       |
+| firstLogin  | datetime     | NO   |     | current_timestamp() |       |
+| lastLogin   | datetime     | NO   |     | current_timestamp() |       |
+| patreonId   | int(11)      | YES  | UNI | NULL                |       |
+| spotifyId   | varchar(40)  | YES  | UNI | NULL                |       |
+| minecraftId | varchar(35)  | YES  | UNI | NULL                |       |
+| apiToken    | varchar(128) | YES  | UNI | NULL                |       |
++-------------+--------------+------+-----+---------------------+-------+
+7 rows in set (0.002 sec)
+
++--------------+------------------+------+-----+---------------------+-------------------------------+
+| Field        | Type             | Null | Key | Default             | Extra                         |
++--------------+------------------+------+-----+---------------------+-------------------------------+
+| Id           | varchar(40)      | NO   | PRI | NULL                |                               |
+| CreatorId    | varchar(20)      | NO   |     | NULL                |                               |
+| DateCreated  | datetime         | NO   |     | NULL                |                               |
+| Privacy      | varchar(8)       | NO   |     | private             |                               |
+| Likes        | int(10) unsigned | NO   |     | 0                   |                               |
+| DateModified | timestamp        | NO   |     | current_timestamp() | on update current_timestamp() |
+| EventType    | varchar(9)       | NO   |     | NULL                |                               |
++--------------+------------------+------+-----+---------------------+-------------------------------+
+7 rows in set (0.001 sec)
+
++-------------+------------------+------+-----+---------+-------+
+| Field       | Type             | Null | Key | Default | Extra |
++-------------+------------------+------+-----+---------+-------+
+| guildId     | varchar(19)      | NO   | PRI | NULL    |       |
+| groupId     | varchar(19)      | NO   | PRI | NULL    |       |
+| userId      | varchar(19)      | NO   | PRI | NULL    |       |
+| kills       | int(10) unsigned | NO   |     | 0       |       |
+| deaths      | int(10) unsigned | NO   |     | 0       |       |
+| wounds      | int(10) unsigned | NO   |     | 0       |       |
+| heals       | int(10) unsigned | NO   |     | 0       |       |
+| revives     | int(10) unsigned | NO   |     | 0       |       |
+| wins        | int(10) unsigned | NO   |     | 0       |       |
+| losses      | int(10) unsigned | NO   |     | 0       |       |
+| daysAlive   | int(10) unsigned | NO   |     | 0       |       |
+| daysDead    | int(10) unsigned | NO   |     | 0       |       |
+| daysWounded | int(10) unsigned | NO   |     | 0       |       |
+| botId       | varchar(19)      | NO   | PRI | NULL    |       |
++-------------+------------------+------+-----+---------+-------+
+14 rows in set (0.002 sec)
+
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| guild    | varchar(19) | NO   | PRI | NULL    |       |
+| channel  | varchar(19) | NO   | PRI | NULL    |       |
+| twitchId | int(11)     | NO   | PRI | NULL    |       |
+| type     | varchar(16) | NO   | PRI | NULL    |       |
+| bot      | varchar(19) | NO   |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+5 rows in set (0.001 sec)
+
++--------------+--------------+------+-----+---------------------+-------------------------------+
+| Field        | Type         | Null | Key | Default             | Extra                         |
++--------------+--------------+------+-----+---------------------+-------------------------------+
+| id           | varchar(6)   | NO   | PRI | NULL                |                               |
+| name         | varchar(128) | NO   |     | NULL                |                               |
+| thumbnailUrl | varchar(256) | YES  |     | NULL                |                               |
+| lastModified | timestamp    | NO   |     | current_timestamp() | on update current_timestamp() |
++--------------+--------------+------+-----+---------------------+-------------------------------+
+4 rows in set (0.001 sec)
+
++-----------+------------------+------+-----+---------------------+-------------------------------+
+| Field     | Type             | Null | Key | Default             | Extra                         |
++-----------+------------------+------+-----+---------------------+-------------------------------+
+| id        | int(10) unsigned | NO   | PRI | NULL                | auto_increment                |
+| user      | int(11)          | NO   | MUL | NULL                |                               |
+| title     | varchar(140)     | YES  |     | NULL                |                               |
+| startTime | timestamp        | NO   |     | current_timestamp() | on update current_timestamp() |
+| endTime   | timestamp        | YES  |     | NULL                |                               |
+| game      | varchar(6)       | YES  | MUL | NULL                |                               |
++-----------+------------------+------+-----+---------------------+-------------------------------+
+6 rows in set (0.001 sec)
+
++--------------------+-------------+------+-----+---------------------+-------------------------------+
+| Field              | Type        | Null | Key | Default             | Extra                         |
++--------------------+-------------+------+-----+---------------------+-------------------------------+
+| id                 | int(11)     | NO   | PRI | NULL                |                               |
+| streamChangedState | int(11)     | NO   |     | 0                   |                               |
+| login              | varchar(24) | YES  |     | NULL                |                               |
+| lastModified       | timestamp   | NO   |     | current_timestamp() | on update current_timestamp() |
+| displayName        | varchar(25) | YES  |     | NULL                |                               |
+| expiresAt          | timestamp   | NO   |     | 0000-00-00 00:00:00 |                               |
+| bot                | varchar(19) | NO   | PRI | NULL                |                               |
++--------------------+-------------+------+-----+---------------------+-------------------------------+
+7 rows in set (0.002 sec)

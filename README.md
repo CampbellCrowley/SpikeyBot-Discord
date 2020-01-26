@@ -98,6 +98,7 @@ The below steps outline the minimum required to get the SpikeyBot to run.
     - If you are **not** running with `--shards` and wish to use the Hungry Games submodule, you must run node with `--experimental-worker`.
 
 Hungry Games requires a MariaDB server to be available for storage of all events. If this database is not setup properly, HG may run into problems, and is not tested.  
+MariaDB table descriptions available in [./docs/describe.txt](./docs/describe.txt).  
 
 ## CLI Arguments
 All arguments are optional for normal usage.
