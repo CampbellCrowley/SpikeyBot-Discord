@@ -420,7 +420,9 @@ function SpikeyBot() {
     if (shardMem != null) argv.push(`--max-old-space-size=${shardMem}`);
     argv.push('--experimental-worker');
     const manager = new Discord.ShardingManager('./src/SpikeyBot.js', {
-      token: (botName && auth[botName]) || (setDev ? auth.dev : auth.release),
+      token: !noLogin && ((botName && auth[botName]) ||
+                          (setDev ? auth.dev : auth.release)) ||
+          undefined,
       totalShards: numShards || 'auto',
       shardArgs: process.argv.slice(2).filter(
           (arg) => !arg.startsWith('--shards') && !arg.startsWith('--delay')),
@@ -740,7 +742,7 @@ function SpikeyBot() {
         }
       }
       if (!minimal && !initialized) {
-        fs.readFile(fullRebootFilename, function(err, file) {
+        fs.readFile(fullRebootFilename, (err, file) => {
           if (err) {
             if (err.code !== 'ENOENT') {
               self.error(`Failed to read ${fullRebootFilename}`);
@@ -758,7 +760,7 @@ function SpikeyBot() {
           }
           parsed.running = true;
           fs.writeFile(
-              fullRebootFilename, JSON.stringify(parsed), function(err) {
+              fullRebootFilename, JSON.stringify(parsed), (err) => {
                 if (err) {
                   common.error('Failed to set file state to running.');
                   console.error(err);
@@ -836,9 +838,7 @@ function SpikeyBot() {
     initialized = true;
   }
 
-  client.on('shardReady', (id) => {
-    common.log('Shard Ready', `Shard ${id}`);
-  });
+  client.on('shardReady', (id) => common.log('Shard Ready', `Shard ${id}`));
 
   client.on('disconnect', onDisconnect);
   /**
@@ -1058,8 +1058,7 @@ function SpikeyBot() {
       guildPrefixes[gId] = newPrefix;
       if (botName) {
         fs.readFile(
-            common.guildSaveDir + gId + guildCustomPrefixFile,
-            function(err, data) {
+            common.guildSaveDir + gId + guildCustomPrefixFile, (err, data) => {
               let finalPrefix = newPrefix;
               if (data) {
                 const parsed = JSON.parse(data);
@@ -1090,7 +1089,7 @@ function SpikeyBot() {
                 }
                 fs.writeFile(
                     common.guildSaveDir + gId + guildCustomPrefixFile,
-                    finalPrefix, function(err) {
+                    finalPrefix, (err) => {
                       if (err) {
                         common.error(
                             'Failed to save guild custom prefix! ' +
@@ -1106,7 +1105,7 @@ function SpikeyBot() {
               }
             });
       } else {
-        mkdirp(common.guildSaveDir + gId, function(err) {
+        mkdirp(common.guildSaveDir + gId, (err) => {
           if (err) {
             common.error(
                 'Failed to create guild directory! ' + gId + ' (' + newPrefix +
@@ -1115,8 +1114,7 @@ function SpikeyBot() {
             return;
           }
           fs.writeFile(
-              common.guildSaveDir + gId + guildPrefixFile, newPrefix,
-              function(err) {
+              common.guildSaveDir + gId + guildPrefixFile, newPrefix, (err) => {
                 if (err) {
                   common.error(
                       'Failed to save guild custom prefix! ' + gId + ' (' +
@@ -1442,15 +1440,11 @@ function SpikeyBot() {
     let noSchedule = false;
 
     let numArg = 0;
-    if (toReload.find(function(el) {
-      return '--force' == el;
-    })) {
+    if (toReload.find((el) => '--force' == el)) {
       force = true;
       numArg++;
     }
-    if (toReload.find(function(el) {
-      return '--no-schedule' == el;
-    })) {
+    if (toReload.find((el) => '--no-schedule' == el)) {
       noSchedule = true;
       numArg++;
     }
@@ -1688,11 +1682,17 @@ function SpikeyBot() {
     fs.readFile(guildFile, onFileRead(id));
   }
 
-  if (!noLogin) {
-    if (delayBoot > 0) {
+  if (delayBoot > 0) {
+    if (!noLogin) {
       setTimeout(login, delayBoot);
     } else {
+      setTimeout(onReady, delayBoot);
+    }
+  } else {
+    if (!noLogin) {
       login();
+    } else {
+      onReady();
     }
   }
 

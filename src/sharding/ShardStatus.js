@@ -26,6 +26,16 @@ class ShardStatus {
      */
     this.id = id;
     /**
+     * @description Is this shard considered the master shard. There must be
+     * exactly one of these configured at all times, and in most cases can run
+     * in the same directory as the ShardingMaster. This shard will be told to
+     * not connect to Discord, and act as the master node for web requests.
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.isMaster = false;
+    /**
      * @description The timestamp at which the shard was most recently started.
      * @public
      * @type {number}

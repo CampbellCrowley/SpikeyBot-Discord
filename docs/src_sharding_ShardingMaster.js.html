@@ -263,9 +263,17 @@ class ShardingMaster {
      * shard names.
      *
      * @private
-     * @type {object.&lt;ShardSocket>}
+     * @type {object.&lt;Socket>}
      */
     this._shardSockets = {};
+    /**
+     * The socket that the master shard is currently connected on, or null if
+     * disconnected.
+     *
+     * @private
+     * @type {?Socket}
+     */
+    this._masterShardSocket = null;
 
     /**
      * Webserver instance.
@@ -378,8 +386,12 @@ class ShardingMaster {
     const file = usersFile;
     fs.readFile(file, (err, data) => {
       if (err) {
-        common.error(`Failed to read ${file}`);
-        console.error(err);
+        if (err.code !== 'ENOENT') {
+          common.error(`Failed to read ${file}`);
+          console.error(err);
+        } else {
+          this._knownUsers = {};
+        }
         return;
       }
       try {
@@ -478,11 +490,16 @@ class ShardingMaster {
     // The missing shard IDs that need to exist.
     const newIds = this._getCurrentUnboundIds(goal);
 
+    const master = this._getMasterUser();
+
     // Array of shards transitioning from "incorrect" to "correct".
     const configuring = [];
 
     if (goal > known) {
       this.generateShardConfig();
+    }
+    if (!master) {
+      this.generateShardConfig(true);
     }
     if (goal > current) {
       common.logWarning(
@@ -542,6 +559,12 @@ class ShardingMaster {
       s.goalShardCount = goal;
     });
 
+    if (master.goalShardId &lt; 0) {
+      configuring.push(master);
+      master.goalShardId = 1000; // I think this is big enough for a while.
+      master.goalShardCount = goal;
+    }
+
     if (now >= this._nextHeartbeatTime) {
       // Send all shutdown requests asap, as they do not have their own
       // timeslot.
@@ -559,12 +582,17 @@ class ShardingMaster {
       if (hbConf.updateStyle === 'pull') {
         if (hbConf.disperse) {
           const updateId = Math.floor(
-              ((now - this._heartbeatLoopStartTime) / hbConf.interval) * goal);
+              ((now - this._heartbeatLoopStartTime) / hbConf.interval) *
+              (goal + 1));
 
-          const delta = Math.floor(hbConf.interval / goal);
+          const delta = Math.floor(hbConf.interval / (goal + 1));
           this._nextHeartbeatTime += delta;
 
-          this._sendHeartbeatRequest(updateId);
+          if (updateId >= goal) {
+            this._sendHeartbeatRequest(master);
+          } else {
+            this._sendHeartbeatRequest(updateId);
+          }
         } else {
           this._nextHeartbeatTime += hbConf.interval;
 
@@ -572,6 +600,7 @@ class ShardingMaster {
             if (el.goalShardId &lt; 0) return;
             this._sendHeartbeatRequest(el);
           });
+          this._sendHeartbeatRequest(this._getMasterUser());
         }
       } else {
         this._nextHeartbeatTime += hbConf.interval;
@@ -598,6 +627,7 @@ class ShardingMaster {
       this._config.numShards = this._detectedNumShards;
 
       if (now - this._config.autoDetectInterval > this._shardNumTimestamp) {
+        if (!this._auth) return this._config.numShards;
         const token = this._auth[this._config.botName];
 
         if (!token) {
@@ -632,6 +662,7 @@ class ShardingMaster {
    * @returns {number} The current number of shards we are controlling.
    */
   getCurrentShardCount() {
+    if (!this._shardSockets) return 0;
     return Object.keys(this._shardSockets).length;
   }
 
@@ -642,7 +673,7 @@ class ShardingMaster {
    * @returns {number} The number of shards allowed to startup.
    */
   getKnownShardCount() {
-    return Object.keys(this._knownUsers).length;
+    return Object.values(this._knownUsers).filter((el) => !el.isMaster).length;
   }
 
   /**
@@ -673,7 +704,7 @@ class ShardingMaster {
     const now = Date.now();
     return Object.values(this._knownUsers)
         .filter(
-            (el) => el.goalShardCount === goal &amp;&amp;
+            (el) => !el.isMaster &amp;&amp; el.goalShardCount === goal &amp;&amp;
                 el.lastHeartbeat >
                     now - this._config.heartbeat.assumeDeadAfter);
   }
@@ -693,7 +724,7 @@ class ShardingMaster {
     const now = Date.now();
     return Object.values(this._knownUsers)
         .filter(
-            (el) => el.goalShardCount !== goal &amp;&amp;
+            (el) => !el.isMaster &amp;&amp; el.goalShardCount !== goal &amp;&amp;
                 el.lastSeen > now - this._config.heartbeat.assumeDeadAfter);
   }
   /**
@@ -709,6 +740,7 @@ class ShardingMaster {
     }
     const ids = [...Object.keys(new Array(goal))];
     Object.values(this._knownUsers).forEach((el) => {
+      if (el.isMaster) return;
       if (el.goalShardCount === goal) {
         const index = ids.indexOf(el.goalShardId);
         if (index >= 0) {
@@ -732,7 +764,17 @@ class ShardingMaster {
    */
   _getShardById(shardId) {
     return Object.values(this._knownUsers)
-        .find((el) => el.goalShardId === shardId);
+        .find((el) => !el.isMaster &amp;&amp; el.goalShardId === shardId);
+  }
+  /**
+   * @description Get the master shard from the known users. Assumes only one
+   * master exists.
+   * @private
+   * @returns {?ShardInfo} The matched shard info, or null if it couldn't be
+   * found.
+   */
+  _getMasterUser() {
+    return Object.values(this._knownUsers).find((el) => el.isMaster);
   }
 
   /**
@@ -807,6 +849,7 @@ class ShardingMaster {
           `Socket disconnected (${num})(${reason}): ${ipName}`, socket.id);
       delete this._sockets[socket.id];
       if (socket.userId) delete this._shardSockets[socket.userId];
+      if (socket.isMasterShard) this._masterShardSocket = null;
     });
 
     const shardAuth = socket.handshake.headers['authorization'];
@@ -881,12 +924,28 @@ class ShardingMaster {
     user.lastSeen = now;
     socket.userId = userId;
 
+    if (user.isMaster &amp;&amp; this._masterShardSocket) {
+      common.logWarning(
+          'Socket attempted connection as a master shard while another master' +
+              ' is already connected!',
+          socket.id);
+      socket.disconnect(true);
+      return;
+    }
+
     const sign = crypto.createSign(signAlgorithm);
     sign.update(`Look at me, I'm the captain now. ${now}`);
     sign.end();
     const masterSig = sign.sign(this._privKey, 'utf8');
     socket.emit('masterVerification', masterSig);
 
+    if (user.isMaster) {
+      socket.isMasterShard = true;
+      this._masterShardSocket = socket;
+    } else {
+      socket.isMasterShard = false;
+      this._shardSockets[userId] = socket;
+    }
     this._refreshShardStatus();
 
     socket.on('status', (status) => {
@@ -933,9 +992,8 @@ class ShardingMaster {
       // TODO: Store history of shard status for historic purposes.
     });
 
-    socket.on('broadcastEval', (script, cb) => {
-      this.broadcastEvalToShards(script, cb);
-    });
+    socket.on(
+        'broadcastEval', (...args) => this.broadcastEvalToShards(...args));
     socket.on('respawnAll', (...args) => this.respawnAll(...args));
   }
 
@@ -1050,10 +1108,12 @@ class ShardingMaster {
    * master. This file will be saved directly to disk, as well as emailed to
    * sysadmins.
    * @public
+   * @param {boolean} [isMaster=false] Is this config for a master shard.
    */
-  generateShardConfig() {
+  generateShardConfig(isMaster = false) {
     const made = new ShardingMaster.ShardInfo(this._generateShardName());
     this._knownUsers[made.id] = made;
+    if (isMaster) made.isMaster = true;
     ShardingMaster.generateKeyPair((err, pub, priv) => {
       if (err) {
         delete this._knownUsers[made.id];
@@ -1065,7 +1125,7 @@ class ShardingMaster {
       }
       made.key = pub;
       const config = {
-        host: this._config.remoteHost,
+        host: (isMaster &amp;&amp; this._config.masterHost) || this._config.remoteHost,
         pubKey: pub,
         privKey: priv,
         masterPubKey: this._pubKey,
@@ -1264,7 +1324,8 @@ ShardingMaster.ShardInfo = require('./ShardInfo.js');
 
 if (require.main === module) {
   console.log('Started via CLI, booting up...');
-  const manager = new ShardingMaster(process.argv[2]);
+  const manager =
+      new ShardingMaster(process.argv[2], process.argv[3], process.argv[4]);
 
   process.on('SIGINT', manager.exit);
   process.on('SIGTERM', manager.exit);
@@ -1316,7 +1377,7 @@ module.exports = ShardingMaster;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Saturday, January 25, 2020 5:59 PM (-08:00)
+		on Sunday, January 26, 2020 3:56 PM (-08:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

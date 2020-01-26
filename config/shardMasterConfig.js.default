@@ -112,6 +112,19 @@ class ShardMasterConfig {
       protocol: 'https:',
       path: '/socket.io/',
     };
+    /**
+     * @description Host information for the master shard to use in order to be
+     * able to find us.
+     * @public
+     * @type {object}
+     * @default
+     */
+    this.masterHost = {
+      host: 'localhost',
+      port: 8024,
+      protocol: 'http:',
+      path: '/socket.io/',
+    };
 
     /**
      * @description Configuration specifying how detecting if shards are still

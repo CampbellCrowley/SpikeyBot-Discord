@@ -212,6 +212,7 @@ class ShardingSlave {
     const s = this._status;
     s.goalShardId = settings.id;
     s.goalShardCount = settings.count;
+    s.isMaster = settings.master || false;
 
     if (s.currentShardId != s.goalShardId ||
         s.currentShardCount != s.goalShardCount) {
@@ -249,6 +250,7 @@ class ShardingSlave {
       SHARD_COUNT: this._status.goalShardCount,
       DISCORD_TOKEN: auth[botFullName],
     });
+    if (!this._settings.botArgs) this._settings.botArgs = [];
     if (botName) {
       const index = this._settings.botArgs.findIndex(
           (el) => el.match(/--botname=(\w+)$/));
@@ -258,7 +260,11 @@ class ShardingSlave {
         this._settings.botArgs.push(`--botname=${botName}`);
       }
     }
-    this._child = fork('src/SpikeyBot.js', this._settings.botArgs || [], {
+    if (this._status.isMaster &&
+        !this._settings.botArgs.includes('--nologin')) {
+      this._settings.botArgs.push('--nologin');
+    }
+    this._child = fork('src/SpikeyBot.js', this._settings.botArgs, {
       execArgv: this._settings.nodeArgs || [],
       env: env,
       cwd: botCWD,
@@ -551,7 +557,7 @@ class ShardingSlave {
 
 if (require.main === module) {
   console.log('Started via CLI, booting up...');
-  const slave = new ShardingSlave(process.argv[2]);
+  const slave = new ShardingSlave();
 
   process.on('SIGINT', slave.exit);
   process.on('SIGTERM', slave.exit);

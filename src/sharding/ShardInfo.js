@@ -34,6 +34,16 @@ class ShardInfo {
      */
     this.key = null;
     /**
+     * @description Is this shard considered the master shard. There must be
+     * exactly one of these configured at all times, and in most cases can run
+     * in the same directory as the ShardingMaster. This shard will be told to
+     * not connect to Discord, and act as the master node for web requests.
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.isMaster = false;
+    /**
      * @description Timestamp of the last time the shard has been seen. This
      * will be 0 if the shard has never attempted to communicate with the
      * master.
@@ -155,6 +165,7 @@ class ShardInfo {
     return {
       id: this.goalShardId,
       count: this.goalShardCount,
+      master: this.isMaster,
     };
   }
 

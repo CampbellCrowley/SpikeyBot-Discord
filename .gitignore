@@ -11,4 +11,7 @@ save/hgWebClients.json
 save/webClients.json
 save/rigged-counter.txt
 save/pingHistory.json
+save/shardsshardMaster.priv
+save/shardsshardMaster.pub
+config/shardMasterConfig.js
 gApiCredentials*.json
