@@ -73,7 +73,7 @@ function Common() {
    * @type {boolean}
    * @default false
    */
-  this.isSlave = (process.env.SHARDING_SLAVE && true) || false;
+  this.isSlave = process.env.SHARDING_SLAVE === 'true';
   /**
    * @description Is this a shard that is being managed by our sharding system,
    * and is the master that all children (siblings) will be connecting to. If
@@ -85,8 +85,7 @@ function Common() {
    * @type {boolean}
    * @default false
    */
-  this.isMaster =
-      (!this.isSlave && process.env.SHARDING_MASTER && true) || false;
+  this.isMaster = !this.isSlave && process.env.SHARDING_MASTER === 'true';
   /**
    * @description The network host information where the master node is located
    * for connecting sibling sockets to. This will be populated if `isSlave` is
@@ -97,36 +96,6 @@ function Common() {
    * @default
    */
   this.masterHost = null;
-
-  if (this.isSlave) {
-    const configDir = './config/';
-    const files = fs.readdirSync(configDir);
-    const file = files.find((el) => el.match(Common.shardConfigRegex));
-    if (!file) {
-      this.error(
-          'Failed to find shard config file required for sibling sockets.');
-    } else {
-      let data;
-      try {
-        data = fs.readFileSync(file);
-      } catch (err) {
-        this.error(
-            'Failed to read shard config file required for sibling sockets.');
-        console.error(err);
-      }
-      if (data) {
-        try {
-          const parsed = JSON.parse(data);
-          this.masterHost = parsed.host;
-        } catch (err) {
-          this.error(
-              'Failed to parse shard config file required for sibling ' +
-              'sockets.');
-          console.error(err);
-        }
-      }
-    }
-  }
 
   /**
    * Initialize variables and settings for logging properly.
@@ -369,6 +338,35 @@ function Common() {
     }
   };
 
+  if (this.isSlave) {
+    const configDir = './config/';
+    const files = fs.readdirSync(configDir);
+    const file = files.find((el) => el.match(Common.shardConfigRegex));
+    if (!file) {
+      this.error(
+          'Failed to find shard config file required for sibling sockets.');
+    } else {
+      let data;
+      try {
+        data = fs.readFileSync(`${configDir}/${file}`);
+      } catch (err) {
+        this.error(
+            'Failed to read shard config file required for sibling sockets.');
+        console.error(err);
+      }
+      if (data) {
+        try {
+          const parsed = JSON.parse(data);
+          this.masterHost = parsed.host;
+        } catch (err) {
+          this.error(
+              'Failed to parse shard config file required for sibling ' +
+              'sockets.');
+          console.error(err);
+        }
+      }
+    }
+  }
 
   /**
    * Gets the name and line number of the current function stack.

@@ -19,6 +19,16 @@
     "./twitch.js",
     "./images.js"
   ],
+  "master": [
+    "./main.js",
+    "./web/account.js",
+    "./web/stats.js",
+    "./web/settings.js",
+    "./web/webApi.js",
+    "./web/proxy.js",
+    "./web/hg.js",
+    "./web/fileServer.js"
+  ],
   "dev": [
     "./main.js",
     "./ticTacToe.js",

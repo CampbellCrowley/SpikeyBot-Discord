@@ -389,6 +389,7 @@ class ShardingMaster {
    * @private
    */
   _refreshShardStatus() {
+    this._setHBTimeout();
     if (!this._knownUsers) return;
     // Total running shards.
     const goal = this.getGoalShardCount();
@@ -528,11 +529,19 @@ class ShardingMaster {
         this._nextHeartbeatTime += hbConf.interval;
       }
 
-      if (this._hbTimeout) clearTimeout(this._hbTimeout);
-      this._hbTimeout = setTimeout(
-          () => this._refreshShardStatus(),
-          Date.now() - this._nextHeartbeatTime);
+      this._setHBTimeout();
     }
+  }
+  /**
+   * @description Reset the heartbeat timeout interval for refreshing shard
+   * statuses.
+   * @private
+   */
+  _setHBTimeout() {
+    if (this._hbTimeout) clearTimeout(this._hbTimeout);
+    let delta = Date.now() - this._nextHeartbeatTime;
+    if (delta < -1000) delta = 5000;
+    this._hbTimeout = setTimeout(() => this._refreshShardStatus(), delta);
   }
   /**
    * @description Fetch the current goal number of shards we are attempting to
@@ -1215,13 +1224,15 @@ class ShardingMaster {
     }
     if (!updating || !updating.id) {
       const num = typeof user === 'number' ? user : (user && user.goalShardId);
-      common.error('Unable to find user with goal shard ID: ' + num);
+      common.error('Unable to find user for HB with goal shard ID: ' + num);
       return;
     }
-    const socket = this._shardSockets[updating.id];
+    const socket = updating.isMaster ? this._masterShardSocket :
+                                       this._shardSockets[updating.id];
     if (!socket) {
       common.logWarning(
-          'Failed to send request for heartbeat to shard ' + updating.id);
+          'Failed to send request for heartbeat to shard ' + updating.id +
+          (updating.isMaster ? ' MASTER' : ''));
     } else {
       const req = updating.request();
       req.config = {

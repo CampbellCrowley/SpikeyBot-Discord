@@ -121,7 +121,7 @@ class ShardingSlave {
     this._socket.on(
         'masterVerification', (...args) => this._masterVerification(...args));
     this._socket.on('evalRequest', (...args) => this._evalRequest(...args));
-    this._socket.on('update', () => this._updateRequest());
+    this._socket.on('update', (...args) => this._updateRequest(...args));
     this._socket.on('respawn', (...args) => this._respawnChild(...args));
     this._socket.on('writeFile', (...args) => this._receiveMasterFile(...args));
     this._socket.on('getFile', (...args) => this._sendMasterFile(...args));
@@ -236,12 +236,14 @@ class ShardingSlave {
    * @description Master has sent a status update, and potentially expects a
    * response.
    * @private
-   * @param {object} settings Current settings for operation.
+   * @param {string} settings Current settings for operation as JSON parsable
+   * string.
    */
   _updateRequest(settings) {
-    this._settings = settings;
     common.log(
         'New settings received from master: ' + JSON.stringify(settings));
+    if (!settings || typeof settings !== 'object') return;
+    this._settings = settings;
     const s = this._status;
     s.goalShardId = settings.id;
     s.goalShardCount = settings.count;
@@ -258,7 +260,7 @@ class ShardingSlave {
         this._spawnChild();
       }
     }
-    if (this._settings.heartbeat.updateStyle === 'pull') {
+    if (this._settings.config.heartbeat.updateStyle === 'pull') {
       this._generateHeartbeat();
     }
     // TODO: Implement 'push' update style event loop.
@@ -271,34 +273,37 @@ class ShardingSlave {
    */
   _spawnChild() {
     if (this._status.goalShardId < 0) return;
+    if (this._child) return;
     common.log('Spawning child shard #' + this._status.goalShardId);
     this._status.reset();
-    const botFullName = this._settings.botName;
+    const botFullName =
+        this._settings.master ? 'master' : this._settings.config.botName;
     const botName =
         ['release', 'dev'].includes(botFullName) ? null : botFullName;
     const env = Object.assign({}, process.env, {
       SHARDING_MANAGER: true,
-      SHARDING_SLAVE: true,
+      SHARDING_SLAVE: !this._settings.master,
+      SHARDING_MASTER: this._settings.master,
       SHARDS: this._status.goalShardId,
       SHARD_COUNT: this._status.goalShardCount,
       DISCORD_TOKEN: auth[botFullName],
     });
-    if (!this._settings.botArgs) this._settings.botArgs = [];
+    if (!this._settings.config.botArgs) this._settings.config.botArgs = [];
     if (botName) {
-      const index = this._settings.botArgs.findIndex(
+      const index = this._settings.config.botArgs.findIndex(
           (el) => el.match(/--botname=(\w+)$/));
       if (index >= 0) {
-        this._settings.botArgs[index] = `--botname=${botName}`;
+        this._settings.config.botArgs[index] = `--botname=${botName}`;
       } else {
-        this._settings.botArgs.push(`--botname=${botName}`);
+        this._settings.config.botArgs.push(`--botname=${botName}`);
       }
     }
-    if (this._status.isMaster &&
-        !this._settings.botArgs.includes('--nologin')) {
-      this._settings.botArgs.push('--nologin');
+    if (this._settings.master &&
+        !this._settings.config.botArgs.includes('--nologin')) {
+      this._settings.config.botArgs.push('--nologin');
     }
-    this._child = fork('src/SpikeyBot.js', this._settings.botArgs, {
-      execArgv: this._settings.nodeArgs || [],
+    this._child = fork('src/SpikeyBot.js', this._settings.config.botArgs, {
+      execArgv: this._settings.config.nodeArgs || [],
       env: env,
       cwd: botCWD,
       detached: false,

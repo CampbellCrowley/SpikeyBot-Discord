@@ -663,6 +663,7 @@ function SpikeyBot() {
    * @param {string} [type='WATCHING'] The type of activity.
    */
   function updateGame(game, type) {
+    if (!client.user) return;
     client.user.setPresence({
       activity: {
         name: game,
@@ -682,7 +683,8 @@ function SpikeyBot() {
    * @listens Discord~Client#ready
    */
   function onReady() {
-    common.log(`Logged in as ${client.user.tag} (${self.version})`);
+    const tag = client.user && client.user.tag || '';
+    common.log(`Logged in as ${tag} (${self.version})`);
     if (!minimal || isBackup) {
       if (testInstance) {
         updateGame('Running unit test...');
@@ -697,7 +699,8 @@ function SpikeyBot() {
       }
     }
     let logChannel = client.channels.get(common.logChannel);
-    if (!logChannel && auth.logWebhookId && auth.logWebhookToken) {
+    if (client.user && !logChannel && auth.logWebhookId &&
+        auth.logWebhookToken) {
       logChannel =
           new Discord.WebhookClient(auth.logWebhookId, auth.logWebhookToken);
     }
@@ -820,11 +823,13 @@ function SpikeyBot() {
         },
         () => {});
     req.on('error', () => {});
+    const user = client.user;
+    const id = user && user.id || 'NOID';
     /* eslint-disable @typescript-eslint/camelcase */
     req.end(JSON.stringify({
-      text: `${client.user.tag}:${client.user.id} JS${self.version}`,
-      tag: client.user.tag,
-      id: client.user.id,
+      text: `${tag}:${id} JS${self.version}`,
+      tag: tag,
+      id: id,
       guild_count: client.guilds.size,
       shard_count: client.shard ? client.shard.count : '0',
       shard_id: client.shard ? client.shard.ids : 'null',
