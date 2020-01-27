@@ -795,7 +795,7 @@ class ShardingMaster {
       socket.disconnect(true);
       return;
     }
-    const [userId, userSig, timestamp] = shardAuth.split(';');
+    const [userId, userSig, timestamp] = shardAuth.split(',');
     if (!userId || !userSig || !(timestamp * 1)) {
       common.logDebug(
           'Socket attempted connection with invalid authorization header.',
@@ -845,10 +845,24 @@ class ShardingMaster {
     }
 
     const user = this._knownUsers[userId];
+    if (!user.key) {
+      common.logWarning('User does not have a known public key! ' + userId);
+      console.log(user);
+      socket.disconnect(true);
+      return;
+    }
+    const verifData = `${userId}${timestamp}`;
     const verify = crypto.createVerify(signAlgorithm);
-    verify.update(`${userId}${timestamp}`);
+    verify.update(verifData);
     verify.end();
-    if (!verify.verify(user.key, userSig)) {
+    let ver = false;
+    try {
+      ver = verify.verify(user.key, userSig, 'base64');
+    } catch (err) {
+      common.error('Failed to attempt to verify signature.');
+      console.error(verifData, user.key, userSig);
+    }
+    if (!ver) {
       common.logDebug(
           'Socket attempted connection but we failed to verify signature.',
           socket.id);
@@ -869,10 +883,11 @@ class ShardingMaster {
     }
 
     const sign = crypto.createSign(signAlgorithm);
-    sign.update(`Look at me, I'm the captain now. ${now}`);
+    const signData = `Look at me, I'm the captain now. ${now}`;
+    sign.update(signData);
     sign.end();
-    const masterSig = sign.sign(this._privKey, 'utf8');
-    socket.emit('masterVerification', masterSig);
+    const masterSig = sign.sign(this._privKey, 'base64');
+    socket.emit('masterVerification', masterSig, signData);
 
     if (user.isMaster) {
       socket.isMasterShard = true;
@@ -1083,6 +1098,7 @@ class ShardingMaster {
               'Failed to save new shard config to disk: ' + file, err);
         } else {
           ShardingMaster._sendShardCreateEmail(this._config.mail, file, made);
+          this._saveUsers();
         }
       });
     });

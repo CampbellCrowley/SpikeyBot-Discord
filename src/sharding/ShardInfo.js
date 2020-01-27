@@ -184,7 +184,7 @@ class ShardInfo {
     for (const prop of Object.keys(out)) {
       if (prop === 'id') continue;
       if (typeof out[prop] === 'function') continue;
-      if (typeof out[prop] !== typeof obj[prop]) continue;
+      if (out[prop] !== null && typeof out[prop] !== typeof obj[prop]) continue;
       out[prop] = obj[prop];
     }
     return out;

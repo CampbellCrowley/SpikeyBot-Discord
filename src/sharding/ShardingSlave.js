@@ -34,7 +34,7 @@ class ShardingSlave {
     if (!file) {
       throw new Error('Failed to find shard config file required for boot.');
     }
-    const data = fs.readFileSync(file);
+    const data = fs.readFileSync(`${configDir}/${file}`);
     /**
      * @description Parsed config file from disk.
      * @private
@@ -101,9 +101,10 @@ class ShardingSlave {
     const host = this._config.host;
     const now = Date.now();
     const sign = crypto.createSign(this._config.signAlgorithm);
-    sign.update(`${this.id}${now}`);
+    const signData = `${this.id}${now}`;
+    sign.update(signData);
     sign.end();
-    const signature = sign.sign(this._privKey, 'utf8');
+    const signature = sign.sign(this._privKey, 'base64');
 
     /**
      * @description The socket.io socket used to communicate with the master.
@@ -113,15 +114,31 @@ class ShardingSlave {
      */
     this._socket = socketIo(`${host.protocol}//${host.host}:${host.port}`, {
       path: host.path,
-      extraHeaders: {authorization: `${this.id};${signature};${now}`},
+      extraHeaders: {authorization: `${this.id},${signature},${now}`},
     });
     this._socket.on('connect', () => this._socketConnected());
     this._socket.on('disconnect', () => this._socketDisconnected());
+    this._socket.on(
+        'masterVerification', (...args) => this._masterVerification(...args));
     this._socket.on('evalRequest', (...args) => this._evalRequest(...args));
     this._socket.on('update', () => this._updateRequest());
     this._socket.on('respawn', (...args) => this._respawnChild(...args));
     this._socket.on('writeFile', (...args) => this._receiveMasterFile(...args));
     this._socket.on('getFile', (...args) => this._sendMasterFile(...args));
+    this._socket.on(
+        'connect_error', (...args) => this._socketConnectError(...args));
+    this._socket.on(
+        'connect_timeout', (...args) => this._socketConnectError(...args));
+    this._socket.on('error', (...args) => this._socketConnectError(...args));
+  }
+  /**
+   * @description Socket connected fail event handler.
+   * @private
+   * @param {...*} [args] Error arguments.
+   */
+  _socketConnectError(...args) {
+    common.error('Failed to connect to master.');
+    console.error(...args);
   }
 
   /**
@@ -137,6 +154,22 @@ class ShardingSlave {
    */
   _socketDisconnected() {
     common.log('Socket disconnected from master');
+  }
+  /**
+   * @description Verify that we are connecting to the master we expect.
+   * @private
+   * @param {string} sig The signature.
+   * @param {string} data The message sent that was signed.
+   */
+  _masterVerification(sig, data) {
+    const verify = crypto.createVerify(this._config.signAlgorithm);
+    verify.update(data);
+    verify.end();
+    if (!verify.verify(this._config.masterPubKey, sig, 'base64')) {
+      common.logWarning('Failed to verify signature from Master!');
+    } else {
+      common.log('Verified signature from master successfully.');
+    }
   }
   /**
    * @description Master has requested shard evaluates a script.
@@ -546,7 +579,7 @@ class ShardingSlave {
       this._status.goalShardId = -2;
       this._status.goalShardCount = -2;
     }
-    this._child.kill();
+    if (this._child) this._child.kill();
 
     // Send heartbeat notifying of our imminent death.
     this._generateHeartbeat();
@@ -559,7 +592,7 @@ if (require.main === module) {
   console.log('Started via CLI, booting up...');
   const slave = new ShardingSlave();
 
-  process.on('SIGINT', slave.exit);
-  process.on('SIGTERM', slave.exit);
+  process.on('SIGINT', (...args) => slave.exit(...args));
+  process.on('SIGTERM', (...args) => slave.exit(...args));
 }
 module.exports = ShardingSlave;
