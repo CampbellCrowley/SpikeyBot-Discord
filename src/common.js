@@ -140,6 +140,8 @@ function Common() {
     self.isTest = isTest || false;
     switch (app) {
       case 'SpikeyBot.js':
+      case 'ShardingMaster.js':
+      case 'ShardingSlave.js':
         mycolor = 44;
         break;
     }

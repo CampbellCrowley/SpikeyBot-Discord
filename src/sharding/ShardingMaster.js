@@ -14,8 +14,8 @@ const configFile =
     path.resolve(__dirname + '/../../config/shardMasterConfig.js');
 const authFile = path.resolve(__dirname + '/../../auth.js');
 const shardDir = path.resolve(__dirname + '/../../save/shards/');
-const privKeyFile = shardDir + 'shardMaster.priv';
-const pubKeyFile = shardDir + 'shardMaster.pub';
+const privKeyFile = `${shardDir}/shardMaster.priv`;
+const pubKeyFile = `${shardDir}/shardMaster.pub`;
 
 const signAlgorithm = 'RSA-SHA256';
 const keyType = 'rsa';
@@ -298,6 +298,8 @@ class ShardingMaster {
           console.error(err);
         } else {
           this._knownUsers = {};
+          common.logDebug(`No users to load ${file}`);
+          this._refreshShardStatus();
         }
         return;
       }
@@ -311,6 +313,7 @@ class ShardingMaster {
           this._knownUsers[u] = ShardingMaster.ShardInfo.from(users[u]);
         }
         common.logDebug(`Updated known users from file: ${ids.join(', ')}`);
+        this._refreshShardStatus();
       } catch (err) {
         common.error(`Failed to parse ${file}`);
         console.error(err);
@@ -354,6 +357,7 @@ class ShardingMaster {
     try {
       const ShardMasterConfig = require(file);
       this._config = new ShardMasterConfig();
+      common.logDebug(`Loaded ${file}`);
       this._refreshShardStatus();
     } catch (err) {
       common.error(`Failed to parse ${file}`);
@@ -370,6 +374,7 @@ class ShardingMaster {
     delete require.cache[require.resolve(file)];
     try {
       this._auth = require(file);
+      common.logDebug(`Loaded ${file}`);
       this._refreshShardStatus();
     } catch (err) {
       common.error(`Failed to parse ${file}`);
@@ -384,8 +389,14 @@ class ShardingMaster {
    * @private
    */
   _refreshShardStatus() {
+    if (!this._knownUsers) return;
     // Total running shards.
     const goal = this.getGoalShardCount();
+    if (goal < 0) {
+      setTimeout(() => this._refreshShardStatus(), 5000);
+      common.logDebug('Attempting to fetch shard count again in 5 seconds.');
+      return;
+    }
     // Currently available shards we can control.
     const current = this.getCurrentShardCount();
     // Total number of shards that should become available.
@@ -453,6 +464,10 @@ class ShardingMaster {
           shardId: el.goalShardId,
           count: el.goalShardCount,
         });
+        if (el.goalShardId != el.currentShardId ||
+            el.goalShardCount != el.currentShardCount) {
+          configuring.push(el);
+        }
       }
     }
 
@@ -466,7 +481,7 @@ class ShardingMaster {
       s.goalShardCount = goal;
     });
 
-    if (master.goalShardId < 0) {
+    if (master && master.goalShardId < 0) {
       configuring.push(master);
       master.goalShardId = 1000; // I think this is big enough for a while.
       master.goalShardCount = goal;
@@ -540,17 +555,23 @@ class ShardingMaster {
         if (!token) {
           if (this._auth) {
             common.logWarning(
-                'Unable to fetch shard count due to no bot token.');
+                'Unable to fetch shard count due to no bot token. "' +
+                this._config.botName + '"');
           }
           return this._config.numShards;
         }
 
         this._shardNumTimestamp = now;
-        Discord.util.fetchRecommendedShards(token, 1250)
+        Discord.Util.fetchRecommendedShards(token)
             .then((num) => {
-              const updated = this._detectedNumShards != num;
-              this._detectedNumShards = num;
-              if (updated) this._refreshShardStatus();
+              const updated = this._detectedNumShards !== num;
+              if (updated) {
+                common.logDebug(
+                    'Shard count changed from ' + this._detectedNumShards +
+                    ' to ' + num);
+                this._detectedNumShards = num;
+                this._refreshShardStatus();
+              }
             })
             .catch((err) => {
               common.error(
@@ -580,6 +601,7 @@ class ShardingMaster {
    * @returns {number} The number of shards allowed to startup.
    */
   getKnownShardCount() {
+    if (!this._knownUsers) return 0;
     return Object.values(this._knownUsers).filter((el) => !el.isMaster).length;
   }
 
@@ -605,6 +627,7 @@ class ShardingMaster {
    * and don't need updating.
    */
   _getCurrentConfigured(goal) {
+    if (!this._knownUsers) return [];
     if (typeof goal !== 'number' || goal < 0) {
       goal = this.getGoalShardCount();
     }
@@ -625,6 +648,7 @@ class ShardingMaster {
    * correctly and DO need updating.
    */
   _getCurrentUnconfigured(goal) {
+    if (!this._knownUsers) return [];
     if (typeof goal !== 'number' || goal < 0) {
       goal = this.getGoalShardCount();
     }
@@ -642,9 +666,11 @@ class ShardingMaster {
    * @returns {number[]} Array of the shard IDs that need to be configured.
    */
   _getCurrentUnboundIds(goal) {
+    if (!this._knownUsers) return [];
     if (typeof goal !== 'number' || goal < 0) {
       goal = this.getGoalShardCount();
     }
+    if (goal < 0) return [];
     const ids = [...Object.keys(new Array(goal))];
     Object.values(this._knownUsers).forEach((el) => {
       if (el.isMaster) return;
@@ -670,6 +696,7 @@ class ShardingMaster {
    * found.
    */
   _getShardById(shardId) {
+    if (!this._knownUsers) return null;
     return Object.values(this._knownUsers)
         .find((el) => !el.isMaster && el.goalShardId === shardId);
   }
@@ -681,6 +708,7 @@ class ShardingMaster {
    * found.
    */
   _getMasterUser() {
+    if (!this._knownUsers) return null;
     return Object.values(this._knownUsers).find((el) => el.isMaster);
   }
 
@@ -1001,11 +1029,14 @@ class ShardingMaster {
    */
   _generateShardName() {
     const alp = 'abcdefghijklmnopqrstuvwxyz';
-    const tmp = new Array(3);
-    let out = '';
+    const len = 3;
+    let out;
     do {
-      out = tmp.map(() => alp[Math.floor(Math.random() * alp.length)]).join('');
-    } while (!this._knownUsers[out]);
+      out = '';
+      for (let i = 0; i < len; ++i) {
+        out += alp[Math.floor(Math.random() * alp.length)];
+      }
+    } while (this._knownUsers[out]);
     return out;
   }
 
@@ -1040,7 +1071,7 @@ class ShardingMaster {
         signAlgorithm: signAlgorithm,
       };
       const dir = shardDir;
-      const file = `${shardDir}shard_${made.id}_config.json`;
+      const file = `${shardDir}/shard_${made.id}_config.json`;
       const str = JSON.stringify(config, null, 2);
       common.mkAndWrite(file, dir, str, (err) => {
         if (err) {
@@ -1070,19 +1101,22 @@ class ShardingMaster {
    */
   static _sendShardCreateEmail(conf, filename, info) {
     if (!conf.enabled) return;
-    const str = conf._sendShardCreateEmail.replace(/{\w+}/g, (m) => {
-      switch (m) {
+    const str = conf.shardConfigCreateMessage.replace(/{(\w+)}/g, (m, one) => {
+      switch (one) {
         case 'date':
           return new Date().toString();
         case 'id':
-          return info && info.id || m;
+          return info && info.id || one;
         case 'pubkey':
-          return info && info.key || m;
+          return info && info.key || one;
         default:
-          return m;
+          return one;
       }
     });
-    const args = conf.args.concat(['-A', filename]);
+    const args = conf.args.map((el) => {
+      if (el === '%ATTACHMENT%') return filename;
+      return el;
+    });
     ShardingMaster._sendEmail(conf.command, args, conf.spawnOpts, str);
   }
 
@@ -1098,7 +1132,7 @@ class ShardingMaster {
    */
   static _sendShardCreateFailEmail(conf, ...errs) {
     if (!conf.enabled) return;
-    const str = conf._sendShardCreateFailEmail.replace(/{\w+}/g, (m) => {
+    const str = conf.shardConfigCreateFailMessage.replace(/{\w+}/g, (m) => {
       switch (m) {
         case 'date':
           return new Date().toString();
@@ -1116,7 +1150,7 @@ class ShardingMaster {
           return m;
       }
     });
-    ShardingMaster._sendEmail(conf.command, conf.args, conf.spawnOpts, str);
+    ShardingMaster._sendEmail(conf.command, conf.failArgs, conf.spawnOpts, str);
   }
 
   /**
