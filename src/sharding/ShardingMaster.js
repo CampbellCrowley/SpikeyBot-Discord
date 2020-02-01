@@ -394,7 +394,8 @@ class ShardingMaster {
     // Total running shards.
     const goal = this.getGoalShardCount();
     if (goal < 0) {
-      setTimeout(() => this._refreshShardStatus(), 5000);
+      clearTimeout(this._hbTimeout);
+      this._hbTimeout = setTimeout(() => this._refreshShardStatus(), 5000);
       common.logDebug('Attempting to fetch shard count again in 5 seconds.');
       return;
     }
@@ -425,6 +426,18 @@ class ShardingMaster {
           `${goal} shards are queued to startup but only ${current}` +
           ' shards are available!');
     }
+
+    const corList =
+        correct.map((el) => `${el.id}(${el.goalShardId}/${el.goalShardCount})`)
+            .join(', ');
+    common.logDebug(`Correct: ${corList}`);
+    const incorList =
+        incorrect
+            .map((el) => `${el.id}(${el.goalShardId}/${el.goalShardCount})`)
+            .join(', ');
+    common.logDebug(`Incorrect: ${incorList}`);
+    const unboundList = newIds.join(', ');
+    common.logDebug(`Unbound: ${unboundList}`);
 
     const hbConf = this._config.heartbeat;
     const now = Date.now();
@@ -680,7 +693,7 @@ class ShardingMaster {
       goal = this.getGoalShardCount();
     }
     if (goal < 0) return [];
-    const ids = [...Object.keys(new Array(goal))];
+    const ids = [...Array(goal).keys()];
     Object.values(this._knownUsers).forEach((el) => {
       if (el.isMaster) return;
       if (el.goalShardCount === goal) {

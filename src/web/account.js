@@ -34,6 +34,7 @@ function WebAccount() {
   if (!self.common.isSlave) {
     app = http.createServer(handler);
     io = socketIo(app, {path: '/socket.io/'});
+    io.on('connection', socketConnection);
 
     app.on('error', function(err) {
       if (err.code === 'EADDRINUSE') {
@@ -189,7 +190,6 @@ function WebAccount() {
    */
   const sockets = {};
 
-  io.on('connection', socketConnection);
   /**
    * Handler for a new socket connecting.
    *

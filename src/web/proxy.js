@@ -77,6 +77,8 @@ function WebProxy() {
     '/socket.io/account/': 8014,
     '/socket.io/dev/control/': 8021,
     '/socket.io/control/': 8020,
+    '/socket.io/master/': 8024,
+    '/socket.io/dev/master/': 8025,
     '/dev': 8023,
     '_fallback': 8022,
     '/master/': 8024,

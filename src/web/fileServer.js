@@ -19,6 +19,8 @@ class FileServer extends SubModule {
    */
   constructor() {
     super();
+    /** @inheritdoc **/
+    this.myName = 'FileServer';
 
     this._app = http.createServer(this._handler);
     this._app.on('error', (err) => {

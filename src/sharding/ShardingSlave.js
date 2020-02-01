@@ -58,6 +58,8 @@ class ShardingSlave {
      * @constant
      */
     this.id = this._config.id;
+
+    common.log(`Shard ${this.id} booting up...`);
     /**
      * @description The public key of this shard.
      * @public
@@ -137,7 +139,7 @@ class ShardingSlave {
    * @param {...*} [args] Error arguments.
    */
   _socketConnectError(...args) {
-    common.error('Failed to connect to master.');
+    common.error('Failed to connect to master.', this.id);
     console.error(...args);
   }
 
@@ -146,14 +148,14 @@ class ShardingSlave {
    * @private
    */
   _socketConnected() {
-    common.log('Socket connected to master');
+    common.log('Socket connected to master', this.id);
   }
   /**
    * @description Socket disconnected event handler.
    * @private
    */
   _socketDisconnected() {
-    common.log('Socket disconnected from master');
+    common.log('Socket disconnected from master', this.id);
   }
   /**
    * @description Verify that we are connecting to the master we expect.

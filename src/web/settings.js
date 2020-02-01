@@ -58,6 +58,7 @@ function WebSettings() {
   if (!this.common.isSlave) {
     app = http.createServer(handler);
     io = socketIo(app, {path: '/socket.io/'});
+    io.on('connection', socketConnection);
 
     app.on('error', (err) => {
       if (io) io.close();
@@ -324,7 +325,6 @@ function WebSettings() {
    */
   const siblingSockets = {};
 
-  io.on('connection', socketConnection);
   /**
    * Handler for a new socket connecting.
    *

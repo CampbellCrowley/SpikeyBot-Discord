@@ -116,7 +116,7 @@ function SpikeyBot() {
    * @private
    * @type {boolean}
    */
-  let noLogin = process.env.SHARDING_MASTER;
+  let noLogin = process.env.SHARDING_MASTER === 'true';
 
   /**
    * The filename of the Command mainModule.

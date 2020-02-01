@@ -83,8 +83,8 @@ class SubModule {
 
     /**
      * The time at which this module was loaded for use in checking if the
-     * module
-     * needs to be reloaded because the file has been modified since loading.
+     * module needs to be reloaded because the file has been modified since
+     * loading.
      *
      * @public
      * @constant
@@ -94,8 +94,7 @@ class SubModule {
 
     /**
      * The name of this submodule. Used for differentiating in the log. Should
-     * be
-     * defined before begin().
+     * be defined before begin().
      *
      * @protected
      * @type {string}
