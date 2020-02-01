@@ -136,7 +136,7 @@ class ShardingSlave {
   _socketConnectError(...args) {
     common.error('Failed to connect to master.', this.id);
     console.error(...args);
-    this._socket.opts.extraHeaders = this._generateAuthHeader();
+    this._socket.io.opts.extraHeaders = this._generateAuthHeader();
   }
 
   /**
@@ -152,7 +152,7 @@ class ShardingSlave {
    */
   _socketDisconnected() {
     common.log('Socket disconnected from master', this.id);
-    this._socket.opts.extraHeaders = this._generateAuthHeader();
+    this._socket.io.opts.extraHeaders = this._generateAuthHeader();
   }
   /**
    * @description Verify that we are connecting to the master we expect.
@@ -305,8 +305,6 @@ class ShardingSlave {
       execArgv: this._settings.config.nodeArgs || [],
       env: env,
       cwd: botCWD,
-      detached: false,
-      stdio: 'inherit',
     });
     this._child.on('error', (...args) => this._handleError(...args));
     this._child.on('exit', (...args) => this._handleExit(...args));
@@ -395,6 +393,7 @@ class ShardingSlave {
    * @param {object} message A parsed JSON object or primitive value.
    */
   _childMessage(message) {
+    common.logDebug(`Shard Message: ${JSON.stringify(message)}`);
     if (message) {
       if (message._ready) {
         // Shard became ready.
@@ -423,7 +422,6 @@ class ShardingSlave {
         return;
       }
     }
-    common.logDebug(`Shard Message: ${JSON.stringify(message)}`);
   }
 
   /**
