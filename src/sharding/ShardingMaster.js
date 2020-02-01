@@ -925,7 +925,7 @@ class ShardingMaster {
       common.logDebug(`${userId} updated status.`, socket.id);
       user.lastSeen = Date.now();
       try {
-        console.log(userId, ':', status);
+        // console.log(userId, ':', status);
         status = ShardingMaster.ShardStatus.from(status);
       } catch (err) {
         common.error(

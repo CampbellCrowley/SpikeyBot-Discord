@@ -394,7 +394,6 @@ class ShardingSlave {
    * @param {object} message A parsed JSON object or primitive value.
    */
   _childMessage(message) {
-    common.logDebug(`Shard Message: ${JSON.stringify(message)}`);
     if (message) {
       if (message._ready) {
         // Shard became ready.
@@ -423,6 +422,7 @@ class ShardingSlave {
         return;
       }
     }
+    common.logDebug(`Shard Message: ${JSON.stringify(message)}`);
   }
 
   /**
@@ -468,7 +468,7 @@ class ShardingSlave {
    * @private
    */
   _generateHeartbeat() {
-    const hbEvalReq = 'this.getStats()';
+    const hbEvalReq = 'this.getStats && this.getStats(true) || null';
 
     this._evalRequest(hbEvalReq, (...args) => this._hbEvalResHandler(...args));
   }
@@ -482,6 +482,12 @@ class ShardingSlave {
   _hbEvalResHandler(err, res) {
     const now = Date.now();
     const s = this._status;
+    if (err || !res) {
+      common.error('Failed to fetch stats for heartbeat!');
+      console.error(err);
+      this._socket.emit('status', s);
+      return;
+    }
 
     this._fetchDiskStats((err, stats) => {
       const delta = (s.timestamp > s.startTime) ? now - s.timestamp : 0;
