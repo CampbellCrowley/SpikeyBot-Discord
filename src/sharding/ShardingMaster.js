@@ -1286,7 +1286,11 @@ class ShardingMaster {
   }
 }
 
-ShardingMaster.ShardMasterConfig = require(configFile);
+try {
+  ShardingMaster.ShardMasterConfig = require(configFile);
+} catch (err) {
+  // Meh.
+}
 ShardingMaster.ShardStatus = require('./ShardStatus.js');
 ShardingMaster.ShardInfo = require('./ShardInfo.js');
 
