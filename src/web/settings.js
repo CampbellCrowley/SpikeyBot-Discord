@@ -277,7 +277,8 @@ function WebSettings() {
     if (self.common.isSlave) {
       const host = self.common.masterHost;
       ioClient = client(
-          `${host.protocol}//${host.host}`, {path: `${host.path}control/`});
+          `${host.protocol}//${host.host}:${host.port}`,
+          {path: `${host.path}control/`});
     } else {
       ioClient = client(
           self.common.isRelease ? 'http://localhost:8020' :

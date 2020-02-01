@@ -144,7 +144,7 @@ function WebAccount() {
   /** @inheritdoc */
   this.initialize = function() {
     if (self.common.isSlave) {
-      self.error('Proxy not starting due to this being a slave shard.');
+      self.error('WebAccount not starting due to this being a slave shard.');
       return;
     }
     app.listen(self.common.isRelease ? 8014 : 8015, '127.0.0.1');

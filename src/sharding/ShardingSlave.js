@@ -115,7 +115,7 @@ class ShardingSlave {
      * @constant
      */
     this._socket = socketIo(`${host.protocol}//${host.host}:${host.port}`, {
-      path: host.path,
+      path: `${host.path}master/`,
       extraHeaders: {authorization: `${this.id},${signature},${now}`},
     });
     this._socket.on('connect', () => this._socketConnected());

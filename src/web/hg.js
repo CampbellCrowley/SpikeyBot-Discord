@@ -62,8 +62,9 @@ function HGWeb() {
     const client = require('socket.io-client');
     if (self.common.isSlave) {
       const host = self.common.masterHost;
-      ioClient =
-          client(`${host.protocol}//${host.host}`, {path: `${host.path}hg/`});
+      ioClient = client(
+          `${host.protocol}//${host.host}:${host.port}`,
+          {path: `${host.path}hg/`});
     } else {
       ioClient = client(
           self.common.isRelease ? 'http://localhost:8011' :
