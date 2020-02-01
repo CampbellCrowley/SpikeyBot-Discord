@@ -281,6 +281,7 @@ class ShardingSlave {
         ['release', 'dev'].includes(botFullName) ? null : botFullName;
     const env = Object.assign({}, process.env, {
       SHARDING_MANAGER: true,
+      SHARDING_MANAGER_MODE: 'process',
       SHARDING_SLAVE: !this._settings.master,
       SHARDING_MASTER: this._settings.master,
       SHARDS: this._status.goalShardId,
