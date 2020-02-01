@@ -1607,15 +1607,9 @@ function HG() {
     let numTeams = 0;
     const game = hg.getGame(id);
     const current = game.currentGame;
-    current.includedUsers.forEach((el) => {
-      if (el.living) {
-        numAlive++;
-      }
-    });
+    current.includedUsers.forEach((el) => el.living && numAlive++);
     if (game.options.teamSize > 0) {
-      current.teams.forEach((team) => {
-        if (team.numAlive > 0) numTeams++;
-      });
+      current.teams.forEach((team) => team.numAlive > 0 && numTeams++);
     }
 
     if (current.numAlive != numAlive) {
