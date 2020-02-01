@@ -427,17 +427,18 @@ class ShardingMaster {
           ' shards are available!');
     }
 
-    const corList =
-        correct.map((el) => `${el.id}(${el.goalShardId}/${el.goalShardCount})`)
-            .join(', ');
-    common.logDebug(`Correct: ${corList}`);
-    const incorList =
-        incorrect
-            .map((el) => `${el.id}(${el.goalShardId}/${el.goalShardCount})`)
-            .join(', ');
-    common.logDebug(`Incorrect: ${incorList}`);
-    const unboundList = newIds.join(', ');
-    common.logDebug(`Unbound: ${unboundList}`);
+    // const corList =
+    //     correct.map((el) =>
+    //     `${el.id}(${el.goalShardId}/${el.goalShardCount})`)
+    //         .join(', ');
+    // common.logDebug(`Correct: ${corList}`);
+    // const incorList =
+    //     incorrect
+    //         .map((el) => `${el.id}(${el.goalShardId}/${el.goalShardCount})`)
+    //         .join(', ');
+    // common.logDebug(`Incorrect: ${incorList}`);
+    // const unboundList = newIds.join(', ');
+    // common.logDebug(`Unbound: ${unboundList}`);
 
     const hbConf = this._config.heartbeat;
     const now = Date.now();
