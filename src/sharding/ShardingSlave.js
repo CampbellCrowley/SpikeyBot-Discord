@@ -101,12 +101,7 @@ class ShardingSlave {
     this._evals = new Map();
 
     const host = this._config.host;
-    const now = Date.now();
-    const sign = crypto.createSign(this._config.signAlgorithm);
-    const signData = `${this.id}${now}`;
-    sign.update(signData);
-    sign.end();
-    const signature = sign.sign(this._privKey, 'base64');
+    const authHeader = this._generateAuthHeader();
 
     /**
      * @description The socket.io socket used to communicate with the master.
@@ -116,7 +111,7 @@ class ShardingSlave {
      */
     this._socket = socketIo(`${host.protocol}//${host.host}:${host.port}`, {
       path: `${host.path}master/`,
-      extraHeaders: {authorization: `${this.id},${signature},${now}`},
+      extraHeaders: {authorization: authHeader},
     });
     this._socket.on('connect', () => this._socketConnected());
     this._socket.on('disconnect', () => this._socketDisconnected());
@@ -141,6 +136,7 @@ class ShardingSlave {
   _socketConnectError(...args) {
     common.error('Failed to connect to master.', this.id);
     console.error(...args);
+    this._socket.opts.extraHeaders = this._generateAuthHeader();
   }
 
   /**
@@ -156,6 +152,7 @@ class ShardingSlave {
    */
   _socketDisconnected() {
     common.log('Socket disconnected from master', this.id);
+    this._socket.opts.extraHeaders = this._generateAuthHeader();
   }
   /**
    * @description Verify that we are connecting to the master we expect.
@@ -574,6 +571,22 @@ class ShardingSlave {
         done();
       });
     });
+  }
+
+  /**
+   * @description Generate the string to pass as the `authorization` header
+   * during the connection request to the master.
+   * @private
+   * @returns {string} The string to pass directly to the auth header.
+   */
+  _generateAuthHeader() {
+    const now = Date.now();
+    const sign = crypto.createSign(this._config.signAlgorithm);
+    const signData = `${this.id}${now}`;
+    sign.update(signData);
+    sign.end();
+    const signature = sign.sign(this._privKey, 'base64');
+    return `${this.id},${signature},${now}`;
   }
 
   /**
