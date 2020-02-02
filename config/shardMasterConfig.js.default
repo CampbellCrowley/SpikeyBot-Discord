@@ -268,14 +268,33 @@ class MailConfig {
      * @default
      * @type {string}
      */
-    this.command = 'mail';
+    this.command = 'mutt';
     /**
      * @description Additional arguments to pass to the mail command.
+     * `%ATTACHMENT%` is replaced with the absolute path to the file to attach.
      * @public
      * @default
      * @type {string[]}
      */
-    this.args = ['sysadmin@spikeybot.com', '-s Automated Sharding Update'];
+    this.args = [
+      '-a',
+      '%ATTACHMENT%',
+      '-s Automated Sharding Update',
+      '--',
+      'sysadmin@spikeybot.com',
+    ];
+    /**
+     * @description Additional arguments to pass to the mail command, when a
+     * failure has occurred.
+     * @public
+     * @default
+     * @type {string[]}
+     */
+    this.failArgs = [
+      '-s Automated Sharding Update FAILURE',
+      '--',
+      'sysadmin@spikeybot.com',
+    ];
     /**
      * @description Options to pass to the spawn function when calling the
      * command.
