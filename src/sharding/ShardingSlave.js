@@ -3,7 +3,8 @@
 const socketIo = require('socket.io-client');
 const common = require('../common.js');
 const crypto = require('crypto');
-const {fork, exec} = require('child_process');
+// const {fork, exec} = require('child_process');
+const {fork} = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const auth = require('../../auth.js');
@@ -570,51 +571,54 @@ class ShardingSlave {
    * directories.
    */
   _fetchDiskStats(cb) {
-    // Resolve the absolute path to the project root.
-    const root = path.resolve(`${__dirname}/../..`);
-    // Paths relative to project root.
-    const dirs = [
-      ['save', './save/'],
-      // ['docs', './docs/'],
-      // ['img', './img/'],
-      // ['sounds', './sounds/'],
-      // ['node_modules', './node_modules/'],
-      ['root', './'],
-    ];
+    cb(null, {});
+    return;
+    // // Resolve the absolute path to the project root.
+    // const root = path.resolve(`${__dirname}/../..`);
+    // // Paths relative to project root.
+    // const dirs = [
+    //   ['save', './save/'],
+    //   // ['docs', './docs/'],
+    //   // ['img', './img/'],
+    //   // ['sounds', './sounds/'],
+    //   // ['node_modules', './node_modules/'],
+    //   ['root', './'],
+    // ];
 
-    const opts = {
-      env: null,
-      timeout: 5000,
-      cwd: root,
-    };
+    // const opts = {
+    //   env: null,
+    //   timeout: 5000,
+    //   cwd: root,
+    // };
 
-    let numDone = 0;
-    const out = {};
+    // let numDone = 0;
+    // const out = {};
 
-    /**
-     * @description Fired at completion of obtaining directory information for
-     * each in the `dir` array. Fires callback once all are complete.
-     * @private
-     */
-    function done() {
-      if (++numDone === dirs.length) return;
-      cb(null, out);
-    }
+    // /**
+    //  * @description Fired at completion of obtaining directory information
+    //  for
+    //  * each in the `dir` array. Fires callback once all are complete.
+    //  * @private
+    //  */
+    // function done() {
+    //   if (++numDone === dirs.length) return;
+    //   cb(null, out);
+    // }
 
-    dirs.forEach((el) => {
-      const name = el[0];
-      const dir = el[1];
-      exec(`du -sh ${dir}`, opts, (err, stdout) => {
-        if (err) {
-          common.logWarning('Failed to fetch save directory size.');
-          console.error(err);
-          out[name] = null;
-        } else {
-          out[name] = stdout.toString().trim().split('\t')[0];
-        }
-        done();
-      });
-    });
+    // dirs.forEach((el) => {
+    //   const name = el[0];
+    //   const dir = el[1];
+    //   exec(`du -sh ${dir}`, opts, (err, stdout) => {
+    //     if (err) {
+    //       common.logWarning('Failed to fetch save directory size.');
+    //       console.error(err);
+    //       out[name] = null;
+    //     } else {
+    //       out[name] = stdout.toString().trim().split('\t')[0];
+    //     }
+    //     done();
+    //   });
+    // });
   }
 
   /**

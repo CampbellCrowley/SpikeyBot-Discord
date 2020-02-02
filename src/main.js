@@ -3111,7 +3111,7 @@ function Main() {
       cb(values);
     }
 
-    childProcess.exec('du -sh ./save/', (err, stdout) => {
+    /* childProcess.exec('du -sh ./save/', (err, stdout) => {
       if (err) {
         self.error('Failed to fetch save directory size.');
         console.error(err);
@@ -3129,7 +3129,18 @@ function Main() {
       } else {
         statsResponse([getStats()]);
       }
-    });
+    }); */
+    if (self.client.shard) {
+      self.client.shard.broadcastEval('this.getStats()')
+          .then(statsResponse)
+          .catch((err) => {
+            self.error('Failed to fetch stats from shards.');
+            console.error(err);
+            statsResponse(null);
+          });
+    } else {
+      statsResponse([getStats()]);
+    }
   }
   /**
    * Fetch our statistics about the bot on this shard.
