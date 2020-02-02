@@ -431,7 +431,7 @@ class ShardingSlave {
         return;
       }
     }
-    common.logDebug(`Shard Message: ${JSON.stringify(message)}`);
+    // common.logDebug(`Shard Message: ${JSON.stringify(message)}`);
   }
 
   /**
