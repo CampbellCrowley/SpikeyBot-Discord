@@ -276,8 +276,11 @@ function WebSettings() {
     const client = require('socket.io-client');
     if (self.common.isSlave) {
       const host = self.common.masterHost;
+      const port = host.host === 'localhost' ?
+          (self.common.isRelease ? 8020 : 8021) :
+          host.port;
       ioClient = client(
-          `${host.protocol}//${host.host}:${host.port}`,
+          `${host.protocol}//${host.host}:${port}`,
           {path: `${host.path}control/`});
     } else {
       ioClient = client(

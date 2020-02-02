@@ -3073,6 +3073,10 @@ function Main() {
      * error.
      */
     function statsResponse(res) {
+      if (!res) {
+        cb(values);
+        return;
+      }
       const parseStart = Date.now();
       const delays = new Array(res.length);
       values.uptimes = new Array(res.length);

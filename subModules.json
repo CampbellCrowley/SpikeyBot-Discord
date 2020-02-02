@@ -21,6 +21,7 @@
   ],
   "master": [
     "./main.js",
+    "./hungryGames.js",
     "./web/account.js",
     "./web/stats.js",
     "./web/settings.js",

@@ -305,9 +305,12 @@ function WebStats() {
         const host = Object.assign({}, apiHost);
         delete host._data;
         delete host._allShards;
-        host.path = host.path.replace('{id}', self.client.user.id);
+        if (self.client.user) {
+          host.path = host.path.replace('{id}', self.client.user.id);
+        }
 
-        if (!self.common.isRelease || !host.headers.Authorization) {
+        if (!self.common.isRelease || !host.headers.Authorization ||
+            !self.client.user) {
           self.debug(
               'NOOP POST: ' + host.host + host.path + ' ' +
               JSON.stringify(body));
