@@ -1,5 +1,9 @@
 // Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
+
+// Increase maximum listener count because we often burst many listeners for a
+// short time.
+process.setMaxListeners(50);
 /**
  * DiscordJS base object.
  *
