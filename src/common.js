@@ -786,7 +786,15 @@ Common.connectSQL = function(force = false) {
   if (global.sqlCon && !force) return global.sqlCon;
   if (global.sqlCon && global.sqlCon.end) global.sqlCon.end();
   if (this.isSlave) {
-    global.sqlCon = {query: this.sendSQL, format: sql.format};
+    global.sqlCon = {
+      query: (...args) => this.sendSQL(...args),
+      format: sql.format,
+    };
+    if (this.log) {
+      this.log('SQL Connection using websocket');
+    } else {
+      console.log('SQL Connection using websocket');
+    }
   } else {
     /* eslint-disable-next-line new-cap */
     global.sqlCon = new sql.createConnection({
