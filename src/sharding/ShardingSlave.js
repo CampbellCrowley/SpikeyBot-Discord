@@ -419,7 +419,6 @@ class ShardingSlave {
         return;
       } else if (message._sEval) {
         this.broadcastEval(message._sEval, (err, res) => {
-          console.log(err, res);
           if (err) {
             this._child.send({_sEval: message._sEval, _error: err});
           } else {
