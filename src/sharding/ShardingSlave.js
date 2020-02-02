@@ -137,6 +137,7 @@ class ShardingSlave {
     common.error('Failed to connect to master.', this.id);
     console.error(...args);
     this._socket.io.opts.extraHeaders = this._generateAuthHeader();
+    this._socket.connect();
   }
 
   /**
@@ -153,6 +154,7 @@ class ShardingSlave {
   _socketDisconnected() {
     common.log('Socket disconnected from master', this.id);
     this._socket.io.opts.extraHeaders = this._generateAuthHeader();
+    this._socket.connect();
   }
   /**
    * @description Verify that we are connecting to the master we expect.
@@ -288,6 +290,8 @@ class ShardingSlave {
       SHARD_COUNT: this._status.goalShardCount,
       DISCORD_TOKEN: auth[botFullName],
     });
+    this._status.currentShardId = this._status.goalShardId;
+    this._status.currentShardCount = this._status.goalShardCount;
     if (!this._settings.config.botArgs) this._settings.config.botArgs = [];
     if (botName) {
       const index = this._settings.config.botArgs.findIndex(
@@ -306,6 +310,7 @@ class ShardingSlave {
       execArgv: this._settings.config.nodeArgs || [],
       env: env,
       cwd: botCWD,
+      detached: false,
     });
     this._child.on('error', (...args) => this._handleError(...args));
     this._child.on('exit', (...args) => this._handleExit(...args));
@@ -375,6 +380,8 @@ class ShardingSlave {
     console.error(err);
     this._status.goalShardId = -1;
     this._status.goalShardCount = -1;
+    this._status.currentShardId = -1;
+    this._status.currentShardCount = -1;
   }
   /**
    * @description Handle the child processes exiting.
@@ -385,6 +392,8 @@ class ShardingSlave {
   _handleExit(code, signal) {
     common.log('Child exited with code ' + code + ' (' + signal + ')');
     this._child = null;
+    this._status.currentShardId = -1;
+    this._status.currentShardCount = -1;
     if (this._status.goalShardId >= 0) this._spawnChild();
   }
 
@@ -410,6 +419,7 @@ class ShardingSlave {
         return;
       } else if (message._sEval) {
         this.broadcastEval(message._sEval, (err, res) => {
+          console.log(err, res);
           if (err) {
             this._child.send({_sEval: message._sEval, _error: err});
           } else {

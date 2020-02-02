@@ -3079,6 +3079,7 @@ function Main() {
       values.versions = new Array(res.length);
 
       for (let i = 0; i < res.length; i++) {
+        if (!res[i]) continue;
         values.numGuilds += res[i].numGuilds;
         values.shardGuilds[i] = res[i].numGuilds;
         values.shardUsers[i] = res[i].numUsers;

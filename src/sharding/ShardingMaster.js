@@ -996,6 +996,7 @@ class ShardingMaster {
         cb(err);
         numDone = num + 1;
       } else if (numDone == num) {
+        console.log(out);
         cb(null, out);
       }
     }
