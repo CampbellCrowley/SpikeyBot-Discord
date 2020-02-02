@@ -243,7 +243,7 @@ class ShardingSlave {
    * string.
    */
   _updateRequest(settings) {
-    common.log(
+    common.logDebug(
         'New settings received from master: ' + JSON.stringify(settings));
     if (!settings || typeof settings !== 'object') return;
     this._settings = settings;
@@ -431,6 +431,16 @@ class ShardingSlave {
       } else if (message._sRespawnAll) {
         this.respawnAll(() => {});
         return;
+      } else if (message._sSQL) {
+        // Shard has requested to send a query to our primary database.
+        this.sendSQL(message._sSQL, (err, res) => {
+          if (err) {
+            this._child.send({_sSQL: message._sSQL, _error: err});
+          } else {
+            this._child.send({_sSQL: message._sSQL, _result: res});
+          }
+        });
+        return;
       }
     }
     // common.logDebug(`Shard Message: ${JSON.stringify(message)}`);
@@ -439,7 +449,7 @@ class ShardingSlave {
   /**
    * @description Fire a broadcast to all shards requesting eval of given
    * script.
-   * @see {@link ShardingMaster~_broadcastToShards}
+   * @see {@link ShardingMaster~broadcastEvalToShards}
    * @public
    * @param {string} script The script to evaluate.
    * @param {Function} cb Callback once all shards have completed or there was
@@ -454,6 +464,24 @@ class ShardingSlave {
       // TODO: Resend this request once reconnected instead of failing.
     } else {
       this._socket.emit('broadcastEval', script, cb);
+    }
+  }
+  /**
+   * @description Send an SQL query to the master to run on our database.
+   * @see {@link ShardingMaster~sendSQL}
+   * @public
+   * @param {string} query The query to evaluate.
+   * @param {Function} cb First argument is optional error, second will
+   * otherwise be response from query.
+   */
+  sendSQL(query, cb) {
+    if (!this._socket.connected) {
+      common.logWarning(
+          'Requested SQL broadcast while disconnected from master!');
+      cb('Disconnected from master!');
+      // TODO: Resend this request once reconnected instead of failing.
+    } else {
+      this._socket.emit('sendSQL', query, cb);
     }
   }
   /**

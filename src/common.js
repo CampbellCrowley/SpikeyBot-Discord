@@ -366,6 +366,35 @@ function Common() {
         }
       }
     }
+    /**
+     * @description Send an SQL query to the master database through our open
+     * websocket.
+     * @public
+     * @param {string} query SQL query to send directly to the database.
+     * @param {Function} cb Callback with optional error, otherwise returned
+     * rows.
+     */
+    this.sendSQL = function(query, cb) {
+      const listener = (message) => {
+        if (!message || message._sSQL !== query) return;
+        process.removeListener('message', listener);
+        if (!message._error) {
+          cb(null, message._result);
+        } else {
+          cb(message._error);
+        }
+      };
+      process.on('message', listener);
+
+      if (!this.client || !this.client.shard || !this.client.shard.send) {
+        cb(new Error('Not a slave shard.'));
+        return;
+      }
+      this.client.shard.send({_sSQL: query}).catch((err) => {
+        process.removeListener('message', listener);
+        cb(err);
+      });
+    };
   }
 
   /**
@@ -756,28 +785,32 @@ global.sqlCon;
 Common.connectSQL = function(force = false) {
   if (global.sqlCon && !force) return global.sqlCon;
   if (global.sqlCon && global.sqlCon.end) global.sqlCon.end();
-  /* eslint-disable-next-line new-cap */
-  global.sqlCon = new sql.createConnection({
-    user: auth.sqlUsername,
-    password: auth.sqlPassword,
-    host: auth.sqlHost,
-    database: auth.sqlDatabase,
-    port: auth.sqlPort,
-  });
-  global.sqlCon.on('error', (e) => {
-    if (this.error) {
-      this.error(e);
-    } else {
-      console.error(e);
-    }
-    if (e.fatal) {
-      Common.connectSQL(true);
-    }
-  });
-  if (this.log) {
-    this.log('SQL Connection created');
+  if (this.isSlave) {
+    global.sqlCon = {query: this.sendSQL, format: sql.format};
   } else {
-    console.log('SQL Connection created');
+    /* eslint-disable-next-line new-cap */
+    global.sqlCon = new sql.createConnection({
+      user: auth.sqlUsername,
+      password: auth.sqlPassword,
+      host: auth.sqlHost,
+      database: auth.sqlDatabase,
+      port: auth.sqlPort,
+    });
+    global.sqlCon.on('error', (e) => {
+      if (this.error) {
+        this.error(e);
+      } else {
+        console.error(e);
+      }
+      if (e.fatal) {
+        Common.connectSQL(true);
+      }
+    });
+    if (this.log) {
+      this.log('SQL Connection created');
+    } else {
+      console.log('SQL Connection created');
+    }
   }
   return global.sqlCon;
 };

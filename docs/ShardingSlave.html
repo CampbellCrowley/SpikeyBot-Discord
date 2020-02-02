@@ -1359,7 +1359,7 @@ directories.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
-				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-544">line 544</a>
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-572">line 572</a>
 			</li>
 		</ul>
 	</dd>
@@ -1448,7 +1448,7 @@ during the connection request to the master.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
-				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-598">line 598</a>
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-626">line 626</a>
 			</li>
 		</ul>
 	</dd>
@@ -1561,7 +1561,7 @@ then sends the message.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
-				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-481">line 481</a>
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-509">line 509</a>
 			</li>
 		</ul>
 	</dd>
@@ -2027,7 +2027,7 @@ request.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
-				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-493">line 493</a>
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-521">line 521</a>
 			</li>
 		</ul>
 	</dd>
@@ -3389,7 +3389,7 @@ of responses indexed by shard IDs.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
-				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-449">line 449</a>
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-459">line 459</a>
 			</li>
 		</ul>
 	</dd>
@@ -3401,7 +3401,7 @@ of responses indexed by shard IDs.</td>
 	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
 	<dd class="tag-see">
 		<ul>
-			<li>ShardingMaster~_broadcastToShards</li>
+			<li>ShardingMaster~broadcastEvalToShards</li>
 			</ul>
 	</dd>
 	
@@ -3484,7 +3484,7 @@ of responses indexed by shard IDs.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
-				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-612">line 612</a>
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-640">line 640</a>
 			</li>
 		</ul>
 	</dd>
@@ -3635,7 +3635,7 @@ error has occurred.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
-				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-465">line 465</a>
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-493">line 493</a>
 			</li>
 		</ul>
 	</dd>
@@ -3648,6 +3648,176 @@ error has occurred.</td>
 	<dd class="tag-see">
 		<ul>
 			<li>ShardingMaster.respawnAll</li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="sendSQL"><span class="type-signature"></span>sendSQL(query, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Send an SQL query to the master to run on our database.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>query</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The query to evaluate.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">First argument is optional error, second will
+otherwise be response from query.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_sharding_ShardingSlave.js.html">src/sharding/ShardingSlave.js</a>,
+				 <a href="src_sharding_ShardingSlave.js.html#sunlight-1-line-477">line 477</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>ShardingMaster~sendSQL</li>
 			</ul>
 	</dd>
 	
@@ -3725,7 +3895,7 @@ error has occurred.</td>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Saturday, February 1, 2020 5:37 PM (-08:00)
+		on Saturday, February 1, 2020 6:14 PM (-08:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

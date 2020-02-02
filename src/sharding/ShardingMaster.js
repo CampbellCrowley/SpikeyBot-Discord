@@ -48,6 +48,7 @@ class ShardingMaster {
    */
   constructor(port = 8024, address = '127.0.0.1', path = '/socket.io/') {
     common.begin(false, true);
+    common.connectSQL();
 
     this._serverError = this._serverError.bind(this);
     this._socketConnection = this._socketConnection.bind(this);
@@ -968,6 +969,7 @@ class ShardingMaster {
     socket.on(
         'broadcastEval', (...args) => this.broadcastEvalToShards(...args));
     socket.on('respawnAll', (...args) => this.respawnAll(...args));
+    socket.on('sendSQL', (...args) => this.sendSQL(...args));
   }
 
   /**
@@ -1041,6 +1043,21 @@ class ShardingMaster {
       i++;
     });
     cb();
+  }
+
+  /**
+   * @description Send an SQL query to our database.
+   * @public
+   * @param {string} query The query to send to database.
+   * @param {Function} cb First argument is optional error, otherwise query
+   * response.
+   */
+  sendSQL(query, cb) {
+    if (!global.sqlCon) {
+      cb('No Database Connection');
+      return;
+    }
+    global.sqlCon.query(query, cb);
   }
 
   /**
