@@ -139,7 +139,7 @@ class ShardingSlave {
     console.error(...args);
     this._socket.io.opts.extraHeaders.authorization =
         this._generateAuthHeader();
-    this._socket.connect();
+    // this._socket.connect();
   }
 
   /**
@@ -157,7 +157,7 @@ class ShardingSlave {
     common.log('Socket disconnected from master', this.id);
     this._socket.io.opts.extraHeaders.authorization =
         this._generateAuthHeader();
-    this._socket.connect();
+    // this._socket.connect();
   }
   /**
    * @description Verify that we are connecting to the master we expect.
