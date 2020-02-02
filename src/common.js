@@ -386,11 +386,8 @@ function Common() {
       };
       process.on('message', listener);
 
-      if (!this.client || !this.client.shard || !this.client.shard.send) {
-        cb(new Error('Not a slave shard.'));
-        return;
-      }
-      this.client.shard.send({_sSQL: query}).catch((err) => {
+      process.send({_sSQL: query}, (err) => {
+        if (!err) return;
         process.removeListener('message', listener);
         cb(err);
       });
@@ -787,7 +784,7 @@ Common.connectSQL = function(force = false) {
   if (global.sqlCon && global.sqlCon.end) global.sqlCon.end();
   if (this.isSlave) {
     global.sqlCon = {
-      query: (...args) => this.sendSQL(...args),
+      query: this.sendSQL,
       format: sql.format,
     };
     if (this.log) {
