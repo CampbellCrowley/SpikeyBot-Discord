@@ -378,6 +378,7 @@ function Common() {
       const listener = (message) => {
         if (!message || message._sSQL !== query) return;
         process.removeListener('message', listener);
+        clearTimeout(timeout);
         if (!message._error) {
           cb(null, message._result);
         } else {
@@ -385,11 +386,16 @@ function Common() {
         }
       };
       process.on('message', listener);
+      const timeout = setTimeout(() => {
+        process.removeListener('message', listener);
+        cb('Send Timeout');
+      }, 10000);
 
       process.send({_sSQL: query}, (err) => {
         if (!err) return;
         process.removeListener('message', listener);
         cb(err);
+        clearTimeout(timeout);
       });
     };
   }
