@@ -292,7 +292,9 @@ function WebProxy() {
    * @param {http.ServerResponse} res Our response to the client.
    */
   function handler(req, res) {
-    if (req.url.startsWith('/dev')) {
+    if (pathPorts[req.url]) {
+      proxy.web(req, res, {target: `http://localhost:${pathPorts[req.url]}`});
+    } else if (req.url.startsWith('/dev')) {
       proxy.web(req, res, {target: `http://localhost:${pathPorts['/dev']}`});
     } else {
       proxy.web(req, res, {target: `http://localhost:${pathPorts._fallback}`});
