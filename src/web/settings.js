@@ -279,9 +279,9 @@ function WebSettings() {
       const port = host.host === 'localhost' ?
           (self.common.isRelease ? 8020 : 8021) :
           host.port;
-      ioClient = client(
-          `${host.protocol}//${host.host}:${port}`,
-          {path: `${host.path}control/`});
+      ioClient = client(`${host.protocol}//${host.host}:${port}`, {
+        path: `${host.path}/child/control/`,
+      });
     } else {
       ioClient = client(
           self.common.isRelease ? 'http://localhost:8020' :

@@ -65,8 +65,9 @@ function HGWeb() {
       const port = host.host === 'localhost' ?
           (self.common.isRelease ? 8011 : 8013) :
           host.port;
-      ioClient = client(
-          `${host.protocol}//${host.host}:${port}`, {path: `${host.path}hg/`});
+      ioClient = client(`${host.protocol}//${host.host}:${port}`, {
+        path: `${host.path}/child/hg/`,
+      });
     } else {
       ioClient = client(
           self.common.isRelease ? 'http://localhost:8011' :
