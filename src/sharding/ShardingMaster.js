@@ -923,7 +923,6 @@ class ShardingMaster {
     this._refreshShardStatus();
 
     socket.on('status', (status) => {
-      common.logDebug(`${userId} updated status.`, socket.id);
       user.lastSeen = Date.now();
       try {
         // console.log(userId, ':', status);
@@ -934,6 +933,8 @@ class ShardingMaster {
         console.error(err);
         return;
       }
+      common.logDebug(
+          `${userId} updated status. (${status.messageCountDelta})`, socket.id);
       if (!user.stats) {
         user.stats = new ShardingMaster.ShardStatus(userId);
       } else {
