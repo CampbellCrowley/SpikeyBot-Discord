@@ -138,6 +138,7 @@ class Echo extends SubModule {
   _onMessage(msg) {
     if (!msg.guild || msg.author.bot) return;
     if (!msg.content || msg.content.length === 0) return;
+    if (!this.client.user) return;
     const char = this._characters[msg.guild.id] &&
         this._characters[msg.guild.id][msg.channel.id] &&
         this._characters[msg.guild.id][msg.channel.id][msg.author.id];
@@ -150,7 +151,8 @@ class Echo extends SubModule {
     }
     msg.channel.fetchWebhooks()
         .then((hooks) => {
-          const hook = hooks.find((h) => h.owner.id == this.client.user.id);
+          const hook =
+              hooks.find((h) => h.owner && h.owner.id == this.client.user.id);
           if (!hook) return;
           hook.send(msg.content, {
             username: char.username,
