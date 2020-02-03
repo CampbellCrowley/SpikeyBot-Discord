@@ -3,7 +3,10 @@
 
 // Increase maximum listener count because we often burst many listeners for a
 // short time.
-process.setMaxListeners(50);
+// process.setMaxListeners(50);
+
+// Temporarily remove this limit since IDK how to fix it atm...
+process.setMaxListeners(0);
 /**
  * DiscordJS base object.
  *
