@@ -560,7 +560,8 @@ class ShardingSlave {
 
       this._socket.emit('status', s);
 
-      if (this._config.useMessageStat && s.messageCountDelta === 0) {
+      if (this._config.useMessageStat && s.messageCountDelta === 0 &&
+          !s.isMaster) {
         this._respawnChild();
       }
     });
