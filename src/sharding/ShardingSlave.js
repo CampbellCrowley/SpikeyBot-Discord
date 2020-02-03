@@ -553,6 +553,7 @@ class ShardingSlave {
         s.cpuLoad[i] = t.user / totalDiff;
       });
       s.cpus = res.cpus;
+      const prevDelta = s.messageCountDelta;
       s.messageCountDelta = res.numMessages - s.messageCountTotal;
       s.messageCountTotal = res.numMessages;
       s.storageUsedTotal = stats.root;
@@ -560,8 +561,8 @@ class ShardingSlave {
 
       this._socket.emit('status', s);
 
-      if (this._config.useMessageStat && s.messageCountDelta === 0 &&
-          !s.isMaster) {
+      if (this._config.useMessageStat && prevDelta === 0 &&
+          s.messageCountDelta === 0 && !s.isMaster) {
         this._respawnChild();
       }
     });
