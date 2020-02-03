@@ -280,7 +280,7 @@ function WebSettings() {
           (self.common.isRelease ? 8020 : 8021) :
           host.port;
       ioClient = client(`${host.protocol}//${host.host}:${port}`, {
-        path: `${host.path}/child/control/`,
+        path: `${host.path}child/control/`,
       });
     } else {
       ioClient = client(

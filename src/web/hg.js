@@ -66,7 +66,7 @@ function HGWeb() {
           (self.common.isRelease ? 8011 : 8013) :
           host.port;
       ioClient = client(`${host.protocol}//${host.host}:${port}`, {
-        path: `${host.path}/child/hg/`,
+        path: `${host.path}child/hg/`,
       });
     } else {
       ioClient = client(
