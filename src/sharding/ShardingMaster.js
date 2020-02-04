@@ -147,6 +147,14 @@ class ShardingMaster {
      * @default
      */
     this._hbTimeout = null;
+    /**
+     * @description Timeout used to prevent multiple calls to {@link _saveUsers}
+     * within a short time.
+     * @private
+     * @type {?number}
+     * @default
+     */
+    this._userSaveTimeout = null;
 
     /**
      * @description History of recent connections ordered by oldest to latest.
@@ -324,8 +332,15 @@ class ShardingMaster {
   /**
    * @description Write updated known list of users to disk.
    * @private
+   * @param {boolean} [force=false] Force saving immediately. False otherwise
+   * waits a moment for multiple calls, then saves once all calls have subsided.
    */
-  _saveUsers() {
+  _saveUsers(force = false) {
+    clearTimeout(this._userSaveTimeout);
+    if (!force) {
+      this._userSaveTimeout = setTimeout(() => this._saveUsers(true), 1000);
+      return;
+    }
     const file = usersFile;
     const dir = path.dirname(file);
     const serializable = {};
@@ -504,6 +519,7 @@ class ShardingMaster {
     }
 
     if (now >= this._nextHeartbeatTime) {
+      this._saveUsers();
       // Send all shutdown requests asap, as they do not have their own
       // timeslot.
       for (let i = 0; i < configuring.length; ++i) {
@@ -964,6 +980,8 @@ class ShardingMaster {
       if (this._config.heartbeat.updateStyle === 'push') {
         this._sendHeartbeatRequest(user);
       }
+
+      this._saveUsers();
       // TODO: Store history of shard status for historic purposes.
     });
 
