@@ -59,7 +59,7 @@ class ShardingSlave {
      */
     this.id = this._config.id;
 
-    common.log(`Shard ${this.id} booting up...`);
+    common.log(`Shard ${this.id} booting up...`, this.id);
     /**
      * @description The public key of this shard.
      * @public
@@ -144,6 +144,8 @@ class ShardingSlave {
     });
     this._socket.on('connect', () => this._socketConnected());
     this._socket.on(
+        'reconnecting', (...args) => this._socketReconnecting(...args));
+    this._socket.on(
         'disconnect', (...args) => this._socketDisconnected(...args));
     this._socket.on(
         'masterVerification', (...args) => this._masterVerification(...args));
@@ -174,9 +176,20 @@ class ShardingSlave {
   /**
    * @description Socket connected event handler.
    * @private
+   * @param {number} attempt The reconnection attempt number.
+   */
+  _socketReconnecting(attempt) {
+    common.log(
+        `Socket reconnecting to master... (Attempt: #${attempt})`, this.id);
+  }
+
+  /**
+   * @description Socket connected event handler.
+   * @private
    */
   _socketConnected() {
     common.log('Socket connected to master', this.id);
+    this._reconnectTimeout = null;
   }
   /**
    * @description Socket disconnected event handler.
@@ -188,8 +201,9 @@ class ShardingSlave {
     common.log(`Socket disconnected from master (${reason})`, this.id);
     this._socket.io.opts.extraHeaders.authorization =
         this._generateAuthHeader();
-    if (this._verified && reason === 'io server disconnect') {
-      setTimeout(this._socket.connect, 3000);
+    if (this._verified && !this._reconnectTimeout &&
+        reason === 'io server disconnect') {
+      this._reconnectTimeout = setTimeout(this._socket.connect, 3000);
     }
     this._verified = false;
   }
@@ -205,10 +219,10 @@ class ShardingSlave {
     verify.update(data);
     verify.end();
     if (!verify.verify(this._config.masterPubKey, sig, 'base64')) {
-      common.logWarning('Failed to verify signature from Master!');
+      common.logWarning('Failed to verify signature from Master!', this.id);
     } else {
       this._verified = true;
-      common.log('Verified signature from master successfully.');
+      common.log('Verified signature from master successfully.', this.id);
     }
   }
   /**
@@ -283,7 +297,8 @@ class ShardingSlave {
   _updateRequest(settings) {
     this._lastSeen = Date.now();
     common.logDebug(
-        'New settings received from master: ' + JSON.stringify(settings));
+        'New settings received from master: ' + JSON.stringify(settings),
+        this.id);
     if (!settings || typeof settings !== 'object') return;
     this._settings = settings;
     const s = this._status;
@@ -330,7 +345,8 @@ class ShardingSlave {
         this._status.goalShardId >= 0) {
       common.logWarning(
           'No message has been received from ShardingMaster for too ' +
-          'long, rebooting.');
+              'long, rebooting.',
+          this.id);
       this.exit();
     }
   }
@@ -342,7 +358,7 @@ class ShardingSlave {
   _spawnChild() {
     if (this._status.goalShardId < 0) return;
     if (this._child) return;
-    common.log('Spawning child shard #' + this._status.goalShardId);
+    common.log('Spawning child shard #' + this._status.goalShardId, this.id);
     this._status.reset();
     const botFullName =
         this._settings.master ? 'master' : this._settings.config.botName;
@@ -446,7 +462,7 @@ class ShardingSlave {
    */
   _handleError(err) {
     this._child = null;
-    common.error('Failed to fork child process!');
+    common.error('Failed to fork child process!', this.id);
     console.error(err);
     this._status.goalShardId = -1;
     this._status.goalShardCount = -1;
@@ -460,7 +476,7 @@ class ShardingSlave {
    * @param {string} signal Process kill signal.
    */
   _handleExit(code, signal) {
-    common.log('Child exited with code ' + code + ' (' + signal + ')');
+    common.log('Child exited with code ' + code + ' (' + signal + ')', this.id);
     this._child = null;
     this._status.currentShardId = -1;
     this._status.currentShardCount = -1;
@@ -511,7 +527,7 @@ class ShardingSlave {
         return;
       }
     }
-    // common.logDebug(`Shard Message: ${JSON.stringify(message)}`);
+    // common.logDebug(`Shard Message: ${JSON.stringify(message)}`, this.id);
   }
 
   /**
@@ -527,7 +543,7 @@ class ShardingSlave {
   broadcastEval(script, cb) {
     if (!this._socket.connected) {
       common.logWarning(
-          'Requested eval broadcast while disconnected from master!');
+          'Requested eval broadcast while disconnected from master!', this.id);
       cb('Disconnected from master!');
       // TODO: Resend this request once reconnected instead of failing.
     } else {
@@ -545,7 +561,7 @@ class ShardingSlave {
   sendSQL(query, cb) {
     if (!this._socket.connected) {
       common.logWarning(
-          'Requested SQL broadcast while disconnected from master!');
+          'Requested SQL broadcast while disconnected from master!', this.id);
       cb('Disconnected from master!');
       // TODO: Resend this request once reconnected instead of failing.
     } else {
@@ -561,7 +577,7 @@ class ShardingSlave {
   respawnAll(cb) {
     if (!this._socket.connected) {
       common.logWarning(
-          'Requested Respawn All while disconnected from master!');
+          'Requested Respawn All while disconnected from master!', this.id);
       cb('Disconnected from master!');
       // TODO: Resend this request once reconnected instead of failing.
     } else {
@@ -577,7 +593,8 @@ class ShardingSlave {
   _generateHeartbeat() {
     if (!this._socket.connected) {
       common.logWarning(
-          'Heartbeat generation requested, but socket is not connected!');
+          'Heartbeat generation requested, but socket is not connected!',
+          this.id);
       return;
     }
     const hbEvalReq = 'this.getStats && this.getStats(true) || null';
@@ -595,7 +612,7 @@ class ShardingSlave {
     const now = Date.now();
     const s = this._status;
     if (err || !res) {
-      common.error('Failed to fetch stats for heartbeat!');
+      common.error('Failed to fetch stats for heartbeat!', this.id);
       console.error(err);
       this._socket.emit('status', s);
       return;
@@ -674,7 +691,7 @@ class ShardingSlave {
         '/\\2\\/\\1 \\4/p';
     exec(`df -h | grep G | sed -rn '${regex}'`, opts, (err, stdout) => {
       if (err) {
-        common.logWarning('Failed to fetch save directory size.');
+        common.logWarning('Failed to fetch save directory size.', this.id);
         console.error(err);
         cb(err);
       } else {
@@ -701,7 +718,7 @@ class ShardingSlave {
     //   const dir = el[1];
     //   exec(`du -sh ${dir}`, opts, (err, stdout) => {
     //     if (err) {
-    //       common.logWarning('Failed to fetch save directory size.');
+    //       common.logWarning('Failed to fetch save directory size.', this.id);
     //       console.error(err);
     //       out[name] = null;
     //     } else {

@@ -692,6 +692,12 @@ function SpikeyBot() {
   function onReady() {
     const tag = client.user && client.user.tag || '';
     common.log(`Logged in as ${tag} (${self.version})`);
+    let hostname = null;
+    try {
+      hostname = childProcess.execSync('hostname -f').toString().trim();
+    } catch (err) {
+      // Meh.
+    }
     if (!minimal || isBackup) {
       if (testInstance) {
         updateGame('Running unit test...');
@@ -806,18 +812,17 @@ function SpikeyBot() {
                   ' after disconnecting from Discord!\n' + disconnectReason;
               disconnectReason = 'Unknown reason for disconnect.';
             } else if (!initialized) {
-              additional += ' from cold stop.';
+              additional += ' from cold stop. ';
             }
             if (process.env.SHARDING_NAME) {
-              logChannel.send(
-                  'I just rebooted (JS' + self.version + ') ' +
-                  (minimal ? 'MINIMAL' : 'FULL') + additional + ' (ID: ' +
-                  process.env.SHARDING_NAME + ')');
-            } else {
-              logChannel.send(
-                  'I just rebooted (JS' + self.version + ') ' +
-                  (minimal ? 'MINIMAL' : 'FULL') + additional);
+              additional += '(ID: ' + process.env.SHARDING_NAME + ')';
             }
+            if (hostname) {
+              additional += '[FQDN: ' + hostname + ']';
+            }
+            logChannel.send(
+                'I just rebooted (JS' + self.version + ') ' +
+                (minimal ? 'MINIMAL' : 'FULL') + additional);
           }
         });
       }
@@ -848,6 +853,7 @@ function SpikeyBot() {
       shard_count: client.shard ? client.shard.count : '0',
       shard_id: client.shard ? client.shard.ids : 'null',
       version: self.version,
+      fqdn: hostname,
     }));
     /* eslint-enable @typescript-eslint/camelcase */
     // Reset save interval

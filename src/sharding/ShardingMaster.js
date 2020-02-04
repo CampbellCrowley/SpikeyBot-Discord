@@ -983,10 +983,19 @@ class ShardingMaster {
    */
   broadcastEvalToShards(script, cb) {
     const sockets = Object.entries(this._shardSockets);
-    const num = sockets.length;
+    const num = this.getGoalShardCount();
+    if (num <= 0) {
+      cb('No Shards');
+      return;
+    }
     const out = new Array(num);
     let numDone = 0;
+    let numSent = 0;
     let err = null;
+    const timeout = setTimeout(() => {
+      err = 'Master timeout exceeded';
+      done();
+    }, 15000);
     /**
      * @description Fired for each completed response from a shard. Fires the
      * callback once all responses have been received, or an error has been
@@ -994,11 +1003,12 @@ class ShardingMaster {
      * @private
      */
     function done() {
-      numDone++;
       if (err && numDone <= num) {
+        clearTimeout(timeout);
         cb(err);
         numDone = num + 1;
-      } else if (numDone == num) {
+      } else if (numDone == numSent) {
+        clearTimeout(timeout);
         cb(null, out);
       }
     }
@@ -1008,16 +1018,21 @@ class ShardingMaster {
         done();
         return;
       }
+      numSent++;
       ent[1].emit('evalRequest', script, (error, res) => {
+        numDone++;
         if (error) {
           err = error;
-          done();
-          return;
+        } else {
+          out[id] = res;
         }
-        out[id] = res;
         done();
       });
     });
+    if (numSent != num) {
+      err = 'Not all shards connected to master.';
+      done();
+    }
   }
 
   /**
