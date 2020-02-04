@@ -3,8 +3,7 @@
 const socketIo = require('socket.io-client');
 const common = require('../common.js');
 const crypto = require('crypto');
-// const {fork, exec} = require('child_process');
-const {fork} = require('child_process');
+const {fork, exec} = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const auth = require('../../auth.js');
@@ -91,6 +90,35 @@ class ShardingSlave {
      * @default
      */
     this._respawnTimeout = null;
+    /**
+     * @description Timeout to attempt reconnection if no heartbeat request was
+     * received from the master (pull), or the timeout until the next heartbeat
+     * will be sent (push).
+     * @private
+     * @type {?number}
+     * @default
+     */
+    this._hbTimeout = null;
+    /**
+     * @description The timestamp at which the last message from the master was
+     * received.
+     * @private
+     * @type {number}
+     * @default
+     */
+    this._lastSeen = 0;
+
+    /**
+     * @description Has the connection to the master been verified. If false,
+     * the current connection has not been established to be the correct
+     * endpoint. This may not necessarily be a security vulnerability however,
+     * as this is a redundant check in addition to the HTTPS websocket
+     * connection.
+     * @private
+     * @type {boolean}
+     * @default
+     */
+    this._verified = false;
 
     /**
      * @description Ongoing promises for calls to
@@ -115,7 +143,8 @@ class ShardingSlave {
       extraHeaders: {authorization: authHeader},
     });
     this._socket.on('connect', () => this._socketConnected());
-    this._socket.on('disconnect', () => this._socketDisconnected());
+    this._socket.on(
+        'disconnect', (...args) => this._socketDisconnected(...args));
     this._socket.on(
         'masterVerification', (...args) => this._masterVerification(...args));
     this._socket.on('evalRequest', (...args) => this._evalRequest(...args));
@@ -152,12 +181,17 @@ class ShardingSlave {
   /**
    * @description Socket disconnected event handler.
    * @private
+   * @param {string} reason Either ‘io server disconnect’, ‘io client
+   * disconnect’, or ‘ping timeout’.
    */
-  _socketDisconnected() {
-    common.log('Socket disconnected from master', this.id);
+  _socketDisconnected(reason) {
+    common.log(`Socket disconnected from master (${reason})`, this.id);
     this._socket.io.opts.extraHeaders.authorization =
         this._generateAuthHeader();
-    // this._socket.connect();
+    if (this._verified && reason === 'io server disconnect') {
+      setTimeout(this._socket.connect, 3000);
+    }
+    this._verified = false;
   }
   /**
    * @description Verify that we are connecting to the master we expect.
@@ -166,12 +200,14 @@ class ShardingSlave {
    * @param {string} data The message sent that was signed.
    */
   _masterVerification(sig, data) {
+    this._lastSeen = Date.now();
     const verify = crypto.createVerify(this._config.signAlgorithm);
     verify.update(data);
     verify.end();
     if (!verify.verify(this._config.masterPubKey, sig, 'base64')) {
       common.logWarning('Failed to verify signature from Master!');
     } else {
+      this._verified = true;
       common.log('Verified signature from master successfully.');
     }
   }
@@ -183,6 +219,7 @@ class ShardingSlave {
    * success message is second parameter.
    */
   _evalRequest(script, cb) {
+    this._lastSeen = Date.now();
     if (!this._child) {
       cb('Not Running');
       return;
@@ -244,6 +281,7 @@ class ShardingSlave {
    * string.
    */
   _updateRequest(settings) {
+    this._lastSeen = Date.now();
     common.logDebug(
         'New settings received from master: ' + JSON.stringify(settings));
     if (!settings || typeof settings !== 'object') return;
@@ -267,8 +305,34 @@ class ShardingSlave {
     if (this._settings.config.heartbeat.updateStyle === 'pull') {
       this._generateHeartbeat();
     }
+    this._hbTimeoutHandler();
     // TODO: Implement 'push' update style event loop.
-    // TODO: Implement suicide at both expected reboot and death timeouts.
+  }
+
+  /**
+   * @description Handler for {@link _hbTimeout}.
+   * @private
+   */
+  _hbTimeoutHandler() {
+    clearTimeout(this._hbTimeout);
+    const style = this._settings.config.heartbeat.updateStyle;
+    const extend = style === 'pull';
+    const delay =
+        this._settings.config.heartbeat.interval * (extend ? 1.5 : 1.0);
+    this._hbTimeout = setTimeout(() => this._hbTimeoutHandler(), delay);
+
+    const deathDelta = this._settings.config.heartbeat.assumeDeadAfter;
+
+    if (style === 'push') {
+      this._generateHeartbeat();
+    } else if (
+      style === 'pull' && Date.now() - this._lastSeen > deathDelta &&
+        this._status.goalShardId >= 0) {
+      common.logWarning(
+          'No message has been received from ShardingMaster for too ' +
+          'long, rebooting.');
+      this.exit();
+    }
   }
 
   /**
@@ -289,6 +353,7 @@ class ShardingSlave {
       SHARDING_MANAGER_MODE: 'process',
       SHARDING_SLAVE: !this._settings.master,
       SHARDING_MASTER: this._settings.master,
+      SHARDING_NAME: this.id,
       SHARDS: this._status.goalShardId,
       SHARD_COUNT: this._status.goalShardCount,
       DISCORD_TOKEN: auth[botFullName],
@@ -330,6 +395,7 @@ class ShardingSlave {
    * @param {string|Buffer} data The data to write to the file.
    */
   _receiveMasterFile(filename, data) {
+    this._lastSeen = Date.now();
     const file = path.resolve(`${botCWD}${filename}`);
     if (!file.startsWith(botCWD)) {
       this.logWarning('Master sent file outside of project directory: ' + file);
@@ -353,6 +419,7 @@ class ShardingSlave {
    * @param {Function} cb Callback to send the error or file back on.
    */
   _sendMasterFile(filename, cb) {
+    this._lastSeen = Date.now();
     const file = path.resolve(`${botCWD}${filename}`);
     if (!file.startsWith(botCWD)) {
       this.logWarning(
@@ -508,6 +575,11 @@ class ShardingSlave {
    * @private
    */
   _generateHeartbeat() {
+    if (!this._socket.connected) {
+      common.logWarning(
+          'Heartbeat generation requested, but socket is not connected!');
+      return;
+    }
     const hbEvalReq = 'this.getStats && this.getStats(true) || null';
 
     this._evalRequest(hbEvalReq, (...args) => this._hbEvalResHandler(...args));
@@ -577,10 +649,10 @@ class ShardingSlave {
    * directories.
    */
   _fetchDiskStats(cb) {
-    cb(null, {});
-    return;
+    // cb(null, {});
+    // return;
     // // Resolve the absolute path to the project root.
-    // const root = path.resolve(`${__dirname}/../..`);
+    const root = path.resolve(`${__dirname}/../..`);
     // // Paths relative to project root.
     // const dirs = [
     //   ['save', './save/'],
@@ -591,11 +663,24 @@ class ShardingSlave {
     //   ['root', './'],
     // ];
 
-    // const opts = {
-    //   env: null,
-    //   timeout: 5000,
-    //   cwd: root,
-    // };
+    const opts = {
+      env: null,
+      timeout: 5000,
+      cwd: root,
+    };
+
+    const regex =
+        's/^\\S+\\s+([0-9]+\\w)\\s+([0-9]+\\w)\\s+([0-9]+\\w)\\s+([0-9]+%).*' +
+        '/\\2\\/\\1 \\4/p';
+    exec(`df -h | grep G | sed -rn '${regex}'`, opts, (err, stdout) => {
+      if (err) {
+        common.logWarning('Failed to fetch save directory size.');
+        console.error(err);
+        cb(err);
+      } else {
+        cb(null, stdout.trim());
+      }
+    });
 
     // let numDone = 0;
     // const out = {};
@@ -653,10 +738,7 @@ class ShardingSlave {
       this._status.goalShardId = -2;
       this._status.goalShardCount = -2;
     }
-    if (this._child) this._child.kill();
-
-    // Send heartbeat notifying of our imminent death.
-    this._generateHeartbeat();
+    if (this._child) this._child.kill('SIGTERM');
 
     process.exit(0);
   }

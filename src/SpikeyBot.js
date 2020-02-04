@@ -808,9 +808,16 @@ function SpikeyBot() {
             } else if (!initialized) {
               additional += ' from cold stop.';
             }
-            logChannel.send(
-                'I just rebooted (JS' + self.version + ') ' +
-                (minimal ? 'MINIMAL' : 'FULL') + additional);
+            if (process.env.SHARDING_NAME) {
+              logChannel.send(
+                  'I just rebooted (JS' + self.version + ') ' +
+                  (minimal ? 'MINIMAL' : 'FULL') + additional + ' (ID: ' +
+                  process.env.SHARDING_NAME + ')');
+            } else {
+              logChannel.send(
+                  'I just rebooted (JS' + self.version + ') ' +
+                  (minimal ? 'MINIMAL' : 'FULL') + additional);
+            }
           }
         });
       }
