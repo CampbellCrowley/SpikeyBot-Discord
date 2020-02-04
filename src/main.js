@@ -3013,9 +3013,12 @@ function Main() {
           shardUptimes.join('\n');
       embed.addField('Shards', shardString, true);
 
-      const systemString = 'Storage used: ' + values.saveData.match(/^\S+/)[0] +
-          '\nPing: ' + Math.round(self.client.ws.ping) + 'ms';
-      embed.addField('System', systemString, true);
+      if (values.saveData) {
+        const systemString = 'Storage used: ' +
+            values.saveData.match(/^\S+/)[0] + '\nPing: ' +
+            Math.round(self.client.ws.ping) + 'ms';
+        embed.addField('System', systemString, true);
+      }
 
       embed.setColor([0, 100, 255]);
 
@@ -3111,7 +3114,12 @@ function Main() {
       cb(values);
     }
 
-    /* childProcess.exec('du -sh ./save/', (err, stdout) => {
+    const regex =
+        's/^\\S+\\s+([0-9]+\\w)\\s+([0-9]+\\w)\\s+([0-9]+\\w)\\s+([0-9]+%).*' +
+        '/\\2\\/\\1 \\4/p';
+    const cmd = `df -h | grep G | sed -rn '${regex}'`;
+    // const cmd = 'du -sh ./save/';
+    childProcess.exec(cmd, (err, stdout) => {
       if (err) {
         self.error('Failed to fetch save directory size.');
         console.error(err);
@@ -3129,8 +3137,8 @@ function Main() {
       } else {
         statsResponse([getStats()]);
       }
-    }); */
-    if (self.client.shard) {
+    });
+    /* if (self.client.shard) {
       self.client.shard.broadcastEval('this.getStats()')
           .then(statsResponse)
           .catch((err) => {
@@ -3140,7 +3148,7 @@ function Main() {
           });
     } else {
       statsResponse([getStats()]);
-    }
+    } */
   }
   /**
    * Fetch our statistics about the bot on this shard.
