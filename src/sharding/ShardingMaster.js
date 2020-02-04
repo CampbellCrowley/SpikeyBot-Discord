@@ -97,8 +97,20 @@ class ShardingMaster {
     this._knownUsers = null;
     this._updateUsers();
     fs.watchFile(usersFile, {persistent: false}, (curr, prev) => {
+      if (this._usersIgnoreNext) {
+        this._usersIgnoreNext = false;
+        return;
+      }
       if (prev.mtime < curr.mtime) this._updateUsers();
     });
+    /**
+     * @description Toggle for when we write known users to file to not re-read
+     * them again.
+     * @private
+     * @type {boolean}
+     * @default
+     */
+    this._usersIgnoreNext = false;
     /**
      * @description The current config for sharding.
      * @private
@@ -341,6 +353,7 @@ class ShardingMaster {
       this._userSaveTimeout = setTimeout(() => this._saveUsers(true), 1000);
       return;
     }
+    this._usersIgnoreNext = true;
     const file = usersFile;
     const dir = path.dirname(file);
     const serializable = {};
