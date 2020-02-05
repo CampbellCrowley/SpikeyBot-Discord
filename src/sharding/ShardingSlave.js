@@ -206,7 +206,10 @@ class ShardingSlave {
     if (this._verified && !this._reconnectTimeout &&
         reason === 'io server disconnect') {
       this._reconnectTimeout = setTimeout(() => {
-        this._socket.connect();
+        if (!this._socket.connected) {
+          this._socket.disconnect();
+          this._socket.connect();
+        }
         this._socket.reconnection(true);
       }, 3000);
     }
@@ -350,9 +353,7 @@ class ShardingSlave {
       style === 'pull' && Date.now() - this._lastSeen > rebootDelta &&
         this._status.goalShardId >= 0 && this._verified) {
       this._socket.disconnect();
-      this._socket.connect();
-      this._socket.reconnection(true);
-      this._verified = false;
+      this._socket.reconnecting(true);
     } else if (
       style === 'pull' && Date.now() - this._lastSeen > deathDelta &&
         this._status.goalShardId >= 0) {

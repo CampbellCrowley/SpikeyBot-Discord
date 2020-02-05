@@ -833,10 +833,12 @@ class ShardingMaster {
 
     socket.on('disconnect', (reason) => {
       const num = this.getNumClients() - 1;
+      const id = socket.userId || userId;
       common.log(
-          `Socket disconnected (${num})(${reason}): ${ipName}`, socket.id);
+          `Socket disconnected (${num})(${reason})(${id}): ${ipName}`,
+          socket.id);
       delete this._sockets[socket.id];
-      if (socket.userId) delete this._shardSockets[socket.userId];
+      if (id) delete this._shardSockets[id];
       if (socket.isMasterShard) this._masterShardSocket = null;
     });
 
