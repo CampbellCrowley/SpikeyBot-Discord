@@ -768,13 +768,18 @@ class WebApi extends SubModule {
    * @param {string} content Encoded content string to broadcast to shards.
    */
   _twitchFinal(ids, content) {
-    if (this.client.shard) {
-      this.client.shard
-          .broadcastEval(`this.twitchWebhookHandler(${ids}, ${content})`)
-          .catch((err) => {
-            this.error('Failed to broadcast webhook handler to shards.');
-            console.error(err);
-          });
+    const toEval = `this.twitchWebhookHandler(${ids}, ${content})`;
+    if (this.common.isMaster) {
+      process.send({_sEval: toEval}, (err) => {
+        if (!err) return;
+        this.common.error('Failed to send broadcast to parent process!');
+        console.error(err);
+      });
+    } else if (this.client.shard) {
+      this.client.shard.broadcastEval(toEval).catch((err) => {
+        this.error('Failed to broadcast webhook handler to shards.');
+        console.error(err);
+      });
     } else {
       const sm = this.bot.getSubmodule('./twitch.js');
       if (!sm) return;
