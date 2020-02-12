@@ -809,11 +809,11 @@ Common.connectSQL = function(force = false) {
     });
     global.sqlCon.on('error', (e) => {
       if (this.error) {
-        this.error(e);
+        this.error(`SQL connection fired error: ${e}`);
       } else {
         console.error(e);
       }
-      if (e.fatal) {
+      if (e.fatal || e.code === 'PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR') {
         Common.connectSQL(true);
       }
     });
