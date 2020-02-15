@@ -2609,13 +2609,24 @@ function Main() {
   function setTimer(timer) {
     timers.push(timer);
     const now = Date.now();
+    const delta = timer.time - now;
+    const dir = `${self.comomn.userSaveDir}${timer.id}/timers/`;
+    const file = `${dir}${timer.time}.json`;
+
+    // Ignore timers more than a minute in the past.
+    if (delta < -60000) return;
     timer.timeout = self.client.setTimeout(() => {
       self.client.users.fetch(timer.id).then((user) => {
         user.send(timer.message);
         const now = Date.now();
         timers = timers.filter((obj) => obj.time > now);
+        fs.unlink(file, (err) => {
+          if (!err) return;
+          self.error(`Failed to delete timer: ${file}`);
+          console.error(err);
+        });
       });
-    }, timer.time - now);
+    }, delta);
   }
 
   /**
