@@ -626,9 +626,11 @@ class WebApi extends SubModule {
       check();
     }
 
+    const botId = (this.client.user && this.client.user.id) ||
+        (this.common.isRelease ? '318552464356016131' : '422623712534200321');
     const toSend = global.sqlCon.format(
         'SELECT * FROM TwitchDiscord WHERE twitchId=? AND bot=?',
-        [userId, this.client.user.id]);
+        [userId, botId]);
     global.sqlCon.query(toSend, (err, rows) => {
       if (err) {
         this.error('Failed to fetch TwitchDiscord database info: ' + userId);
