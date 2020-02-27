@@ -664,9 +664,13 @@ class ShardingSlave {
 
       this._socket.emit('status', s);
 
-      if (this._config.useMessageStat && prevDelta === 0 &&
-          s.messageCountDelta === 0 && !s.isMaster) {
-        this._respawnChild();
+      if (this._config.useMessageStat) {
+        common.logDebug(
+            `Message delta: ${s.messageCountDelta}, Prev: ${prevDelta}`);
+        if (prevDelta === 0 && s.messageCountDelta === 0 && !s.isMaster) {
+          common.error('No messages received for last two heartbeats!');
+          this._respawnChild();
+        }
       }
     });
   }

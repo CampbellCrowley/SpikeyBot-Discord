@@ -491,6 +491,9 @@ function SpikeyBot() {
       type: 'WATCHING',
     },
   };
+  if (isDev) {
+    defaultPresence.activity.name = `Version: ${self.version}`;
+  }
   if (isBackup) {
     defaultPresence = {
       status: 'dnd',
