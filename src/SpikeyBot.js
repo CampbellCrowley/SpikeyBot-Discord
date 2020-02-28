@@ -1258,9 +1258,11 @@ function SpikeyBot() {
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
    * @param {boolean} [silent=false] Suppress reboot scheduling messages.
+   * @param {boolean} [onlySelf=false] Prevent sending reboot command to other
+   * shards if possible.
    * @listens Command#reboot
    */
-  function commandReboot(msg, silent) {
+  function commandReboot(msg, silent, onlySelf) {
     /**
      * Actually do the reboot process. Send kill signals and save the reboot
      * information file.
@@ -1288,7 +1290,7 @@ function SpikeyBot() {
           console.log(err);
         }
       }
-      if (!client.shard || !hard) {
+      if (onlySelf || !client.shard || !hard) {
         process.exit(-1);
       } else if (hard) {
         if (force) {
@@ -1744,8 +1746,8 @@ function SpikeyBot() {
    */
   function exit(...info) {
     common.logWarning('Caught exit! (' + info.join(' ') + ')');
-    if (info[0] != -1 && typeof info[0] != 'string') {
-      commandReboot(null, true);
+    if (info[0] != -1) {
+      commandReboot(null, true, true);
     }
   }
   /**

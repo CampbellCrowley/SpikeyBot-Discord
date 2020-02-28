@@ -386,10 +386,6 @@ function Main() {
     self.client.on('message', onMessage);
 
     // Catch reasons for exiting in order to save first.
-    process.on('exit', sigint);
-    process.on('SIGINT', sigint);
-    process.on('SIGHUP', sigint);
-    process.on('SIGTERM', sigint);
     if (self.client.shard) {
       process.on('message', shardMessage);
     }
@@ -709,11 +705,6 @@ function Main() {
     self.client.removeListener('guildDelete', onGuildDelete);
     self.client.removeListener('guildBanAdd', onGuildBanAdd);
     self.client.removeListener('message', onMessage);
-
-    process.removeListener('exit', sigint);
-    process.removeListener('SIGINT', sigint);
-    process.removeListener('SIGHUP', sigint);
-    process.removeListener('SIGTERM', sigint);
 
     timers.forEach((el) => self.client.clearTimeout(el.timeout));
     if (self.client.shard) {
@@ -3882,34 +3873,6 @@ function Main() {
             checkDone();
           });
     });
-  }
-
-  /**
-   * Triggered via SIGINT, SIGHUP or SIGTERM. Saves data before exiting.
-   *
-   * @private
-   * @listens Process#SIGINT
-   * @listens Process#SIGHUP
-   * @listens Process#SIGTERM
-   */
-  function sigint() {
-    if (self.initialized) {
-      self.log('Caught exit!', 'Main');
-    } else {
-      console.log('Main: Caught exit!');
-    }
-    try {
-      self.save();
-    } catch (err) {
-      console.log('Main: Failed to save', err);
-    }
-    try {
-      self.end();
-    } catch (err) {
-      console.log('Main: Failed to shutdown', err);
-    }
-    process.removeListener('exit', sigint);
-    process.exit();
   }
 
   /**
