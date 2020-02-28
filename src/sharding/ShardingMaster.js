@@ -1004,6 +1004,7 @@ class ShardingMaster {
         'broadcastEval', (...args) => this.broadcastEvalToShards(...args));
     socket.on('respawnAll', (...args) => this.respawnAll(...args));
     socket.on('sendSQL', (...args) => this.sendSQL(...args));
+    socket.on('reboot', (...args) => this.rebootRequest(...args));
   }
 
   /**
@@ -1107,6 +1108,44 @@ class ShardingMaster {
       return;
     }
     global.sqlCon.query(query, cb);
+  }
+
+  /**
+   * @description A reboot of some form has been requested. Parse, and comply.
+   * @public
+   * @param {string} msg The reboot command.
+   */
+  rebootRequest(msg) {
+    const list = Object.values(this._knownUsers);
+    if (msg === 'reboot hard' || msg === 'reboot hard force') {
+      common.logWarning('TRIGGERED HARD REBOOT!');
+      list.forEach((info) => {
+        if (info.goalShardId === -2) return;
+        info.goalShardId = -2;
+        this._sendHeartbeatRequest(info);
+      });
+      process.exit(-1);
+    } else if (typeof msg === 'string' && msg.startsWith('reboot')) {
+      const idList = msg.match(/\b\d+\b/g);
+      if (msg.indexOf('force') > -1) {
+        list.forEach((s) => {
+          if (!idList || idList.find((el) => el == s.goalShardId)) {
+            s.goalShardId = -2;
+            this._sendHeartbeatRequest(s);
+          }
+        });
+      } else {
+        list.forEach((s) => {
+          if (!idList || idList.find((el) => el == s.goalShardId)) {
+            s.goalShardId = -1;
+            this._sendHeartbeatRequest(s);
+          }
+        });
+      }
+    } else {
+      common.error('Malformed reboot request received!');
+      console.log(msg);
+    }
   }
 
   /**

@@ -539,11 +539,18 @@ class ShardingSlave {
           }
         });
         return;
-      } else if (message === 'reboot hard' || message === 'reboot hard force') {
-        // Reboot or somehting...
+      } else if (typeof message === 'string' && message.startsWith('reboot')) {
+        if (!this._socket.connected) {
+          common.logWarning(
+              'Requested reboot broadcast while disconnected from master!',
+              this.id);
+        } else {
+          this._socket.emit('reboot', message);
+        }
+        return;
       }
     }
-    common.logDebug(`Shard Message: ${JSON.stringify(message)}`, this.id);
+    // common.logDebug(`Shard Message: ${JSON.stringify(message)}`, this.id);
   }
 
   /**
