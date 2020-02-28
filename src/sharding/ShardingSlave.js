@@ -540,6 +540,7 @@ class ShardingSlave {
         });
         return;
       } else if (typeof message === 'string' && message.startsWith('reboot')) {
+        common.log(`Reboot requested: ${JSON.stringify(message)}`);
         if (!this._socket.connected) {
           common.logWarning(
               'Requested reboot broadcast while disconnected from master!',

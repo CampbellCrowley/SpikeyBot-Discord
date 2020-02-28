@@ -1119,29 +1119,27 @@ class ShardingMaster {
     const list = Object.values(this._knownUsers);
     if (msg === 'reboot hard' || msg === 'reboot hard force') {
       common.logWarning('TRIGGERED HARD REBOOT!');
-      list.forEach((info) => {
-        if (info.goalShardId === -2) return;
-        info.goalShardId = -2;
-        this._sendHeartbeatRequest(info);
+      list.forEach((s) => {
+        if (s.goalShardId === -2) return;
+        const g = s.goalShardId;
+        s.goalShardId = -2;
+        this._sendHeartbeatRequest(s);
+        s.goalShardId = g;
       });
       process.exit(-1);
     } else if (typeof msg === 'string' && msg.startsWith('reboot')) {
       const idList = msg.match(/\b\d+\b/g);
-      if (msg.indexOf('force') > -1) {
-        list.forEach((s) => {
-          if (!idList || idList.find((el) => el == s.goalShardId)) {
-            s.goalShardId = -2;
-            this._sendHeartbeatRequest(s);
-          }
-        });
-      } else {
-        list.forEach((s) => {
-          if (!idList || idList.find((el) => el == s.goalShardId)) {
-            s.goalShardId = -1;
-            this._sendHeartbeatRequest(s);
-          }
-        });
-      }
+      common.log(
+          `Rebooting shards: ${(idList||[null, 'all']).slice(1).join(',')}`);
+      const force = msg.indexOf('force') > -1;
+      list.forEach((s) => {
+        if (!idList || idList.includes(s.goalShardId)) {
+          const g = s.goalShardId;
+          s.goalShardId = force ? -2 : -1;
+          this._sendHeartbeatRequest(s);
+          s.goalShardId = g;
+        }
+      });
     } else {
       common.error('Malformed reboot request received!');
       console.log(msg);
