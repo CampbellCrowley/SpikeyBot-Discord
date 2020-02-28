@@ -94,11 +94,17 @@ class FileServer extends SubModule {
         const ext = path.extname(file);
         const mime = mimeTypes[ext];
 
-        res.writeHead(200, {
-          'Content-Type': mime,
-          'Content-Length': stats.size,
-        });
-        res.pipe(fs.createReadStream(file));
+        if (!mime) {
+          res.writeHead(404);
+          res.end();
+          this.debug(`404 (Bad MIME) ${req.method} ${url}`, ip);
+        } else {
+          res.writeHead(200, {
+            'Content-Type': mime,
+            'Content-Length': stats.size,
+          });
+          fs.createReadStream(file).pipe(res);
+        }
       });
     } else {
       res.writeHead(404);
