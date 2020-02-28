@@ -964,8 +964,6 @@ class ShardingMaster {
         console.error(err);
         return;
       }
-      common.logDebug(
-          `${userId} updated status. (${status.messageCountDelta})`, socket.id);
       if (!user.stats) {
         user.stats = new ShardingMaster.ShardStatus(userId);
       } else {
@@ -988,6 +986,10 @@ class ShardingMaster {
       } else {
         user.lastHeartbeat = user.lastSeen;
       }
+      const d = user.lastSeen - user.lastHeartbeat;
+      common.logDebug(
+          `${userId} updated status. (${status.messageCountDelta}, ${d})`,
+          socket.id);
 
       user.currentShardId = user.stats.currentShardId;
       user.currentShardCount = user.stats.currentShardCount;
