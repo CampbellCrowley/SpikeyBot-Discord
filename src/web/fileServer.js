@@ -21,7 +21,10 @@ class FileServer extends SubModule {
     super();
     /** @inheritdoc **/
     this.myName = 'FileServer';
+  }
 
+  /** @inheritdoc */
+  initialize() {
     this._app = http.createServer((...args) => this._handler(...args));
     this._app.on('error', (err) => {
       if (err.code === 'EADDRINUSE') {
@@ -31,10 +34,6 @@ class FileServer extends SubModule {
       this.error('A webserver error occurred!');
       console.error(err);
     });
-  }
-
-  /** @inheritdoc */
-  initialize() {
     const port = this.common.isRelease ? 8022 : 8023;
     this._app.listen(port, '127.0.0.1');
     this.debug('Starting file server on port: ' + port);
