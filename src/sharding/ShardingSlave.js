@@ -631,6 +631,8 @@ class ShardingSlave {
       this._socket.emit('status', s);
       return;
     }
+    console.log(s);
+    console.log(res);
 
     this._fetchDiskStats((err, stats) => {
       const delta = (s.timestamp > s.startTime) ? now - s.timestamp : 0;
@@ -656,9 +658,9 @@ class ShardingSlave {
         s.cpuLoad[i] = t.user / totalDiff;
       });
       s.cpus = res.cpus;
-      const prevDelta = s.messageCountDelta;
-      s.messageCountDelta = res.numMessages - s.messageCountTotal;
-      s.messageCountTotal = res.numMessages;
+      const prevDelta = s.messageCountDelta || 0;
+      s.messageCountDelta = (res.numMessages || 0) - (s.messageCountTotal || 0);
+      s.messageCountTotal = res.numMessages || 0;
       s.storageUsedTotal = stats.root;
       s.storageUsedUsers = stats.save;
 
