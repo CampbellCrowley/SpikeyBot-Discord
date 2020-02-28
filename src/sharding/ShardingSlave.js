@@ -623,6 +623,7 @@ class ShardingSlave {
     }
     const hbEvalReq = 'this.getStats && this.getStats(true) || null';
 
+    common.logDebug('Attempting to fetch stats for heartbeat...');
     this._evalRequest(hbEvalReq, (...args) => this._hbEvalResHandler(...args));
   }
   /**
