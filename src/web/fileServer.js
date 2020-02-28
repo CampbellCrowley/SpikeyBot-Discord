@@ -22,7 +22,7 @@ class FileServer extends SubModule {
     /** @inheritdoc **/
     this.myName = 'FileServer';
 
-    this._app = http.createServer(this._handler);
+    this._app = http.createServer((...args) => this._handler(...args));
     this._app.on('error', (err) => {
       if (err.code === 'EADDRINUSE') {
         this.debug('Port already in use. Shutting down.');
@@ -31,8 +31,6 @@ class FileServer extends SubModule {
       this.error('A webserver error occurred!');
       console.error(err);
     });
-
-    this._handler = this._handler.bind(this);
   }
 
   /** @inheritdoc */
@@ -104,9 +102,9 @@ class FileServer extends SubModule {
         res.pipe(fs.createReadStream(file));
       });
     } else {
-      this.debug(`404 ${req.method} ${url}`, ip);
       res.writeHead(404);
       res.end();
+      this.debug(`404 ${req.method} ${url}`, ip);
     }
   }
 
