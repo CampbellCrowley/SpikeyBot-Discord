@@ -664,7 +664,7 @@ class ShardingSlave {
 
       this._socket.emit('status', s);
 
-      if (this._config.useMessageStat) {
+      if (this._config.useMessageStats) {
         common.logDebug(
             `Message delta: ${s.messageCountDelta}, Prev: ${prevDelta}`);
         if (prevDelta === 0 && s.messageCountDelta === 0 && !s.isMaster) {
