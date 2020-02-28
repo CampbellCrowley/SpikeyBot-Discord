@@ -120,13 +120,13 @@ All arguments are optional for normal usage.
 `--nologin`: Bot will not attempt to login to Discord, but will continue to do everything else normally, including loading MainModules. If this is used, most SubModules will not do anything as they rely on a connection to Discord to be made. This is to support a single process that acts as the master node of webservers.  
 `--shards[=NUMSHARDS]`: Specifies that we wish to use Discord.js built-in sharding. The number of shards does not need to be specified if we wish to use Discord.js' suggested number of shards.  
 `--shardmem=MEMBYTES`: The number of bytes to allocate for each shard's heap.  
-`--backup`: Runs the back as a fallback node. It will not attempt to load any MainModules, and essentially does nothing, but sets the default presence to DND in order to signify that the bot is unnavailable. This is intended to be expanded in its features to take over when a shard went offline, but that may no longer be feasible.  
+`--backup`: Runs the bot as a fallback node. It will not attempt to load any MainModules, and essentially does nothing, but sets the default presence to DND in order to signify that the bot is unavailable. This is intended to be expanded in its features to take over when a shard went offline, but that may no longer be feasible.  
 `--delay[=5000]`: Time in milliseconds to wait after ready before contacting Discord to login, or start shards.  
 `--inspect`: Passes `--inspect` to the NodeJS process of spawned shards.  
 
 # Development
 - Unit tests exist
-  - Covers all current commands with text-only replies.
+  - Covers most current commands with text-only replies.
   - Tests only send a message, and check for response messages that match expected output.
     1) String exact match
     2) String contains match
