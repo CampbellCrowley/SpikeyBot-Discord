@@ -396,7 +396,7 @@ function Main() {
 
     if (!self.client.shard || !self.client.shard.ids ||
         self.client.shard.ids[0] == 0) {
-      fs.readdir(self.common.userSaveDir, function(err, items) {
+      fs.readdir(self.common.userSaveDir, (err, items) => {
         if (err) return;
         for (let i = 0; i < items.length; i++) {
           const dir = self.common.userSaveDir + items[i] + '/timers/';
@@ -419,7 +419,7 @@ function Main() {
                       return;
                     }
                     setTimer(parsed);
-                    fs.unlink(filename, function(err4) {
+                    fs.unlink(filename, (err4) => {
                       if (err4) {
                         self.error(
                             'Failed to delete timer save file: ' + filename,
@@ -645,9 +645,11 @@ function Main() {
        *
        * @public
        * @param {string} cmd The full command run by the user.
+       * @returns {number} This shard's ID.
        */
       self.client.runBotUpdate = (cmd) => {
         runBotUpdate({content: cmd});
+        return self.client.shard.ids[0];
       };
       /* eslint-enable no-unused-vars */
     }
@@ -3563,10 +3565,8 @@ function Main() {
               'command. Sorry!');
       return;
     }
-    self.log(
-        `Triggered update: ${__dirname} <-- DIR | CWD -->${process.cwd()}`);
     self.common.reply(msg, 'Updating from git...').then((msg_) => {
-      if (self.client.shard) {
+      if (self.common.isSlave || self.comomn.isMaster) {
         self.client.shard
             .broadcastEval(`this.runBotUpdate(${JSON.stringify(msg.content)})`)
             .then(() => msg_.edit('Updating has begun on all shards.'))
@@ -3591,7 +3591,9 @@ function Main() {
    * update command.
    */
   function runBotUpdate(msg, msg_) {
-    childProcess.exec('npm run update', function(err, stdout, stderr) {
+    self.log(
+        `Triggered update: ${__dirname} <-- DIR | CWD -->${process.cwd()}`);
+    childProcess.exec('npm run update', (err, stdout, stderr) => {
       if (!err) {
         if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
         if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
@@ -3599,7 +3601,7 @@ function Main() {
         const noReload = msg.content.indexOf('--noreload') > -1;
         if (!noReload) {
           self.bot.reloadCommon();
-          if (self.client.shard) {
+          if (self.client.shard && !self.common.isSlave) {
             self.client.shard.broadcastEval(
                 'this.reloadUpdatedMainModules()', () => {
                   self.client.shard.broadcastEval(
