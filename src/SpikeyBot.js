@@ -1744,7 +1744,7 @@ function SpikeyBot() {
    */
   function exit(...info) {
     common.logWarning('Caught exit! (' + info.join(' ') + ')');
-    if (info[0] != -1) {
+    if (info[0] != -1 && typeof info[0] != 'string') {
       commandReboot(null, true);
     }
   }

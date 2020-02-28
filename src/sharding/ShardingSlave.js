@@ -681,6 +681,8 @@ class ShardingSlave {
           common.error('No messages received for last two heartbeats!');
           this._respawnChild();
         }
+      } else {
+        common.logDebug('Heartbeat Sent');
       }
     });
   }

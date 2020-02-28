@@ -1129,11 +1129,12 @@ class ShardingMaster {
       process.exit(-1);
     } else if (typeof msg === 'string' && msg.startsWith('reboot')) {
       const idList = msg.match(/\b\d+\b/g);
-      common.log(
-          `Rebooting shards: ${(idList||[null, 'all']).slice(1).join(',')}`);
       const force = msg.indexOf('force') > -1;
+      const strList = (idList || ['all']).join(',');
+      common.log(`Rebooting shards: ${strList}${force?' force':''}`);
       list.forEach((s) => {
-        if (!idList || idList.includes(s.goalShardId)) {
+        if (s.goalShardId < 0) return;
+        if (!idList || idList.includes(`${s.goalShardId}`)) {
           const g = s.goalShardId;
           s.goalShardId = force ? -2 : -1;
           this._sendHeartbeatRequest(s);
