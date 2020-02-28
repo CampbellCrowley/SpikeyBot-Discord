@@ -539,9 +539,11 @@ class ShardingSlave {
           }
         });
         return;
+      } else if (message === 'reboot hard' || message === 'reboot hard force') {
+        // Reboot or somehting...
       }
     }
-    // common.logDebug(`Shard Message: ${JSON.stringify(message)}`, this.id);
+    common.logDebug(`Shard Message: ${JSON.stringify(message)}`, this.id);
   }
 
   /**

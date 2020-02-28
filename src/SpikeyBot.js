@@ -39,6 +39,12 @@ function unhandledRejection(...args) {
     console.log(str);
   } else if (args[0] && args[0].message == 'No Perms') {
     console.log(`ERR:${pid}`, args[0]);
+  } else if (args[0] && args[0].code == 'ERR_IPC_CHANNEL_CLOSED') {
+    console.log(`ERR:${pid}`, 'Uncaught', args[0]);
+    console.error(
+        'THIS ERROR MEANS THIS PROCESS HAS BEEN ORPHANED.',
+        'THIS SHOULD NOT HAPPEN. THIS PROCESS WILL SUICIDE.');
+    process.exit(0);
   } else {
     console.log(`ERR:${pid}`, 'Uncaught', args[0]);
   }
@@ -442,13 +448,7 @@ function SpikeyBot() {
         common.logDebug(
             'Received message from shard ' + shard.id + ': ' +
             JSON.stringify(msg));
-        // @TODO: Differentiate between a forced hard reboot, and a scheduled
-        // hard reboot. Is this feasible?
-        if (msg === 'reboot hard force') {
-          common.logWarning('TRIGGERED HARD REBOOT!');
-          manager.shards.forEach((s) => s.process.kill('SIGHUP'));
-          process.exit(-1);
-        } else if (msg === 'reboot hard') {
+        if (msg === 'reboot hard' || msg === 'reboot hard force') {
           common.logWarning('TRIGGERED HARD REBOOT!');
           manager.shards.forEach((s) => s.process.kill('SIGHUP'));
           process.exit(-1);

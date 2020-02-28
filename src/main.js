@@ -638,6 +638,17 @@ function Main() {
        * @public
        */
       self.client.banListResponse = banListResponse;
+      /**
+       * Handle an update request being called on all shards.
+       *
+       * @see {@link Main~runBotUpdate}
+       *
+       * @public
+       * @param {string} cmd The full command run by the user.
+       */
+      self.client.runBotUpdate = (cmd) => {
+        runBotUpdate({content: cmd});
+      };
       /* eslint-enable no-unused-vars */
     }
     self.bot.getStats = getAllStats;
@@ -3555,47 +3566,77 @@ function Main() {
     self.log(
         `Triggered update: ${__dirname} <-- DIR | CWD -->${process.cwd()}`);
     self.common.reply(msg, 'Updating from git...').then((msg_) => {
-      childProcess.exec('npm run update', function(err, stdout, stderr) {
-        if (!err) {
-          if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
-          if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+      if (self.client.shard) {
+        self.client.shard
+            .broadcastEval(`this.runBotUpdate(${JSON.stringify(msg.content)})`)
+            .then(() => msg_.edit('Updating has begun on all shards.'))
+            .catch((err) => {
+              msg_.edit('Update request failed to be sent to all shards!');
+              self.error('Failed to send update request to shards.');
+              console.error(err);
+            });
+      } else {
+        runBotUpdate(msg, msg_);
+      }
+    });
+  }
 
-          const noReload = msg.content.indexOf('--noreload') > -1;
-          if (!noReload) {
-            self.bot.reloadCommon();
-            if (self.client.shard) {
-              self.client.shard.broadcastEval(
-                  'this.reloadUpdatedMainModules()', () => {
-                    self.client.shard.broadcastEval(
-                        'this.reloadUpdatedSubModules()');
-                  });
-            } else {
-              self.client.reloadUpdatedMainModules();
-            }
+  /**
+   * Fetch the latest version of the bot from GitHub, install/update NPM
+   * packages, then reload updated SubModules.
+   *
+   * @private
+   * @param {Discord~Message} msg The message that triggered this command.
+   * @param {Discord~Message} [msg_] The message we sent as a response to the
+   * update command.
+   */
+  function runBotUpdate(msg, msg_) {
+    childProcess.exec('npm run update', function(err, stdout, stderr) {
+      if (!err) {
+        if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
+        if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+
+        const noReload = msg.content.indexOf('--noreload') > -1;
+        if (!noReload) {
+          self.bot.reloadCommon();
+          if (self.client.shard) {
+            self.client.shard.broadcastEval(
+                'this.reloadUpdatedMainModules()', () => {
+                  self.client.shard.broadcastEval(
+                      'this.reloadUpdatedSubModules()');
+                });
+          } else {
+            self.client.reloadUpdatedMainModules();
           }
-          try {
-            childProcess.execSync(
-                'git diff-index --quiet ' +
-                (self.bot.version.split('#')[1] || commit) +
-                ' -- ./src/SpikeyBot.js');
+        }
+        try {
+          childProcess.execSync(
+              'git diff-index --quiet ' +
+              (self.bot.version.split('#')[1] || commit) +
+              ' -- ./src/SpikeyBot.js');
+          if (msg_) {
             const embed = new self.Discord.MessageEmbed();
             embed.setTitle('Bot update complete!');
             embed.setColor([255, 0, 255]);
             if (noReload) embed.setDescription('Modules not reloaded.');
             msg_.edit(self.common.mention(msg), embed);
-          } catch (err) {
-            if (err.status === 1) {
+          }
+        } catch (err) {
+          if (err.status === 1) {
+            if (msg_) {
               const embed = new self.Discord.MessageEmbed();
               embed.setTitle(
                   'Bot update complete, but requires manual reboot.');
               embed.setDescription(err.message);
               embed.setColor([255, 0, 255]);
               msg_.edit(self.common.mention(msg), embed);
-            } else {
-              self.error(
-                  'Checking for SpikeyBot.js changes failed: ' + err.status);
-              console.error('STDOUT:', err.stdout.toString());
-              console.error('STDERR:', err.stderr.toString());
+            }
+          } else {
+            self.error(
+                'Checking for SpikeyBot.js changes failed: ' + err.status);
+            console.error('STDOUT:', err.stdout.toString());
+            console.error('STDERR:', err.stderr.toString());
+            if (msg_) {
               const embed = new self.Discord.MessageEmbed();
               embed.setTitle(
                   'Bot update complete, but failed to check if ' +
@@ -3604,17 +3645,19 @@ function Main() {
               msg_.edit(self.common.mention(msg), embed);
             }
           }
-        } else {
-          self.error('Failed to pull latest update.');
-          console.error(err);
-          if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
-          if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+        }
+      } else {
+        self.error('Failed to pull latest update.');
+        console.error(err);
+        if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
+        if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+        if (msg_) {
           const embed = new self.Discord.MessageEmbed();
           embed.setTitle('Bot update FAILED!');
           embed.setColor([255, 0, 255]);
           msg_.edit(self.common.mention(msg), embed);
         }
-      });
+      }
     });
   }
 
