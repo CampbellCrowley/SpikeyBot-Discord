@@ -158,3 +158,14 @@ All arguments are optional for normal usage.
 - Ports
   - Webservers and endpoints each bind to their own ports.
   - [Google Doc of port bindings](https://docs.google.com/spreadsheets/d/1Di555A6Tt52FF943FOkCHvOAOxBufi0oQoi63wnrdqk/edit?usp=sharing)
+
+| Service      | Release Port | Development Port |
+|--------------|--------------|------------------|
+| Proxy        | 8010         | 8012             |
+| HG           | 8011         | 8013             |
+| Stats        | 8016         | 8017             |
+| WebApi       | 8018         | 8019             |
+| Account      | 8014         | 8015             |
+| Settings     | 8020         | 8021             |
+| File Server  | 8022         | 8023             |
+| Shard Master | 8024         | 8025             |
