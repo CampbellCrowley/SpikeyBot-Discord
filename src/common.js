@@ -560,6 +560,22 @@ Common.prototype.webURL = 'https://www.spikeybot.com/';
 Common.webURL = Common.prototype.webURL;
 
 /**
+ * The website base URL for pointing to for avatar files.
+ *
+ * @type {string}
+ * @constant
+ * @default
+ */
+Common.prototype.avatarURL = 'https://kamino.spikeybot.com/';
+/**
+ * The website base URL for pointing to for avatar files.
+ *
+ * @type {string}
+ * @constant
+ */
+Common.avatarURL = Common.prototype.avatarURL;
+
+/**
  * The website path for more help and documentation.
  *
  * @type {string}

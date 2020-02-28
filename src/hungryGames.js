@@ -857,7 +857,7 @@ function HG() {
       const dir = self.common.userSaveDir + 'avatars/' + id + '/';
       const imgName = Date.now() + '.png';
       const filename = dir + imgName;
-      const url = self.common.webURL +
+      const url = self.common.avatarURL +
           (self.common.isRelease ? 'avatars/' : 'dev/avatars/') + id + '/' +
           imgName;
       mkdirp(dir, (err) => {
