@@ -631,8 +631,6 @@ class ShardingSlave {
       this._socket.emit('status', s);
       return;
     }
-    console.log(s);
-    console.log(res);
 
     this._fetchDiskStats((err, stats) => {
       const delta = (s.timestamp > s.startTime) ? now - s.timestamp : 0;
