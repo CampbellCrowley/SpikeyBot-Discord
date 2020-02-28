@@ -1324,6 +1324,7 @@ class ShardingMaster {
           interval: this._config.heartbeat.interval,
           expectRebootAfter: this._config.heartbeat.expectRebootAfter,
           assumeDeadAfter: this._config.heartbeat.assumeDeadAfter,
+          useMessageStats: this._config.heartbeat.useMessageStats,
         },
       };
       socket.emit('update', req);
