@@ -3562,7 +3562,7 @@ function Main() {
             .broadcastEval(`this.runBotUpdate(${JSON.stringify(msg.content)})`)
             .then(() => msg_.edit('Updating has begun on all shards.'))
             .catch((err) => {
-              if (!err) return;
+              if (!err || !err.name) return;
               msg_.edit('Update request failed to be sent to all shards!');
               self.error('Failed to send update request to shards.');
               console.error(err);
