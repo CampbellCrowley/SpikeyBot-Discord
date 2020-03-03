@@ -16,6 +16,7 @@ const authFile = path.resolve(__dirname + '/../../auth.js');
 const shardDir = path.resolve(__dirname + '/../../save/shards/');
 const privKeyFile = `${shardDir}/shardMaster.priv`;
 const pubKeyFile = `${shardDir}/shardMaster.pub`;
+const botCWD = path.resolve(__dirname + '/../../');
 
 const signAlgorithm = 'RSA-SHA256';
 const keyType = 'rsa';
@@ -1370,6 +1371,57 @@ class ShardingMaster {
       socket.emit('update', req);
       common.logDebug('Sent heartbeat request to ' + updating.id);
     }
+  }
+
+  /**
+   * @description We received a file from a shard that it intends for us to
+   * write to disk at the given filename relative to the project root.
+   *
+   * @private
+   * @param {string} filename Filename relative to project directory.
+   * @param {string|Buffer} data The data to write to the file.
+   */
+  _receiveFile(filename, data) {
+    const file = path.resolve(`${botCWD}${filename}`);
+    if (!file.startsWith(botCWD)) {
+      this.logWarning('Shard sent file outside of project directory: ' + file);
+      return;
+    }
+    fs.writeFile(file, data, (err) => {
+      if (err) {
+        this.error('Failed to write file from shard to disk: ' + file);
+        console.error(err);
+      } else {
+        this.logDebug('Wrote file from shard to disk: ' + file);
+      }
+    });
+  }
+
+  /**
+   * @description Shard has requested one of our files.
+   *
+   * @private
+   * @param {string} filename Filename relative to project directory.
+   * @param {Function} cb Callback to send the error or file back on.
+   */
+  _sendFile(filename, cb) {
+    const file = path.resolve(`${botCWD}${filename}`);
+    if (!file.startsWith(botCWD)) {
+      this.logWarning(
+          'Shard requested file outside of project directory: ' + file);
+      cb(null);
+      return;
+    }
+    fs.readFile(file, (err, data) => {
+      if (err) {
+        this.error('Failed to read file that shard requested disk: ' + file);
+        console.error(err);
+        cb(null);
+      } else {
+        this.logDebug('Sending file to shard from disk: ' + file);
+        cb(data);
+      }
+    });
   }
 
   /**

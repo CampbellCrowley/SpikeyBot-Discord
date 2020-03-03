@@ -1313,7 +1313,7 @@ function SpikeyBot() {
             idList.find((el) => el == client.shard.ids[0]);
         const requestedOthers = !idList ||
             (client.shard && idList.find((el) => el != client.shard.ids[0]));
-        if (requestedOthers && client.shard) {
+        if (requestedOthers && client.shard && !onlySelf) {
           client.shard.send(
               'reboot ' + (force ? 'force ' : '') +
               (idList ? idList.join(' ') : ''));
@@ -1335,7 +1335,7 @@ function SpikeyBot() {
                   msg, 'Reboot scheduled. Waiting on at least ' +
                       mainModuleNames[i]);
             }
-            setTimeout(() => commandReboot(msg, true), 10000);
+            setTimeout(() => commandReboot(msg, true, onlySelf), 10000);
             return;
           }
         }

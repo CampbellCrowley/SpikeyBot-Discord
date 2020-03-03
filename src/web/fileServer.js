@@ -6,6 +6,11 @@ const http = require('http');
 const crypto = require('crypto');
 const SubModule = require('../subModule.js');
 
+const forbidden = [
+  path.resolve(__dirname + '/../../auth.js'),
+  path.resolve(__dirname + '/../../gApiCredentials.json'),
+];
+
 const ccMaxAge = 30 * 7 * 24 * 60 * 60; // 30 days
 
 /**
@@ -54,8 +59,10 @@ class FileServer extends SubModule {
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress ||
         'ERROR';
     const url = req.url.replace(/^\/(www|kamino).spikeybot.com(?:\/dev)?/, '');
-    if (url.startsWith('/avatars/') && req.method === 'GET') {
-      const file = path.resolve(`./save/users${url}`);
+    const rootIntent = (url.startsWith('/avatars/') && './save/users') ||
+        (url.startsWith('/hg/events/') && './save') || null;
+    if (rootIntent && req.method === 'GET') {
+      const file = path.resolve(`${rootIntent}${url}`);
       if (!this._isPathAcceptable(file)) {
         res.writeHead(404);
         res.end();
@@ -90,6 +97,7 @@ class FileServer extends SubModule {
           '.png': 'image/png',
           '.jpg': 'image/jpg',
           '.gif': 'image/gif',
+          '.json': 'application/json',
         };
         const ext = path.extname(file);
         const mime = mimeTypes[ext];
@@ -123,6 +131,7 @@ class FileServer extends SubModule {
   _isPathAcceptable(file) {
     file = path.resolve(file);
     const proj = path.resolve(__dirname + '/../../');
+    if (forbidden.includes(proj)) return false;
     return file.startsWith(proj);
   }
 }
