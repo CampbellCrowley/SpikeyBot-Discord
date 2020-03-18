@@ -1042,9 +1042,8 @@ function HG() {
           p.settings['isPatron'] = true;
         }
       }
-      self.bot.patreon.getAllPerms(p.id, cId, gId, function(err, info) {
-        onPermResponse(err, info, p);
-      });
+      self.bot.patreon.getAllPerms(
+          p.id, cId, gId, (err, info) => onPermResponse(err, info, p));
     }
     /**
      * After retrieving a player's permissions, fetch their settings for each.
@@ -1069,11 +1068,9 @@ function HG() {
         if (!patreonSettingKeys.includes(values[i])) continue;
         settingRequests++;
         self.bot.patreon.getSettingValue(
-            p.id, cId, gId, values[i], (function(p, v) {
-              return function(err, info) {
-                onSettingResponse(err, info, p, v);
-              };
-            })(p, values[i]));
+            p.id, cId, gId, values[i],
+            ((p, v) => (err, info) => onSettingResponse(err, info, p, v))(
+                p, values[i]));
       }
       if (permResponses === players.length &&
           settingRequests === settingResponses && cb) {
@@ -1123,11 +1120,9 @@ function HG() {
     }
 
     for (let i = 0; i < players.length; i++) {
-      self.bot.patreon.checkPerm(players[i].id, null, (function(p) {
-        return function(err, info) {
-          onCheckPatron(err, info, p);
-        };
-      })(players[i]));
+      self.bot.patreon.checkPerm(
+          players[i].id, null,
+          ((p) => (err, info) => onCheckPatron(err, info, p))(players[i]));
     }
   }
 
