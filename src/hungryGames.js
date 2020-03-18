@@ -4370,7 +4370,7 @@ function HG() {
       message += '\nThe last listener will end in ' +
           (Math.round(listenerBlockDuration / 100 / 60) / 10) + ' minutes.';
     }
-    const web = self.bot.getSubmodule(webSM);
+    const web = !self.common.isSlave && self.bot.getSubmodule(webSM);
     if (web) {
       const numClients = web.getNumClients();
       if (short) {
