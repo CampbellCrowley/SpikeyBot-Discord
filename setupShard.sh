@@ -20,7 +20,7 @@ echo 'if [ "$TERM" == "tmux" ] && [ "" == "$TMUX" ]; then
 fi' >> /home/admin/.bashrc
 sed -i 's/#force_color_prompt=yes/force_color_prompt=yes/' /home/admin/.bashrc
 
-curl -sL https://deb.nodesource.com/setup_10.x | bash -
+curl -sL https://deb.nodesource.com/setup_12.x | bash -
 apt install git make libtool autoconf g++ ffmpeg nodejs rsync psmisc -y
 
 sudo -u admin git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git /home/admin/SpikeyBot-Discord/
