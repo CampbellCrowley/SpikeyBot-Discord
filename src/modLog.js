@@ -43,7 +43,7 @@ class ModLog extends SubModule {
                   this.Discord.Permissions.FLAGS.KICK_MEMBERS,
             }));
 
-    this.client.guilds.forEach((g) => {
+    this.client.guilds.cache.forEach((g) => {
       fs.readFile(
           `${this.common.guildSaveDir}${g.id}/modLog.json`, (err, file) => {
             if (err) return;

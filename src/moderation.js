@@ -385,7 +385,7 @@ class Moderation extends SubModule {
             modLog.output(member.guild, 'memberJoin', member.user);
           });
     } else {
-      this.client.guilds.forEach((g) => {
+      this.client.guilds.cache.forEach((g) => {
         if (g.members.resolve(member.id)) num++;
       });
       const additional =

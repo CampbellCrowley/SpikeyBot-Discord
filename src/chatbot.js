@@ -60,10 +60,10 @@ function ChatBot() {
 
     sessionClient = new dialogflow.SessionsClient();
 
-    self.client.guilds.forEach(function(g) {
+    self.client.guilds.cache.forEach((g) => {
       fs.readFile(
           self.common.guildSaveDir + g.id + '/chatbot-config.json',
-          function(err, file) {
+          (err, file) => {
             if (err) return;
             let parsed;
             try {
@@ -86,7 +86,7 @@ function ChatBot() {
    * @inheritdoc
    */
   this.save = function(opt) {
-    self.client.guilds.forEach(function(g) {
+    self.client.guilds.cache.forEach((g) => {
       const dir = self.common.guildSaveDir + g.id;
       const filename = dir + '/chatbot-config.json';
       const obj = {

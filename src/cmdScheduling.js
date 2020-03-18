@@ -38,7 +38,7 @@ function CmdScheduling() {
             adminOnlyOpts));
 
     const now = Date.now();
-    self.client.guilds.forEach((g) => {
+    self.client.guilds.cache.forEach((g) => {
       fs.readFile(self.common.guildSaveDir + g.id + saveSubDir, (err, data) => {
         if (err && err.code == 'ENOENT') return;
         if (err) {
@@ -90,7 +90,7 @@ function CmdScheduling() {
    * @inheritdoc
    */
   this.save = function(opt) {
-    self.client.guilds.forEach((g) => {
+    self.client.guilds.cache.forEach((g) => {
       const dir = self.common.guildSaveDir + g.id;
       const filename = dir + saveSubDir;
       if (opt === 'async') {

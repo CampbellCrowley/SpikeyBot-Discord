@@ -90,7 +90,7 @@ class Echo extends SubModule {
             }));
     this.client.on('message', this._onMessage);
 
-    this.client.guilds.forEach((g) => {
+    this.client.guilds.cache.forEach((g) => {
       fs.readFile(
           `${this.common.guildSaveDir}${g.id}/characters.json`, (err, file) => {
             if (err) return;
@@ -379,7 +379,7 @@ class Echo extends SubModule {
         send();
       });
     } else {
-      this.client.guilds.forEach((g) => {
+      this.client.guilds.cache.forEach((g) => {
         if (g.members.resolve(member.id)) num++;
       });
       send();

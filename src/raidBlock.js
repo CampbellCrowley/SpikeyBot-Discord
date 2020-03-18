@@ -57,7 +57,7 @@ class RaidBlock extends SubModule {
             }));
     this.client.on('guildMemberAdd', this._onGuildMemberAdd);
 
-    this.client.guilds.forEach((g) => {
+    this.client.guilds.cache.forEach((g) => {
       fs.readFile(
           `${this.common.guildSaveDir}${g.id}/raidSettings.json`,
           (err, file) => {

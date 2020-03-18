@@ -25,7 +25,7 @@ function Polling() {
     self.command.on(['poll', 'vote'], commandPoll, true);
     self.command.on(['endpoll', 'endvote'], commandEndPoll, true);
 
-    self.client.guilds.forEach((g) => {
+    self.client.guilds.cache.forEach((g) => {
       const dir = self.common.guildSaveDir + g.id + guildSubDir;
       fs.readdir(dir, (err, files) => {
         if (err && err.code != 'ENOENT') {
@@ -60,7 +60,7 @@ function Polling() {
   };
   /** @inheritdoc */
   this.save = function(opt) {
-    self.client.guilds.forEach((g) => {
+    self.client.guilds.cache.forEach((g) => {
       const dir = self.common.guildSaveDir + g.id + guildSubDir;
       if (opt == 'async') {
         rimraf(dir, (err) => {
