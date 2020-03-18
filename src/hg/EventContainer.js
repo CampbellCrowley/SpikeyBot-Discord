@@ -1,6 +1,7 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
+const https = require('https');
 
 /**
  * @description Manages interface for event storage.
@@ -324,28 +325,80 @@ class EventContainer {
         if (err.code !== 'ENOENT') {
           console.error(`Failed to load: ${eventDir}${id}.json`);
           console.error(err);
-        }
-        done('BAD_ID');
-        return;
-      }
-      try {
-        const parsed = JSON.parse(data);
-        if (!parsed) {
-          console.error(`Failed to parse: ${eventDir}${id}.json (NO DATA)`);
-          done('PARSE_ERROR');
+          done('BAD_ID');
         } else {
-          if (type && EventContainer.types.includes(type)) {
-            if (!this.ids(type).includes(id)) this.ids(type).push(id);
-            this.get(type)[id] = parsed;
-          }
-          done(null, parsed);
+          this._fetchFromUrl(id, type, cb);
         }
-      } catch (err) {
-        console.error(`Failed to parse: ${eventDir}${id}.json`);
-        console.error(err);
-        done('PARSE_ERROR');
       }
+      this._parseFetched(data, id, type, done);
     });
+  }
+
+  /**
+   * @description Parse fetched data.
+   * @private
+   * @param {string|Buffer} data Data to parse.
+   * @param {string} id The ID of the event we're parsing.
+   * @param {string} type The event type we're parsing.
+   * @param {Function} done Callback.
+   */
+  _parseFetched(data, id, type, done) {
+    const eventDir = EventContainer.eventDir;
+    try {
+      const parsed = JSON.parse(data);
+      if (!parsed) {
+        console.error(`Failed to parse: ${eventDir}${id}.json (NO DATA)`);
+        done('PARSE_ERROR');
+      } else {
+        if (type && EventContainer.types.includes(type)) {
+          if (!this.ids(type).includes(id)) this.ids(type).push(id);
+          this.get(type)[id] = parsed;
+        }
+        done(null, parsed);
+      }
+    } catch (err) {
+      console.error(`Failed to parse: ${eventDir}${id}.json`);
+      console.error(err);
+      done('PARSE_ERROR');
+    }
+  }
+
+  /**
+   * @description Fetch an event into the cache. Always updates from file, even
+   * if already cached. This fetches exclusively from the master server URL.
+   * This is called from {@link fetch}.
+   * @private
+   * @param {string} id The event ID to fetch.
+   * @param {?string} type The category to add this event to. If null, event
+   * will not be stored in category, nor cached.
+   * @param {basicCB} cb Callback once completed. First argument is optional
+   * error string, second is otherwise the event object.
+   */
+  _fetchFromUrl(id, type, cb) {
+    const host = {
+      protocol: 'https:',
+      host: 'kamino.spikeybot.com',
+      path: `/hg/events/${id}.json`,
+      method: 'GET',
+      headers: {
+        'User-Agent': require('./common.js').ua,
+        'Content-Type': 'application/json',
+      },
+    };
+    const req = https.request(host, (res) => {
+      let content = '';
+      res.on('data', (chunk) => content += chunk);
+      res.on('end', () => {
+        if (res.statusCode == 200) {
+          this._parseFetched(content, id, type, cb);
+        } else {
+          this.error('HG Event ' + res.statusCode + ': ' + content);
+          console.error(host);
+          cb(new Error('HG Event Bad Response'));
+        }
+      });
+    });
+    req.end();
   }
 
   /**
