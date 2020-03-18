@@ -340,10 +340,10 @@ function runTests(tests) {
     (function(i) {
       it(tests[i].title, function(done) {
         if (!tests[i].responses || tests[i].responses.length == 0) {
-          setTimeout(done, 10000);
-          this.timeout(11000);
+          setTimeout(done, 15000);
+          this.timeout(16000);
         } else {
-          this.timeout(10000);
+          this.timeout(15000);
         }
         sendCommand(tests[i], done);
       });
