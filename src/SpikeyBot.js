@@ -420,6 +420,32 @@ function SpikeyBot() {
   };
   self.reloadCommon();
 
+  if (common.isSlave || common.isMaster) {
+    // Create interval to ensure the parent process hasn't orphaned us.
+    setInterval(() => {
+      if (!process.channel) {
+        console.error(
+            'THIS ERROR MEANS THIS PROCESS HAS BEEN ORPHANED.',
+            'THIS SHOULD NOT HAPPEN. THIS PROCESS WILL SUICIDE.',
+            '(NO IPC CHANNEL)');
+        process.exit(0);
+      } else {
+        process.send('ping', (err) => {
+          if (!err) return;
+          common.error('Failed to send IPC heartbeat ping.');
+          console.error(err);
+          if (err.code === 'ERR_IPC_CHANNEL_CLOSED') {
+            console.error(
+                'THIS ERROR MEANS THIS PROCESS HAS BEEN ORPHANED.',
+                'THIS SHOULD NOT HAPPEN. THIS PROCESS WILL SUICIDE.',
+                '(IPC PING FAILED)');
+            process.exit(0);
+          }
+        });
+      }
+    }, 1000);
+  }
+
   /**
    * Create a ShardingManager and spawn shards. This shall only be called at
    * most once, and `login()` shall not be called after this.

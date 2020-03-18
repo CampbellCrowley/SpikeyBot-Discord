@@ -396,6 +396,9 @@ function Common() {
         process.removeListener('message', listener);
         cb(err);
         clearTimeout(timeout);
+        // Rethrow to force suicide as this is a fatal error and is
+        // unrecoverable.
+        if (err.code === 'ERR_IPC_CHANNEL_CLOSED') throw err;
       });
     };
   }
