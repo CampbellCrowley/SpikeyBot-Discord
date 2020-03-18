@@ -347,7 +347,7 @@ function CmdScheduling() {
      */
     function getReferences() {
       if (!myself.channel || typeof myself.channel !== 'object') {
-        myself.channel = self.client.channels.get(myself.channelId);
+        myself.channel = self.client.channels.resolve(myself.channelId);
       }
       if (!myself.channel || typeof myself.channel !== 'object' ||
           myself.channel.deleted) {
@@ -358,7 +358,7 @@ function CmdScheduling() {
         return;
       }
       if (!myself.message || typeof myself.message !== 'object') {
-        myself.message = myself.channel.messages.get(myself.messageId);
+        myself.message = myself.channel.messages.resolve(myself.messageId);
         if (!myself.message) {
           myself.channel.messages.fetch(myself.messageId)
               .then((msg) => {
@@ -384,7 +384,7 @@ function CmdScheduling() {
         }
       }
       if (!myself.member || typeof myself.member !== 'object') {
-        myself.member = myself.channel.members.get(myself.memberId);
+        myself.member = myself.channel.members.resolve(myself.memberId);
         if (!myself.member) {
           myself.channel.guild.members.fetch(myself.memberId)
               .then((m) => {

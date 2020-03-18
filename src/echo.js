@@ -320,7 +320,7 @@ class Echo extends SubModule {
         if (userList.length == 0) continue;
         for (const u of userList) {
           if (u[0] !== user.id || !u[1]) continue;
-          const channel = msg.guild.channels.get(chan[0]);
+          const channel = msg.guild.channels.resolve(chan[0]);
           const name = (channel && channel.name) || chan[0];
           charList.push(`#${name}: ${u[1].username}`);
         }
@@ -373,14 +373,14 @@ class Echo extends SubModule {
 
     if (this.client.shard) {
       const toEval =
-          `this.guilds.filter((g) => g.members.get('${user.id}')).size`;
+        `this.guilds.cache.filter((g) => g.members.resolve('${user.id}')).size`;
       this.client.shard.broadcastEval(toEval).then((res) => {
         res.forEach((el) => num += el);
         send();
       });
     } else {
       this.client.guilds.forEach((g) => {
-        if (g.members.get(member.id)) num++;
+        if (g.members.resolve(member.id)) num++;
       });
       send();
     }
@@ -404,13 +404,13 @@ class Echo extends SubModule {
     let output = [];
     for (let channel in chars) {
       if (!channel) continue;
-      channel = msg.guild.channels.get(channel);
+      channel = msg.guild.channels.resolve(channel);
       if (!channel) continue;
       const list = [];
 
       for (let member in chars[channel.id]) {
         if (!member) continue;
-        member = msg.guild.members.get(member);
+        member = msg.guild.members.resolve(member);
         if (!member) continue;
         list.push(
             `${member.user.tag}: ${chars[channel.id][member.id].username}`);
@@ -439,7 +439,7 @@ class Echo extends SubModule {
     const channels = Object.keys(this._characters[msg.guild.id]);
 
     channels.forEach((el) => {
-      const channel = msg.guild.channels.get(el);
+      const channel = msg.guild.channels.resolve(el);
       if (!channel) return;
       channel.fetchWebhooks()
           .then((hooks) => {

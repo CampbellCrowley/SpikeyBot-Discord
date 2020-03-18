@@ -655,7 +655,7 @@ function HGWeb() {
    * @returns {boolean} True if this shard has this guild.
    */
   function checkMyGuild(gId) {
-    const g = self.client && self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.resolve(gId);
     return (g && true) || false;
   }
 
@@ -695,12 +695,12 @@ function HGWeb() {
   function checkChannelPerm(userData, gId, cId, cmd) {
     if (!checkPerm(userData, gId, cId, cmd)) return false;
     if (userData.id == self.common.spikeyId) return true;
-    const g = self.client.guilds.get(gId);
+    const g = self.client.guilds.resolve(gId);
 
-    const channel = g.channels.get(cId);
+    const channel = g.channels.resolve(cId);
     if (!channel) return false;
 
-    const m = g.members.get(userData.id);
+    const m = g.members.resolve(userData.id);
 
     const perms = channel.permissionsFor(m);
     if (!perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return false;
@@ -742,12 +742,12 @@ function HGWeb() {
         },
         guild: {},
         permissions: {bitfield: 0},
-        user: self.client.users.get(m),
+        user: self.client.users.resolve(m),
       };
     }
     return {
       nickname: m.nickname,
-      roles: m.roles.map && m.roles.map((el) => el.id),
+      roles: m.roles.cache.map && m.roles.cache.map((el) => el.id),
       color: m.displayColor,
       guild: {id: m.guild.id},
       permissions: m.permissions.bitfield,
@@ -893,13 +893,14 @@ function HGWeb() {
       let guilds = [];
       if (userData.guilds && userData.guilds.length > 0) {
         userData.guilds.forEach((el) => {
-          const g = self.client && self.client.guilds.get(el.id);
+          const g = self.client && self.client.guilds.resolve(el.id);
           if (!g) return;
           guilds.push(g);
         });
       } else {
         guilds = self.client &&
-            self.client.guilds.filter((obj) => obj.members.get(userData.id))
+            self.client.guilds.cache
+                .filter((obj) => obj.members.resolve(userData.id))
                 .array();
       }
       const strippedGuilds = stripGuilds(guilds, userData);
@@ -941,18 +942,18 @@ function HGWeb() {
               },
               {});
 
-      const member = g.members.get(userData.id);
+      const member = g.members.resolve(userData.id);
       const newG = {};
       newG.iconURL = g.iconURL();
       newG.name = g.name;
       newG.id = g.id;
       newG.bot = self.client.user.id;
       newG.ownerId = g.ownerID;
-      newG.members = g.members.map((m) => m.id);
+      newG.members = g.members.cache.map((m) => m.id);
       newG.defaultSettings = dOpts;
       newG.userSettings = uOpts;
       newG.channels =
-          g.channels
+          g.channels.cache
               .filter(
                   (c) => member &&
                       (userData.id == self.common.spikeyId ||
@@ -994,10 +995,10 @@ function HGWeb() {
       return;
     }
 
-    const guild = self.client && self.client.guilds.get(gId);
+    const guild = self.client && self.client.guilds.resolve(gId);
     if (!guild) return;
     if (userData.id != self.common.spikeyId &&
-        !guild.members.get(userData.id)) {
+        !guild.members.resolve(userData.id)) {
       cb(null);
       return;
     }
@@ -1017,9 +1018,9 @@ function HGWeb() {
    */
   this.fetchMember = function fetchMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId, null, 'players')) return;
-    const g = self.client && self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.resolve(gId);
     if (!g) return;
-    const m = g.members.get(mId);
+    const m = g.members.resolve(mId);
     if (!m) return;
     const finalMember = makeMember(m);
 
@@ -1042,7 +1043,7 @@ function HGWeb() {
    */
   this.fetchRoles = function fetchRoles(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null)) return;
-    const g = self.client && self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.resolve(gId);
     if (!g) return;
 
     const roles = g.roles.array();
@@ -1067,10 +1068,10 @@ function HGWeb() {
    */
   this.fetchChannel = function fetchChannel(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, '')) return;
-    const g = self.client && self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.resolve(gId);
     if (!g) return;
-    const m = g.members.get(userData.id);
-    const channel = g.channels.get(cId);
+    const m = g.members.resolve(userData.id);
+    const channel = g.channels.resolve(cId);
 
     const perms = channel.permissionsFor(m) || {bitfield: 0};
 
@@ -1135,12 +1136,12 @@ function HGWeb() {
     if (!userData) {
       return;
     } else {
-      g = self.client && self.client.guilds.get(gId);
+      g = self.client && self.client.guilds.resolve(gId);
       if (!g) {
         // Request is probably fulfilled by another sibling.
         return;
       } else {
-        m = g.members.get(userData.id);
+        m = g.members.resolve(userData.id);
         if (!m) {
           self.common.log(
               'Attempted fetchDay, but unable to find member in guild' + gId +
@@ -1162,7 +1163,7 @@ function HGWeb() {
       return;
     }
 
-    if (!g.channels.get(game.outputChannel)
+    if (!g.channels.resolve(game.outputChannel)
         .permissionsFor(m)
         .has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
       replyNoPerm(socket, 'fetchDay');
@@ -1196,8 +1197,8 @@ function HGWeb() {
       replyNoPerm(socket, 'fetchNextDay');
       return;
     }
-    const g = self.client && self.client.guilds.get(gId);
-    const m = g.members.get(userData.id);
+    const g = self.client && self.client.guilds.resolve(gId);
+    const m = g.members.resolve(userData.id);
     if (!m) {
       if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'fetchNextDay');
@@ -1215,7 +1216,7 @@ function HGWeb() {
       return;
     }
 
-    if (!g.channels.get(game.outputChannel)
+    if (!g.channels.resolve(game.outputChannel)
         .permissionsFor(m)
         .has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
       replyNoPerm(socket, 'fetchNextDay');

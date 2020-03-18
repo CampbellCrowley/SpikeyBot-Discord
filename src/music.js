@@ -247,13 +247,13 @@ function Music() {
     tmpHelp.setURL(self.common.webURL);
     tmpHelp.setDescription(
         helpObject.description.replaceAll('{prefix}', self.bot.getPrefix()));
-    helpObject.sections.forEach(function(obj) {
+    helpObject.sections.forEach((obj) => {
       const titleID = encodeURIComponent(obj.title.replace(/\s/g, '_'));
       const titleURL = `${self.common.webHelp}#${titleID} `;
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows
-                  .map(function(row) {
+                  .map((row) => {
                     if (typeof row === 'string') {
                       return self.bot.getPrefix() +
                           row.replaceAll('{prefix}', self.bot.getPrefix());
@@ -414,9 +414,9 @@ function Music() {
       }
       if (oldState.channel && oldState.channel.members) {
         const numMembers =
-            oldState.channel.members.filter((el) => !el.user.bot).size;
+            oldState.channel.members.cache.filter((el) => !el.user.bot).size;
         if (numMembers === 0 &&
-            oldState.channel.members.get(self.client.user.id)) {
+            oldState.channel.members.resolve(self.client.user.id)) {
           if (broadcast.subjugated) {
             if (broadcast.voice) {
               broadcast.voice.disconnect();
@@ -1012,7 +1012,7 @@ function Music() {
     if (!broadcast.broadcast.dispatcher.paused) return false;
     if (!broadcast.voice ||
         (broadcast.voice.channel.members.size === 1 &&
-         broadcast.voice.channel.members.get(self.client.user.id))) {
+         broadcast.voice.channel.members.resolve(self.client.user.id))) {
       return false;
     }
     broadcast.broadcast.dispatcher.resume();
@@ -1245,7 +1245,7 @@ function Music() {
         let queueExact = true;
         const queueString = broadcasts[msg.guild.id]
             .queue
-            .map(function(obj, index) {
+            .map((obj, index) => {
               if (obj.info) {
                 queueDuration += obj.info._duration_raw;
                 return (index + 1) + ') ' + obj.info.title;
@@ -1566,9 +1566,7 @@ function Music() {
       reply(
           msg, 'Only recording ' +
               msg.mentions.users
-                  .map(function(obj) {
-                    return '`' + obj.username.replaceAll('`', '\\`') + '`';
-                  })
+                  .map((obj) => '`' + obj.username.replaceAll('`', '\\`') + '`')
                   .join(', '),
           url);
     }
@@ -1578,8 +1576,8 @@ function Music() {
       msg.channel.send('Saved to ' + url);
     });
     const listen = function(user, receiver /* , conn*/) {
-      if (streams[user.id] ||
-          (msg.mentions.users.size > 0 && !msg.mentions.users.get(user.id))) {
+      if (streams[user.id] || (msg.mentions.users.size > 0 &&
+                               !msg.mentions.users.resolve(user.id))) {
         return;
       }
       const stream =
@@ -1598,9 +1596,8 @@ function Music() {
           conn.play('./sounds/plink.ogg');
           self.client.setTimeout(() => {
             const receiver = conn.receiver;
-            msg.member.voice.channel.members.forEach(function(member) {
-              listen(member.user, receiver, conn);
-            });
+            msg.member.voice.channel.members.cache.forEach(
+                (member) => listen(member.user, receiver, conn));
             conn.on('speaking', (user, speaking) => {
               if (speaking) {
                 listen(user, receiver, conn);

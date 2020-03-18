@@ -432,7 +432,7 @@ function Main() {
       });
     }
 
-    self.client.guilds.forEach(function(g) {
+    self.client.guilds.cache.forEach(function(g) {
       fs.readFile(
           self.common.guildSaveDir + g.id + '/main-config.json',
           function(err, file) {
@@ -485,7 +485,7 @@ function Main() {
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows
-                  .map(function(row) {
+                  .map((row) => {
                     if (typeof row === 'string') {
                       return self.bot.getPrefix() +
                           row.replaceAll('{prefix}', self.bot.getPrefix());
@@ -523,7 +523,7 @@ function Main() {
       tmpAdminHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows
-                  .map(function(row) {
+                  .map((row) => {
                     if (typeof row === 'string') {
                       return self.bot.getPrefix() +
                           row.replaceAll('{prefix}', self.bot.getPrefix());
@@ -736,9 +736,9 @@ function Main() {
         self.common.mkAndWriteSync(filename, dir, JSON.stringify(obj));
       }
     });
-    self.client.guilds.forEach(function(g) {
-      const dir = self.common.guildSaveDir + g.id;
-      const filename = dir + '/main-config.json';
+    self.client.guilds.cache.forEach((g) => {
+      const dir = `${self.common.guildSaveDir}${g.id}`;
+      const filename = `${dir}/main-config.json`;
       const obj = {
         disabledAutoSmite: disabledAutoSmite[g.id],
         disabledBanMessage: disabledBanMessage[g.id],
@@ -751,7 +751,7 @@ function Main() {
         self.common.mkAndWriteSync(filename, dir, JSON.stringify(obj));
       }
 
-      const filename2 = dir + '/banCache.json';
+      const filename2 = `${dir}/banCache.json`;
       if (opt == 'async') {
         self.common.mkAndWrite(
             filename2, dir, JSON.stringify(banListCache[g.id]));
@@ -762,12 +762,12 @@ function Main() {
     });
     if (!self.client.shard || self.client.shard.ids[0] == 0) {
       const dir = './save/';
-      const filename = dir + 'rigged-counter.txt';
+      const filename = `${dir}rigged-counter.txt`;
       if (opt == 'async') {
-        self.common.mkAndWrite(filename, dir, self.client.riggedCounter + '');
+        self.common.mkAndWrite(filename, dir, `${self.client.riggedCounter}`);
       } else {
         self.common.mkAndWriteSync(
-            filename, dir, self.client.riggedCounter + '');
+            filename, dir, `${self.client.riggedCounter}`);
       }
     }
     if (opt == 'async') {
@@ -860,7 +860,7 @@ function Main() {
     let channel = null;
     let pos = -1;
     try {
-      guild.channels.forEach((val) => {
+      guild.channels.cache.forEach((val) => {
         if (val.type == 'text') {
           const perms = val.permissionsFor(self.client.user);
           if ((pos == -1 || val.position < pos) && perms &&
@@ -1064,7 +1064,7 @@ function Main() {
       const word = msg.content.match(/(say){0}.*\bi'?m\s+(.*)/i);
       if (word) {
         const dadId = '503720029456695306';
-        if (msg.channel.members.get(dadId)) {
+        if (msg.channel.members.resolve(dadId)) {
           msg.channel
               .awaitMessages(
                   (m) => m.author.id === dadId,
@@ -1102,7 +1102,7 @@ function Main() {
           let hasMuteRole = false;
           let muteRole;
           const toMute = msg.member;
-          msg.guild.roles.forEach((val) => {
+          msg.guild.roles.cache.forEach((val) => {
             if (val.name == 'MentionAbuser') {
               hasMuteRole = true;
               muteRole = val;
@@ -1114,9 +1114,10 @@ function Main() {
                 self.common.reply(
                     msg, 'I think you need a break from mentioning everyone.');
               });
-              member.guild.channels.forEach(function(channel) {
+              member.guild.channels.cache.forEach(function(channel) {
                 if (channel.permissionsLocked) return;
-                const overwrites = channel.permissionOverwrites.get(role.id);
+                const overwrites =
+                    channel.permissionOverwrites.resolve(role.id);
                 if (overwrites) {
                   if (channel.type == 'category') {
                     if (overwrites.deny.has(
@@ -1375,11 +1376,8 @@ function Main() {
         continue;
       }
     }
-    const outMessage = messages
-        .map(function(obj, i) {
-          return variables[i] + ' = ' + obj;
-        })
-        .join('\n');
+    const outMessage =
+        messages.map((obj, i) => `${variables[i]} = ${obj}`).join('\n');
     self.common.reply(
         msg, outMessage || 'Oops, something didn\'t work!', error);
   }
@@ -1518,11 +1516,7 @@ function Main() {
       if (turningPoints.length > 0) {
         embed.addField(
             'Approximate Turning Points',
-            turningPoints
-                .map(function(obj) {
-                  return '(' + obj.x + ', ' + obj.y + ')';
-                })
-                .join('\n'),
+            turningPoints.map((obj) => `(${obj.x}, ${obj.y})`).join('\n'),
             false);
       }
       msg.channel.send(embed);
@@ -1873,9 +1867,8 @@ function Main() {
             embed.addField('Unicode Emojis', unicodeList.join('\n'), true);
           }
           if (emojis.length > 0) {
-            const list = emojiText.map((el, i) => {
-              return `${el}: ${emojis[i] && emojis[i].url || 'Unknown'}`;
-            });
+            const list = emojiText.map(
+                (el, i) => `${el}: ${emojis[i] && emojis[i].url || 'Unknown'}`);
             embed.addField('Discord Emojis', list, true);
           }
         }
@@ -1890,7 +1883,7 @@ function Main() {
 
     if (self.client.shard && emojiIds.length > 0) {
       const toSend = JSON.stringify(emojiIds) +
-          '.map((el)=>this.emojis.get(el))' +
+          '.map((el)=>this.emojis.resolve(el))' +
           '.filter((el)=>el)' +
           '.map((el)=>{el.guildName=el.guild.name;return JSON.stringify(el);})';
       self.client.shard.broadcastEval(toSend)
@@ -1907,7 +1900,7 @@ function Main() {
             self.common.reply(msg, 'Oops! Something inside me is broken.');
           });
     } else {
-      emojis = emojiIds.map((el) => self.client.emojis.get(el));
+      emojis = emojiIds.map((el) => self.client.emojis.resolve(el));
       finalSend();
     }
   }
@@ -2153,24 +2146,17 @@ function Main() {
       }
       if (msg.mentions.users.size > 0) {
         if (!limited) num--;
-        const toDelete = msg.channel.messages.filter(function(obj) {
-          return msg.mentions.users.find(function(mention) {
-            return obj.author.id === mention.id;
-          });
-        });
+        const toDelete = msg.channel.messages.cache.filter(
+            (obj) => msg.mentions.users.find(
+                (mention) => obj.author.id === mention.id));
         msg.channel.bulkDelete(toDelete.first(num))
             .then(() => {
               self.common
                   .reply(
                       msg, 'Deleted ' + num + ' messages by ' +
-                          msg.mentions.users
-                              .map(function(obj) {
-                                return obj.username;
-                              })
+                          msg.mentions.users.map((obj) => obj.username)
                               .join(', '))
-                  .then((msg_) => {
-                    msg_.delete({timeout: 5000});
-                  });
+                  .then((msg_) => msg_.delete({timeout: 5000}));
             })
             .catch((err) => {
               self.common.reply(
@@ -2217,13 +2203,13 @@ function Main() {
     }
     const banList = [];
     uIds.forEach((el) => {
-      const u = msg.guild.members.get(el);
+      const u = msg.guild.members.resolve(el);
       if (u) {
         if (!banList.includes(u.id)) banList.push(u);
       } else {
-        const r = msg.guild.roles.get(el);
+        const r = msg.guild.roles.resolve(el);
         if (r) {
-          r.members.forEach((m) => {
+          r.members.cache.forEach((m) => {
             if (!banList.includes(m.id)) banList.push(m);
           });
         }
@@ -2242,7 +2228,7 @@ function Main() {
             .replace(/\s{2,}/g, ' ')
             .trim();
     if (reason == 'undefined') reason = null;
-    banList.forEach(function(toBan) {
+    banList.forEach((toBan) => {
       if (msg.guild.ownerID !== msg.author.id &&
           msg.member.roles.highest.comparePositionTo(toBan.roles.highest) <=
               0) {
@@ -2324,7 +2310,7 @@ function Main() {
           } else {
             let hasSmiteRole = false;
             let smiteRole;
-            msg.guild.roles.forEach((val) => {
+            msg.guild.roles.cache.forEach((val) => {
               if (val.name == 'Smited') {
                 hasSmiteRole = true;
                 smiteRole = val;
@@ -2354,9 +2340,10 @@ function Main() {
                           member.id);
                       console.log(err);
                     });
-                member.guild.channels.forEach(function(channel) {
+                member.guild.channels.cache.forEach(function(channel) {
                   if (channel.permissionsLocked) return;
-                  const overwrites = channel.permissionOverwrites.get(role.id);
+                  const overwrites =
+                      channel.permissionOverwrites.resolve(role.id);
                   if (overwrites) {
                     if (channel.type == 'category') {
                       if (overwrites.deny.has(
@@ -2589,9 +2576,7 @@ function Main() {
             '\nDiscord.js: ' + (self.Discord.version || 'Unknown') +
             '\n\nSubModules:\n' +
             self.bot.getSubmoduleCommits()
-                .map((el) => {
-                  return el.name + ': ' + el.commit;
-                })
+                .map((el) => `${el.name}: ${el.commit}`)
                 .join('\n'));
   }
 
@@ -2701,9 +2686,7 @@ function Main() {
     }
 
     const outcomes = [];
-    numbers.forEach((el, i) => {
-      outcomes[i] = Math.ceil(Math.random() * el);
-    });
+    numbers.forEach((el, i) => outcomes[i] = Math.ceil(Math.random() * el));
 
     if (allSame) {
       embed.setTitle(
@@ -2807,10 +2790,11 @@ function Main() {
     if (self.common.trustedIds.includes(msg.author.id) && idList) {
       const id = idList[0];
       const id2 = idList[1];
-      chan = self.client.channels.get(id) || self.client.channels.get(id2);
-      guild = (chan && chan.guild) || self.client.guilds.get(id) ||
-          self.client.guilds.get(id2);
-      mem = guild && (guild.members.get(id) || guild.members.get(id2));
+      chan = self.client.channels.resolve(id) ||
+          self.client.channels.resolve(id2);
+      guild = (chan && chan.guild) || self.client.guilds.resolve(id) ||
+          self.client.guilds.resolve(id2);
+      mem = guild && (guild.members.resolve(id) || guild.members.resolve(id2));
       author = mem && mem.user;
       if (!guild) {
         if (self.client.shard) {
@@ -2846,7 +2830,7 @@ function Main() {
     const cY = chan && author && chan.permissionsFor(author).bitfield;
     const cM = chan && chan.permissionsFor(self.client.user).bitfield;
     const gY = author && mem.permissions.bitfield;
-    const gM = guild.members.get(self.client.user.id).permissions.bitfield;
+    const gM = guild.members.resolve(self.client.user.id).permissions.bitfield;
     const uId = author && author.id;
     replyPerms(msg, guild.id, gM, gY, chan && chan.id, cM, cY, uId);
   }
@@ -2931,18 +2915,18 @@ function Main() {
    * guild, `uId` is id of matched user.
    */
   function fetchShardPerms(id, id2) {
-    const chan = this.channels.get(id) || this.channels.get(id2);
-    const guild =
-        (chan && chan.guild) || this.guilds.get(id) || this.guilds.get(id2);
+    const chan = this.channels.resolve(id) || this.channels.resolve(id2);
+    const guild = (chan && chan.guild) || this.guilds.resolve(id) ||
+        this.guilds.resolve(id2);
     if (guild) {
-      const mem = guild.members.get(id) || guild.members.get(id2);
+      const mem = guild.members.resolve(id) || guild.members.resolve(id2);
 
       const cMPerms = chan && chan.permissionsFor(this.user);
       const cM = cMPerms && cMPerms.bitfield;
       const cYPerms = chan && chan.permissionsFor(mem);
       const cY = cYPerms && cYPerms.bitfield;
 
-      const gM = guild.members.get(this.user.id).permissions.bitfield;
+      const gM = guild.members.resolve(this.user.id).permissions.bitfield;
       const gY = mem && mem.permissions.bitfield;
       return {
         cId: chan && chan.id,
@@ -3198,10 +3182,10 @@ function Main() {
       out.cpus = require('os').cpus();
     }
 
-    out.numGuilds = self.client.guilds.size;
+    out.numGuilds = self.client.guilds.cache.size;
 
     let iTime = Date.now();
-    self.client.guilds.forEach((g) => {
+    self.client.guilds.cache.forEach((g) => {
       out.numLargestGuild = Math.max(g.memberCount, out.numLargestGuild);
       out.numMembers += g.memberCount;
       out.numEmojis += g.emojis.size;
@@ -3279,15 +3263,15 @@ function Main() {
    * @returns {?string} A Discord formatted string to send.
    */
   function lookupId(id, trusted = false) {
-    const user = this.users.get(id);
-    const guild = this.guilds.get(id);
-    const channel = this.channels.get(id);
+    const user = this.users.resolve(id);
+    const guild = this.guilds.resolve(id);
+    const channel = this.channels.resolve(id);
     const output = [];
 
     if (user) {
       const guilds = [];
-      this.guilds.forEach((g) => {
-        if (g.members.get(id)) guilds.push(g.id);
+      this.guilds.cache.forEach((g) => {
+        if (g.members.resolve(id)) guilds.push(g.id);
       });
       if (trusted) {
         output.push(
@@ -3354,8 +3338,8 @@ function Main() {
       self.common.reply(msg, 'Please specify a channel and a message.');
       return;
     }
-    const channel = self.client.channels.get(idString);
-    const user = self.client.users.get(idString);
+    const channel = self.client.channels.resolve(idString);
+    const user = self.client.users.resolve(idString);
     const message = msg.text.split(' ').slice(2).join(' ');
     if (channel) {
       channel.send(message)
@@ -3410,8 +3394,8 @@ function Main() {
    */
   function sendTo(id, message) {
     message = decodeURIComponent(message);
-    const channel = this.channels.get(id);
-    const user = this.users.get(id);
+    const channel = this.channels.resolve(id);
+    const user = this.users.resolve(id);
     if (channel) {
       const perms = channel.permissionsFor(this.user);
       if (perms && !perms.has('SEND_MESSAGES')) return false;
@@ -3438,9 +3422,9 @@ function Main() {
    */
   function commandThankYou(msg) {
     if (msg.mentions.members && msg.mentions.members.size > 0) {
-      const mentions = msg.mentions.members.map((el) => {
-        return '`' + (el.nickname || el.user.username).replace(/`/g, '`') + '`';
-      });
+      const mentions = msg.mentions.members.map(
+          (el) =>
+            '`' + (el.nickname || el.user.username).replace(/`/g, '`') + '`');
       let mentionString = mentions[0];
       for (let i = 1; i < mentions.length; i++) {
         mentionString += ', ';
@@ -3768,7 +3752,7 @@ function Main() {
       let total = 0;
       let done = 0;
       const res = {};
-      self.client.guilds.forEach((g) => {
+      self.client.guilds.cache.forEach((g) => {
         total++;
         g.fetchBans().then((bans) => {
           bans.forEach((b) => {
@@ -3844,7 +3828,7 @@ function Main() {
             `this.banListResponse('${userId}',${JSON.stringify(res)})`);
       }
     };
-    self.client.guilds.forEach((g) => {
+    self.client.guilds.cache.forEach((g) => {
       if (!g.me.permissions.has('BAN_MEMBERS')) return;
       total++;
       const now = Date.now();

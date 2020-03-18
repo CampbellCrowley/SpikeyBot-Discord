@@ -217,7 +217,7 @@ class ModLog extends SubModule {
     const s = this._settings[guild.id];
     if (!s || !s.channel) return;
     if (!s.check(action)) return;
-    const channel = guild.channels.get(s.channel);
+    const channel = guild.channels.resolve(s.channel);
     if (!channel) return;
     const embed = new this.Discord.MessageEmbed();
     embed.setTitle(this._actionString(action));

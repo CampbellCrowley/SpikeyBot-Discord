@@ -234,7 +234,7 @@ class HungryGames {
    */
   create(guild, cb) {
     if (!(guild instanceof this._parent.Discord.Guild)) {
-      guild = this._parent.client.guilds.get(guild);
+      guild = this._parent.client.guilds.resolve(guild);
     }
     const optKeys = this.defaultOptions.keys;
     const opts = {};
@@ -280,7 +280,7 @@ class HungryGames {
    */
   refresh(guild, cb) {
     if (!(guild instanceof this._parent.Discord.Guild)) {
-      guild = this._parent.client.guilds.get(guild);
+      guild = this._parent.client.guilds.resolve(guild);
     }
     this.fetchGame(guild.id, (game) => {
       if (!game) {

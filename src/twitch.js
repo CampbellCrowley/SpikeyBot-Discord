@@ -476,7 +476,7 @@ class Twitch extends SubModule {
     this._injectWebhookMetadata(data, (data) => {
       const pF = this.Discord.Permissions.FLAGS;
       channels.forEach((cId) => {
-        const chan = this.client.channels.get(cId);
+        const chan = this.client.channels.resolve(cId);
         if (!chan) return;
         const perms = chan.guild && !chan.permissionsFor(chan.guild.me);
         if (perms && !perms.has(pF.SEND_MESSAGES)) {

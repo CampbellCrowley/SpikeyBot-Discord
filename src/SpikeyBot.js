@@ -740,7 +740,7 @@ function SpikeyBot() {
         updateGame('SpikeyBot.com');
       }
     }
-    let logChannel = client.channels.get(common.logChannel);
+    let logChannel = client.channels.resolve(common.logChannel);
     if (client.user && !logChannel && auth.logWebhookId &&
         auth.logWebhookToken) {
       logChannel =
@@ -811,7 +811,7 @@ function SpikeyBot() {
                   console.error(err);
                 }
               });
-          const channel = client.channels.get(parsed.channel);
+          const channel = client.channels.resolve(parsed.channel);
           if (channel) {
             channel.messages.fetch(parsed.id)
                 .then((msg_) => {
@@ -856,7 +856,7 @@ function SpikeyBot() {
         });
       }
       if (!initialized) {
-        loadGuildPrefixes(Array.from(client.guilds.array()));
+        loadGuildPrefixes(Array.from(client.guilds.cache.array()));
       }
     }
     const req = require('https').request(
@@ -878,7 +878,7 @@ function SpikeyBot() {
       text: `${tag}:${id} JS${self.version}`,
       tag: tag,
       id: id,
-      guild_count: client.guilds.size,
+      guild_count: client.guilds.cache.size,
       shard_count: client.shard ? client.shard.count : '0',
       shard_id: client.shard ? client.shard.ids : 'null',
       version: self.version,

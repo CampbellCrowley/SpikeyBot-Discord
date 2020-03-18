@@ -57,7 +57,7 @@ class ActionManager {
     const none = game.actions.eventPlayerUnAffected;
 
     const day = game.currentGame.day;
-    const guild = hg._parent.client.guilds.get(game.id);
+    const guild = hg._parent.client.guilds.resolve(game.id);
     const evt = day.events[day.state];
 
     if (evt) {
@@ -124,7 +124,7 @@ class ActionManager {
       let sameConsumer = false;
       evt.icons.forEach((el) => {
         if (el.id.startsWith('NPC')) return;
-        const member = guild.members.get(el.id);
+        const member = guild.members.resolve(el.id);
         const group = el.settings.victim ? evt.victim : evt.attacker;
         const weapons = {};
 
@@ -152,7 +152,7 @@ class ActionManager {
 
       if (evt.consumer && !sameConsumer && !evt.consumer.startsWith('NPC')) {
         const weapons = {};
-        const member = guild.members.get(evt.consumer);
+        const member = guild.members.resolve(evt.consumer);
         evt.consumes.forEach((el) => weapons[el.name] = -el.count);
         if (!member) {
           guild.members.fetch(evt.consumer)
@@ -200,10 +200,10 @@ class ActionManager {
     const win = game.actions.gamePlayerWin;
     const lose = game.actions.gamePlayerLose;
 
-    const guild = hg._parent.client.guilds.get(game.id);
+    const guild = hg._parent.client.guilds.resolve(game.id);
     game.currentGame.includedUsers.forEach((player) => {
       if (player.isNPC) return;
-      const member = guild.members.get(player.id);
+      const member = guild.members.resolve(player.id);
       if (!member) return;
       if (winList.includes(player.id)) {
         win.forEach((el) => el.trigger(hg, game, member));
@@ -233,14 +233,14 @@ class ActionManager {
    * @param {HungryGames~Action[]} list List of events to fire all of.
    */
   static _triggerAll(hg, game, list) {
-    const channel = hg._parent.client.channels.get(game.outputChannel);
-    const guild = hg._parent.client.guilds.get(game.id);
+    const channel = hg._parent.client.channels.resolve(game.outputChannel);
+    const guild = hg._parent.client.guilds.resolve(game.id);
 
     list.forEach((el) => {
       if (el instanceof MemberAction) {
         game.currentGame.includedUsers.forEach((player) => {
           if (player.isNPC) return;
-          const member = guild.members.get(player.id);
+          const member = guild.members.resolve(player.id);
           if (!member) return;
           el.trigger(hg, game, member);
         });
@@ -268,11 +268,11 @@ class ActionManager {
    */
   static _endTrigger(hg, game, list, alive, dead, wounded) {
     ActionManager._triggerAll(hg, game, list);
-    const guild = hg._parent.client.guilds.get(game.id);
+    const guild = hg._parent.client.guilds.resolve(game.id);
 
     game.includedUsers.forEach((player) => {
       if (player.isNPC) return;
-      const member = guild.members.get(player.id);
+      const member = guild.members.resolve(player.id);
       if (!member) return;
 
       if (!player.living) {

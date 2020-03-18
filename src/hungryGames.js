@@ -370,14 +370,14 @@ function HG() {
     tmpHelp.setURL(
         self.common.webURL + '#' +
         encodeURIComponent(helpObject.title.replace(/\s/g, '_')));
-    helpObject.sections.forEach(function(obj) {
+    helpObject.sections.forEach((obj) => {
       const titleID =
           encodeURIComponent((self.postPrefix + obj.title).replace(/\s/g, '_'));
       const titleURL = `${self.common.webHelp}#${titleID} `;
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows
-                  .map(function(row) {
+                  .map((row) => {
                     if (typeof row === 'string') {
                       return prefix + row.replace(/\{prefix\}/g, prefix);
                     } else if (typeof row === 'object') {
@@ -530,9 +530,7 @@ function HG() {
                     self.common.reply(
                         msg, 'Hmm, did you mean one of the following commands?',
                         searched
-                            .map((el) => {
-                              return msg.prefix + self.postPrefix + el;
-                            })
+                            .map((el) => `${msg.prefix}${self.postPrefix}${el}`)
                             .join('\n'));
                   } else {
                     self.common.reply(
@@ -554,7 +552,7 @@ function HG() {
     self.client.on('guildDelete', onGuildDelete);
     self.client.on('channelDelete', onChannelDelete);
 
-    self.client.guilds.forEach((g) => {
+    self.client.guilds.cache.forEach((g) => {
       hg.fetchGame(g.id, (game) => {
         if (!game) return;
 
@@ -936,7 +934,7 @@ function HG() {
     if (!msg) {
       silent = true;
       msg = {
-        guild: self.client.guilds.get(id),
+        guild: self.client.guilds.resolve(id),
       };
     }
     const g = hg.getGame(id);
@@ -971,7 +969,7 @@ function HG() {
         self.common.reply(msg, 'Refreshing current game.');
       }
       g.includedUsers = g.includedUsers.filter((u) => {
-        const m = msg.guild.members.get(u);
+        const m = msg.guild.members.resolve(u);
         if (m && m.partial) m.fetch();
         return m && !m.deleted;
       });
@@ -979,7 +977,7 @@ function HG() {
         g.excludedUsers = [];
       } else {
         g.excludedUsers = g.excludedUsers.filter((u) => {
-          const m = msg.guild.members.get(u);
+          const m = msg.guild.members.resolve(u);
           if (m && m.partial) m.fetch();
           return m && !m.deleted;
         });
@@ -1726,11 +1724,11 @@ function HG() {
               'game.');
     } else {
       const mentionedRoleUsers = new self.Discord.UserStore(
-          self.client,
-          ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
+          self.client, ...msg.mentions.roles.cache.map(
+              (r) => r.members.cache.map((m) => m.user)));
       const softRoleUsers = new self.Discord.UserStore(
-          self.client,
-          ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
+          self.client, ...msg.softMentions.roles.cache.map(
+              (r) => r.members.cache.map((m) => m.user)));
       const mentions = msg.mentions.users.concat(msg.softMentions.users)
           .concat(mentionedRoleUsers.concat(softRoleUsers));
 
@@ -1769,8 +1767,8 @@ function HG() {
     const iTime = Date.now();
     const tmp = [];
     let npcs = [];
-    const large =
-        self.client.guilds.get(id).memberCount >= HungryGames.largeServerCount;
+    const large = self.client.guilds.resolve(id).memberCount >=
+        HungryGames.largeServerCount;
     switch (users) {
       case 'everyone':
         users = game.includedUsers;
@@ -1781,7 +1779,7 @@ function HG() {
       case 'idle':
       case 'dnd':
         game.includedUsers.forEach((u) => {
-          const user = self.client.users.get(u);
+          const user = self.client.users.resolve(u);
           if (user && user.presence.status === users) tmp.push(user);
         });
         users = tmp;
@@ -1815,7 +1813,7 @@ function HG() {
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
           if (typeof users[i] === 'string' && !users[i].startsWith('NPC') &&
-              !self.client.users.get(users[i])) {
+              !self.client.users.resolve(users[i])) {
             fetchWait++;
             self.client.users.fetch(users[i]).then(fetched).catch((err) => {
               response.push(err.message);
@@ -1884,7 +1882,7 @@ function HG() {
           return `${response.join('\n')}\n`;
         }
       } else {
-        obj = self.client.users.get(obj);
+        obj = self.client.users.resolve(obj);
       }
       if (!obj) {
         response.push(`${obj} is not a valid id.`);
@@ -2024,11 +2022,11 @@ function HG() {
           'You must specify who you wish for me to include in the next game.');
     } else {
       const mentionedRoleUsers = new self.Discord.UserStore(
-          self.client,
-          ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
+          self.client, ...msg.mentions.roles.cache.map(
+              (r) => r.members.cache.map((m) => m.user)));
       const softRoleUsers = new self.Discord.UserStore(
-          self.client,
-          ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
+          self.client, ...msg.softMentions.roles.cache.map(
+              (r) => r.members.cache.map((m) => m.user)));
       const mentions = msg.mentions.users.concat(msg.softMentions.users)
           .concat(mentionedRoleUsers.concat(softRoleUsers));
 
@@ -2067,8 +2065,8 @@ function HG() {
     const iTime = Date.now();
     const tmp = [];
     let npcs = [];
-    const large =
-        self.client.guilds.get(id).memberCount >= HungryGames.largeServerCount;
+    const large = self.client.guilds.resolve(id).memberCount >=
+        HungryGames.largeServerCount;
     if (large && typeof users === 'string') {
       cb('Too many members');
       return;
@@ -2083,7 +2081,7 @@ function HG() {
       case 'idle':
       case 'dnd':
         game.excludedUsers.forEach((u) => {
-          const user = self.client.users.get(u);
+          const user = self.client.users.resolve(u);
           if (user && user.presence.status === users) tmp.push(user);
         });
         users = tmp;
@@ -2117,7 +2115,7 @@ function HG() {
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
           if (typeof users[i] === 'string' && !users[i].startsWith('NPC') &&
-              !self.client.users.get(users[i])) {
+              !self.client.users.resolve(users[i])) {
             fetchWait++;
             self.client.users.fetch(users[i]).then(fetched).catch((err) => {
               response.push(err.message);
@@ -2183,7 +2181,7 @@ function HG() {
           return `${response.join('\n')}\n`;
         }
       } else {
-        obj = self.client.users.get(obj);
+        obj = self.client.users.resolve(obj);
       }
       if (!obj) {
         response.push(`${obj} is not a valid id.`);
@@ -2390,7 +2388,7 @@ function HG() {
     if (game.excludedUsers.length > 0) {
       let excludedList = '\u200B';
       if (game.excludedUsers.length < 20) {
-        const guild = self.client.guilds.get(game.id);
+        const guild = self.client.guilds.resolve(game.id);
         excludedList =
             game.excludedUsers.map((obj) => getName(guild, obj)).join(', ');
         const trimmedList = excludedList.substr(0, 512);
@@ -2419,8 +2417,8 @@ function HG() {
     let name = '';
     if (typeof user === 'object' && user.username) {
       name = user.username;
-    } else if (guild.members.get(user)) {
-      name = guild.members.get(user).user.username;
+    } else if (guild.members.resolve(user)) {
+      name = guild.members.resolve(user).user.username;
     } else {
       name = user;
     }
@@ -2559,7 +2557,7 @@ function HG() {
             ', which requires true or false. (Currently ' + obj[option] + ')';
       } else {
         if (option == 'excludeNewUsers' &&
-            self.client.guilds.get(id).memberCount >=
+            self.client.guilds.resolve(id).memberCount >=
                 HungryGames.largeServerCount) {
           obj[option] = true;
           return 'Due to performance issues, large servers must exclude new ' +
@@ -2985,9 +2983,11 @@ function HG() {
     if (teamId1 < 0 || teamId2 < 0 || isNaN(teamId2)) {
       let extra = null;
       if (user2 > 0 && teamId2 < 0) {
-        extra = 'Is ' + self.client.users.get(user2).username + ' on a team?';
+        extra =
+            'Is ' + self.client.users.resolve(user2).username + ' on a team?';
       } else if (user1 > 0 && teamId1 < 0) {
-        extra = 'Is ' + self.client.users.get(user1).username + ' on a team?';
+        extra =
+            'Is ' + self.client.users.resolve(user1).username + ' on a team?';
       }
       self.common.reply(
           msg, 'Please ensure the first option is the user, and the second ' +
@@ -3002,7 +3002,7 @@ function HG() {
               'Team ' + (game.currentGame.teams.length + 1), []));
       teamId2 = game.currentGame.teams.length - 1;
     }
-    const user1Final = self.client.users.get(user1);
+    const user1Final = self.client.users.resolve(user1);
     self.common.reply(
         msg, 'Moving `' + (user1Final && user1Final.username || user1) +
             '` from ' + game.currentGame.teams[teamId1].name + ' to ' +
@@ -4279,7 +4279,7 @@ function HG() {
             if (iU) {
               name = (game.options.useNicknames && iU.nickname) || iU.name;
             } else {
-              const m = msg.guild.members.get(el.id);
+              const m = msg.guild.members.resolve(el.id);
               name = m ?
                   (game.options.useNicknames && m.nickname) || m.user.username :
                   el.id;
@@ -4407,11 +4407,11 @@ function HG() {
    */
   function parseGamePlayers(msg, game) {
     const mentionedRoleUsers = new self.Discord.UserStore(
-        self.client,
-        ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
+        self.client, ...msg.mentions.roles.cache.map(
+            (r) => r.members.cache.map((m) => m.user)));
     const softRoleUsers = new self.Discord.UserStore(
-        self.client,
-        ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
+        self.client, ...msg.softMentions.roles.cache.map(
+            (r) => r.members.cache.map((m) => m.user)));
     const mentions = msg.mentions.users.concat(msg.softMentions.users)
         .concat(mentionedRoleUsers.concat(softRoleUsers));
 
@@ -4433,25 +4433,25 @@ function HG() {
       players = game.currentGame.includedUsers.map((el) => el.id);
     } else if (specialWords.online.includes(firstWord)) {
       players = incU.filter((el) => {
-        const member = msg.guild.members.get(el.id);
+        const member = msg.guild.members.resolve(el.id);
         if (!member) return false;
         return member.user.presence.status === 'online';
       }).map((el) => el.id);
     } else if (specialWords.offline.includes(firstWord)) {
       players = incU.filter((el) => {
-        const member = msg.guild.members.get(el.id);
+        const member = msg.guild.members.resolve(el.id);
         if (!member) return false;
         return member.user.presence.status === 'offline';
       }).map((el) => el.id);
     } else if (specialWords.idle.includes(firstWord)) {
       players = incU.filter((el) => {
-        const member = msg.guild.members.get(el.id);
+        const member = msg.guild.members.resolve(el.id);
         if (!member) return false;
         return member.user.presence.status === 'idle';
       }).map((el) => el.id);
     } else if (specialWords.dnd.includes(firstWord)) {
       players = incU.filter((el) => {
-        const member = msg.guild.members.get(el.id);
+        const member = msg.guild.members.resolve(el.id);
         if (!member) return false;
         return member.user.presence.status === 'dnd';
       }).map((el) => el.id);
@@ -4459,7 +4459,7 @@ function HG() {
       players = incU.filter((el) => el.isNPC).map((el) => el.id);
     } else if (specialWords.bots.includes(firstWord)) {
       players = incU.filter((el) => {
-        const member = msg.guild.members.get(el.id);
+        const member = msg.guild.members.resolve(el.id);
         if (!member) return false;
         return member.user.bot;
       }).map((el) => el.id);
@@ -4592,7 +4592,7 @@ function HG() {
     if (name.length > 100) return false;
     hg.getGame(id).currentGame.customName = name;
     hg.getGame(id).currentGame.name =
-        name || (self.client.guilds.get(id).name + '\'s Hungry Games');
+        name || (self.client.guilds.resolve(id).name + '\'s Hungry Games');
     return true;
   };
 
@@ -4620,7 +4620,7 @@ function HG() {
     if (self.renameGame(id, msg.text.trim())) {
       self.common.reply(
           msg, 'Renamed game to',
-          msg.text.trim() || self.client.guilds.get(id).name);
+          msg.text.trim() || self.client.guilds.resolve(id).name);
     } else {
       self.common.reply(
           msg, 'Oops! I couldn\'t change the name to that. Please ensure ' +
@@ -4770,7 +4770,7 @@ function HG() {
    */
   this.createReactJoinMessage = function(channel) {
     if (typeof channel === 'string') {
-      channel = self.client.channels.get(channel);
+      channel = self.client.channels.resolve(channel);
     }
     if (!channel || !channel.guild || !channel.guild.id ||
         !hg.getGame(channel.guild.id)) {
@@ -4815,7 +4815,7 @@ function HG() {
     let numTotal = 0;
     let numDone = 0;
     let msg;
-    const channel = self.client.guilds.get(id).channels.get(
+    const channel = self.client.guilds.resolve(id).channels.resolve(
         hg.getGame(id).reactMessage.channel);
     if (!channel) {
       hg.getGame(id).reactMessage = null;
@@ -4828,7 +4828,7 @@ function HG() {
           if (!msg.reactions || msg.reactions.size == 0) {
             usersFetched();
           } else {
-            msg.reactions.forEach((el) => {
+            msg.reactions.cache.forEach((el) => {
               numTotal++;
               el.users.fetch().then(usersFetched).catch((err) => {
                 self.error('Failed to fetch user reactions: ' + msg.channel.id);

@@ -17,7 +17,7 @@ class MessageMaker {
    * @param {?string} msg The message content.
    */
   constructor(self, uId, gId, cId, msg) {
-    const g = self.client && self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.resolve(gId);
     const prefix = self.bot.getPrefix(gId);
     /**
      * @description Always true. Can be used to check if this message was
@@ -34,7 +34,7 @@ class MessageMaker {
      * @type {external:Discord~User}
      * @constant
      */
-    this.author = self.client && self.client.users.get(uId);
+    this.author = self.client && self.client.users.resolve(uId);
     /**
      * @description Discord.JS Client.
      * @public
@@ -48,7 +48,7 @@ class MessageMaker {
      * @type {?external:Discord~GuildMember}
      * @constant
      */
-    this.member = g && g.members.get(uId);
+    this.member = g && g.members.resolve(uId);
     /**
      * @description Guild.
      * @public
@@ -62,8 +62,8 @@ class MessageMaker {
      * @type {external:Discord~TextChannel|external:Discord~DMChannel}
      * @constant
      */
-    this.channel = (g && g.channels.get(cId)) ||
-        (self.client && self.client.channels.get(uId));
+    this.channel = (g && g.channels.resolve(cId)) ||
+        (self.client && self.client.channels.resolve(uId));
     /**
      * @description Message content without command prefix.
      * @public

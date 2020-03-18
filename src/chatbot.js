@@ -122,7 +122,7 @@ function ChatBot() {
   function onMessage(msg) {
     if (msg.author.bot || !msg.guild) return;
     msg.prefix = self.bot.getPrefix(msg.guild);
-    if (msg.mentions.users.get(self.client.user.id) &&
+    if (msg.mentions.users.resolve(self.client.user.id) &&
         !self.command.find(msg.content.match(/^\S+/)[0], msg)) {
       const withoutMe = msg.content.replace(selfMentionRegex, '').trim();
       const withoutMeMatch = withoutMe.match(/^\S+/);

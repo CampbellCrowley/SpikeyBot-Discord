@@ -38,7 +38,7 @@ class GiveRoleAction extends MemberAction {
    * find role. If unable to find, it will not update the value.
    */
   set role(rId) {
-    const newRole = this._role.guild.roles.get(rId);
+    const newRole = this._role.guild.roles.resolve(rId);
     if (!newRole) return null;
     this._role = newRole;
     this._saveData.role = newRole.id;
@@ -57,7 +57,7 @@ class GiveRoleAction extends MemberAction {
    * to find the given role.
    */
   static create(client, id, obj) {
-    const role = client.guilds.get(id).roles.get(obj.role);
+    const role = client.guilds.resolve(id).roles.resolve(obj.role);
     if (!role) return null;
     return new GiveRoleAction(role);
   }

@@ -16,7 +16,7 @@ function Command() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    self.client.guilds.forEach((g) => {
+    self.client.guilds.cache.forEach((g) => {
       const dir = self.common.guildSaveDir + g.id;
       const filename = dir + commandSettingsFile;
       fs.readFile(filename, (err, data) => {
@@ -246,9 +246,7 @@ function Command() {
      *
      * @type {string[]}
      */
-    this.aliases = cmd.map((el) => {
-      return el.toLowerCase();
-    });
+    this.aliases = cmd.map((el) => el.toLowerCase());
 
     /**
      * Sub commands for this single command. Triggered by commands separated by
@@ -304,22 +302,22 @@ function Command() {
       };
       if (uIds) {
         uIds.forEach((el) => {
-          const u = self.client.users.get(el);
+          const u = self.client.users.resolve(el);
           if (u) {
             msg.softMentions.users.add(u);
             text = text.replace(el, '');
           }
           if (msg.guild) {
-            const m = msg.guild.members.get(el);
+            const m = msg.guild.members.resolve(el);
             if (m) msg.softMentions.members.add(m);
-            const r = msg.guild.roles.get(el);
+            const r = msg.guild.roles.resolve(el);
             if (r) msg.softMentions.roles.add(r);
           }
         });
       }
       if (msg.guild) {
         const sT = text.toLocaleLowerCase();
-        msg.guild.members.forEach((el) => {
+        msg.guild.members.cache.forEach((el) => {
           if (sT.indexOf(el.user.username.toLocaleLowerCase()) > -1) {
             // sT = sT.replace(el.user.username.toLocaleLowerCase(), '');
             msg.softMentions.members.add(el);
@@ -335,7 +333,7 @@ function Command() {
             msg.softMentions.users.add(el.user);
           }
         });
-        msg.guild.roles.forEach((el) => {
+        msg.guild.roles.cache.forEach((el) => {
           if (sT.indexOf(el.name.toLocaleLowerCase()) > -1) {
             // sT = sT.replace(el.role.name.toLocaleLowerCase(), '');
             msg.softMentions.roles.add(el);
@@ -524,7 +522,7 @@ function Command() {
       }
       switch (type) {
         case 'guild':
-          if (!id || !self.client.guilds.get(id)) {
+          if (!id || !self.client.guilds.resolve(id)) {
             throw new Error('Guild ID is invalid for id: ' + id);
           }
           if (value != 'enabled') delete me.enabled.guilds[id];
@@ -533,7 +531,7 @@ function Command() {
           else me.disabled.guilds[id] = true;
           break;
         case 'channel':
-          if (!id || !self.client.channels.get(id)) {
+          if (!id || !self.client.channels.resolve(id)) {
             throw new Error('Channel ID is invalid for id: ' + id);
           }
           if (value != 'enabled') delete me.enabled.channels[id];
@@ -542,7 +540,7 @@ function Command() {
           else me.disabled.channels[id] = true;
           break;
         case 'user':
-          if (!id || !self.client.users.get(id)) {
+          if (!id || !self.client.users.resolve(id)) {
             throw new Error('User ID is invalid for id: ' + id);
           }
           if (value != 'enabled') delete me.enabled.users[id];
@@ -551,10 +549,10 @@ function Command() {
           else me.disabled.users[id] = true;
           break;
         case 'role':
-          if (!id2 || !self.client.guilds.get(id2)) {
+          if (!id2 || !self.client.guilds.resolve(id2)) {
             throw new Error('Guild ID is invalid for id2: ' + id2);
           }
-          if (!id || !self.client.guilds.get(id2).roles.get(id)) {
+          if (!id || !self.client.guilds.resolve(id2).roles.resolve(id)) {
             throw new Error('Role ID is invalid for id: ' + id);
           }
           if (value != 'enabled') delete me.enabled.roles[id2 + '/' + id];
@@ -696,7 +694,7 @@ function Command() {
    * command name. If it doesn't exist, an object will first be created.
    */
   this.getUserSettings = function(gId) {
-    if (!userSettings[gId] && self.client.guilds.get(gId)) {
+    if (!userSettings[gId] && self.client.guilds.resolve(gId)) {
       userSettings[gId] = {};
     }
     return userSettings[gId];
@@ -1083,21 +1081,21 @@ function Command() {
       settings.push(userSettings[msg.guild.id][name]);
     });
     const disabledList = [];
-    msg.mentions.channels.forEach((c) => {
+    msg.mentions.channels.cache.forEach((c) => {
       settings.forEach((s) => {
         if (s.disabled.channels[c.id]) return;
         s.set(s.defaultDisabled ? 'default' : 'disabled', 'channel', c.id);
       });
       disabledList.push(`${c.type} channel: #${c.name}`);
     });
-    msg.mentions.members.forEach((m) => {
+    msg.mentions.members.cache.forEach((m) => {
       settings.forEach((s) => {
         if (s.disabled.users[m.id]) return;
         s.set(s.defaultDisabled ? 'default' : 'disabled', 'user', m.id);
       });
       disabledList.push(`Member: ${m.user.tag}`);
     });
-    msg.mentions.roles.forEach((r) => {
+    msg.mentions.roles.cache.forEach((r) => {
       settings.forEach((s) => {
         if (s.disabled.roles[`${r.guild.id}/${r.id}`]) return;
         s.set(
@@ -1190,21 +1188,21 @@ function Command() {
       settings.push(userSettings[msg.guild.id][name]);
     });
     const enabledList = [];
-    msg.mentions.channels.forEach((c) => {
+    msg.mentions.channels.cache.forEach((c) => {
       settings.forEach((s) => {
         if (s.enabled.channels[c.id]) return;
         s.set(s.defaultEnabled ? 'default' : 'enabled', 'channel', c.id);
       });
       enabledList.push(c.type + ' channel: #' + c.name);
     });
-    msg.mentions.members.forEach((m) => {
+    msg.mentions.members.cache.forEach((m) => {
       settings.forEach((s) => {
         if (s.enabled.users[m.id]) return;
         s.set(s.defaultEnabled ? 'default' : 'enabled', 'user', m.id);
       });
       enabledList.push('Member: ' + m.user.tag);
     });
-    msg.mentions.roles.forEach((r) => {
+    msg.mentions.roles.cache.forEach((r) => {
       settings.forEach((s) => {
         if (s.enabled.roles[r.guild.id + '/' + r.id]) return;
         s.set(
@@ -1439,16 +1437,16 @@ function Command() {
       const channels = Object.keys(obj.channels);
       if (channels.length) {
         const list = channels.map((c) => {
-          if (!msg.guild.channels.get(c)) return '';
-          return '#' + msg.guild.channels.get(c).name;
+          if (!msg.guild.channels.resolve(c)) return '';
+          return '#' + msg.guild.channels.resolve(c).name;
         });
         tmp.push('Channels: ' + list.join(', '));
       }
       const users = Object.keys(obj.users);
       if (users.length) {
         const list = users.map((u) => {
-          if (!msg.guild.members.get(u)) return '';
-          return msg.guild.members.get(u).user.tag;
+          if (!msg.guild.members.resolve(u)) return '';
+          return msg.guild.members.resolve(u).user.tag;
         });
         tmp.push('Members: ' + list.join(', '));
       }
@@ -1456,8 +1454,8 @@ function Command() {
       if (roles.length) {
         const list = roles.map((r) => {
           r = r.split('/')[1];
-          if (!msg.guild.roles.get(r)) return '';
-          return msg.guild.roles.get(r).name;
+          if (!msg.guild.roles.resolve(r)) return '';
+          return msg.guild.roles.resolve(r).name;
         });
         tmp.push('Roles: ' + list.join(', '));
       }
@@ -1651,9 +1649,7 @@ function Command() {
   this.fire = function(name, ...args) {
     const handlers = eventList[name];
     if (!handlers || handlers.length == 0) return;
-    handlers.forEach((h) => {
-      h.apply(h, args);
-    });
+    handlers.forEach((h) => h.apply(h, args));
   };
 
   /**

@@ -115,12 +115,13 @@ function Polling() {
       return;
     }
 
-    const channel = self.client.channels.get(parsed.message.channel);
+    const channel = self.client.channels.resolve(parsed.message.channel);
     if (!channel) {
       self.error('Failed to find channel: ' + parsed.message.channel);
       return;
     }
-    parsed.emojis = parsed.emojis.map((el) => self.client.emojis.get(el) || el);
+    parsed.emojis =
+        parsed.emojis.map((el) => self.client.emojis.resolve(el) || el);
     channel.messages.fetch(parsed.message.message)
         .then((message) => {
           const poll =
@@ -332,7 +333,7 @@ function Polling() {
             error = i + 1;
             return;
           }
-          matchedEmoji = self.client.emojis.get(matchedEmoji[1]);
+          matchedEmoji = self.client.emojis.resolve(matchedEmoji[1]);
           if (!matchedEmoji) {
             error = i + 1;
             return;
@@ -451,7 +452,7 @@ function Polling() {
       self.client.clearTimeout(poll.timeout);
       poll.timeout = null;
     }
-    const reactions = poll.message.reactions.filter(
+    const reactions = poll.message.reactions.cache.filter(
         (reaction) => poll.emojis.concat(reaction.emoji.name));
 
     const embed = new self.Discord.MessageEmbed();

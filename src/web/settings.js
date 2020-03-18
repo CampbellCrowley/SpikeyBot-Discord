@@ -567,7 +567,7 @@ function WebSettings() {
    * @returns {boolean} True if this shard has this guild.
    */
   function checkMyGuild(gId) {
-    const g = self.client && self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.resolve(gId);
     return (g && true) || false;
   }
 
@@ -607,13 +607,13 @@ function WebSettings() {
    */
   function checkChannelPerm(userData, gId, cId) {
     if (!userData) return false;
-    const g = self.client && self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.resolve(gId);
     if (!g) return false;
     if (userData.id == self.common.spikeyId) return true;
-    const m = g.members.get(userData.id);
+    const m = g.members.resolve(userData.id);
     if (!m) return false;
 
-    const channel = g.channels.get(cId);
+    const channel = g.channels.resolve(cId);
     if (!channel) return false;
 
     const perms = channel.permissionsFor(m);
@@ -641,7 +641,7 @@ function WebSettings() {
         },
         guild: {},
         permissions: {bitfield: 0},
-        user: self.client.users.get(m),
+        user: self.client.users.resolve(m),
       };
     }
     return {
@@ -757,13 +757,14 @@ function WebSettings() {
       let guilds = [];
       if (userData.guilds && userData.guilds.length > 0) {
         userData.guilds.forEach((el) => {
-          const g = self.client && self.client.guilds.get(el.id);
+          const g = self.client && self.client.guilds.resolve(el.id);
           if (!g) return;
           guilds.push(g);
         });
       } else {
         guilds = self.client &&
-            self.client.guilds.filter((obj) => obj.members.get(userData.id))
+            self.client.guilds.cache
+                .filter((obj) => obj.members.resolve(userData.id))
                 .array();
       }
       const strippedGuilds = stripGuilds(guilds, userData);
@@ -787,15 +788,13 @@ function WebSettings() {
    */
   function stripGuilds(guilds, userData) {
     return guilds.map((g) => {
-      const member = g.members.get(userData.id);
+      const member = g.members.resolve(userData.id);
       const newG = {};
       newG.iconURL = g.iconURL();
       newG.name = g.name;
       newG.id = g.id;
       newG.ownerId = g.ownerID;
-      newG.members = g.members.map((m) => {
-        return m.id;
-      });
+      newG.members = g.members.cache.map((m) => m.id);
       newG.channels =
           g.channels
               .filter((c) => {
@@ -804,9 +803,7 @@ function WebSettings() {
                     (perms &&
                      perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL));
               })
-              .map((c) => {
-                return c.id;
-              });
+              .map((c) => c.id);
       newG.myself = makeMember(member || userData.id);
       return newG;
     });
@@ -835,10 +832,10 @@ function WebSettings() {
       return;
     }
 
-    const guild = self.client && self.client.guilds.get(gId);
+    const guild = self.client && self.client.guilds.resolve(gId);
     if (!guild) return;
     if (userData.id != self.common.spikeyId &&
-        !guild.members.get(userData.id)) {
+        !guild.members.resolve(userData.id)) {
       cb(null);
       return;
     }
@@ -860,9 +857,9 @@ function WebSettings() {
   this.fetchMember = function fetchMember(userData, socket, gId, mId, cb) {
     if (typeof cb !== 'function') return;
     if (!checkPerm(userData, gId, null, 'players')) return;
-    const g = self.client && self.client.guilds.get(gId);
+    const g = self.client && self.client.guilds.resolve(gId);
     if (!g) return;
-    const m = g.members.get(mId);
+    const m = g.members.resolve(mId);
     if (!m) {
       cb('No Member');
       return;
@@ -893,8 +890,8 @@ function WebSettings() {
       cb('NO_PERM');
       return;
     }
-    const c = self.client.channels.get(cId);
-    const m = self.client.guilds.get(gId).members.get(userData.id);
+    const c = self.client.channels.resolve(cId);
+    const m = self.client.guilds.resolve(gId).members.resolve(userData.id);
     const perms = c.permissionsFor(m);
     const stripped = {
       id: c.id,
@@ -927,14 +924,14 @@ function WebSettings() {
     let guilds = [];
     if (userData.guilds && userData.guilds.length > 0) {
       userData.guilds.forEach((el) => {
-        const g = self.client && self.client.guilds.get(el.id);
+        const g = self.client && self.client.guilds.resolve(el.id);
         if (!g) return;
         guilds.push(g);
       });
     } else {
-      guilds = self.client.guilds.filter(
+      guilds = self.client.guilds.cache.filter(
           (obj) => userData.id == self.common.spikeyId ||
-              obj.members.get(userData.id));
+              obj.members.resolve(userData.id));
     }
     const cmdDefaults = self.command.getDefaultSettings();
     const modLog = self.bot.getSubmodule('./modLog.js');
@@ -975,8 +972,8 @@ function WebSettings() {
       return;
     }
     if (userData.id != self.common.spikeyId) {
-      const guild = self.client.guilds.get(gId);
-      const member = guild.members.get(userData.id);
+      const guild = self.client.guilds.resolve(gId);
+      const member = guild.members.resolve(userData.id);
       if (!member) {
         cb('NO_PERM');
         return;
@@ -1009,8 +1006,8 @@ function WebSettings() {
       return;
     }
     if (userData.id != self.common.spikeyId) {
-      const guild = self.client.guilds.get(gId);
-      const member = guild.members.get(userData.id);
+      const guild = self.client.guilds.resolve(gId);
+      const member = guild.members.resolve(userData.id);
       if (!member) {
         cb('NO_PERM');
         return;
@@ -1048,8 +1045,8 @@ function WebSettings() {
       return;
     }
     if (userData.id != self.common.spikeyId) {
-      const guild = self.client.guilds.get(gId);
-      const member = guild.members.get(userData.id);
+      const guild = self.client.guilds.resolve(gId);
+      const member = guild.members.resolve(userData.id);
       if (!member) {
         cb('NO_PERM');
         return;
@@ -1086,9 +1083,10 @@ function WebSettings() {
     }
     let guilds = userData.guilds;
     if (guilds) {
-      guilds.map((el) => self.client.guilds.get(el.id));
+      guilds.map((el) => self.client.guilds.resolve(el.id));
     } else {
-      guilds = self.client.guilds.filter((obj) => obj.members.get(userData.id));
+      guilds = self.client.guilds.cache.filter(
+          (obj) => obj.members.resolve(userData.id));
     }
     const sCmds = {};
     updateModuleReferences();
@@ -1139,8 +1137,8 @@ function WebSettings() {
       return;
     }
     if (userData.id != self.common.spikeyId) {
-      const guild = self.client.guilds.get(gId);
-      const member = guild.members.get(userData.id);
+      const guild = self.client.guilds.resolve(gId);
+      const member = guild.members.resolve(userData.id);
       if (!member) {
         cb('NO_PERM');
         return;
@@ -1230,7 +1228,7 @@ function WebSettings() {
       cb('Repeat time is too soon.');
       return;
     }
-    let cId = self.client.channels.get(cmd.channel);
+    let cId = self.client.channels.resolve(cmd.channel);
     if (!cId) {
       cb('Invalid Channel');
       return;
@@ -1410,7 +1408,7 @@ function WebSettings() {
       }
     }
     if (key === 'channel') {
-      const channel = self.client.guilds.get(gId).channels.get(value);
+      const channel = self.client.guilds.resolve(gId).channels.resolve(value);
       if (!channel) {
         cb('Bad Payload');
         return;

@@ -121,7 +121,7 @@ class Moderation extends SubModule {
           permissions: this.Discord.Permissions.FLAGS.KICK_MEMBERS,
         }));
 
-    this.client.guilds.forEach((g) => {
+    this.client.guilds.cache.forEach((g) => {
       if (!fs.existsSync(
           `${this.common.guildSaveDir}${g.id}/moderation.json`)) {
         // This is here to upgrade to new file-system. After first load
@@ -187,7 +187,7 @@ class Moderation extends SubModule {
   save(opt) {
     if (!this.initialized) return;
 
-    this.client.guilds.forEach((obj) => {
+    this.client.guilds.cache.forEach((obj) => {
       const dir = `${this.common.guildSaveDir}${obj.id}/`;
       const filename = `${dir}moderation.json`;
       const data = {
@@ -367,7 +367,7 @@ class Moderation extends SubModule {
     let num = -1;
     if (this.client.shard) {
       const toEval =
-          `this.guilds.filter((g) => g.members.get('${member.id}')).size`;
+      `this.guilds.cache.filter((g) => g.members.resolve('${member.id}')).size`;
       this.client.shard.broadcastEval(toEval)
           .then((res) => {
             res.forEach((el) => num += el);
@@ -386,7 +386,7 @@ class Moderation extends SubModule {
           });
     } else {
       this.client.guilds.forEach((g) => {
-        if (g.members.get(member.id)) num++;
+        if (g.members.resolve(member.id)) num++;
       });
       const additional =
           num > 0 ? `${num} other mutual server${num > 1 ? 's' : ''}.` : null;
@@ -407,7 +407,7 @@ class Moderation extends SubModule {
     let hasMuteRole = false;
     let muteRole;
     const toMute = member;
-    member.guild.roles.forEach((val) => {
+    member.guild.roles.cache.forEach((val) => {
       if (val.name == 'Muted') {
         hasMuteRole = true;
         muteRole = val;
@@ -427,9 +427,9 @@ class Moderation extends SubModule {
               console.error(err);
               cb('Failed to give role');
             });
-        member.guild.channels.forEach((channel) => {
+        member.guild.channels.cache.forEach((channel) => {
           if (channel.permissionsLocked) return;
-          const overwrites = channel.permissionOverwrites.get(role.id);
+          const overwrites = channel.permissionOverwrites.resolve(role.id);
           if (overwrites) {
             if (channel.type == 'category') {
               if (overwrites.deny.has(
@@ -498,11 +498,11 @@ class Moderation extends SubModule {
     }
     const banList = [];
     uIds.forEach((el) => {
-      const u = msg.guild.members.get(el);
+      const u = msg.guild.members.resolve(el);
       if (u) {
         if (!banList.includes(u.id)) banList.push(u);
       } else {
-        const r = msg.guild.roles.get(el);
+        const r = msg.guild.roles.resolve(el);
         if (r) {
           r.members.forEach((m) => {
             if (!banList.includes(m.id)) banList.push(m);

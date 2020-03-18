@@ -662,7 +662,7 @@ function Uno() {
         // This is disabled during testing as to not annoy others with
         // random notifications.
         /* game.groupChannel.permissionOverwrites
-            .get(maker.guild.roles.everyone)
+            .resolve(maker.guild.roles.everyone)
             .update({VIEW_CHANNEL: true}); */
       });
       if (currentCollector) {
@@ -715,7 +715,7 @@ function Uno() {
                 self.common.reply(m, 'Please mention users to invite.');
               } else {
                 let fail = false;
-                m.mentions.members.forEach((m) => {
+                m.mentions.members.cache.forEach((m) => {
                   fail = fail || !game.addPlayer(m);
                 });
                 if (fail) {
@@ -764,7 +764,7 @@ function Uno() {
             }
             case 'kick': {
               let bad = false;
-              m.mentions.members.forEach((el) => {
+              m.mentions.members.cache.forEach((el) => {
                 if (el.id != maker.id) game.removePlayer(el);
                 else bad = true;
               });
@@ -852,7 +852,7 @@ function Uno() {
               return true;
             case 'kick': {
               let bad = false;
-              m.mentions.members.forEach((el) => {
+              m.mentions.members.cache.forEach((el) => {
                 if (el.id != maker.id) game.removePlayer(el);
                 else bad = true;
               });
@@ -1439,7 +1439,7 @@ function Uno() {
         players[index].remove();
         discarded = discarded.concat(players[index].hand.splice(0));
         players.splice(index, 1);
-        const perms = game.groupChannel.permissionOverwrites.get(p);
+        const perms = game.groupChannel.permissionOverwrites.resolve(p);
         if (perms) perms.delete('User removed from game');
         if (turn == index) nextTurn();
       }

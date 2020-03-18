@@ -184,9 +184,9 @@ function Connect4() {
           // '012345678901234567890123456\n' +
           '        Connect Four           \n' +
           this.board
-              .map(function(row, rowNum) {
+              .map((row, rowNum) => {
                 return row
-                    .map(function(cell, colNum) {
+                    .map((cell, colNum) => {
                       switch (game.board[rowNum][colNum]) {
                         case 1:
                           if (winner > 0 && winner != 1) {

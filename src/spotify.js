@@ -169,11 +169,8 @@ function Spotify() {
               cb('Nothing Playing');
               return;
             }
-            const artists = (parsed.item.artists || [])
-                .map((a) => {
-                  return a.name;
-                })
-                .join(', ');
+            const artists =
+                (parsed.item.artists || []).map((a) => a.name).join(', ');
             const songInfo = {
               name: parsed.item.name,
               artist: artists,
