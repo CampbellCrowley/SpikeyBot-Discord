@@ -295,10 +295,10 @@ function Command() {
       let text = msg.text;
       const uIds = text.match(/\d{17,19}/g);
       msg.softMentions = {
-        users: new self.Discord.UserStore(self.client),
-        members: msg.guild ? new self.Discord.GuildMemberStore(msg.guild) :
+        users: new self.Discord.UserManager(self.client),
+        members: msg.guild ? new self.Discord.GuildMemberManager(msg.guild) :
                              null,
-        roles: msg.guild ? new self.Discord.RoleStore(msg.guild) : null,
+        roles: msg.guild ? new self.Discord.RoleManager(msg.guild) : null,
       };
       if (uIds) {
         uIds.forEach((el) => {
