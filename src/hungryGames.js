@@ -3491,9 +3491,16 @@ function HG() {
     function onIncoming(incoming) {
       if (incoming.statusCode != 200 ) {
         incoming.destroy();
-        self.common.reply(
-            msg, 'Hmm, that link doesn\'t appear to work.',
-            'Status code: ' + incoming.statusCode);
+        if (incoming.statusCode == 415) {
+          self.common.reply(
+              msg,
+              'Hmm, that link does not appear to be a supported media type.',
+              'HTTP status code: ' + incoming.statusCode);
+        } else {
+          self.common.reply(
+              msg, 'Hmm, that link doesn\'t appear to work.',
+              'HTTP status code: ' + incoming.statusCode);
+        }
         msg.channel.stopTyping();
         return;
       }
