@@ -303,7 +303,7 @@ class HungryGames {
             });
       };
       if (game.options.excludeNewUsers) {
-        getAll(guild.members);
+        getAll(guild.members.cache);
       } else {
         guild.members.fetch().then(getAll).catch((err) => {
           this._parent.error(
