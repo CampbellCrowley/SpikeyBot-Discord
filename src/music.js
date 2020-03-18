@@ -414,7 +414,7 @@ function Music() {
       }
       if (oldState.channel && oldState.channel.members) {
         const numMembers =
-            oldState.channel.members.cache.filter((el) => !el.user.bot).size;
+            oldState.channel.members.filter((el) => !el.user.bot).size;
         if (numMembers === 0 &&
             oldState.channel.members.resolve(self.client.user.id)) {
           if (broadcast.subjugated) {
@@ -1596,7 +1596,7 @@ function Music() {
           conn.play('./sounds/plink.ogg');
           self.client.setTimeout(() => {
             const receiver = conn.receiver;
-            msg.member.voice.channel.members.cache.forEach(
+            msg.member.voice.channel.members.forEach(
                 (member) => listen(member.user, receiver, conn));
             conn.on('speaking', (user, speaking) => {
               if (speaking) {

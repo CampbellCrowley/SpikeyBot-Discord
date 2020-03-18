@@ -1064,7 +1064,7 @@ function Main() {
       const word = msg.content.match(/(say){0}.*\bi'?m\s+(.*)/i);
       if (word) {
         const dadId = '503720029456695306';
-        if (msg.channel.members.resolve(dadId)) {
+        if (msg.channel.members.get(dadId)) {
           msg.channel
               .awaitMessages(
                   (m) => m.author.id === dadId,
@@ -2203,11 +2203,11 @@ function Main() {
     }
     const banList = [];
     uIds.forEach((el) => {
-      const u = msg.guild.members.resolve(el);
+      const u = msg.guild.members.get(el);
       if (u) {
         if (!banList.includes(u.id)) banList.push(u);
       } else {
-        const r = msg.guild.roles.resolve(el);
+        const r = msg.guild.roles.get(el);
         if (r) {
           r.members.cache.forEach((m) => {
             if (!banList.includes(m.id)) banList.push(m);
