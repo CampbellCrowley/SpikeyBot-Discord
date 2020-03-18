@@ -321,7 +321,7 @@ client.login(auth.test).catch((err) => {
 client.on('message', testMessageContent);
 client.on('ready', () => {
   console.log("Test bot ready");
-  channel = client.channels.get(channelID);
+  channel = client.channels.resolve(channelID);
 });
 console.log("Begin test bot");
 
