@@ -258,7 +258,7 @@ class HungryGames {
     };
     if (guild.memberCount > 100) {
       opts.excludeNewUsers = true;
-      getAll(guild.members);
+      getAll(guild.members.cache);
     } else {
       guild.members.fetch().then(getAll).catch((err) => {
         this._parent.error('Failed to fetch all users for guild: ' + guild.id);
