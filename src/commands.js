@@ -644,7 +644,7 @@ function Command() {
         if (data.guild) {
           if (search.guilds[data.guild.id]) return 1;
           if (data.member &&
-              data.member.roles.find(
+              data.member.roles.cache.find(
                   (r) => search.roles[`${data.guild.id}/${r.id}`])) {
             return 2;
           }
