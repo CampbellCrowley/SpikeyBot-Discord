@@ -295,23 +295,22 @@ function Command() {
       let text = msg.text;
       const uIds = text.match(/\d{17,19}/g);
       msg.softMentions = {
-        users: new self.Discord.UserManager(self.client),
-        members: msg.guild ? new self.Discord.GuildMemberManager(msg.guild) :
-                             null,
-        roles: msg.guild ? new self.Discord.RoleManager(msg.guild) : null,
+        users: new self.Discord.Collection(),
+        members: msg.guild ? new self.Discord.Collection() : null,
+        roles: msg.guild ? new self.Discord.Collection() : null,
       };
       if (uIds) {
         uIds.forEach((el) => {
           const u = self.client.users.resolve(el);
           if (u) {
-            msg.softMentions.users.add(u);
+            msg.softMentions.users.set(u.id, u);
             text = text.replace(el, '');
           }
           if (msg.guild) {
             const m = msg.guild.members.resolve(el);
-            if (m) msg.softMentions.members.add(m);
+            if (m) msg.softMentions.members.set(m.id, m);
             const r = msg.guild.roles.resolve(el);
-            if (r) msg.softMentions.roles.add(r);
+            if (r) msg.softMentions.roles.set(r.id, r);
           }
         });
       }
@@ -320,23 +319,23 @@ function Command() {
         msg.guild.members.cache.forEach((el) => {
           if (sT.indexOf(el.user.username.toLocaleLowerCase()) > -1) {
             // sT = sT.replace(el.user.username.toLocaleLowerCase(), '');
-            msg.softMentions.members.add(el);
-            msg.softMentions.users.add(el.user);
+            msg.softMentions.members.set(el.id, el);
+            msg.softMentions.users.set(el.user.id, el.user);
           } else if (sT.indexOf(el.user.tag.toLocaleLowerCase()) > -1) {
             // sT = sT.replace(el.user.tag.toLocaleLowerCase(), '');
-            msg.softMentions.members.add(el);
-            msg.softMentions.users.add(el.user);
+            msg.softMentions.members.set(el.id, el);
+            msg.softMentions.users.set(el.user.id, el.user);
           } else if (
             el.nickname && sT.indexOf(el.nickname.toLocaleLowerCase()) > -1) {
             // sT = sT.replace(el.nickname.toLocaleLowerCase(), '');
-            msg.softMentions.members.add(el);
-            msg.softMentions.users.add(el.user);
+            msg.softMentions.members.set(el.id, el);
+            msg.softMentions.users.set(el.user.id, el.user);
           }
         });
         msg.guild.roles.cache.forEach((el) => {
           if (sT.indexOf(el.name.toLocaleLowerCase()) > -1) {
             // sT = sT.replace(el.role.name.toLocaleLowerCase(), '');
-            msg.softMentions.roles.add(el);
+            msg.softMentions.roles.set(el.id, el);
           }
         });
       }

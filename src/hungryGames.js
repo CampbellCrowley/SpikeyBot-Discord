@@ -701,10 +701,10 @@ function HG() {
               game.includedNPCs.forEach((el) => {
                 if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
                   // text = text.replace(el.username.toLocaleLowerCase(), '');
-                  msg.softMentions.users.add(el);
+                  msg.softMentions.users.set(el.id, el);
                 } else if (text.indexOf(el.id.toLocaleLowerCase()) > -1) {
                   text = text.replace(el.id.toLocaleLowerCase(), '');
-                  msg.softMentions.users.add(el);
+                  msg.softMentions.users.set(el.id, el);
                 }
               });
             }
@@ -714,10 +714,10 @@ function HG() {
               game.excludedNPCs.forEach((el) => {
                 if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
                   // text = text.replace(el.username.toLocaleLowerCase(), '');
-                  msg.softMentions.users.add(el);
+                  msg.softMentions.users.set(el.id, el);
                 } else if (text.indexOf(el.id.toLocaleLowerCase()) > -1) {
                   text = text.replace(el.id.toLocaleLowerCase(), '');
-                  msg.softMentions.users.add(el);
+                  msg.softMentions.users.set(el.id, el);
                 }
               });
             }
