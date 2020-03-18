@@ -705,26 +705,26 @@ Common.shardConfigRegex = Common.prototype.shardConfigRegex;
  * optional error.
  */
 Common.mkAndWrite = function(filename, dir, data, cb) {
-  mkdirp(dir, (err) => {
-    if (err) {
-      if (err.code !== 'EEXIST') {
-        if (this.error) this.error(`Failed to make directory: ${dir}`);
-        console.error(err);
-        if (typeof cb === 'function') cb(err);
-        return;
-      }
-    }
-    if (typeof data === 'object') data = JSON.stringify(data);
-    fs.writeFile(filename, data, (err2) => {
-      if (err2) {
-        if (this.error) this.error(`Failed to save file: ${filename}`);
-        console.error(err2);
-        if (typeof cb === 'function') cb(err2);
-        return;
-      }
-      if (typeof cb === 'function') cb();
-    });
-  });
+  mkdirp(dir)
+      .then(() => {
+        if (typeof data === 'object') data = JSON.stringify(data);
+        fs.writeFile(filename, data, (err2) => {
+          if (err2) {
+            if (this.error) this.error(`Failed to save file: ${filename}`);
+            console.error(err2);
+            if (typeof cb === 'function') cb(err2);
+            return;
+          }
+          if (typeof cb === 'function') cb();
+        });
+      })
+      .catch((err) => {
+        if (err.code !== 'EEXIST') {
+          if (this.error) this.error(`Failed to make directory: ${dir}`);
+          console.error(err);
+          if (typeof cb === 'function') cb(err);
+        }
+      });
 };
 Common.prototype.mkAndWrite = Common.mkAndWrite;
 /**

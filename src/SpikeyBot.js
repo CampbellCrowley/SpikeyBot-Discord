@@ -1123,24 +1123,22 @@ function SpikeyBot() {
                 newData[botName] = newPrefix;
                 finalPrefix = JSON.stringify(newData);
               }
-              mkdirp(common.guildSaveDir + gId, writeBotNamePrefix);
+              mkdirp(`${common.guildSaveDir}${gId}`)
+                  .then(writeBotNamePrefix)
+                  .catch((err) => {
+                    common.error(
+                        'Failed to create guild directory! ' + gId + ' (' +
+                        newPrefix + ')');
+                    console.error(err);
+                  });
               /**
                * Write the custom prefix to file after making the
                * directory. This is for bots not using the default
                * name.
                *
                * @private
-               * @param {Error} err Error that occurred during making the
-               * directory.
                */
-              function writeBotNamePrefix(err) {
-                if (err) {
-                  common.error(
-                      'Failed to create guild directory! ' + gId +
-                      ' (' + newPrefix + ')');
-                  console.error(err);
-                  return;
-                }
+              function writeBotNamePrefix() {
                 fs.writeFile(
                     common.guildSaveDir + gId + guildCustomPrefixFile,
                     finalPrefix, (err) => {
@@ -1159,16 +1157,10 @@ function SpikeyBot() {
               }
             });
       } else {
-        mkdirp(common.guildSaveDir + gId, (err) => {
-          if (err) {
-            common.error(
-                'Failed to create guild directory! ' + gId + ' (' + newPrefix +
-                ')');
-            console.error(err);
-            return;
-          }
+        mkdirp(`${common.guildSaveDir}${gId}`).then(() => {
           fs.writeFile(
-              common.guildSaveDir + gId + guildPrefixFile, newPrefix, (err) => {
+              common.guildSaveDir + gId + guildPrefixFile, newPrefix,
+              (err) => {
                 if (err) {
                   common.error(
                       'Failed to save guild custom prefix! ' + gId + ' (' +
@@ -1179,6 +1171,11 @@ function SpikeyBot() {
                       'Guild ' + gId + ' updated prefix to ' + newPrefix);
                 }
               });
+        }).catch((err) => {
+          common.error(
+              'Failed to create guild directory! ' + gId + ' (' +
+              newPrefix + ')');
+          console.error(err);
         });
       }
     };

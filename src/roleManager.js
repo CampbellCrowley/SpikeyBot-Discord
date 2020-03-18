@@ -92,12 +92,7 @@ function RoleManager() {
       const filename = dir + saveFile;
       const saveStartTime = Date.now();
       if (opt == 'async') {
-        mkdirp(dir, function(err) {
-          if (err) {
-            self.error('Failed to create directory for ' + dir);
-            console.error(err);
-            return;
-          }
+        mkdirp(dir).then(() => {
           fs.writeFile(filename, JSON.stringify(data), function(err2) {
             if (err2) {
               self.error('Failed to save HG data for ' + filename);
@@ -108,6 +103,9 @@ function RoleManager() {
               self.debug('Purged ' + id);
             }
           });
+        }).catch((err) => {
+          self.error('Failed to create directory for ' + dir);
+          console.error(err);
         });
       } else {
         try {

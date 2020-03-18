@@ -860,12 +860,7 @@ function HG() {
       const url = self.common.avatarURL +
           (self.common.isRelease ? 'avatars/' : 'dev/avatars/') + id + '/' +
           imgName;
-      mkdirp(dir, (err) => {
-        if (err) {
-          self.error('Failed to create NPC directory to cache avatar: ' + dir);
-          console.error(err);
-          return;
-        }
+      mkdirp(dir).then(() => {
         const fetchSize = HungryGames.UserIconUrl.fetchSize;
         image.resize(fetchSize, fetchSize);
         image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
@@ -881,6 +876,9 @@ function HG() {
             }
           });
         });
+      }).catch((err) => {
+        self.error('Failed to create NPC directory to cache avatar: ' + dir);
+        console.error(err);
       });
       return url;
     });
@@ -5014,13 +5012,7 @@ function HG() {
     return toJimp(url).then((image) => {
       if (fromCache) return image;
       if (filename && image) {
-        mkdirp(dir, (err) => {
-          if (err) {
-            self.error(
-                'Failed to create user directory to cache avatar: ' + dir);
-            console.error(err);
-            return;
-          }
+        mkdirp(dir).then(() => {
           image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
             if (err) {
               self.error(
@@ -5035,6 +5027,10 @@ function HG() {
               }
             });
           });
+        }).catch((err) => {
+          self.error(
+              'Failed to create user directory to cache avatar: ' + dir);
+          console.error(err);
         });
       }
       return image;

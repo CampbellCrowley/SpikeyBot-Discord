@@ -738,9 +738,9 @@ function WebAccount() {
      */
     function makeDirectory(err, data) {
       if (err) {
-        mkdirp(dirname, function(err) {
-          writeFile(err, data);
-        });
+        mkdirp(dirname)
+            .then(() => writeFile(null, data))
+            .catch((err) => writeFile(err, null));
       } else {
         writeFile(null, data);
       }

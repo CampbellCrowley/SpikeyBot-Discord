@@ -132,12 +132,7 @@ function CmdScheduling() {
     const dir = self.common.guildSaveDir + i;
     const filename = dir + saveSubDir;
     if (opt === 'async') {
-      mkdirp(dir, (err) => {
-        if (err) {
-          self.error('Failed to make directory: ' + dir);
-          console.log(err);
-          return;
-        }
+      mkdirp(dir).then(() => {
         fs.readFile(filename, (err, rec) => {
           if (!err && rec) {
             try {
@@ -158,6 +153,9 @@ function CmdScheduling() {
             }
           });
         });
+      }).catch((err) => {
+        self.error('Failed to make directory: ' + dir);
+        console.log(err);
       });
     } else {
       try {

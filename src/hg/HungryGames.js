@@ -727,12 +727,7 @@ class HungryGames {
       cb('ALREADY_EXISTS');
       return null;
     }
-    mkdirp(newDir + creator, (err) => {
-      if (err) {
-        console.error(err);
-        cb('MKDIR_FAILED');
-        return;
-      }
+    mkdirp(`${newDir}${creator}`).then(() => {
       fs.writeFile(filename, JSON.stringify(evt), (err) => {
         if (err) {
           console.error(err);
@@ -753,6 +748,9 @@ class HungryGames {
           cb(null, evt);
         });
       });
+    }).catch((err) => {
+      console.error(err);
+      cb('MKDIR_FAILED');
     });
     return evt.id;
   }
@@ -1097,12 +1095,7 @@ class HungryGames {
       const filename = dir + this.saveFile;
       const saveStartTime = Date.now();
       if (opt == 'async') {
-        mkdirp(dir, (err) => {
-          if (err) {
-            this._parent.error('Failed to create directory for ' + dir);
-            console.error(err);
-            return;
-          }
+        mkdirp(dir).then(() => {
           let stringified;
           try {
             stringified = JSON.stringify(data);
@@ -1122,6 +1115,9 @@ class HungryGames {
               this._parent.debug(`Purged ${id}`);
             }
           });
+        }).catch((err) => {
+          this._parent.error('Failed to create directory for ' + dir);
+          console.error(err);
         });
       } else {
         try {
