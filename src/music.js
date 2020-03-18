@@ -3,8 +3,8 @@
 const ytdl = require('youtube-dl'); // Music thread uses separate require.
 const fs = require('fs'); // Music thread uses separate require.
 const https = require('https');
-const ogg = require('ogg');
-const opus = require('node-opus');
+// const ogg = require('ogg');
+// const opus = require('node-opus');
 const spawn = require('threads').spawn;
 const Readable = require('stream').Readable;
 require('./subModule.js').extend(Music);
@@ -1850,10 +1850,14 @@ function Music() {
  * @param {WritableStream} file The file stream we are writing to.
  */
 Music.streamToOgg = function(input, file) {
-  const opusEncoder = new opus.Encoder();
-  const oggEncoder = new ogg.Encoder();
-  input.pipe(opusEncoder).pipe(oggEncoder.stream());
-  oggEncoder.pipe(file);
+  input; file;
+  return;
 };
+// Music.streamToOgg = function(input, file) {
+//   const opusEncoder = new opus.Encoder();
+//   const oggEncoder = new ogg.Encoder();
+//   input.pipe(opusEncoder).pipe(oggEncoder.stream());
+//   oggEncoder.pipe(file);
+// };
 
 module.exports = new Music();
