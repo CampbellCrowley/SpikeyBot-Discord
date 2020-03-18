@@ -77,13 +77,13 @@ This tutorial uses the Discord.js sharding system, which may become deprecated i
 1) Have a server/computer
     - SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.
 2) Install [NodeJS](https://nodejs.org/)
-    - The bot is currently running on NodeJS [v10.18.1](https://nodejs.org/dist/v10.18.1/). Other versions may work, but are untested.
+    - The bot is currently running on NodeJS [v12.16.1](https://nodejs.org/dist/v12.16.1/). Other versions may work, but are untested.
 3) Download source code
     - Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.
 4) Install system dependencies
     - `sudo apt install make libtool autoconf g++ ffmpeg` are required for the default installation.
 5) Install dependencies via NPM
-    - Current version of NPM used is `v6.14.1`, but almost any version should be fine.
+    - Current version of NPM used is `v6.14.2`, but almost any version should be fine.
     - In the `SpikeyBot-Discord` directory, run `npm install`.
 6) Get a bot token from Discord
     - A token for the bot that you are trying to run from [Discord](https://discordapp.com/developers/applications/) is required.
