@@ -388,7 +388,7 @@ function Common() {
       process.on('message', listener);
       const timeout = setTimeout(() => {
         process.removeListener('message', listener);
-        cb('Send Timeout');
+        cb('SQL IPC Send Timeout');
       }, 10000);
 
       process.send({_sSQL: query}, (err) => {

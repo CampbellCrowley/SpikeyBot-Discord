@@ -1059,7 +1059,7 @@ class ShardingMaster {
       ent[1].emit('evalRequest', script, (error, res) => {
         numDone++;
         if (error) {
-          err = error;
+          err = this._makeSerializableError(error);
         } else {
           out[id] = res;
         }
@@ -1110,7 +1110,8 @@ class ShardingMaster {
       cb('No Database Connection');
       return;
     }
-    global.sqlCon.query(query, cb);
+    global.sqlCon.query(
+        query, (err, ...args) => cb(this._makeSerializableError(err), ...args));
   }
 
   /**
@@ -1422,6 +1423,28 @@ class ShardingMaster {
         cb(data);
       }
     });
+  }
+
+  /**
+   * @description Convert an Error object into a serializable object format that
+   * can be send easily over a socket.
+   * @private
+   * @param {?Error|string} err The error to make into a basic object. If
+   * falsey, returns null. If string, the string is returned unmodified.
+   * @returns {?object|string} A simple object or null if falsey value passed or
+   * string if string was passed.
+   */
+  _makeSerializableError(err) {
+    if (!err) return null;
+    if (typeof err === 'string') return err;
+    return {
+      message: err.message,
+      name: err.name,
+      fileName: err.fileName,
+      lineNumber: err.lineNumber,
+      columnNumber: err.columnNumber,
+      stack: err.stack,
+    };
   }
 
   /**

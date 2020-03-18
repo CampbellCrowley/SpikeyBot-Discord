@@ -965,9 +965,7 @@ function HG() {
       }
       if (typeof cb === 'function') cb(null);
     } else if (g) {
-      if (!silent) {
-        self.common.reply(msg, 'Refreshing current game.');
-      }
+      if (!silent) self.common.reply(msg, 'Refreshing current game.');
       g.includedUsers = g.includedUsers.filter((u) => {
         const m = msg.guild.members.resolve(u);
         if (m && m.partial) m.fetch();
