@@ -1723,12 +1723,10 @@ function HG() {
           'You must specify who you wish for me to exclude from the next ' +
               'game.');
     } else {
-      const mentionedRoleUsers = new self.Discord.UserStore(
-          self.client, ...msg.mentions.roles.cache.map(
-              (r) => r.members.cache.map((m) => m.user)));
-      const softRoleUsers = new self.Discord.UserStore(
-          self.client, ...msg.softMentions.roles.cache.map(
-              (r) => r.members.cache.map((m) => m.user)));
+      const mentionedRoleUsers = new self.Discord.Collection(
+          ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
+      const softRoleUsers = new self.Discord.Collection(
+          ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
       const mentions = msg.mentions.users.concat(msg.softMentions.users)
           .concat(mentionedRoleUsers.concat(softRoleUsers));
 
@@ -2021,12 +2019,10 @@ function HG() {
           msg,
           'You must specify who you wish for me to include in the next game.');
     } else {
-      const mentionedRoleUsers = new self.Discord.UserStore(
-          self.client, ...msg.mentions.roles.cache.map(
-              (r) => r.members.cache.map((m) => m.user)));
-      const softRoleUsers = new self.Discord.UserStore(
-          self.client, ...msg.softMentions.roles.cache.map(
-              (r) => r.members.cache.map((m) => m.user)));
+      const mentionedRoleUsers = new self.Discord.Collection(
+          ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
+      const softRoleUsers = new self.Discord.Collection(
+          ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
       const mentions = msg.mentions.users.concat(msg.softMentions.users)
           .concat(mentionedRoleUsers.concat(softRoleUsers));
 
@@ -4406,12 +4402,10 @@ function HG() {
    * were mentioned.
    */
   function parseGamePlayers(msg, game) {
-    const mentionedRoleUsers = new self.Discord.UserStore(
-        self.client, ...msg.mentions.roles.cache.map(
-            (r) => r.members.cache.map((m) => m.user)));
-    const softRoleUsers = new self.Discord.UserStore(
-        self.client, ...msg.softMentions.roles.cache.map(
-            (r) => r.members.cache.map((m) => m.user)));
+    const mentionedRoleUsers = new self.Discord.Collection(
+        ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
+    const softRoleUsers = new self.Discord.Collection(
+        ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
     const mentions = msg.mentions.users.concat(msg.softMentions.users)
         .concat(mentionedRoleUsers.concat(softRoleUsers));
 
