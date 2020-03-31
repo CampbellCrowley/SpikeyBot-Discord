@@ -1716,14 +1716,7 @@ function HG() {
           'You must specify who you wish for me to exclude from the next ' +
               'game.');
     } else {
-      const mentionedRoleUsers = new self.Discord.Collection(
-          ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
-      const softRoleUsers = new self.Discord.Collection(
-          ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
-      const mentions = msg.mentions.users.concat(msg.softMentions.users)
-          .concat(mentionedRoleUsers.concat(softRoleUsers));
-
-      self.excludeUsers(mentions, id, (res) => {
+      self.excludeUsers(parseMentions(msg), id, (res) => {
         self.common.reply(msg, res);
       });
     }
@@ -2012,14 +2005,7 @@ function HG() {
           msg,
           'You must specify who you wish for me to include in the next game.');
     } else {
-      const mentionedRoleUsers = new self.Discord.Collection(
-          ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
-      const softRoleUsers = new self.Discord.Collection(
-          ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
-      const mentions = msg.mentions.users.concat(msg.softMentions.users)
-          .concat(mentionedRoleUsers.concat(softRoleUsers));
-
-      self.includeUsers(mentions, id, (response) => {
+      self.includeUsers(parseMentions(msg), id, (response) => {
         self.common.reply(msg, response);
       });
     }
@@ -4402,12 +4388,7 @@ function HG() {
    * were mentioned.
    */
   function parseGamePlayers(msg, game) {
-    const mentionedRoleUsers = new self.Discord.Collection(
-        ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
-    const softRoleUsers = new self.Discord.Collection(
-        ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
-    const mentions = msg.mentions.users.concat(msg.softMentions.users)
-        .concat(mentionedRoleUsers.concat(softRoleUsers));
+    const mentions = parseMentions(msg);
 
     let firstWord = msg.text.trim().split(' ')[0];
     if (firstWord) firstWord = firstWord.toLowerCase();
@@ -4976,6 +4957,24 @@ function HG() {
     if (Date.now() + duration > listenersEndTime) {
       listenersEndTime = Date.now() + duration;
     }
+  }
+
+  /**
+   * @description Parse all mentioned users from all softMentions and Discord
+   * mentions, including roles.
+   * @private
+   * @param {Discord~Message} msg The message containing mention data.
+   * @returns {Discord~Collection<Discord~User>} Collection of all users
+   * mentioned.
+   */
+  function parseMentions(msg) {
+    const mentionedRoleUsers = new self.Discord.Collection(
+        ...msg.mentions.roles.map((r) => r.members.map((m) => [m.id, m.user])));
+    const softRoleUsers = new self.Discord.Collection(
+        ...msg.softMentions.roles.map(
+            (r) => r.members.map((m) => [m.id, m.user])));
+    return msg.mentions.users.concat(msg.softMentions.users)
+        .concat(mentionedRoleUsers.concat(softRoleUsers));
   }
 
   /**
