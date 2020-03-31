@@ -1148,7 +1148,7 @@ function HG() {
    */
   function showGameInfo(msg, id) {
     let finalId = id;
-    if (msg.author.id == self.common.spikeyId) {
+    if (self.common.trustedIds.includes(msg.author.id)) {
       if (msg.text.trim().split(' ')[0]) {
         finalId = msg.text.trim().split(' ')[0];
       }
