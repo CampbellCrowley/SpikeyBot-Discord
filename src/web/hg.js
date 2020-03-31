@@ -739,6 +739,7 @@ function HGWeb() {
           array: function() {
             return [];
           },
+          cache: [],
         },
         guild: {},
         permissions: {bitfield: 0},
