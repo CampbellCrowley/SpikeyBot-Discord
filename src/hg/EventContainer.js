@@ -381,7 +381,7 @@ class EventContainer {
       path: `/hg/events/${id}.json`,
       method: 'GET',
       headers: {
-        'User-Agent': require('./common.js').ua,
+        'User-Agent': require('../common.js').ua,
         'Content-Type': 'application/json',
       },
     };
