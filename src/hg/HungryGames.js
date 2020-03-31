@@ -515,6 +515,9 @@ class HungryGames {
       game.actions = new HungryGames.ActionStore();
       this._parent._fire('actionUpdate', id, null);
       return 'Reset ALL actions!';
+    } else if (command == 'react') {
+      game.reactMessage = null;
+      return 'Reset react message!';
     } else {
       return 'Please specify what data to reset.\nall {deletes all data ' +
           'for this server},\nevents {deletes all custom events},\n' +
@@ -523,7 +526,7 @@ class HungryGames {
           'teams and creates new ones},\nusers {delete data about where to ' +
           'put users when creating a new game},\nnpcs {delete all NPCS}.' +
           '\nstats {delete all stats and groups}.\nactions {reset all actions' +
-          ' to default settings}.';
+          ' to default settings}.\nreact {cancels hg react command}.';
     }
   }
 

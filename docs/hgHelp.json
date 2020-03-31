@@ -177,6 +177,16 @@
               "description": "Reset Stats and Stat Groups",
               "command": "reset stats",
               "result": "Bot will remove and reset all tracked stats and stat groups. All lifetime stats will also be reset."
+            },
+            {
+              "description": "Reset Actions",
+              "command": "reset actions",
+              "result": "Bot will remove and reset all Actions to default values."
+            },
+            {
+              "description": "Reset React Command",
+              "command": "reset react",
+              "result": "Bot will clear all of its internal information about the react command. Use this if hg react appears to be broken."
             }
           ]
         }
