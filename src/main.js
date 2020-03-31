@@ -1748,8 +1748,9 @@ function Main() {
       if (guild.description) embed.setDescription(guild.description);
       embed.addField(
           'Numbers', 'Members: ' + guild.memberCount + '\nChannels: ' +
-              guild.channels.size + '\nRoles: ' + guild.roles.size +
-              '\nEmojis: ' + guild.emojis.size,
+              guild.channels.cache.size + '+\nRoles: ' +
+              guild.roles.cache.size + '+\nEmojis: ' + guild.emojis.cache.size +
+              '+',
           true);
       if (!guild.ownerID) {
         embed.addField(
