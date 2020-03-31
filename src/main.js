@@ -3188,7 +3188,7 @@ function Main() {
     self.client.guilds.cache.forEach((g) => {
       out.numLargestGuild = Math.max(g.memberCount, out.numLargestGuild);
       out.numMembers += g.memberCount;
-      out.numEmojis += g.emojis.size;
+      out.numEmojis += g.emojis.cache.size;
       if (g.verified) out.numVerified++;
       if (g.partnered) out.numPartnered++;
     });
@@ -3197,8 +3197,8 @@ function Main() {
     iTime = Date.now();
     const userDelta = Date.now() - iTime;
 
-    out.numUsers = self.client.users.size;
-    out.numChannels = self.client.channels.size;
+    out.numUsers = self.client.users.cache.size;
+    out.numChannels = self.client.channels.cache.size;
 
     const ut = self.bot.startTimestamp ? Date.now() - self.bot.startTimestamp :
                                          self.client.uptime;
