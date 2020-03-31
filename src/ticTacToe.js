@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 require('./subModule.js').extend(TicTacToe);  // Extends the SubModule class.
 
@@ -247,7 +247,7 @@ function TicTacToe() {
    * @param {TicTacToe~Game} game The game to update when changes are made.
    */
   function addListener(msg, game) {
-    msg.awaitReactions(function(reaction, user) {
+    msg.awaitReactions((reaction, user) => {
       if (user.id != self.client.user.id) {
         // reaction.users.remove(user).catch(() => {});
       } else {
@@ -266,7 +266,7 @@ function TicTacToe() {
         if (emoji[i] == reaction.emoji.name) return true;
       }
       return false;
-    }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+    }, {max: 1, time: maxReactAwaitTime}).then((reactions) => {
       if (reactions.size == 0) {
         msg.reactions.removeAll().catch(() => {});
         msg.edit(
@@ -276,10 +276,10 @@ function TicTacToe() {
         return;
       }
       if (!game.players.p1 && game.turn == 1) {
-        game.players.p1 = reactions.first().users.first(2)[1];
+        game.players.p1 = reactions.first().users.cache.first(2)[1];
       }
       if (!game.players.p2 && game.turn == 2) {
-        game.players.p2 = reactions.first().users.first(2)[1];
+        game.players.p2 = reactions.first().users.cache.first(2)[1];
       }
       // reactions.first().users.remove(self.client.user).catch(() => {});
 

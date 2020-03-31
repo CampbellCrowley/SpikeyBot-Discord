@@ -314,11 +314,11 @@ function Connect4() {
         return;
       }
       if (!game.players.p1 && game.turn == 1) {
-        const reactUsers = reactions.first().users.first(2);
+        const reactUsers = reactions.first().users.cache.first(2);
         game.players.p1 = reactUsers[1] || reactUsers[0];
       }
       if (!game.players.p2 && game.turn == 2) {
-        const reactUsers = reactions.first().users.first(2);
+        const reactUsers = reactions.first().users.cache.first(2);
         game.players.p2 = reactUsers[1] || reactUsers[0];
       }
 
