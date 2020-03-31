@@ -34,11 +34,21 @@ class SendPlayerRankMessageAction extends ChannelAction {
                 shortName = `${shortName.substring(0, 13)}...`;
               }
             }
-            return obj.rank + ') ' + shortName +
-                (obj.kills > 0 ? ' (' + obj.kills + ')' : '');
+            shortName = shortName.replace(/_/g, '\\_');
+            const kills = obj.kills > 0 ? ` (${obj.kills})` : '';
+            return `${obj.rank}) ${shortName}${kills}`;
           });
       if (rankList.length <= 20) {
         rankEmbed.setDescription(rankList.join('\n'));
+      } else if (rankList.length > 100) {
+        rankList.splice(100);
+        const thirdLength = Math.floor(rankList.length / 3);
+        for (let i = 0; i < 2; i++) {
+          const thisMessage =
+              rankList.splice(0, thirdLength).join('\n').slice(0, 1024);
+          rankEmbed.addField(i + 1, thisMessage, true);
+        }
+        rankEmbed.addField(3, rankList.join('\n').slice(0, 1024), true);
       } else {
         const thirdLength = Math.floor(rankList.length / 3);
         for (let i = 0; i < 2; i++) {

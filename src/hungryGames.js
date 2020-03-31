@@ -4462,7 +4462,7 @@ function HG() {
     return players.concat(
         mentions
             .filter((u) => {
-              if (players.includes(u.id)) return false;
+              if (!u || players.includes(u.id)) return false;
               return game.currentGame.includedUsers.find((p) => p.id == u.id);
             })
             .map((el) => el.id));
