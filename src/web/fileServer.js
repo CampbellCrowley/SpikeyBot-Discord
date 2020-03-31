@@ -64,20 +64,22 @@ class FileServer extends SubModule {
     if (rootIntent && req.method === 'GET') {
       const file = path.resolve(`${rootIntent}${url}`);
       if (!this._isPathAcceptable(file)) {
-        res.writeHead(404);
+        this.common.logDebug(`Unacceptable path ${url}`, ip);
+        res.writeHead(403);
         res.end();
         return;
       }
       fs.stat(file, (err, stats) => {
         if (err) {
           if (err.code === 'ENOENT') {
+            this.common.logDebug(`File not found ${url}`, ip);
             res.writeHead(404);
             res.end();
             return;
           }
           res.writeHead(500);
           res.end('500 Internal Server Error (FS)');
-          this.error(`Failed to stat file: ${file}`);
+          this.common.error(`Failed to stat file: ${file}`, ip);
           console.log(err);
           return;
         }
@@ -105,7 +107,7 @@ class FileServer extends SubModule {
         if (!mime) {
           res.writeHead(404);
           res.end();
-          this.debug(`404 (Bad MIME) ${req.method} ${url}`, ip);
+          this.common.logDebug(`404 (Bad MIME) ${req.method} ${url}`, ip);
         } else {
           res.writeHead(200, {
             'Content-Type': mime,
