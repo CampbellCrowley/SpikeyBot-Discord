@@ -715,7 +715,7 @@ function Uno() {
                 self.common.reply(m, 'Please mention users to invite.');
               } else {
                 let fail = false;
-                m.mentions.members.cache.forEach((m) => {
+                m.mentions.members.forEach((m) => {
                   fail = fail || !game.addPlayer(m);
                 });
                 if (fail) {
@@ -764,7 +764,7 @@ function Uno() {
             }
             case 'kick': {
               let bad = false;
-              m.mentions.members.cache.forEach((el) => {
+              m.mentions.members.forEach((el) => {
                 if (el.id != maker.id) game.removePlayer(el);
                 else bad = true;
               });
@@ -852,7 +852,7 @@ function Uno() {
               return true;
             case 'kick': {
               let bad = false;
-              m.mentions.members.cache.forEach((el) => {
+              m.mentions.members.forEach((el) => {
                 if (el.id != maker.id) game.removePlayer(el);
                 else bad = true;
               });
