@@ -392,7 +392,7 @@ class EventContainer {
         if (res.statusCode == 200) {
           this._parseFetched(content, id, type, cb);
         } else {
-          this.error('HG Event ' + res.statusCode + ': ' + content);
+          console.error('HG Event ' + res.statusCode + ': ' + content);
           console.error(host);
           cb(new Error('HG Event Bad Response'));
         }
