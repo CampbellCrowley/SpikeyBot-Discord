@@ -1046,7 +1046,7 @@ function HGWeb() {
     const g = self.client && self.client.guilds.resolve(gId);
     if (!g) return;
 
-    const roles = g.roles.array();
+    const roles = g.roles.cache.array();
 
     if (typeof cb === 'function') {
       cb(null, roles);

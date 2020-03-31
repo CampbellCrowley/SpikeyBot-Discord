@@ -2203,11 +2203,11 @@ function Main() {
     }
     const banList = [];
     uIds.forEach((el) => {
-      const u = msg.guild.members.get(el);
+      const u = msg.guild.members.resolve(el);
       if (u) {
         if (!banList.includes(u.id)) banList.push(u);
       } else {
-        const r = msg.guild.roles.get(el);
+        const r = msg.guild.roles.resolve(el);
         if (r) {
           r.members.cache.forEach((m) => {
             if (!banList.includes(m.id)) banList.push(m);
