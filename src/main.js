@@ -1116,8 +1116,7 @@ function Main() {
               });
               member.guild.channels.cache.forEach(function(channel) {
                 if (channel.permissionsLocked) return;
-                const overwrites =
-                    channel.permissionOverwrites.resolve(role.id);
+                const overwrites = channel.permissionOverwrites.get(role.id);
                 if (overwrites) {
                   if (channel.type == 'category') {
                     if (overwrites.deny.has(
