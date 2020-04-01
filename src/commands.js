@@ -1133,9 +1133,8 @@ function Command() {
         disabledList.push('Role: ' + role.name);
         return;
       }
-      const user = msg.guild.members.find((m) => {
-        return m.user.tag.toLowerCase() == trimmed;
-      });
+      const user = msg.guild.members.cache.find(
+          (m) => m.user.tag.toLowerCase() == trimmed);
       if (user) {
         settings.forEach((s) => {
           if (s.disabled.user && s.disabled.user[user.id]) return;
@@ -1238,9 +1237,8 @@ function Command() {
         enabledList.push('Role: ' + role.name);
         return;
       }
-      const user = msg.guild.members.find((m) => {
-        return m.user.tag.toLowerCase() == trimmed;
-      });
+      const user = msg.guild.members.cache.find(
+          (m) => m.user.tag.toLowerCase() == trimmed);
       if (user) {
         settings.forEach((s) => {
           if (s.enabled.user && s.enabled.user[user.id]) return;
