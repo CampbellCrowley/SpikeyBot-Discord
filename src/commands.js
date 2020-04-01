@@ -1121,9 +1121,8 @@ function Command() {
         disabledList.push('Permission: ' + el);
         return;
       }
-      const role = msg.guild.roles.find((r) => {
-        return r.name.toLowerCase() == trimmed;
-      });
+      const role =
+          msg.guild.roles.cache.find((r) => r.name.toLowerCase() == trimmed);
       if (role) {
         settings.forEach((s) => {
           if (s.disabled.roles[role.guild.id + '/' + role.id]) {
@@ -1227,9 +1226,8 @@ function Command() {
         enabledList.push('Permission: ' + el);
         return;
       }
-      const role = msg.guild.roles.find((r) => {
-        return r.name.toLowerCase() == trimmed;
-      });
+      const role =
+          msg.guild.roles.cache.find((r) => r.name.toLowerCase() == trimmed);
       if (role) {
         settings.forEach((s) => {
           if (s.enabled.roles[role.guild.id + '/' + role.id]) {
