@@ -899,9 +899,7 @@ function Command() {
     if (!cmd) return null;
     if (msg && cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
     cmd = cmd.toLowerCase();
-    let single = Object.values(cmds).find((el) => {
-      return el.aliases.includes(cmd);
-    });
+    let single = Object.values(cmds).find((el) => el.aliases.includes(cmd));
     if (setCmd) msg.cmd = cmd;
     while (single && single.subCmds && split.length > 0) {
       const sub = Object.values(single.subCmds).find((el) => {
