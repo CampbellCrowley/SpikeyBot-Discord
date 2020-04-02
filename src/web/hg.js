@@ -733,6 +733,7 @@ function HGWeb() {
    * @returns {object} The minimal member.
    */
   function makeMember(m) {
+    const m_ = m;
     if (typeof m !== 'object') {
       m = {
         roles: {
@@ -745,6 +746,10 @@ function HGWeb() {
         permissions: {bitfield: 0},
         user: self.client.users.resolve(m),
       };
+    }
+    if (!m.user) {
+      self.error(`Failed to make member: ${m_}`);
+      return null;
     }
     return {
       nickname: m.nickname,
