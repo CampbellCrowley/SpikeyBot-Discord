@@ -826,9 +826,7 @@ function Command() {
     }
 
     const keys = Object.keys(cmds);
-    const duplicates = cmd.aliases.filter((el) => {
-      return keys.includes(el);
-    });
+    const duplicates = cmd.aliases.filter((el) => keys.includes(el));
     if (duplicates.length > 0) {
       self.error(
           'Attempted to register a second handler for event that already ' +
@@ -889,6 +887,7 @@ function Command() {
    * null if it could not be found.
    */
   this.find = function(cmd, msg, setCmd = false) {
+    if (!cmds) return null;
     let split;
     if (!cmd) {
       split = msg.content.trim().split(/\s/);
