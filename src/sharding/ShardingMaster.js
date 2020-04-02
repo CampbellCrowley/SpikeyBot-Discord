@@ -1040,11 +1040,16 @@ class ShardingMaster {
      * @private
      */
     function done() {
-      if (err && numDone <= num) {
+      /* if (err && numDone <= num) {
         clearTimeout(timeout);
         cb(err);
         numDone = num + 1;
       } else if (numDone == numSent) {
+        clearTimeout(timeout);
+        cb(null, out);
+      } */
+      if (numDone == numSent) {
+        console.log('EVAL', script, err);
         clearTimeout(timeout);
         cb(null, out);
       }
@@ -1060,9 +1065,8 @@ class ShardingMaster {
         numDone++;
         if (error) {
           err = this._makeSerializableError(error);
-        } else {
-          out[id] = res;
         }
+        out[id] = res;
         done();
       });
     });
