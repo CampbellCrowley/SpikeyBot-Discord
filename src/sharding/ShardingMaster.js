@@ -1051,7 +1051,7 @@ class ShardingMaster {
       if (numDone == numSent) {
         console.log('EVAL', script, err);
         clearTimeout(timeout);
-        cb(null, out);
+        cb(err, out);
       }
     }
     sockets.forEach((ent) => {
@@ -1071,7 +1071,7 @@ class ShardingMaster {
       });
     });
     if (numSent != num) {
-      err = 'Not all shards connected to master.';
+      err = `Not all shards connected to master. (${numSent}/${num})`;
       done();
     }
   }
