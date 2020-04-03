@@ -1069,13 +1069,18 @@ class ShardingMaster {
      * @private
      */
     function done() {
-      if (err && numDone <= num) {
+      /* if (err && numDone <= num) {
         clearTimeout(timeout);
         cb(err);
         numDone = num + 1;
       } else if (numDone == numSent) {
         clearTimeout(timeout);
         cb(null, out);
+      } */
+      if (numDone == numSent) {
+        console.log('EVAL', script, err);
+        clearTimeout(timeout);
+        cb(err, out);
       }
     }
     sockets.forEach((ent) => {
@@ -1089,14 +1094,13 @@ class ShardingMaster {
         numDone++;
         if (error) {
           err = this._makeSerializableError(error);
-        } else {
-          out[id] = res;
         }
+        out[id] = res;
         done();
       });
     });
     if (numSent != num) {
-      err = 'Not all shards connected to master.';
+      err = `Not all shards connected to master. (${numSent}/${num})`;
       done();
     }
   }

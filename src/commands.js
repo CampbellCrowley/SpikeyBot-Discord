@@ -826,9 +826,7 @@ function Command() {
     }
 
     const keys = Object.keys(cmds);
-    const duplicates = cmd.aliases.filter((el) => {
-      return keys.includes(el);
-    });
+    const duplicates = cmd.aliases.filter((el) => keys.includes(el));
     if (duplicates.length > 0) {
       self.error(
           'Attempted to register a second handler for event that already ' +
@@ -889,6 +887,7 @@ function Command() {
    * null if it could not be found.
    */
   this.find = function(cmd, msg, setCmd = false) {
+    if (!cmds) return null;
     let split;
     if (!cmd) {
       split = msg.content.trim().split(/\s/);
@@ -899,9 +898,7 @@ function Command() {
     if (!cmd) return null;
     if (msg && cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
     cmd = cmd.toLowerCase();
-    let single = Object.values(cmds).find((el) => {
-      return el.aliases.includes(cmd);
-    });
+    let single = Object.values(cmds).find((el) => el.aliases.includes(cmd));
     if (setCmd) msg.cmd = cmd;
     while (single && single.subCmds && split.length > 0) {
       const sub = Object.values(single.subCmds).find((el) => {
@@ -1080,21 +1077,21 @@ function Command() {
       settings.push(userSettings[msg.guild.id][name]);
     });
     const disabledList = [];
-    msg.mentions.channels.cache.forEach((c) => {
+    msg.mentions.channels.forEach((c) => {
       settings.forEach((s) => {
         if (s.disabled.channels[c.id]) return;
         s.set(s.defaultDisabled ? 'default' : 'disabled', 'channel', c.id);
       });
       disabledList.push(`${c.type} channel: #${c.name}`);
     });
-    msg.mentions.members.cache.forEach((m) => {
+    msg.mentions.members.forEach((m) => {
       settings.forEach((s) => {
         if (s.disabled.users[m.id]) return;
         s.set(s.defaultDisabled ? 'default' : 'disabled', 'user', m.id);
       });
       disabledList.push(`Member: ${m.user.tag}`);
     });
-    msg.mentions.roles.cache.forEach((r) => {
+    msg.mentions.roles.forEach((r) => {
       settings.forEach((s) => {
         if (s.disabled.roles[`${r.guild.id}/${r.id}`]) return;
         s.set(
@@ -1121,9 +1118,8 @@ function Command() {
         disabledList.push('Permission: ' + el);
         return;
       }
-      const role = msg.guild.roles.find((r) => {
-        return r.name.toLowerCase() == trimmed;
-      });
+      const role =
+          msg.guild.roles.cache.find((r) => r.name.toLowerCase() == trimmed);
       if (role) {
         settings.forEach((s) => {
           if (s.disabled.roles[role.guild.id + '/' + role.id]) {
@@ -1134,9 +1130,8 @@ function Command() {
         disabledList.push('Role: ' + role.name);
         return;
       }
-      const user = msg.guild.members.find((m) => {
-        return m.user.tag.toLowerCase() == trimmed;
-      });
+      const user = msg.guild.members.cache.find(
+          (m) => m.user.tag.toLowerCase() == trimmed);
       if (user) {
         settings.forEach((s) => {
           if (s.disabled.user && s.disabled.user[user.id]) return;
@@ -1187,21 +1182,21 @@ function Command() {
       settings.push(userSettings[msg.guild.id][name]);
     });
     const enabledList = [];
-    msg.mentions.channels.cache.forEach((c) => {
+    msg.mentions.channels.forEach((c) => {
       settings.forEach((s) => {
         if (s.enabled.channels[c.id]) return;
         s.set(s.defaultEnabled ? 'default' : 'enabled', 'channel', c.id);
       });
       enabledList.push(c.type + ' channel: #' + c.name);
     });
-    msg.mentions.members.cache.forEach((m) => {
+    msg.mentions.members.forEach((m) => {
       settings.forEach((s) => {
         if (s.enabled.users[m.id]) return;
         s.set(s.defaultEnabled ? 'default' : 'enabled', 'user', m.id);
       });
       enabledList.push('Member: ' + m.user.tag);
     });
-    msg.mentions.roles.cache.forEach((r) => {
+    msg.mentions.roles.forEach((r) => {
       settings.forEach((s) => {
         if (s.enabled.roles[r.guild.id + '/' + r.id]) return;
         s.set(
@@ -1227,9 +1222,8 @@ function Command() {
         enabledList.push('Permission: ' + el);
         return;
       }
-      const role = msg.guild.roles.find((r) => {
-        return r.name.toLowerCase() == trimmed;
-      });
+      const role =
+          msg.guild.roles.cache.find((r) => r.name.toLowerCase() == trimmed);
       if (role) {
         settings.forEach((s) => {
           if (s.enabled.roles[role.guild.id + '/' + role.id]) {
@@ -1240,9 +1234,8 @@ function Command() {
         enabledList.push('Role: ' + role.name);
         return;
       }
-      const user = msg.guild.members.find((m) => {
-        return m.user.tag.toLowerCase() == trimmed;
-      });
+      const user = msg.guild.members.cache.find(
+          (m) => m.user.tag.toLowerCase() == trimmed);
       if (user) {
         settings.forEach((s) => {
           if (s.enabled.user && s.enabled.user[user.id]) return;

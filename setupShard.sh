@@ -12,7 +12,7 @@ rm tmpcrontab
 
 crontab -u admin -l > tmpcrontab
 echo '35 * * * * /usr/bin/sh /home/admin/sync.sh' >> tmpcrontab
-crontab -u tmpcrontab
+crontab -u admin tmpcrontab
 rm tmpcrontab
 
 echo 'if [ "$TERM" == "tmux" ] && [ "" == "$TMUX" ]; then
@@ -34,6 +34,7 @@ sudo -u admin npm i
 
 cd /home/admin/
 
+mkdir .ssh
 ssh-keygen -t rsa -f /home/admin/.ssh/id_rsa_nopass -q -N ""
 echo 'Host kamino1
   Hostname 10.138.62.205

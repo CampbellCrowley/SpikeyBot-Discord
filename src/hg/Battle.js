@@ -130,7 +130,7 @@ class Battle extends HungryGames.Event {
       const attackerEventDamage = eventTry.attacker.damage * 1;
       const victimEventDamage = eventTry.victim.damage * 1;
 
-      const flipRoles = Math.random() > 0.6;
+      const flipRoles = Math.random() > 0.7;
       const attackerIndex = Math.floor(Math.random() * numAttacker) + numVictim;
 
       if (loop == 999) {
