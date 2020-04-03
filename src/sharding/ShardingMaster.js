@@ -421,6 +421,8 @@ class ShardingMaster {
   _refreshShardStatus() {
     this._setHBTimeout();
     if (!this._knownUsers) return;
+    const now = Date.now();
+    if (now < this._nextHeartbeatTime) return;
     // Total running shards.
     const goal = this.getGoalShardCount();
     if (goal < 0) {
@@ -433,6 +435,8 @@ class ShardingMaster {
     const current = this.getCurrentShardCount();
     // Total number of shards that should become available.
     const known = this.getKnownShardCount();
+    // Total number of shards that have ever been connected successfully.
+    const registered = this.getRegisteredShardCount();
     // Array of references to ShardInfo running with same goal count.
     const correct = this._getCurrentConfigured(goal);
     // Array of references to ShardInfo for each shard not configured correctly.
@@ -447,6 +451,9 @@ class ShardingMaster {
 
     if (goal > known) {
       this.generateShardConfig();
+    }
+    if (goal > registered) {
+      goal = registered;
     }
     if (!master) {
       this.generateShardConfig(true);
@@ -471,7 +478,6 @@ class ShardingMaster {
     // common.logDebug(`Unbound: ${unboundList}`);
 
     const hbConf = this._config.heartbeat;
-    const now = Date.now();
 
     const foundIds = [];
     correct.sort((a, b) => b.bootTime - a.bootTime);
@@ -528,54 +534,52 @@ class ShardingMaster {
 
     if (master && master.goalShardId < 0) {
       configuring.push(master);
-      master.goalShardId = 1000; // I think this is big enough for a while.
+      master.goalShardId = 1000;  // I think this is big enough for a while.
       master.goalShardCount = goal;
     }
 
-    if (now >= this._nextHeartbeatTime) {
-      this._saveUsers();
-      // Send all shutdown requests asap, as they do not have their own
-      // timeslot.
-      for (let i = 0; i < configuring.length; ++i) {
-        if (configuring[i].goalShardId >= 0) continue;
-        this._sendHeartbeatRequest(configuring[i]);
-        configuring.splice(i, 1);
-        i--;
-      }
+    this._saveUsers();
+    // Send all shutdown requests asap, as they do not have their own
+    // timeslot.
+    for (let i = 0; i < configuring.length; ++i) {
+      if (configuring[i].goalShardId >= 0) continue;
+      this._sendHeartbeatRequest(configuring[i]);
+      configuring.splice(i, 1);
+      i--;
+    }
 
-      if (now - hbConf.interval > this._heartbeatLoopStartTime) {
-        this._heartbeatLoopStartTime += hbConf.interval;
-      }
+    if (now - hbConf.interval > this._heartbeatLoopStartTime) {
+      this._heartbeatLoopStartTime += hbConf.interval;
+    }
 
-      if (hbConf.updateStyle === 'pull') {
-        if (hbConf.disperse) {
-          const updateId = Math.floor(
-              ((now - this._heartbeatLoopStartTime) / hbConf.interval) *
-              (goal + 1));
+    if (hbConf.updateStyle === 'pull') {
+      if (hbConf.disperse) {
+        const updateId = Math.floor(
+            ((now - this._heartbeatLoopStartTime) / hbConf.interval) *
+            (goal + 1));
 
-          const delta = Math.floor(hbConf.interval / (goal + 1));
-          this._nextHeartbeatTime += delta;
+        const delta = Math.floor(hbConf.interval / (goal + 1));
+        this._nextHeartbeatTime += delta;
 
-          if (updateId >= goal) {
-            this._sendHeartbeatRequest(master);
-          } else {
-            this._sendHeartbeatRequest(updateId);
-          }
+        if (updateId >= goal) {
+          this._sendHeartbeatRequest(master);
         } else {
-          this._nextHeartbeatTime += hbConf.interval;
-
-          Object.keys(this._knownUsers).forEach((el) => {
-            if (el.goalShardId < 0) return;
-            this._sendHeartbeatRequest(el);
-          });
-          this._sendHeartbeatRequest(this._getMasterUser());
+          this._sendHeartbeatRequest(updateId);
         }
       } else {
         this._nextHeartbeatTime += hbConf.interval;
-      }
 
-      this._setHBTimeout();
+        Object.keys(this._knownUsers).forEach((el) => {
+          if (el.goalShardId < 0) return;
+          this._sendHeartbeatRequest(el);
+        });
+        this._sendHeartbeatRequest(this._getMasterUser());
+      }
+    } else {
+      this._nextHeartbeatTime += hbConf.interval;
     }
+
+    this._setHBTimeout();
   }
   /**
    * @description Reset the heartbeat timeout interval for refreshing shard
@@ -657,6 +661,19 @@ class ShardingMaster {
   getKnownShardCount() {
     if (!this._knownUsers) return 0;
     return Object.values(this._knownUsers).filter((el) => !el.isMaster).length;
+  }
+
+  /**
+   * @description Fetches the number of shards that have ever successfully
+   * connected to us.
+   * @public
+   * @returns {number} The number of shards we will probably be startable.
+   */
+  getRegisteredShardCount() {
+    if (!this._knownUsers) return 0;
+    return Object.values(this._knownUsers)
+        .filter((el) => !el.isMaster && el.lastSeen)
+        .length;
   }
 
   /**
@@ -927,6 +944,7 @@ class ShardingMaster {
     }
 
     user.lastSeen = now;
+    user.lastHeartbeat = user.lastSeen;
     socket.userId = userId;
 
     if (user.isMaster && this._masterShardSocket) {
@@ -1003,11 +1021,22 @@ class ShardingMaster {
       // TODO: Store history of shard status for historic purposes.
     });
 
-    socket.on(
-        'broadcastEval', (...args) => this.broadcastEvalToShards(...args));
-    socket.on('respawnAll', (...args) => this.respawnAll(...args));
-    socket.on('sendSQL', (...args) => this.sendSQL(...args));
-    socket.on('reboot', (...args) => this.rebootRequest(...args));
+    socket.on('broadcastEval', (...args) => {
+      user.lastSeen = Date.now();
+      this.broadcastEvalToShards(...args);
+    });
+    socket.on('respawnAll', (...args) => {
+      user.lastSeen = Date.now();
+      this.respawnAll(...args);
+    });
+    socket.on('sendSQL', (...args) => {
+      user.lastSeen = Date.now();
+      this.sendSQL(...args);
+    });
+    socket.on('reboot', (...args) => {
+      user.lastSeen = Date.now();
+      this.rebootRequest(...args);
+    });
   }
 
   /**

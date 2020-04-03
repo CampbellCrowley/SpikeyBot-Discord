@@ -288,7 +288,11 @@ class ShardingSlave {
       return;
     }
     clearTimeout(this._respawnTimeout);
-    if (this._child) {
+    if (this._child && this._status.stopTime > this._status.startTime &&
+        Date.now() - this._status.stopTime > 5000) {
+      common.logWarning('Child failed to shutdown! Forcefully killing...');
+      this._child.kill('SIGKILL');
+    } else if (this._child) {
       this._child.kill('SIGTERM');
       this._status.stopTime = Date.now();
     } else if (this._status.goalShardId >= 0) {
