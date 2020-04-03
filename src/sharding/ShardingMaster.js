@@ -424,7 +424,7 @@ class ShardingMaster {
     const now = Date.now();
     if (now < this._nextHeartbeatTime) return;
     // Total running shards.
-    const goal = this.getGoalShardCount();
+    let goal = this.getGoalShardCount();
     if (goal < 0) {
       clearTimeout(this._hbTimeout);
       this._hbTimeout = setTimeout(() => this._refreshShardStatus(), 5000);
@@ -1078,7 +1078,10 @@ class ShardingMaster {
         cb(null, out);
       } */
       if (numDone == numSent) {
-        console.log('EVAL', script, err);
+        if (err) {
+          common.error(`BROADCAST EVAL FAILED: ${script}`);
+          console.error(err, out);
+        }
         clearTimeout(timeout);
         cb(err, out);
       }
