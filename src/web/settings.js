@@ -796,7 +796,7 @@ function WebSettings() {
       newG.ownerId = g.ownerID;
       newG.members = g.members.cache.map((m) => m.id);
       newG.channels =
-          g.channels
+          g.channels.cache
               .filter((c) => {
                 const perms = c.permissionsFor(member);
                 return userData.id == self.common.spikeyId ||
