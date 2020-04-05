@@ -737,9 +737,6 @@ function HGWeb() {
     if (typeof m !== 'object') {
       m = {
         roles: {
-          array: function() {
-            return [];
-          },
           cache: [],
         },
         guild: {},

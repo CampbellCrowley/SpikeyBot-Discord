@@ -635,8 +635,10 @@ function WebSettings() {
     if (typeof m !== 'object') {
       m = {
         roles: {
-          array: function() {
-            return [];
+          cache: {
+            array: function() {
+              return [];
+            },
           },
         },
         guild: {},
@@ -646,7 +648,7 @@ function WebSettings() {
     }
     return {
       nickname: m.nickname,
-      roles: m.roles.array(),
+      roles: m.roles.cache.array(),
       color: m.displayColor,
       guild: {id: m.guild.id},
       user: {
