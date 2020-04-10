@@ -75,7 +75,6 @@
     "./tts.js",
     "./poll.js",
     "./chatbot.js",
-    "./spotify.js",
     "./cmdScheduling.js",
     "./uno.js",
     "./define.js",
