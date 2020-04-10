@@ -452,6 +452,8 @@ function HG() {
       new self.command.SingleCommand(
           ['next', 'nextday', 'resume', 'continue'], mkCmd(nextDay), cmdOpts),
       new self.command.SingleCommand(
+          ['step', 'single', 'one', 'nextevent'], mkCmd(commandStep), cmdOpts),
+      new self.command.SingleCommand(
           ['end', 'abort', 'stop'], mkCmd(endGame), cmdOpts),
       new self.command.SingleCommand(
           ['save'],
@@ -1226,9 +1228,7 @@ function HG() {
         self._fire('gameStarted', id);
         const game = hg.getGame(id);
         HungryGames.ActionManager.gameStart(hg, game);
-        if (game.autoPlay && !game.currentGame.isPaused) {
-          nextDay(msg, id);
-        }
+        if (game.autoPlay) nextDay(msg, id);
       });
       if (game) game.loading = false;
     }
@@ -1404,6 +1404,7 @@ function HG() {
         msg.channel.send(
             '<@' + msg.author.id +
             '> `Enabling Autoplay! Starting the next day!`');
+        game.currentGame.isPaused = false;
         nextDay(msg, id);
       } else if (!game.currentGame.inProgress) {
         if (self.command.validate(msg.prefix + 'hg start', msg)) {
@@ -1478,8 +1479,9 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {boolean} [autoStep=true] Value to pass for autoStep.
    */
-  function nextDay(msg, id) {
+  function nextDay(msg, id, autoStep = true) {
     if (!msg.channel) {
       self.error('Failed to start next day because channel is unknown: ' + id);
       return;
@@ -1513,8 +1515,11 @@ function HG() {
                   err.message);
               if (err.message != 'No Perms') console.error(err);
             });
-      } else {
+      } else if (autoStep) {
         game.createInterval(dayStateModified);
+      } else {
+        game.setStateUpdateCallback(dayStateModified);
+        game.step();
       }
       return;
     }
@@ -1552,7 +1557,8 @@ function HG() {
       HungryGames.ActionManager.dayStart(hg, game);
       if (!game._dayEventInterval && !game._autoPlayTimeout) {
         game._autoPlayTimeout = setTimeout(() => {
-          if (!game._dayEventInterval) game.createInterval(dayStateModified);
+          game.setStateUpdateCallback(dayStateModified);
+          if (!game._dayEventInterval && autoStep) game.createInterval();
         }, game.options.disableOutput ? 0 : game.options.delayEvents);
       }
     });
@@ -1571,7 +1577,7 @@ function HG() {
     function dayStateModified(dayComplete, doSim) {
       self._fire('dayStateChange', id);
       if (doSim) {
-        nextDay(msg, id);
+        nextDay(msg, id, !game.currentGame.isPaused);
       } else if (dayComplete) {
         endDayCheck(msg, id);
       } else {
@@ -1614,6 +1620,42 @@ function HG() {
       HungryGames.ActionManager.gameEnd(hg, game);
     } else {
       HungryGames.ActionManager.dayEnd(hg, game);
+    }
+  }
+  /**
+   * Show only the next event in a day.
+   *
+   * @public
+   * @param {string} uId The id of the user who trigged this step.
+   * @param {string} gId The id of the guild to step the game in.
+   * @param {string} cId The id of the channel the request was sent from.
+   */
+  this.gameStep = function(uId, gId, cId) {
+    commandStep(makeMessage(uId, gId, cId), gId);
+  };
+  /**
+   * Show only the next event in a day.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function commandStep(msg, id) {
+    if (!msg.channel) {
+      self.error('Failed to start next day because channel is unknown: ' + id);
+      return;
+    }
+    const game = hg.getGame(id);
+    if (game && game.currentGame && !game.currentGame.isPaused) {
+      pauseGame(msg, id);
+    } else if (
+      !game || !game.currentGame || !game.currentGame.inProgress ||
+        !game.currentGame.day.state < 2 || !game._stateUpdateCallback) {
+      nextDay(msg, id, false);
+    } else {
+      game.currentGame.isPaused = true;
+      game.step();
     }
   }
   /**

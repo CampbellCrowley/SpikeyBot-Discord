@@ -60,6 +60,7 @@
 - gettime (Replies with the server's timezone and time, as well as GMT)
 - sweep (Removes users from cache that we don't care about at the moment in order to free memory. Only Spikey can do this)
 - cookies (Alias for `imgur cookies`)
+- listbans (List all known bans for a user in all mutual servers. Currently disabled due to poor implementation causing rate-limits to get hit.)
 
 # Event Controlled
 - Added to guild

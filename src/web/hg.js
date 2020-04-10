@@ -278,6 +278,7 @@ function HGWeb() {
     socket.on('startGame', (...args) => handle(self.startGame, args));
     socket.on('startAutoplay', (...args) => handle(self.startAutoplay, args));
     socket.on('nextDay', (...args) => handle(self.nextDay, args));
+    socket.on('gameStep', (...args) => handle(self.gameStep, args));
     socket.on('endGame', (...args) => handle(self.endGame, args));
     socket.on('pauseAutoplay', (...args) => handle(self.pauseAutoplay, args));
     socket.on('pauseGame', (...args) => handle(self.pauseGame, args));
@@ -1571,6 +1572,30 @@ function HGWeb() {
       return;
     }
     hg().nextDay(userData.id, gId, cId);
+    if (typeof cb === 'function') cb(null);
+  };
+  /**
+   * Step the game once.
+   *
+   * @see {@link HungryGames.gameStep}
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {number|string} cId Channel to send the messages in.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
+   */
+  this.gameStep = function gameStep(userData, socket, gId, cId, cb) {
+    if (!checkChannelPerm(userData, gId, cId, 'step')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'gameStep');
+      return;
+    }
+    hg().gameStep(userData.id, gId, cId);
     if (typeof cb === 'function') cb(null);
   };
   /**

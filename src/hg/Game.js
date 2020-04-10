@@ -99,7 +99,7 @@ class Game {
      * @type {boolean}
      * @default
      */
-    this.isPaused = false;
+    this.isPaused = true;
   }
 }
 

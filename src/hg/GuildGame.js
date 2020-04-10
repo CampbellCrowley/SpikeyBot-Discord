@@ -417,7 +417,7 @@ class GuildGame {
    */
   end() {
     this.currentGame.inProgress = false;
-    this.currentGame.isPaused = false;
+    this.currentGame.isPaused = true;
     this.currentGame.ended = true;
     this.autoPlay = false;
     this.clearIntervals();
@@ -437,17 +437,21 @@ class GuildGame {
       this._autoPlayTimeout = null;
     }
     this._autoStep = false;
+    this.currentGame.isPaused = true;
   }
   /**
    * @description Create an interval for this guild. Calls the callback every
    * time the game state is about to be modified. State is updated immediately
    * after the callback completes. This also sets `_autoStep` to true.
    * @public
-   * @param {HungryGames~GuildGame~StateUpdateCB} cb Callback to fire on the
-   * interval.
+   * @param {HungryGames~GuildGame~StateUpdateCB} [cb] Callback to fire on the
+   * interval. Optional only if set via {@link setStateUpdateCallback} prior to
+   * call to this function.
    */
   createInterval(cb) {
-    if (typeof cb !== 'function') {
+    if (cb && typeof cb !== 'function') {
+      throw new Error('Callback must be a function');
+    } else if (typeof this._stateUpdateCallback !== 'function') {
       throw new Error('Callback must be a function');
     }
     if (this._dayEventInterval) {
@@ -456,10 +460,23 @@ class GuildGame {
     }
     this.currentGame.isPaused = false;
     this._autoStep = true;
-    this._stateUpdateCallback = cb;
+    if (cb) this._stateUpdateCallback = cb;
     const delay = this.options.disableOutput ? 1 : this.options.delayEvents;
     this.step();
     this._dayEventInterval = setInterval(this.step, delay);
+  }
+
+  /**
+   * @description Set the state update callback function.
+   * @public
+   * @param {HungryGames~GuildGame~StateUpdateCB} cb Callback to fire when
+   * stepped.
+   */
+  setStateUpdateCallback(cb) {
+    if (typeof cb !== 'function') {
+      throw new Error('Callback must be a function');
+    }
+    this._stateUpdateCallback = cb;
   }
 
   /**
