@@ -68,6 +68,18 @@
               "command": "next"
             }
           ]
+        },
+        {
+          "command": "step",
+          "description": "Show the next event in the game.",
+          "aliases": "step, single, one, nextevent",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "step"
+            }
+          ]
         }
       ]
     },
