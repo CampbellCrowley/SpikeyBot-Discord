@@ -451,7 +451,9 @@ class GuildGame {
   createInterval(cb) {
     if (cb && typeof cb !== 'function') {
       throw new Error('Callback must be a function');
-    } else if (typeof this._stateUpdateCallback !== 'function') {
+    } else if (
+      typeof cb !== 'function' &&
+        typeof this._stateUpdateCallback !== 'function') {
       throw new Error('Callback must be a function');
     }
     if (this._dayEventInterval) {
