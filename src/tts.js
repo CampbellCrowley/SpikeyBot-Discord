@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const Readable = require('stream').Readable;
 const tts = require('@google-cloud/text-to-speech');
@@ -28,6 +28,10 @@ function TTS() {
   /** @inheritdoc */
   this.initialize = function() {
     self.command.on(['tts', 'speak'], commandTTS, true);
+    if (self.bot.getGoalSubModules &&
+        !self.bot.getGoalSubModules.includes('./music.js')) {
+      self.command.on(['leave', 'stop', 'stfu'], commandLeave, true);
+    }
 
     if (self.bot.getBotName()) {
       process.env.GOOGLE_APPLICATION_CREDENTIALS =
@@ -40,6 +44,7 @@ function TTS() {
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.deleteEvent('tts');
+    self.command.deleteEvent('leave');
   };
 
   let ttsClient;
@@ -187,6 +192,20 @@ function TTS() {
       vConn.play(readable);
       readable.push(res.audioContent);
     }
+  }
+
+  /**
+   * Cause the bot to leave the voice channel.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#leave
+   * @listens Command#stfu
+   * @listens Command#stop
+   */
+  function commandLeave(msg) {
+    if (msg.guild.me.voice.channel) msg.guild.me.voice.channel.leave();
   }
 }
 module.exports = new TTS();

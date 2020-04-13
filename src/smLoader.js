@@ -852,6 +852,16 @@ function SMLoader() {
     }
   }
 
+  /**
+   * Get a list of the current SubModules intended to be loaded.
+   *
+   * @public
+   * @returns {string[]} Array of the names of the SubModules (ex:
+   * './connect4.js').
+   */
+  toAssign.bot.getGoalSubModules = function() {
+    return goalSubModuleNames.slice(0);
+  };
 
   /**
    * Check current loaded submodule commit to last modified commit, and reload
@@ -871,11 +881,10 @@ function SMLoader() {
             .on('close', ((name) => {
               return (code) => {
                 if (code) {
-                  self.reload(name, {force: true}, (out) => {
-                    self.log(out.join(' '));
-                  });
+                  self.reload(
+                      name, {force: true}, (out) => self.log(out.join(' ')));
                 } else {
-                  self.debug(name + ' unchanged (' + code + ')');
+                  self.debug(`${name} unchanged (${code})`);
                 }
               };
             })(subModuleNames[i]));

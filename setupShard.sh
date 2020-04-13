@@ -25,12 +25,12 @@ apt install git make libtool autoconf g++ ffmpeg nodejs rsync psmisc -y
 
 sudo -u admin git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git /home/admin/SpikeyBot-Discord/
 cd /home/admin/SpikeyBot-Discord
-sudo -u admin npm i
+sudo -u admin npm i --production
 
 sudo -u admin git clone https://github.com/CampbellCrowley/ServerManager.git /home/admin/ServerManager/
 cd /home/admin/ServerManager
 git checkout SpikeyBot
-sudo -u admin npm i
+sudo -u admin npm i --production
 
 cd /home/admin/
 
