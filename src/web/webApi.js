@@ -166,7 +166,11 @@ class WebApi extends SubModule {
         'ERROR';
     const url = req.url.replace(/^\/www.spikeybot.com(?:\/dev)?/, '');
     if (url.startsWith('/api')) {
-      this._apiRequest(req, res, url, ip);
+      if (url.startsWith('/api/public')) {
+        this._publicApiRequest(req, res, url, ip);
+      } else {
+        this._apiRequest(req, res, url, ip);
+      }
     } else if (url === '/webhook/twitch/') {
       if (req.method === 'GET') {
         this._twitchConfirmation(req, res, url, ip);
@@ -216,6 +220,75 @@ class WebApi extends SubModule {
         res.end();
       });
     }
+  }
+
+  /**
+   * @description Handles requests to the public (unauthenticated) API endpoint.
+   *
+   * @private
+   * @param {http.IncomingMessage} req Client request.
+   * @param {http.ServerResponse} res Server response.
+   * @param {string} url The requested url. Generally a similar or slightly
+   * modified version of `req.url`.
+   * @param {string} ip IP for logging purposes.
+   */
+  _publicApiRequest(req, res, url, ip) {
+    const endpoints = [
+      [
+        '/api/public/patreon-campaign',
+        (...a) => this._patreonCampaignEndpoint(...a),
+      ],
+    ];
+    const acceptable = endpoints.find((el) => url.startsWith(el[0]));
+    if (!acceptable) {
+      this.common.logDebug(`Public API Unknown: ${url}`, ip);
+      res.writeHead(404);
+      res.end('404: Not Found');
+      return;
+    }
+    const cmd = acceptable[0].match(/\/api\/public\/([^/?&#]+)/);
+    const rateInfo = this._checkRateLimit(cmd, ip);
+    res.setHeader('X-RateLimit-Limit', rateInfo.limit);
+    res.setHeader('X-RateLimit-Remaining', rateInfo.remaining);
+    res.setHeader('X-RateLimit-Bucket', rateInfo.group);
+
+    if (rateInfo.exceeded) {
+      res.writeHead(429);
+      res.end();
+      return;
+    }
+
+    acceptable[1](req, res, url, ip);
+  }
+
+  /**
+   * @description Fetches Patreon campaign information.
+   *
+   * @private
+   * @param {http.IncomingMessage} req Client request.
+   * @param {http.ServerResponse} res Server response.
+   * @param {string} url The requested url. Generally a similar or slightly
+   * modified version of `req.url`.
+   * @param {string} ip IP for logging purposes.
+   */
+  _patreonCampaignEndpoint(req, res, url, ip) {
+    this.debug(url, ip);
+    if (!this.bot.patreon || !this.bot.patreon.fetchCampaign) {
+      res.writeHead(503);
+      res.end('503: Service Unavailable');
+      return;
+    }
+    this.bot.patreon.fetchCampaign((err, data) => {
+      if (err) {
+        this.error('Failed to fetch Patreon campaign info!');
+        console.log(err);
+        res.writeHead(500);
+        res.end('500: Internal Server Error');
+        return;
+      }
+      res.writeHead(200);
+      res.end(JSON.stringify(data));
+    });
   }
 
   /**

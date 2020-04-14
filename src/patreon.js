@@ -234,7 +234,6 @@ function Patreon() {
    * @listens Command#patreon
    */
   function commandPatreon(msg) {
-    fetchCampaign((err, res) => console.log('Campaign response:', err, res));
     /**
      * Verifies that valid data was found, then fetches all permissions for the
      * user's pledge amount.
@@ -686,39 +685,43 @@ function Patreon() {
   /**
    * Fetch the campaign information for ourself.
    *
+   * @public
    * @param {Patreon~basicCB} cb Callback with parameters for error and success
    * values.
    */
-  function fetchCampaign(cb) {
+  toExport.fetchCampaign = function(cb) {
     const now = Date.now();
     if (now - campaignInfo.timestamp <= campaignCacheTime) {
       cb(null, {status: campaignInfo.data, message: 'Success'});
       return;
     }
     campaignInfo.timestamp = now;
-    fetchAccessToken((err, accessToken) => {
+    fetchAccessToken((err, res) => {
       if (err) {
         cb(err);
         return;
       }
+      const accessToken = res.status;
       const patreonAPIClient = patreon.patreon(accessToken);
-      patreonAPIClient('/current_user/campaigns')
+      patreonAPIClient('/current_user/campaigns?includes=goals')
           .then((data) => {
-            console.log('Data:', data);
-            const store = data.store;
-            const user = store.findAll('user').map((user) => user.serialize());
-            console.log('user is', user);
-            const campaign = store.findAll('campaign')
-                .map((campaign) => campaign.serialize());
-            console.log('campaign is', campaign);
-            cb('Not Implemented');
+            // console.log('Data:', data);
+            // const store = data.store;
+            // const user = store.findAll('user').map((user) =>
+            // user.serialize());
+            // console.log('user is', user);
+            // const campaign = store.findAll('campaign')
+            //     .map((campaign) => campaign.serialize());
+            const serializable = data.rawJson;
+            campaignInfo.data = serializable;
+            cb(null, serializable);
           })
           .catch((err) => {
             console.error('error!', err);
             cb(err);
           });
     });
-  }
+  };
 
   /**
    * Get the current access token for making a request on our behalf. If the
@@ -775,7 +778,7 @@ function Patreon() {
           fetchAccessToken(cb);
         } else {
           self.common.error(content);
-          cb('Internal Server Error');
+          cb('Failed to refresh access_token');
           return;
         }
       });

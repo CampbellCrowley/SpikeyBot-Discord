@@ -1976,7 +1976,7 @@ endpoint.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-323">line 323</a>
+				 <a href="src_web_webApi.js.html#sunlight-1-line-396">line 396</a>
 			</li>
 		</ul>
 	</dd>
@@ -2187,7 +2187,7 @@ modified version of `req.url`.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-231">line 231</a>
+				 <a href="src_web_webApi.js.html#sunlight-1-line-304">line 304</a>
 			</li>
 		</ul>
 	</dd>
@@ -2350,7 +2350,7 @@ purposes of rate limiting.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-386">line 386</a>
+				 <a href="src_web_webApi.js.html#sunlight-1-line-459">line 459</a>
 			</li>
 		</ul>
 	</dd>
@@ -2643,7 +2643,7 @@ metadata to be stored and to prevent duplicate alerts.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-598">line 598</a>
+				 <a href="src_web_webApi.js.html#sunlight-1-line-671">line 671</a>
 			</li>
 		</ul>
 	</dd>
@@ -2969,7 +2969,429 @@ the second parameter is the game object.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-732">line 732</a>
+				 <a href="src_web_webApi.js.html#sunlight-1-line-805">line 805</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_patreonCampaignEndpoint"><span class="type-signature">&lt;private> </span>_patreonCampaignEndpoint(req, res, url, ip)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetches Patreon campaign information.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">http.IncomingMessage</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Client request.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">http.ServerResponse</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Server response.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The requested url. Generally a similar or slightly
+modified version of `req.url`.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ip</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">IP for logging purposes.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
+				 <a href="src_web_webApi.js.html#sunlight-1-line-274">line 274</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_publicApiRequest"><span class="type-signature">&lt;private> </span>_publicApiRequest(req, res, url, ip)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Handles requests to the public (unauthenticated) API endpoint.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>req</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">http.IncomingMessage</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Client request.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>res</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">http.ServerResponse</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Server response.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The requested url. Generally a similar or slightly
+modified version of `req.url`.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ip</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">IP for logging purposes.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
+				 <a href="src_web_webApi.js.html#sunlight-1-line-235">line 235</a>
 			</li>
 		</ul>
 	</dd>
@@ -3181,7 +3603,7 @@ modified version of `req.url`.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-449">line 449</a>
+				 <a href="src_web_webApi.js.html#sunlight-1-line-522">line 522</a>
 			</li>
 		</ul>
 	</dd>
@@ -3344,7 +3766,7 @@ is ready to be sent to our shards for re-broadcast and alerting.
 		<ul class="dummy">
 			<li>
 				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-772">line 772</a>
+				 <a href="src_web_webApi.js.html#sunlight-1-line-845">line 845</a>
 			</li>
 		</ul>
 	</dd>
@@ -3482,7 +3904,7 @@ is ready to be sent to our shards for re-broadcast and alerting.
 		<ul class="dummy">
 			<li>
 				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-669">line 669</a>
+				 <a href="src_web_webApi.js.html#sunlight-1-line-742">line 742</a>
 			</li>
 		</ul>
 	</dd>
@@ -3693,7 +4115,7 @@ modified version of `req.url`.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-531">line 531</a>
+				 <a href="src_web_webApi.js.html#sunlight-1-line-604">line 604</a>
 			</li>
 		</ul>
 	</dd>
@@ -3781,7 +4203,7 @@ modified version of `req.url`.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-423">line 423</a>
+				 <a href="src_web_webApi.js.html#sunlight-1-line-496">line 496</a>
 			</li>
 		</ul>
 	</dd>
@@ -4599,7 +5021,7 @@ the second parameter is the fetched data object.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-690">line 690</a>
+				 <a href="src_web_webApi.js.html#sunlight-1-line-763">line 763</a>
 			</li>
 		</ul>
 	</dd>
@@ -5636,7 +6058,7 @@ doing such may risk putting the module into an uncontrollable state.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
 	
-		on Monday, April 13, 2020 10:57 PM (-07:00)
+		on Monday, April 13, 2020 11:55 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
