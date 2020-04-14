@@ -430,17 +430,17 @@ class ShardingSlave {
    */
   _receiveMasterFile(filename, data) {
     this._lastSeen = Date.now();
-    const file = path.resolve(`${botCWD}${filename}`);
+    const file = path.resolve(`${botCWD}/${filename}`);
     if (!file.startsWith(botCWD)) {
       this.logWarning('Master sent file outside of project directory: ' + file);
       return;
     }
     fs.writeFile(file, data, (err) => {
       if (err) {
-        this.error('Failed to write file from master to disk: ' + file);
+        common.error('Failed to write file from master to disk: ' + file);
         console.error(err);
       } else {
-        this.logDebug('Wrote file from master to disk: ' + file);
+        common.logDebug('Wrote file from master to disk: ' + file);
       }
     });
   }
@@ -454,20 +454,20 @@ class ShardingSlave {
    */
   _sendMasterFile(filename, cb) {
     this._lastSeen = Date.now();
-    const file = path.resolve(`${botCWD}${filename}`);
+    const file = path.resolve(`${botCWD}/${filename}`);
     if (!file.startsWith(botCWD)) {
-      this.logWarning(
+      common.logWarning(
           'Master requested file outside of project directory: ' + file);
       cb(null);
       return;
     }
     fs.readFile(file, (err, data) => {
       if (err) {
-        this.error('Failed to read file that master requested disk: ' + file);
+        common.error('Failed to read file that master requested disk: ' + file);
         console.error(err);
         cb(null);
       } else {
-        this.logDebug('Sending file to master from disk: ' + file);
+        common.logDebug('Sending file to master from disk: ' + file);
         cb(data);
       }
     });

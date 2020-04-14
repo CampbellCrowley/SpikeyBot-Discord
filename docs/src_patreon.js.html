@@ -91,10 +91,15 @@
 <section>
     <article>
         <pre
-            class="sunlight-highlight-javascript linenums">// Copyright 2018 Campbell Crowley. All rights reserved.
+            class="sunlight-highlight-javascript linenums">// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
+const auth = require('../auth.js');
+const patreon = require('patreon');
+const https = require('https');
 require('./subModule.js').extend(Patreon);  // Extends the SubModule class.
+
+const patreonAPI = patreon.patreonAPI;
 
 /**
  * @classdesc Modifies the {@link SpikeyBot} object with an interface for
@@ -110,6 +115,54 @@ function Patreon() {
 
   /** @inheritdoc */
   this.helpMessage = null;
+
+  /**
+   * Filename of the file that will store the creator token information for
+   * fetching campaign information.
+   *
+   * @private
+   * @default
+   * @constant
+   * @type {string}
+   */
+  const tokenFile = './save/patreonCreatorTokens.json';
+  /**
+   * Cached token values stored in {@link tokenFile}.
+   *
+   * @private
+   * @default
+   * @constant
+   * @type {{
+   *   access_token: string,
+   *   refresh_token: string,
+   *   expires_at: number,
+   *   scope: string,
+   *   token_type: string
+   * }}
+   */
+  const tokenData = {};
+  /**
+   * Cached campaign information that was fetched from Patreon previously.
+   *
+   * @private
+   * @default
+   * @constant
+   * @type {{
+   *   timestamp: number,
+   *   data: object
+   * }}
+   */
+  const campaignInfo = {};
+  /**
+   * The amount of time the {@link campaignInfo} will be cached for before
+   * re-fetching from Patreon.
+   *
+   * @private
+   * @default 3 Hours
+   * @constant
+   * @type {number}
+   */
+  const campaignCacheTime = 3 * 60 * 60 * 1000;
 
   /**
    * The filename in the user's directory of the file where the settings related
@@ -250,6 +303,23 @@ function Patreon() {
     fs.unwatchFile(patreonSettingsTemplateFile);
   };
 
+  fs.readFile(tokenFile, (err, data) => {
+    if (err) {
+      self.error(
+          'Failed to read Patreon API token information from file: ' +
+          tokenFile);
+      console.error(err);
+      return;
+    }
+    try {
+      const parsed = JSON.parse(data);
+      Object.assign(tokenData, parsed);
+    } catch (err) {
+      self.error('Failed to parse Patroen API tokens from file: ' + tokenFile);
+      console.error(err);
+    }
+  });
+
   /**
    * Shows the user's Patreon information to the user.
    *
@@ -259,6 +329,7 @@ function Patreon() {
    * @listens Command#patreon
    */
   function commandPatreon(msg) {
+    fetchCampaign((err, res) => console.log('Campaign response:', err, res));
     /**
      * Verifies that valid data was found, then fetches all permissions for the
      * user's pledge amount.
@@ -706,6 +777,106 @@ function Patreon() {
         global.sqlCon.format('SELECT * FROM Discord WHERE id=? LIMIT 1', [uId]);
     global.sqlCon.query(toSend, receivedDiscordRow);
   }
+
+  /**
+   * Fetch the campaign information for ourself.
+   *
+   * @param {Patreon~basicCB} cb Callback with parameters for error and success
+   * values.
+   */
+  function fetchCampaign(cb) {
+    const now = Date.now();
+    if (now - campaignInfo.timestamp &lt;= campaignCacheTime) {
+      cb(null, {status: campaignInfo.data, message: 'Success'});
+      return;
+    }
+    campaignInfo.timestamp = now;
+    fetchAccessToken((err, accessToken) => {
+      if (err) {
+        cb(err);
+        return;
+      }
+      const patreonAPIClient = patreonAPI(accessToken);
+      patreonAPIClient('/current_user/campaigns')
+          .then((data) => {
+            console.log('Data:', data);
+            const store = data.store;
+            const user = store.findAll('user').map((user) => user.serialize());
+            console.log('user is', user);
+            const campaign = store.findAll('campaign')
+                .map((campaign) => campaign.serialize());
+            console.log('campaign is', campaign);
+            cb('Not Implemented');
+          })
+          .catch((err) => {
+            console.error('error!', err);
+            cb(err);
+          });
+    });
+  }
+
+  /**
+   * Get the current access token for making a request on our behalf. If the
+   * token has expired, it will first be refreshed.
+   *
+   * @private
+   * @param {Patreon~basicCB} cb Callback with parameters for error and success
+   * values.
+   */
+  function fetchAccessToken(cb) {
+    if (!tokenData || !tokenData.refresh_token || !tokenData.access_token) {
+      cb('No Patreon API tokens');
+      return;
+    }
+    const now = Date.now();
+    if (now - tokenData.expires_at &lt; 0) {
+      cb(null, {status: tokenData.access_token, message: 'Success'});
+      return;
+    }
+    const host = {
+      protocol: 'https:',
+      host: 'www.patreon.com',
+      path: '/api/oauth2/token?grant_type=refresh_token&amp;refresh_token=' +
+          tokenData.refresh_token + '&amp;client_id=' + auth.patreonClientId +
+          '&amp;client_secret=' + auth.patreonClientSecret,
+      method: 'POST',
+      headers: {
+        'User-Agent': require('../common.js').ua,
+      },
+    };
+
+    const req = https.request(host, (res) => {
+      let content = '';
+      res.on('data', (chunk) => content += chunk);
+      res.on('end', () => {
+        if (res.statusCode == 200) {
+          let parsed;
+          try {
+            parsed = JSON.parse(content);
+          } catch (err) {
+            self.error('Failed to parse response from Patreon!');
+            console.error(err);
+            cb(err);
+            return;
+          }
+          Object.assign(tokenData, parsed);
+          /* eslint-disable-next-line @typescript-eslint/camelcase */
+          tokenData.expires_at = now + (tokenData.expires_in * 1000);
+          fs.writeFile(tokenFile, JSON.stringify(tokenData), (err) => {
+            if (!err) return;
+            self.error('Failed to save token data to file: ' + tokenFile);
+            console.error(err, tokenData);
+          });
+          fetchAccessToken(cb);
+        } else {
+          self.common.error(content);
+          cb('Internal Server Error');
+          return;
+        }
+      });
+    });
+    req.end();
+  }
 }
 module.exports = new Patreon();
 </pre>
@@ -753,7 +924,7 @@ module.exports = new Patreon();
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
 	
-		on Monday, April 13, 2020 6:57 PM (-07:00)
+		on Monday, April 13, 2020 10:48 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

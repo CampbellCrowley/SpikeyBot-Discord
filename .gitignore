@@ -15,6 +15,7 @@ save/webClients.json
 save/rigged-counter.txt
 save/pingHistory.json
 save/knownShards.json
+save/patreonCreatorTokens.json
 
 config/shardMasterConfig.js
 config/shard_*_config.json

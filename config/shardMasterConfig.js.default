@@ -54,8 +54,7 @@ class ShardMasterConfig {
      * @type {string[]}
      * @default
      */
-    this.shardNodeLaunchArgs =
-        ['--experimental-worker', '--max-old-space-size=2048'];
+    this.shardNodeLaunchArgs = ['--max-old-space-size=2048'];
     /**
      * @description Arguments to pass to the bot's scripts when the shard is
      * started.
@@ -125,6 +124,20 @@ class ShardMasterConfig {
       protocol: 'http:',
       path: '/socket.io/',
     };
+
+    /**
+     * @description Paths to files to send to slave shards every time they
+     * successfully connect. These are expected to be immediately overwritten on
+     * the slave shards once received.
+     * @default
+     * @public
+     * @type {string[]}
+     */
+    this.copyFiles = [
+      './auth.js',
+      './gApiCredentials.json',
+      './save/patreonCreatorTokens.json',
+    ];
 
     /**
      * @description Configuration specifying how detecting if shards are still

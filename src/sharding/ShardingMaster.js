@@ -1037,6 +1037,19 @@ class ShardingMaster {
       user.lastSeen = Date.now();
       this.rebootRequest(...args);
     });
+
+    if (this._config.copyFiles) {
+      this._config.copyFiles.forEach((el) => {
+        fs.readFile(el, (err, data) => {
+          if (err) {
+            common.error('Failed to read file to send to slaves: ' + el);
+            console.error(err);
+            return;
+          }
+          socket.emit('writeFile', el, data);
+        });
+      });
+    }
   }
 
   /**
