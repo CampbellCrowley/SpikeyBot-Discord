@@ -95,7 +95,7 @@ const mainTests = [
        'probably blocked me :(\n```']),
   new Test(
       'PM Spikey command', '~pmspikey I am running a unit test.',
-      ['<@422623712534200321>\n```\nI sent your message to SpikeyRobot.\n```']),
+      ['^<@422623712534200321>\n```\nI sent your message to SpikeyRobot.\n```']),
   new Test('Flip command', '~flip', ['#embed']),
   new Test('Avatar command', '~avatar', ['#embed']),
   new Test('Ping command', '~ping', ['^My current ping']),
