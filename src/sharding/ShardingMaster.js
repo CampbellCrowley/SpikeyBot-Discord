@@ -1100,7 +1100,7 @@ class ShardingMaster {
       }
     }
     sockets.forEach((ent) => {
-      const id = this._knownUsers[ent[0]].currentShardId;
+      const id = this._knownUsers[ent[0]].goalShardId;
       if (id < 0) {
         done();
         return;
