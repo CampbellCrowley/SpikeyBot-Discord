@@ -29,7 +29,7 @@ function TTS() {
   this.initialize = function() {
     self.command.on(['tts', 'speak'], commandTTS, true);
     if (self.bot.getGoalSubModules &&
-        !self.bot.getGoalSubModules.includes('./music.js')) {
+        !self.bot.getGoalSubModules().includes('./music.js')) {
       self.command.on(['leave', 'stop', 'stfu'], commandLeave, true);
     }
 
