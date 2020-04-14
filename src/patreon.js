@@ -6,8 +6,6 @@ const patreon = require('patreon');
 const https = require('https');
 require('./subModule.js').extend(Patreon);  // Extends the SubModule class.
 
-const patreonAPI = patreon.patreonAPI;
-
 /**
  * @classdesc Modifies the {@link SpikeyBot} object with an interface for
  * checking the Patreon status of users.
@@ -703,7 +701,7 @@ function Patreon() {
         cb(err);
         return;
       }
-      const patreonAPIClient = patreonAPI(accessToken);
+      const patreonAPIClient = patreon.patreon(accessToken);
       patreonAPIClient('/current_user/campaigns')
           .then((data) => {
             console.log('Data:', data);
@@ -748,7 +746,7 @@ function Patreon() {
           '&client_secret=' + auth.patreonClientSecret,
       method: 'POST',
       headers: {
-        'User-Agent': require('../common.js').ua,
+        'User-Agent': require('./common.js').ua,
       },
     };
 
