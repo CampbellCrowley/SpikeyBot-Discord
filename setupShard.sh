@@ -58,5 +58,5 @@ node Starter.js &' > /home/admin/start.sh
 chown admin:admin /home/admin/start.sh
 chmod u+x /home/admin/start.sh
 
-echo 'Shard requires shard_id_config.json and auth.js to be installed manually.'
+echo 'Shard requires shard_id_config.json to be installed manually.'
 echo 'Otherwise, this shard is ready to boot.'
