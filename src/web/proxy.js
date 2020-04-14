@@ -657,20 +657,35 @@ function WebProxy() {
         const toSend = global.sqlCon.format(
             'INSERT INTO Discord (id) values (?) ON DUPLICATE KEY UPDATE ?',
             [ud.id, {lastLogin: now}]);
-        global.sqlCon.query(toSend, (err) => {
+        global.sqlCon.query(toSend, (err) => err && self.error(err));
+        loginInfo.userId = ud.id;
+        const afterPatreon = function() {
+          if (loginInfo.scope && loginInfo.scope.indexOf('guilds') > -1) {
+            fetchGuilds(loginInfo, (data) => {
+              if (data) ud.setGuilds(data);
+              cb(ud);
+            });
+          } else {
+            cb(ud);
+          }
+        };
+        if (!self.bot.patreon) {
+          afterPatreon();
+          return;
+        }
+        self.bot.patreon.getAllPerms(ud.id, null, null, (err, info) => {
           if (err) {
             self.error(err);
+            loginInfo.isPatron = null;
+          } else if (info && info.status) {
+            loginInfo.isPatron = true;
+            ud.patreonStatus = info.status;
+          } else {
+            loginInfo.isPatron = false;
           }
+          ud.isPatron = loginInfo.isPatron;
+          afterPatreon();
         });
-        loginInfo.userId = ud.id;
-        if (loginInfo.scope && loginInfo.scope.indexOf('guilds') > -1) {
-          fetchGuilds(loginInfo, (data) => {
-            if (data) ud.setGuilds(data);
-            cb(ud);
-          });
-        } else {
-          cb(ud);
-        }
       } else {
         cb(null);
       }

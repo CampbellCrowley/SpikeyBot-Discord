@@ -302,20 +302,31 @@ function WebAccount() {
        * user info onto, then send to the client.
        */
       function fetchDiscordBot(data) {
-        self.client.users.fetch(userData.id)
-            .then((user) => {
-              data.username = user.username;
-              data.avatarURL = user.displayAvatarURL();
-              data.createdAt = user.createdAt;
-              data.discriminator = user.discriminator;
-              data.activity = user.presence.activity;
-              cb(null, data);
-            })
-            .catch((err) => {
-              cb('Server Error', null);
-              self.error('Failed to fetch user data from discord.');
-              console.error(err);
-            });
+        const onData = (user) => {
+          data.username = user.username;
+          data.avatarURL = user.displayAvatarURL();
+          data.createdAt = user.createdAt;
+          data.discriminator = user.discriminator;
+          data.activity = user.presence.activity;
+          cb(null, data);
+        };
+        const onError = (err) => {
+          cb('Server Error', null);
+          self.error('Failed to fetch user data from discord.');
+          console.error(err);
+        };
+        if (self.common.isMaster) {
+          self.client.shard
+              .broadcastEval(`this.users.resolve('${userData.id}')`)
+              .then(
+                  (res) => onData(
+                      new self.Discord.User(self.client, res.find((el) => el))))
+              .catch(onError);
+        } else {
+          self.client.users.fetch(userData.id)
+              .then(onData)
+              .catch(onError);
+        }
       }
     });
 

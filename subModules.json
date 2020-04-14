@@ -27,7 +27,8 @@
     "./web/webApi.js",
     "./web/proxy.js",
     "./web/hg.js",
-    "./web/fileServer.js"
+    "./web/fileServer.js",
+    "./patreon.js"
   ],
   "dev": [
     "./main.js",

@@ -121,6 +121,8 @@ class ActionManager {
         if (unaffected) action.forEach((el) => el.trigger(hg, game, member));
       };
 
+      if (!guild) return;
+
       let sameConsumer = false;
       evt.icons.forEach((el) => {
         if (el.id.startsWith('NPC')) return;
