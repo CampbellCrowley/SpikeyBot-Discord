@@ -714,7 +714,7 @@ function Patreon() {
             //     .map((campaign) => campaign.serialize());
             const serializable = data.rawJson;
             campaignInfo.data = serializable;
-            cb(null, serializable);
+            toExport.fetchCampaign(cb);
           })
           .catch((err) => {
             console.error('error!', err);
