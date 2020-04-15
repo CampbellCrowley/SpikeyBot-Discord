@@ -353,7 +353,11 @@ class Moderation extends SubModule {
   _onGuildMemberRemove(member) {
     const modLog = this.bot.getSubmodule('./modLog.js');
     if (!modLog) return;
-    modLog.output(member.guild, 'memberLeave', member.user);
+    const additional = member.joinedTimestamp &&
+        this._formatDelay(Date.now() - member.joinedTimestamp);
+    modLog.output(
+        member.guild, 'memberLeave', member.user, null, 'Time on server',
+        additional);
   }
   /**
    * @description Handle someone joining the guild.
@@ -569,6 +573,47 @@ class Moderation extends SubModule {
         }
       }
     });
+  }
+  /**
+   * Format a duration in milliseconds into a human readable string.
+   *
+   * @private
+   *
+   * @param {number} msecs Duration in milliseconds.
+   * @returns {string} Formatted string.
+   */
+  _formatDelay(msecs) {
+    let output = '';
+    let unit = 7 * 24 * 60 * 60 * 1000;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' week' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 7;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' day' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 24;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' hour' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 60;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' minute' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 60;
+    if (msecs >= unit) {
+      const num = Math.round(msecs / unit);
+      output += num + ' second' + (num == 1 ? '' : 's') + '';
+    }
+    return output.replace(/,\s$/, '');
   }
 }
 
