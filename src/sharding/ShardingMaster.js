@@ -1053,7 +1053,8 @@ class ShardingMaster {
   }
 
   /**
-   * @description Broadcast a message to all connected shards.
+   * @description Broadcast a message to all connected shards, except for the
+   * master.
    * @public
    * @param {string} script Text for each shard to evaluate.
    * @param {Function} cb Callback once all shards have replied. First argument

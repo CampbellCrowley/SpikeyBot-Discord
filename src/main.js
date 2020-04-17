@@ -2599,7 +2599,7 @@ function Main() {
     timers.push(timer);
     const now = Date.now();
     const delta = timer.time - now;
-    const dir = `${self.comomn.userSaveDir}${timer.id}/timers/`;
+    const dir = `${self.common.userSaveDir}${timer.id}/timers/`;
     const file = `${dir}${timer.time}.json`;
 
     // Ignore timers more than a minute in the past.
