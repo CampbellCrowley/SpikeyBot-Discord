@@ -407,6 +407,13 @@ function HG() {
           self.Discord.Permissions.FLAGS.MANAGE_GUILD |
           self.Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     };
+    const cmdOptsAnywhere = {
+      validOnlyInGuild: false,
+      defaultDisabled: true,
+      permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
+          self.Discord.Permissions.FLAGS.MANAGE_GUILD |
+          self.Discord.Permissions.FLAGS.MANAGE_CHANNELS,
+    };
     const subCmds = [
       new self.command.SingleCommand('help', help),
       new self.command.SingleCommand('makemewin', commandMakeMeWin),
@@ -492,9 +499,10 @@ function HG() {
                 ['rename', 'name', 'title'], mkCmd(commandRenameGroup),
                 cmdOpts),
           ]),
-      new self.command.SingleCommand(['nums'], mkCmd(commandNums), cmdOpts),
       new self.command.SingleCommand(
-          ['rig', 'rigged'], mkCmd(commandRig), cmdOpts),
+          ['nums'], mkCmd(commandNums), cmdOptsAnywhere),
+      new self.command.SingleCommand(
+          ['rig', 'rigged'], mkCmd(commandRig), cmdOptsAnywhere),
       new self.command.SingleCommand(
           ['kill', 'smite'], mkCmd(commandKill), cmdOpts),
       new self.command.SingleCommand(
