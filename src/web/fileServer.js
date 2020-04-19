@@ -9,6 +9,7 @@ const SubModule = require('../subModule.js');
 const forbidden = [
   path.resolve(__dirname + '/../../auth.js'),
   path.resolve(__dirname + '/../../gApiCredentials.json'),
+  path.resolve(__dirname + '/../../save/patreonCreatorTokens.json'),
 ];
 
 const ccMaxAge = 30 * 7 * 24 * 60 * 60; // 30 days
@@ -72,7 +73,7 @@ class FileServer extends SubModule {
       fs.stat(file, (err, stats) => {
         if (err) {
           if (err.code === 'ENOENT') {
-            this.common.logDebug(`File not found ${url}`, ip);
+            this.common.logDebug(`File not found ${file}`, ip);
             res.writeHead(404);
             res.end();
             return;

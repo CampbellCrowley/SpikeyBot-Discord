@@ -329,8 +329,9 @@ class EventContainer {
         } else {
           this._fetchFromUrl(id, type, cb);
         }
+      } else {
+        this._parseFetched(data, id, type, done);
       }
-      this._parseFetched(data, id, type, done);
     });
   }
 
@@ -375,10 +376,11 @@ class EventContainer {
    * error string, second is otherwise the event object.
    */
   _fetchFromUrl(id, type, cb) {
+    const isDev = process.argv.includes('--dev');
     const host = {
       protocol: 'https:',
-      host: 'kamino.spikeybot.com',
-      path: `/hg/events/${id}.json`,
+      host: isDev ? 'www.spikeybot.com' : 'kamino.spikeybot.com',
+      path: isDev ? `/dev/hg/events/${id}.json` : `/hg/events/${id}.json`,
       method: 'GET',
       headers: {
         'User-Agent': require('../common.js').ua,
@@ -392,8 +394,8 @@ class EventContainer {
         if (res.statusCode == 200) {
           this._parseFetched(content, id, type, cb);
         } else {
-          console.error('HG Event ' + res.statusCode + ': ' + content);
-          console.error(host);
+          console.error(
+              'HG Event', res.statusCode, host.host, host.path, content);
           cb(new Error('HG Event Bad Response'));
         }
       });

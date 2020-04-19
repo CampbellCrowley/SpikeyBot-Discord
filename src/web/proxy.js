@@ -294,7 +294,7 @@ function WebProxy() {
   function handler(req, res) {
     if (pathPorts[req.url]) {
       proxy.web(req, res, {target: `http://localhost:${pathPorts[req.url]}`});
-    } else if (req.url.startsWith('/dev')) {
+    } else if (req.url.match(/^\/(www|kamino).spikeybot.com\/dev/)) {
       proxy.web(req, res, {target: `http://localhost:${pathPorts['/dev']}`});
     } else {
       proxy.web(req, res, {target: `http://localhost:${pathPorts._fallback}`});

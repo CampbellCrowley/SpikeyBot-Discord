@@ -1777,7 +1777,7 @@ function HGWeb() {
       return;
     }
 
-    const eId = hg().getHG().createEvent(evt, (err) => {
+    hg().getHG().createEvent(evt, (err, evtFinal) => {
       if (err) {
         if (typeof cb === 'function') {
           cb('ATTEMPT_FAILED', err);
@@ -1785,6 +1785,8 @@ function HGWeb() {
           socket.emit('message', 'Failed to create event: ' + err);
         }
       } else {
+        const eId = evtFinal.id;
+        self.debug(`Created HG Event: ${eId}`);
         cb(null, eId);
       }
     });
