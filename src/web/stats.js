@@ -168,22 +168,6 @@ function WebStats() {
       },
       _allShards: false,
     },
-    {
-      protocol: 'https:',
-      host: 'divinediscordbots.com',
-      path: '/bot/{id}/stats',
-      method: 'POST',
-      headers: {
-        'Authorization': auth.divineDiscordBotsComToken,
-        'content-type': 'application/json',
-        'User-Agent': ua,
-      },
-      _data: {
-        'server_count': 'guildCount',
-        'shards': 'shardCount',
-      },
-      _allShards: false,
-    },
   ];
 
   /**
