@@ -668,7 +668,7 @@ function HG() {
    */
   function mkCmd(cb) {
     return function(msg) {
-      if (msg.guild.memberCount > 75000) {
+      if (self.common.isRelease && msg.guild.memberCount > 75000) {
         self.common.reply(
             msg,
             'Sorry, but HG has been temporarily disabled on servers larger' +
