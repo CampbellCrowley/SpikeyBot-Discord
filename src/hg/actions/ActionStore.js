@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 /**
  * @description Manages game action firing and listeners.
@@ -111,7 +111,7 @@ class ActionStore {
     this.dayEnd = [
       new Action.SendDayEndMessageAction(),
       new Action.SendStatusListAction(),
-      new Action.SendAutoplayingMessageAlertAction,
+      new Action.SendAutoplayingMessageAlertAction(),
     ];
     /**
      * @description Fired for all players who end day alive.

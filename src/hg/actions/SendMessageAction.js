@@ -15,7 +15,9 @@ class SendMessageAction extends ChannelAction {
    * @param {string} msg The message to send.
    */
   constructor(msg) {
-    super((hg, game, channel) => channel.send(this._message));
+    super(
+        (hg, game, channel) =>
+          !game.options.disableOutput && channel.send(this._message));
     this._saveData = {message: msg};
     this._message = msg;
   }

@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const crypto = require('crypto');
 
@@ -31,7 +31,7 @@ class Action {
       throw new TypeError('Handler is not a function.');
     }
     /**
-     * @description The unique ID for this action. Propably globally unique,
+     * @description The unique ID for this action. Probably globally unique,
      * definitely unique per-trigger in a guild.
      * @public
      * @type {string}

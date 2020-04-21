@@ -183,10 +183,24 @@ class ActionManager {
    * @param {HungryGames~GuildGame} game Game context events are firing in.
    */
   static gameEnd(hg, game) {
-    const list = game.actions.gameEnd;
+    const list = game.actions.gameEnd.slice();
     const alive = game.actions.gamePlayerAlive;
     const dead = game.actions.gamePlayerDead;
     const wounded = game.actions.gamePlayerWounded;
+
+    const hasPatron =
+        game.currentGame.includedUsers.find((el) => el.settings.isPatron);
+    if (!hasPatron) {
+      let max = 0;
+      list.forEach((el) => max = Math.max(max, el.delay));
+      max += 2000;
+      const patreonAction = new Action.SendMessageAction(
+          'If you enjoy SpikeyBot, please consider supporting it on Patreon: ' +
+          '<https://www.patreon.com/campbellcrowley>');
+      patreonAction.delay = max;
+      list.push(patreonAction);
+    }
+
     ActionManager._endTrigger(hg, game, list, alive, dead, wounded);
 
     let winList = [];
