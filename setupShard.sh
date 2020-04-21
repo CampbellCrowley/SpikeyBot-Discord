@@ -34,15 +34,15 @@ sudo -u admin npm i --production
 
 cd /home/admin/
 
-mkdir .ssh
-ssh-keygen -t rsa -f /home/admin/.ssh/id_rsa_nopass -q -N ""
+sudo -u admin mkdir .ssh
+sudo -u admin ssh-keygen -t rsa -f /home/admin/.ssh/id_rsa_nopass -q -N ""
 echo 'Host kamino1
   Hostname 10.138.62.205
   # Hostname kamino1.campbellcrowley.com
   User admin
-  IdentityFile ~/.ssh/id_rsa_nopass' > /home/admin/.ssh/config
+  IdentityFile ~/.ssh/id_rsa_nopass' | sudo -u admin tee /home/admin/.ssh/config
 
-ssh-copy-id kamino1
+sudo -u admin ssh-copy-id -i ~/.ssh/id_rsa_nopass kamino1
 
 echo 'nice rsync -urpt --rsync-path="nice rsync" --exclude="shards/*" /home/admin/SpikeyBot-Discord/save/ admin@kamino1:/home/admin/SpikeyBot-Discord/save/ &&\
 nice rsync -urpt --rsync-path="nice rsync" --exclude="shards/*" admin@kamino1:/home/admin/SpikeyBot-Discord/save/ /home/admin/SpikeyBot-Discord/save/' > /home/admin/sync.sh
