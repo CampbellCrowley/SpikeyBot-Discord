@@ -679,9 +679,10 @@ class ShardingSlave {
 
       this._socket.emit('status', s);
 
+      common.logDebug(`Status Message: ${JSON.stringify(s)}`);
       if (this._settings.config.heartbeat.useMessageStats) {
-        common.logDebug(
-            `Message delta: ${s.messageCountDelta}, Prev: ${prevDelta}`);
+        // common.logDebug(
+        //     `Message delta: ${s.messageCountDelta}, Prev: ${prevDelta}`);
         if (prevDelta === 0 && s.messageCountDelta === 0 && !s.isMaster) {
           common.error('No messages received for last two heartbeats!');
           this._respawnChild();

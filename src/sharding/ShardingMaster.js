@@ -983,16 +983,15 @@ class ShardingMaster {
         console.error(err);
         return;
       }
-      if (!user.stats) {
-        user.stats = new ShardingMaster.ShardStatus(userId);
-      } else {
-        if (status.id && status.id !== userId) {
-          common.logWarning(
-              'User changed ID after handshake! This will be ignored, but ' +
-              'should not happen! ' + userId + ' --> ' + status.id);
-        }
-        user.stats.update(status);
+
+      if (!user.stats) user.stats = new ShardingMaster.ShardStatus(userId);
+      if (status.id && status.id !== userId) {
+        common.logWarning(
+            'User changed ID after handshake! This will be ignored, but ' +
+            'should not happen! ' + userId + ' --> ' + status.id);
       }
+      user.stats.update(status);
+
       if (user.stats.goalShardId != user.goalShardId) {
         common.logWarning(
             'Shard goal state is incorrect! ' + user.id + ' Received: ' +
@@ -1102,7 +1101,7 @@ class ShardingMaster {
     }
     let dbg = '';
     sockets.forEach((ent) => {
-      const id = this._knownUsers[ent[0]].currentShardId;
+      const id = this._knownUsers[ent[0]].goalShardId;
       if (id < 0 || id == 1000) {
         dbg += `${id}${ent[0]}: NO, `;
         done();
