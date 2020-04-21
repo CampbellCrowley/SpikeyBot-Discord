@@ -1100,12 +1100,15 @@ class ShardingMaster {
         cb(err, out);
       }
     }
+    let dbg = '';
     sockets.forEach((ent) => {
       const id = this._knownUsers[ent[0]].currentShardId;
       if (id < 0 || id == 1000) {
+        dbg += `${id}${ent[0]}: NO, `;
         done();
         return;
       }
+      dbg += `${id}${ent[0]}: YES, `;
       numSent++;
       ent[1].emit('evalRequest', script, (error, res) => {
         numDone++;
@@ -1119,6 +1122,7 @@ class ShardingMaster {
     if (numSent != num) {
       err = `Not all shards connected to master. (${numSent}/${num})`;
       done();
+      console.log(dbg);
     }
   }
 

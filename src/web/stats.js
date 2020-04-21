@@ -233,6 +233,7 @@ function WebStats() {
       cachedTime = Date.now();
       self.bot.getStats((values) => {
         if (values) cachedStats = values;
+        else values = cachedStats;
         cb(values);
       });
     } else {
