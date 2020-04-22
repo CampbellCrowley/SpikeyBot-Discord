@@ -441,6 +441,15 @@ class StatGroup {
       }
       const fn = `${this._dir}${data.id}.json`;
       if (fs.existsSync(fn)) {
+        fs.open(`${fn}.DELETEME`, 'w', 0o664, (err, fd) => {
+          if (err) {
+            console.error(
+                'Failed to mark legacy user stat file for deletion: ' +
+                `${fn}.DELETEME`);
+            console.error(err);
+          }
+          if (fd) fs.close(fd, (err) => err && console.error(err));
+        });
         fs.unlink(fn, (err) => {
           if (err) {
             console.error('Failed to remove legacy user stat file:', fn);

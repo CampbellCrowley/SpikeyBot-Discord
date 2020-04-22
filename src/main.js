@@ -397,6 +397,16 @@ function Main() {
                       return;
                     }
                     setTimer(parsed);
+                    fs.open(`${filename}.DELETEME`, 'w', 0o664, (err, fd) => {
+                      if (err) {
+                        self.error(
+                            'Failed to mark timer save file for deletion: ' +
+                                `${filename}.DELETEME`,
+                            'Main');
+                        console.error(err);
+                      }
+                      if (fd) fs.close(fd, (err) => err && console.error(err));
+                    });
                     fs.unlink(filename, (err4) => {
                       if (err4) {
                         self.error(
@@ -2456,6 +2466,15 @@ function Main() {
         user.send(timer.message);
         const now = Date.now();
         timers = timers.filter((obj) => obj.time > now);
+        fs.open(`${file}.DELETEME`, 'w', 0o664, (err, fd) => {
+          if (err) {
+            self.error(
+                'Failed to mark timer save file for deletion: ' +
+                `${file}.DELETEME`);
+            console.error(err);
+          }
+          if (fd) fs.close(fd, (err) => err && console.error(err));
+        });
         fs.unlink(file, (err) => {
           if (!err) return;
           self.error(`Failed to delete timer: ${file}`);

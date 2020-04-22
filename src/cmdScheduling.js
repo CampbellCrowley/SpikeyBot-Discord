@@ -94,6 +94,15 @@ function CmdScheduling() {
       const dir = self.common.guildSaveDir + g.id;
       const filename = dir + saveSubDir;
       if (opt === 'async') {
+        fs.open(`${filename}.DELETEME`, 'w', 0o664, (err, fd) => {
+          if (err) {
+            this.error(
+                'Failed to mark sCmd file for deletion: ' +
+                `${filename}.DELETEME`);
+            console.error(err);
+          }
+          if (fd) fs.close(fd, (err) => err && console.error(err));
+        });
         fs.unlink(filename, () => {
           if (schedules[g.id] && schedules[g.id].length) {
             schedules[g.id] = schedules[g.id].filter((el) => !el.complete);
@@ -103,6 +112,7 @@ function CmdScheduling() {
         });
       } else {
         try {
+          fs.closeSync(fs.openSync(`${filename}.DELETEME`, 'w', 0o664));
           fs.unlinkSync(filename);
         } catch (err) {
           if (err.code !== 'ENOENT') {
