@@ -74,7 +74,7 @@ class Moderation extends SubModule {
   /** @inheritdoc */
   initialize() {
     /**
-     * Permissions required to to use the smite command. Bitfield.
+     * Permissions for the new Smited role. Bitfield.
      *
      * @private
      * @type {number}
@@ -82,6 +82,8 @@ class Moderation extends SubModule {
      */
     this._smitePerms = this.Discord.Permissions.FLAGS.CONNECT |
         this.Discord.Permissions.FLAGS.VIEW_CHANNEL;
+
+    this._commandSmite = this._commandSmite.bind(this);
 
     /* const adminOnlyOpts = new this.command.CommandSetting({
       validOnlyInGuild: true,
@@ -103,17 +105,18 @@ class Moderation extends SubModule {
           defaultDisabled: true,
           permissions: this.Discord.Permissions.FLAGS.BAN_MEMBERS,
         }));
-    this.command.on(new this.command.SingleCommand(['smite'], commandSmite, {
-      validOnlyInGuild: true,
-      defaultDisabled: true,
-      permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES,
-    }));
     this.command.on(
         new this.command.SingleCommand(
             'togglemute', commandToggleMute, adminOnlyOpts));
     this.command.on(
         new this.command.SingleCommand(
             'togglebanmessages', commandToggleBanMessages, adminOnlyOpts)); */
+    this.command.on(
+        new this.command.SingleCommand(['smite'], this._commandSmite, {
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES,
+        }));
     this.command.on(
         new this.command.SingleCommand(['kick'], this._commandKick, {
           validOnlyInGuild: true,
@@ -173,9 +176,9 @@ class Moderation extends SubModule {
   shutdown() {
     /* this.command.removeListener('purge');
     this.command.removeListener('fuckyou');
-    this.command.removeListener('smite');
     this.command.removeListener('togglemute');
     this.command.removeListener('togglebanmessages'); */
+    this.command.removeListener('smite');
     this.command.removeListener('kick');
     this.client.removeListener('messageDelete', this._onMessageDelete);
     this.client.removeListener('messageUpdate', this._onMessageUpdate);
@@ -433,7 +436,7 @@ class Moderation extends SubModule {
             });
         member.guild.channels.cache.forEach((channel) => {
           if (channel.permissionsLocked) return;
-          const overwrites = channel.permissionOverwrites.resolve(role.id);
+          const overwrites = channel.permissionOverwrites.get(role.id);
           if (overwrites) {
             if (channel.type == 'category') {
               if (overwrites.deny.has(
@@ -480,6 +483,139 @@ class Moderation extends SubModule {
           });
     } else {
       mute(muteRole, toMute);
+    }
+  }
+
+  /**
+   * Remove all roles from a user and give them a role that prevents them from
+   * doing anything. Checks if all parties involved have permission to do this
+   * without the bot's help.
+   *
+   * @private
+   * @this bound
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#smite
+   */
+  _commandSmite(msg) {
+    const pFlags = this.Discord.Permissions.FLAGS;
+    if (msg.mentions.members.size === 0) {
+      this.common.reply(
+          msg, 'You must mention someone to smite after the command.');
+    } else {
+      const toSmite = msg.mentions.members.first();
+      if (msg.guild.ownerID !== msg.author.id &&
+          msg.member.roles.highest.comparePositionTo(toSmite.roles.highest) <=
+              0) {
+        this.common.reply(
+            msg, 'You can\'t smite ' + toSmite.user.username +
+                '! You are not stronger than them!',
+            'Your role is not higher than theirs.');
+      } else {
+        msg.guild.members.fetch(this.client.user).then((me) => {
+          const myRole = me.roles.highest;
+          if (toSmite.roles.highest &&
+              this.Discord.Role.comparePositions(
+                  myRole, toSmite.roles.highest) <= 0) {
+            this.common.reply(
+                msg, 'I can\'t smite ' + toSmite.user.username +
+                    '! I am not strong enough!',
+                'I need permission to have a higher role.');
+          } else {
+            let hasSmiteRole = false;
+            let smiteRole;
+            msg.guild.roles.cache.forEach((val) => {
+              if (val.name == 'Smited') {
+                hasSmiteRole = true;
+                smiteRole = val;
+              }
+            });
+            const self = this;
+            const smite = function(role, member) {
+              try {
+                member.roles.set([role])
+                    .then(() => {
+                      self.common.reply(
+                          msg, 'The gods have struck ' + member.user.username +
+                              ' with lightning!');
+                      const modLog = self.bot.getSubmodule('./modLog.js');
+                      if (modLog) {
+                        modLog.output(
+                            msg.guild, 'smite', member.user, msg.author);
+                      }
+                    })
+                    .catch((err) => {
+                      self.common.reply(
+                          msg, 'Oops! I wasn\'t able to smite ' +
+                              member.user.username +
+                              '! I wasn\'t able to give them the "Smited" ' +
+                              'role!');
+                      self.error(
+                          'Failed to give smited role: ' + msg.guild.id + '@' +
+                          member.id);
+                      console.log(err);
+                    });
+                member.guild.channels.cache.forEach((channel) => {
+                  if (channel.permissionsLocked) return;
+                  const overwrites = channel.permissionOverwrites.get(role.id);
+                  if (overwrites) {
+                    if (channel.type == 'category') {
+                      if (overwrites.deny.has(pFlags.SPEAK) &&
+                          overwrites.deny.has(pFlags.SEND_MESSAGES)) {
+                        return;
+                      }
+                    } else if (channel.type == 'voice') {
+                      if (overwrites.deny.has(pFlags.SPEAK)) {
+                        return;
+                      }
+                    } else if (channel.type == 'text') {
+                      if (overwrites.deny.has(pFlags.SEND_MESSAGES)) {
+                        return;
+                      }
+                    }
+                  }
+                  channel
+                      .updateOverwrite(
+                          role, {SEND_MESSAGES: false, SPEAK: false})
+                      .catch(console.error);
+                });
+              } catch (err) {
+                self.common.reply(
+                    msg, 'Oops! I wasn\'t able to smite ' +
+                        member.user.username + '! I\'m not sure why though!');
+                self.error('Failed to smite for unknown reason');
+                console.log(err);
+              }
+            };
+            if (!hasSmiteRole) {
+              msg.guild.roles
+                  .create({
+                    data: {
+                      name: 'Smited',
+                      position: 0,
+                      hoist: true,
+                      color: '#2f3136',
+                      permissions: this._smitePerms,
+                      mentionable: true,
+                    },
+                  })
+                  .then((role) => {
+                    smite(role, toSmite);
+                  })
+                  .catch((err) => {
+                    this.error('Failed to create Smited role: ' + msg.guild.id);
+                    console.error(err);
+                    this.common.reply(
+                        msg, 'I couldn\'t smite ' + toSmite.user.username +
+                            ' because there isn\'t a "Smited" role and I ' +
+                            'couldn\'t make it!');
+                  });
+            } else {
+              smite(smiteRole, toSmite);
+            }
+          }
+        });
+      }
     }
   }
 

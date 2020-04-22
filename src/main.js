@@ -52,7 +52,6 @@ const math = mathjs.create(mathjs.all, {matrix: 'Array'});
  * @listens Command#prune
  * @listens Command#fuckYou
  * @listens Command#ban
- * @listens Command#smite
  * @listens Command#profile
  * @listens Command#avatar
  * @listens Command#ping
@@ -116,15 +115,6 @@ function Main() {
   childProcess.exec('git rev-parse HEAD', (err, stdout) => {
     commit = stdout.toString().trim();
   });
-
-  /*
-   * Stores the required permissions for smiting a user. Defined at
-   * initialize().
-   *
-   * @private
-   * @type {number}
-   */
-  let smitePerms;
 
   /**
    * Array of all timers currently set.
@@ -298,9 +288,6 @@ function Main() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    smitePerms = self.Discord.Permissions.FLAGS.CONNECT |
-        self.Discord.Permissions.FLAGS.VIEW_CHANNEL;
-
     const adminOnlyOpts = new self.command.CommandSetting({
       validOnlyInGuild: true,
       defaultDisabled: true,
@@ -339,11 +326,6 @@ function Main() {
           defaultDisabled: true,
           permissions: self.Discord.Permissions.FLAGS.BAN_MEMBERS,
         }));
-    self.command.on(new self.command.SingleCommand(['smite'], commandSmite, {
-      validOnlyInGuild: true,
-      defaultDisabled: true,
-      permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES,
-    }));
     self.command.on(['profile', 'avatar'], commandAvatar);
     self.command.on('ping', commandPing);
     self.command.on('uptime', commandUptime);
@@ -673,7 +655,6 @@ function Main() {
     self.command.removeListener('flip');
     self.command.removeListener('purge');
     self.command.removeListener('fuckyou');
-    self.command.removeListener('smite');
     self.command.removeListener('profile');
     self.command.removeListener('ping');
     self.command.removeListener('uptime');
@@ -2273,140 +2254,6 @@ function Main() {
         }
       }
     });
-  }
-  /**
-   * Remove all roles from a user and give them a role that prevents them from
-   * doing anything. Checks if all parties involved have permission to do this
-   * without the bot's help.
-   *
-   * @private
-   * @type {commandHandler}
-   * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#smite
-   */
-  function commandSmite(msg) {
-    if (msg.mentions.members.size === 0) {
-      self.common.reply(
-          msg, 'You must mention someone to smite after the command.');
-    } else {
-      const toSmite = msg.mentions.members.first();
-      if (msg.guild.ownerID !== msg.author.id &&
-          msg.member.roles.highest.comparePositionTo(toSmite.roles.highest) <=
-              0) {
-        self.common.reply(
-            msg, 'You can\'t smite ' + toSmite.user.username +
-                '! You are not stronger than them!',
-            'Your role is not higher than theirs.');
-      } else {
-        msg.guild.members.fetch(self.client.user).then((me) => {
-          const myRole = me.roles.highest;
-          if (toSmite.roles.highest &&
-              self.Discord.Role.comparePositions(
-                  myRole, toSmite.roles.highest) <= 0) {
-            self.common.reply(
-                msg, 'I can\'t smite ' + toSmite.user.username +
-                    '! I am not strong enough!',
-                'I need permission to have a higher role.');
-          } else {
-            let hasSmiteRole = false;
-            let smiteRole;
-            msg.guild.roles.cache.forEach((val) => {
-              if (val.name == 'Smited') {
-                hasSmiteRole = true;
-                smiteRole = val;
-              }
-            });
-            const smite = function(role, member) {
-              try {
-                member.roles.set([role])
-                    .then(() => {
-                      self.common.reply(
-                          msg, 'The gods have struck ' + member.user.username +
-                              ' with lightning!');
-                      const modLog = self.bot.getSubmodule('./modLog.js');
-                      if (modLog) {
-                        modLog.output(
-                            msg.guild, 'smite', member.user, msg.author);
-                      }
-                    })
-                    .catch((err) => {
-                      self.common.reply(
-                          msg, 'Oops! I wasn\'t able to smite ' +
-                              member.user.username +
-                              '! I wasn\'t able to give them the "Smited" ' +
-                              'role!');
-                      self.error(
-                          'Failed to give smited role: ' + msg.guild.id + '@' +
-                          member.id);
-                      console.log(err);
-                    });
-                member.guild.channels.cache.forEach(function(channel) {
-                  if (channel.permissionsLocked) return;
-                  const overwrites =
-                      channel.permissionOverwrites.resolve(role.id);
-                  if (overwrites) {
-                    if (channel.type == 'category') {
-                      if (overwrites.deny.has(
-                          self.Discord.Permissions.FLAGS.SPEAK) &&
-                          overwrites.deny.has(
-                              self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
-                        return;
-                      }
-                    } else if (channel.type == 'voice') {
-                      if (overwrites.deny.has(
-                          self.Discord.Permissions.FLAGS.SPEAK)) {
-                        return;
-                      }
-                    } else if (channel.type == 'text') {
-                      if (overwrites.deny.has(
-                          self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
-                        return;
-                      }
-                    }
-                  }
-                  channel
-                      .updateOverwrite(
-                          role, {SEND_MESSAGES: false, SPEAK: false})
-                      .catch(console.error);
-                });
-              } catch (err) {
-                self.common.reply(
-                    msg, 'Oops! I wasn\'t able to smite ' +
-                        member.user.username + '! I\'m not sure why though!');
-                self.error('Failed to smite for unknown reason');
-                console.log(err);
-              }
-            };
-            if (!hasSmiteRole) {
-              msg.guild.roles
-                  .create({
-                    data: {
-                      name: 'Smited',
-                      position: 0,
-                      hoist: true,
-                      color: '#2f3136',
-                      permissions: smitePerms,
-                      mentionable: true,
-                    },
-                  })
-                  .then((role) => {
-                    smite(role, toSmite);
-                  })
-                  .catch((err) => {
-                    self.error('Failed to create Smited role: ' +msg.guild.id);
-                    console.error(err);
-                    self.common.reply(
-                        msg, 'I couldn\'t smite ' + toSmite.user.username +
-                            ' because there isn\'t a "Smited" role and I ' +
-                            'couldn\'t make it!');
-                  });
-            } else {
-              smite(smiteRole, toSmite);
-            }
-          }
-        });
-      }
-    }
   }
   /**
    * Send a larger resolution version of the mentioned user's avatar.
