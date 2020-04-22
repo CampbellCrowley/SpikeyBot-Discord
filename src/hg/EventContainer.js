@@ -327,7 +327,7 @@ class EventContainer {
           console.error(err);
           done('BAD_ID');
         } else {
-          this._fetchFromUrl(id, type, cb);
+          this._fetchFromUrl(id, type, done);
         }
       } else {
         this._parseFetched(data, id, type, done);
@@ -396,7 +396,7 @@ class EventContainer {
         } else {
           console.error(
               'HG Event', res.statusCode, host.host, host.path, content);
-          cb(new Error('HG Event Bad Response'));
+          cb('FETCH_FAILED');
         }
       });
     });
