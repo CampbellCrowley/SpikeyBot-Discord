@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const SubModule = require('./subModule.js');
@@ -61,6 +61,7 @@ class Moderation extends SubModule {
           'that no one liked anyways.',
       'The ban hammer has spoken!',
     ];
+    this._saveDir = `${this.common.guildSaveDir}/smited/`;
 
     this.save = this.save.bind(this);
     this.muteMember = this.muteMember.bind(this);
@@ -69,6 +70,8 @@ class Moderation extends SubModule {
     this._onMessageDeleteBulk = this._onMessageDeleteBulk.bind(this);
     this._onGuildMemberRemove = this._onGuildMemberRemove.bind(this);
     this._onGuildMemberAdd = this._onGuildMemberAdd.bind(this);
+
+    this._commandSmite = this._commandSmite.bind(this);
     this._commandKick = this._commandKick.bind(this);
   }
   /** @inheritdoc */
@@ -82,8 +85,6 @@ class Moderation extends SubModule {
      */
     this._smitePerms = this.Discord.Permissions.FLAGS.CONNECT |
         this.Discord.Permissions.FLAGS.VIEW_CHANNEL;
-
-    this._commandSmite = this._commandSmite.bind(this);
 
     /* const adminOnlyOpts = new this.command.CommandSetting({
       validOnlyInGuild: true,
@@ -523,13 +524,26 @@ class Moderation extends SubModule {
           } else {
             let hasSmiteRole = false;
             let smiteRole;
-            /* const idList =*/msg.guild.roles.cache.map((val) => {
+            msg.guild.roles.cache.forEach((val) => {
               if (val.name == 'Smited') {
                 hasSmiteRole = true;
                 smiteRole = val;
               }
               return val.id;
             });
+            const idList =
+                toSmite.roles.cache.filter((el) => el.name == 'Smited')
+                    .map((el) => el.id);
+            const filename = `${this._saveDir}${toSmite.id}.json`;
+            this.common.mkAndWrite(filename, this._saveDir, idList, (err) => {
+              if (err) {
+                this.error(
+                    'Failed to save user roles for unsmiting: ' + toSmite.id +
+                    ': ' + JSON.stringify(idList));
+                console.error(err);
+              }
+            });
+
             if (!hasSmiteRole) {
               msg.guild.roles
                   .create({
