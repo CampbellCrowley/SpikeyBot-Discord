@@ -591,7 +591,6 @@ class Moderation extends SubModule {
    * @listens Command#smite
    */
   _commandSmite(msg) {
-    const pFlags = this.Discord.Permissions.FLAGS;
     if (msg.mentions.members.size === 0) {
       this.common.reply(
           msg, 'You must mention someone to smite after the command.');
@@ -617,69 +616,13 @@ class Moderation extends SubModule {
           } else {
             let hasSmiteRole = false;
             let smiteRole;
-            msg.guild.roles.cache.forEach((val) => {
+            /* const idList =*/msg.guild.roles.cache.map((val) => {
               if (val.name == 'Smited') {
                 hasSmiteRole = true;
                 smiteRole = val;
               }
+              return val.id;
             });
-            const self = this;
-            const smite = function(role, member) {
-              try {
-                member.roles.set([role])
-                    .then(() => {
-                      self.common.reply(
-                          msg, 'The gods have struck ' + member.user.username +
-                              ' with lightning!');
-                      const modLog = self.bot.getSubmodule('./modLog.js');
-                      if (modLog) {
-                        modLog.output(
-                            msg.guild, 'smite', member.user, msg.author);
-                      }
-                    })
-                    .catch((err) => {
-                      self.common.reply(
-                          msg, 'Oops! I wasn\'t able to smite ' +
-                              member.user.username +
-                              '! I wasn\'t able to give them the "Smited" ' +
-                              'role!');
-                      self.error(
-                          'Failed to give smited role: ' + msg.guild.id + '@' +
-                          member.id);
-                      console.log(err);
-                    });
-                member.guild.channels.cache.forEach((channel) => {
-                  if (channel.permissionsLocked) return;
-                  const overwrites = channel.permissionOverwrites.get(role.id);
-                  if (overwrites) {
-                    if (channel.type == 'category') {
-                      if (overwrites.deny.has(pFlags.SPEAK) &amp;&amp;
-                          overwrites.deny.has(pFlags.SEND_MESSAGES)) {
-                        return;
-                      }
-                    } else if (channel.type == 'voice') {
-                      if (overwrites.deny.has(pFlags.SPEAK)) {
-                        return;
-                      }
-                    } else if (channel.type == 'text') {
-                      if (overwrites.deny.has(pFlags.SEND_MESSAGES)) {
-                        return;
-                      }
-                    }
-                  }
-                  channel
-                      .updateOverwrite(
-                          role, {SEND_MESSAGES: false, SPEAK: false})
-                      .catch(console.error);
-                });
-              } catch (err) {
-                self.common.reply(
-                    msg, 'Oops! I wasn\'t able to smite ' +
-                        member.user.username + '! I\'m not sure why though!');
-                self.error('Failed to smite for unknown reason');
-                console.log(err);
-              }
-            };
             if (!hasSmiteRole) {
               msg.guild.roles
                   .create({
@@ -692,9 +635,7 @@ class Moderation extends SubModule {
                       mentionable: true,
                     },
                   })
-                  .then((role) => {
-                    smite(role, toSmite);
-                  })
+                  .then((role) => this._smite(role, toSmite, msg))
                   .catch((err) => {
                     this.error('Failed to create Smited role: ' + msg.guild.id);
                     console.error(err);
@@ -704,11 +645,73 @@ class Moderation extends SubModule {
                             'couldn\'t make it!');
                   });
             } else {
-              smite(smiteRole, toSmite);
+              this._smite(smiteRole, toSmite, msg);
             }
           }
         });
       }
+    }
+  }
+
+  /**
+   * @description Perform the actual smiting of a member.
+   *
+   * @private
+   * @param {Discord~Role} role The role to give to the member.
+   * @param {Discord~GulidMember} member The member to smite.
+   * @param {Discord~Message} msg The message that triggered the smiting.
+   */
+  _smite(role, member, msg) {
+    const pFlags = this.Discord.Permissions.FLAGS;
+    try {
+      member.roles.set([role])
+          .then(() => {
+            this.common.reply(
+                msg, 'The gods have struck ' + member.user.username +
+                    ' with lightning!');
+            const modLog = this.bot.getSubmodule('./modLog.js');
+            if (modLog) {
+              modLog.output(msg.guild, 'smite', member.user, msg.author);
+            }
+          })
+          .catch((err) => {
+            this.common.reply(
+                msg, 'Oops! I wasn\'t able to smite ' + member.user.username +
+                    '! I wasn\'t able to give them the "Smited" ' +
+                    'role!');
+            this.error(
+                'Failed to give smited role: ' + msg.guild.id + '@' +
+                member.id);
+            console.log(err);
+          });
+      member.guild.channels.cache.forEach((channel) => {
+        if (channel.permissionsLocked) return;
+        const overwrites = channel.permissionOverwrites.get(role.id);
+        if (overwrites) {
+          if (channel.type == 'category') {
+            if (overwrites.deny.has(pFlags.SPEAK) &amp;&amp;
+                overwrites.deny.has(pFlags.SEND_MESSAGES)) {
+              return;
+            }
+          } else if (channel.type == 'voice') {
+            if (overwrites.deny.has(pFlags.SPEAK)) {
+              return;
+            }
+          } else if (channel.type == 'text') {
+            if (overwrites.deny.has(pFlags.SEND_MESSAGES)) {
+              return;
+            }
+          }
+        }
+        channel.updateOverwrite(role, {SEND_MESSAGES: false, SPEAK: false})
+            .catch(console.error);
+      });
+    } catch (err) {
+      this.common.reply(
+          msg, 'Oops! I wasn\'t able to smite ' + member.user.username +
+              '! I\'m not sure why though!');
+      this.error('Failed to smite for unknown reason');
+      console.log(err);
     }
   }
 
@@ -892,7 +895,7 @@ module.exports = new Moderation();
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
 	
-		on Tuesday, April 21, 2020 6:50 PM (-07:00)
+		on Tuesday, April 21, 2020 8:11 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
