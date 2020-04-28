@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.14.8",
+  "version": "1.14.9",
   "description": "SpikeyBot",
   "homepage": "https://www.spikeybot.com/",
   "bugs": {
@@ -21,7 +21,7 @@
     "dateformat": "^3.0.3",
     "dialogflow": "^1.2.0",
     "diff": "^4.0.2",
-    "discord.js": "github:discordjs/discord.js#1330e2d246cf4e1b9e7f13a5f941ff086117a3fc",
+    "discord.js": "github:discordjs/discord.js#026691702da7d1fcf9a959f00082f07f1e14b13d",
     "erlpack": "github:discordapp/erlpack",
     "fuzzy-search": "^3.2.1",
     "http-proxy": "^1.18.0",
@@ -46,9 +46,9 @@
     }
   ],
   "devDependencies": {
-    "@types/node": "^13.13.1",
-    "@typescript-eslint/eslint-plugin": "^2.29.0",
-    "@typescript-eslint/parser": "^2.29.0",
+    "@types/node": "^13.13.4",
+    "@typescript-eslint/eslint-plugin": "^2.30.0",
+    "@typescript-eslint/parser": "^2.30.0",
     "acorn": "^7.1.1",
     "chai": "^4.2.0",
     "eslint": "^6.8.0",
@@ -56,7 +56,7 @@
     "eslint-plugin-jsdoc": "^24.0.0",
     "ink-docstrap": "^1.3.2",
     "jsdoc": "^3.6.4",
-    "mocha": "^7.1.1",
+    "mocha": "^7.1.2",
     "typescript": "^3.8.3"
   },
   "scripts": {

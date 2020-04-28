@@ -2681,9 +2681,10 @@ function Main() {
             const gY = match.gY;
             const gM = match.gM;
             const uId = match.uId;
+            const owner = match.oId === match.uId;
             const embed = new self.Discord.MessageEmbed();
             embed.setTitle(`Permissions (Shard #${index})`);
-            replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, embed);
+            replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, owner, embed);
           });
         } else {
           self.common.reply(
@@ -2698,7 +2699,8 @@ function Main() {
     const gY = author && mem.permissions.bitfield;
     const gM = guild.members.resolve(self.client.user.id).permissions.bitfield;
     const uId = author && author.id;
-    replyPerms(msg, guild.id, gM, gY, chan && chan.id, cM, cY, uId);
+    const owner = guild.ownerID === author.id;
+    replyPerms(msg, guild.id, gM, gY, chan && chan.id, cM, cY, uId, owner);
   }
 
   /**
@@ -2713,10 +2715,11 @@ function Main() {
    * @param {number} [cM] Bitfield for self in channel.
    * @param {number} [cY] Bitfield for user in channel.
    * @param {string} [uId] User id to show.
+   * @param {boolean} [owner] Is the user the guild owner.
    * @param {external:Discord~MessageEmbed} [embed] Embed object to modify
    * instead of creating a new one.
    */
-  function replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, embed) {
+  function replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, owner, embed) {
     if (!embed) {
       embed = new self.Discord.MessageEmbed();
       embed.setTitle('Permissions');
@@ -2750,7 +2753,9 @@ function Main() {
           return `${bits} ${flags} ${el[0]}`;
         })
         .join('\n');
-    embed.setDescription('```css\n' + formatted + '```');
+    let ownerTag = '';
+    if (owner) ownerTag = 'Guild Owner\n';
+    embed.setDescription(ownerTag + '```css\n' + formatted + '```');
     embed.setFooter(
         'To see permissions for each command type: `' + msg.prefix + 'show`');
     msg.channel.send(embed);
@@ -2802,6 +2807,7 @@ function Main() {
         gY: gY,
         gM: gM,
         uId: mem && mem.id,
+        iId: guild.ownerID,
       };
     } else {
       return null;

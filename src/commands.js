@@ -582,13 +582,11 @@ function Command() {
       if (!msg) {
         throw new Error('Checking for disabled requires a Discord~Message.');
       }
-      if (['124733888177111041', '126464376059330562'].includes(
-          msg.author.id)) {
-        return 0;
-      }
+      // if (self.common.trustedIds.includes(msg.author.id)) return 0;
       if (!msg.guild && me.validOnlyInGuild) return 1;
 
       let hasPerm = false;
+      let permOverride = false;
       if (msg.guild) {
         // The command is disabled by default, but the GuildMember has a
         // required permission to run this command, or is Admin, or is guild
@@ -600,16 +598,15 @@ function Command() {
         } else if (msg.member) {
           perms = msg.member.permissions.bitfield;
         }
-        hasPerm =
-            ((perms & me.permissions) ||
-             (perms & self.Discord.Permissions.FLAGS.ADMINISTRATOR) ||
-             (msg.guild.ownerID === msg.author.id));
+        permOverride = (perms & self.Discord.Permissions.FLAGS.ADMINISTRATOR) ||
+            (msg.guild.ownerID === msg.author.id);
+        hasPerm = (perms & me.permissions) || permOverride;
         hasPerm = (hasPerm && true) || false;
       }
 
       const disallow = me.defaultDisabled ? me.enabled : me.disabled;
       const matched = findMatch(disallow, msg);
-      const isDisabled = (
+      const isDisabled = !permOverride && (
         // Command is disabled by default, and context does not explicitly
         // enable the command.
         ((!matched && !hasPerm) && me.defaultDisabled) ||
