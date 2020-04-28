@@ -397,9 +397,7 @@ function CmdScheduling() {
         myself.member = myself.channel.members.resolve(myself.memberId);
         if (!myself.member) {
           myself.channel.guild.members.fetch(myself.memberId)
-              .then((m) => {
-                myself.member = m;
-              })
+              .then((m) => myself.member = m)
               .catch((err) => {
                 self.error(
                     'Failed to find member with id: ' + myself.memberId +
@@ -445,7 +443,7 @@ function CmdScheduling() {
         myself.message.channel = myself.channel;
       }
       if (!myself.message.guild.members ||
-          typeof myself.message.guild.members.get !== 'function') {
+          typeof myself.message.guild.members.resolve !== 'function') {
         self.error(
             'ScheduledCmdFailed No Members Channel: ' +
             myself.channel.guild.id + '#' + myself.channel.id + '@' +
