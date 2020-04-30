@@ -585,6 +585,14 @@ class Moderation extends SubModule {
   _smite(role, member, msg) {
     const pFlags = this.Discord.Permissions.FLAGS;
     try {
+      const list = JSON.stringify(member.roles.cache.keyArray());
+      const dir = `${this.common.guildSaveDir}${member.guild.id}/smited`;
+      const file = `${dir}/${member.id}.json`;
+      this.common.mkAndWrite(file, dir, list, (err) => {
+        if (!err) return;
+        this.error(`Failed to save old smited roles: ${file} ${list}`);
+        console.error(err);
+      });
       member.roles.set([role])
           .then(() => {
             this.common.reply(
@@ -627,6 +635,7 @@ class Moderation extends SubModule {
         channel.updateOverwrite(role, {SEND_MESSAGES: false, SPEAK: false})
             .catch(console.error);
       });
+      if (member.voice.channel) member.voice.setMute(true, 'Smited');
     } catch (err) {
       this.common.reply(
           msg, 'Oops! I wasn\'t able to smite ' + member.user.username +
