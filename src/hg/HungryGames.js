@@ -962,6 +962,10 @@ class HungryGames {
   _find(id, cb) {
     const a = typeof cb === 'function';
     if (!a) cb = function() {};
+    if (!id) {
+      cb(null);
+      return null;
+    }
     const now = Date.now();
     if (this._games[id]) {
       this._findTimestamps[id] = now;

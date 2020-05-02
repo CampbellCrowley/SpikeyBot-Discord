@@ -1,4 +1,4 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const Jimp = require('jimp');
@@ -668,7 +668,8 @@ function HG() {
    */
   function mkCmd(cb) {
     return function(msg) {
-      if (self.common.isRelease && msg.guild.memberCount > 75000) {
+      if (self.common.isRelease &&
+          (msg.guild && msg.guild.memberCount > 75000)) {
         self.common.reply(
             msg,
             'Sorry, but HG has been temporarily disabled on servers larger' +
@@ -676,8 +677,8 @@ function HG() {
             'More information may be available on my support server.');
         return;
       }
-      const id = msg.guild.id;
-      const cached = hg._games[id];
+      const id = msg.guild && msg.guild.id;
+      const cached = id && hg._games[id];
       hg.fetchGame(id, (game) => {
         if (game) {
           if (!cached && game.legacyEvents) {
