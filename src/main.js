@@ -218,7 +218,7 @@ function Main() {
    * @constant
    */
   const introduction = '\nHello! My name is {username}.\nI was created by ' +
-      'SpikeyRobot#0971, so if you wish to add any features, feel free to DM ' +
+      'SpikeyRobot#0001, so if you wish to add any features, feel free to DM ' +
       'him! (Tip: **{prefix}dmspikey** does this)\n\nThe prefix for commands ' +
       'can be changed with `{prefix}changeprefix`.\nIf you\'d like to know ' +
       'what I can do, type **{prefix}help** in a PM to me and I\'ll let you ' +

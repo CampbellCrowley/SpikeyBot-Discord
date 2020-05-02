@@ -669,12 +669,12 @@
           "examples": [
             {
               "description": "Basic Usage",
-              "command": "kill @SpikeyRobot#0971",
+              "command": "kill @SpikeyRobot#0001",
               "result": "A message will be added to the current day or the next day, that kills SpikeyRobot if he is not already dead."
             },
             {
               "description": "Multiple Players",
-              "command": "kill @SpikeyRobot#0971 @SpikeyBot#4928",
+              "command": "kill @SpikeyRobot#0001 @SpikeyBot#4928",
               "result": "A message will be added to the current day or the next day, that kills SpikeyRobot and SpikeyBot if they are not already dead."
             },
             {
@@ -692,12 +692,12 @@
           "examples": [
             {
               "description": "Basic Usage",
-              "command": "wound @SpikeyRobot#0971",
+              "command": "wound @SpikeyRobot#0001",
               "result": "A message will be added to the current day or the next day, that wounds SpikeyRobot if he is not already wounded."
             },
             {
               "description": "Multiple Players",
-              "command": "wound @SpikeyRobot#0971 @SpikeyBot#4928",
+              "command": "wound @SpikeyRobot#0001 @SpikeyBot#4928",
               "result": "A message will be added to the current day or the next day, that wounds SpikeyRobot and SpikeyBot if they are not already wounded."
             },
             {
@@ -715,12 +715,12 @@
           "examples": [
             {
               "description": "Basic Usage",
-              "command": "heal @SpikeyRobot#0971",
+              "command": "heal @SpikeyRobot#0001",
               "result": "A message will be added to the current day or the next day, that resurrects or heals SpikeyRobot if he is not already fully healed."
             },
             {
               "description": "Multiple Players",
-              "command": "heal @SpikeyRobot#0971 @SpikeyBot#4928",
+              "command": "heal @SpikeyRobot#0001 @SpikeyBot#4928",
               "result": "A message will be added to the current day or the next day, that heals SpikeyRobot and SpikeyBot if they are not already fully healed."
             },
             {
@@ -738,12 +738,12 @@
           "examples": [
             {
               "description": "Basic Usage",
-              "command": "give @SpikeyRobot#0971 knife",
+              "command": "give @SpikeyRobot#0001 knife",
               "result": "SpikeyRobot will immediately be given a knife."
             },
             {
               "description": "Multiple Consumables",
-              "command": "give @SpikeyRobot#0971 bow 20",
+              "command": "give @SpikeyRobot#0001 bow 20",
               "result": "SpikeyRobot will immediately be given a bow with 20 arrows."
             }
           ]
@@ -756,12 +756,12 @@
           "examples": [
             {
               "description": "Basic Usage",
-              "command": "take @SpikeyRobot#0971 knife",
+              "command": "take @SpikeyRobot#0001 knife",
               "result": "SpikeyRobot will immediately lose a knife. If they end up with 0 or less, a message saying they lost all of their knives will still be sent."
             },
             {
               "description": "Multiple Consumables",
-              "command": "take @SpikeyRobot#0971 bow 20",
+              "command": "take @SpikeyRobot#0001 bow 20",
               "result": "SpikeyRobot will immediately lose 20 arrows from their bow. If they end up with 0 or less, a message saying they lost all their arrows will be sent."
             }
           ]

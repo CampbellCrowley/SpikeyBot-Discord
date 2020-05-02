@@ -335,7 +335,7 @@ class Worker {
             reply: 'Oops! I wasn\'t able to find a valid event for the ' +
                 'remaining players.\nThis is usually because too many ' +
                 'events are disabled.\nIf you think this is a bug, ' +
-                'please tell SpikeyRobot#0971',
+                'please tell SpikeyRobot#0001',
             reply2: 'Try again with `{prefix}next`.\n(Failed to find valid ' +
                 'event for \'' +
                 (doArenaEvent ? arenaEvent.message : 'player events') +

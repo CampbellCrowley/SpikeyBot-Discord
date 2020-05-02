@@ -956,10 +956,10 @@ function Uno() {
         embed.addField(
             'Lobby Settings',
             'The creator of this game can use the following commands in this ' +
-                'channel.\n\nUse `invite @SpikeyRobot#0971` to add new people' +
+                'channel.\n\nUse `invite @SpikeyRobot#0001` to add new people' +
                 ' to this game.\nUse `uno npc add 2` to add 2 NPCs or `uno ' +
                 'npc remove 3` to remove 3 NPCs.\nType `uno kick ' +
-                '@SpikeyRobot#0971` to remove them from the game (Note: ' +
+                '@SpikeyRobot#0001` to remove them from the game (Note: ' +
                 'don\'t use the command prefix).\nType `uno start` to start ' +
                 'the game once you\'re ready!\n`uno end` to end this game at ' +
                 'any time.');
@@ -968,7 +968,7 @@ function Uno() {
             'Lobby Settings',
             'The creator of this game can use the following commands in this ' +
                 'channel.\n\n`uno end` to end this game at any time (this ' +
-                'deletes all Uno text channels).\n`uno kick @SpikeyRobot#0971' +
+                'deletes all Uno text channels).\n`uno kick @SpikeyRobot#0001' +
                 '` to kick players (Careful! They cannot be added back during' +
                 ' the game!).');
       }
