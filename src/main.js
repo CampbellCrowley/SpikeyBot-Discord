@@ -2459,11 +2459,7 @@ function Main() {
           }
           if (fd) fs.close(fd, (err) => err && console.error(err));
         });
-        fs.unlink(file, (err) => {
-          if (!err) return;
-          self.error(`Failed to delete timer: ${file}`);
-          console.error(err);
-        });
+        self.common.unlink(file);
       });
     }, delta);
   }

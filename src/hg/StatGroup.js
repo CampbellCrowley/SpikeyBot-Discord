@@ -1,4 +1,4 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const Stats = require('./Stats.js');
 const common = require('../common.js');
@@ -440,23 +440,12 @@ class StatGroup {
         return;
       }
       const fn = `${this._dir}${data.id}.json`;
-      if (fs.existsSync(fn)) {
-        fs.open(`${fn}.DELETEME`, 'w', 0o664, (err, fd) => {
-          if (err) {
-            console.error(
-                'Failed to mark legacy user stat file for deletion: ' +
-                `${fn}.DELETEME`);
-            console.error(err);
-          }
-          if (fd) fs.close(fd, (err) => err && console.error(err));
-        });
-        fs.unlink(fn, (err) => {
-          if (err) {
-            console.error('Failed to remove legacy user stat file:', fn);
-            console.error(err);
-          }
-        });
-      }
+      common.unlink(fn, (err) => {
+        if (err) {
+          console.error('Failed to remove legacy user stat file:', fn);
+          console.error(err);
+        }
+      });
     });
     // common.mkAndWrite(
     //     `${this._dir}${data.id}.json`, this._dir, data.serializable);

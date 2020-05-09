@@ -706,6 +706,7 @@ Common.shardConfigRegex = Common.prototype.shardConfigRegex;
  * optional error.
  */
 Common.mkAndWrite = function(filename, dir, data, cb) {
+  if (!dir) dir = path.dirname(filename);
   mkdirp(dir)
       .then(() => {
         if (typeof data === 'object') data = JSON.stringify(data);
@@ -782,7 +783,8 @@ Common.prototype.mkAndWriteSync = Common.mkAndWriteSync;
  *
  * @public
  * @param {string} filename The name of the file to remove.
- * @param {Function} cb Callback once completed, with optional error parameter.
+ * @param {Function} [cb] Callback once completed, with optional error
+ *     parameter.
  */
 Common.unlink = function(filename, cb) {
   fs.writeFile(`${filename}.DELETEME`, Date.now(), (err) => {
