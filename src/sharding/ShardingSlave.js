@@ -207,11 +207,11 @@ class ShardingSlave {
     if (this._verified && !this._reconnectTimeout &&
         reason === 'io server disconnect') {
       this._reconnectTimeout = setTimeout(() => {
-        if (!this._socket.connected) {
-          this._socket.disconnect();
-          this._socket.connect();
-        }
+        common.log('Attempting reconnect after io disconnect.', this.id);
+        this._socket.disconnect();
+        this._socket.connect();
         this._socket.reconnection(true);
+        this._reconnectTimeout = null;
       }, 3000);
     }
     this._verified = false;
