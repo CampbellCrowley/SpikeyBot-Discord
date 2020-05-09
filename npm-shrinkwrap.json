@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.15.0-dev",
+  "version": "1.15.0",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -676,9 +676,9 @@
       }
     },
     "acorn": {
-      "version": "7.1.1",
-      "resolved": "https://registry.npmjs.org/acorn/-/acorn-7.1.1.tgz",
-      "integrity": "sha512-add7dgA5ppRPxCFJoAGfMDi7PIBXq1RtGo7BhbLaxwrXPOmw8gq48Y9ozT01hUKy9byMjlR20EJhu5zlkErEkg==",
+      "version": "7.2.0",
+      "resolved": "https://registry.npmjs.org/acorn/-/acorn-7.2.0.tgz",
+      "integrity": "sha512-apwXVmYVpQ34m/i71vrApRrRKCWQnZZF1+npOD0WV5xZFfwWOmKGQ2RWlfdy9vWITsenisM8M0Qeq8agcFHNiQ==",
       "dev": true
     },
     "acorn-jsx": {
@@ -1339,8 +1339,8 @@
       "integrity": "sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A=="
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#026691702da7d1fcf9a959f00082f07f1e14b13d",
-      "from": "github:discordjs/discord.js#026691702da7d1fcf9a959f00082f07f1e14b13d",
+      "version": "github:discordjs/discord.js#2583ad5da7db5ab92dfa357909f9c713db0a2981",
+      "from": "github:discordjs/discord.js#2583ad5da7db5ab92dfa357909f9c713db0a2981",
       "requires": {
         "@discordjs/collection": "^0.1.5",
         "@discordjs/form-data": "^3.0.1",
@@ -1727,9 +1727,9 @@
       "dev": true
     },
     "eslint-plugin-jsdoc": {
-      "version": "24.0.6",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-24.0.6.tgz",
-      "integrity": "sha512-WDzUgShMK7Zg9N6s19LxUqy71At/PxCuMEXaKyBzybhABq6iU4DaZtWZ+4fkCMBvMzMwMAPa2oRD/+fQGORMhg==",
+      "version": "25.0.1",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-25.0.1.tgz",
+      "integrity": "sha512-lLazG3UDlAVZwXs8C+E8OnavzLxXpjx0UtlzhKcXZ5gnzGdxQ9hL3Tab98gJuh2QNZJPBk2jH/BZG2KXjSEkIw==",
       "dev": true,
       "requires": {
         "comment-parser": "^0.7.4",
