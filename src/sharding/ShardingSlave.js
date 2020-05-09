@@ -190,6 +190,7 @@ class ShardingSlave {
    * @private
    */
   _socketConnected() {
+    this._lastSeen = Date.now();
     common.log('Socket connected to master', this.id);
     this._reconnectTimeout = null;
   }

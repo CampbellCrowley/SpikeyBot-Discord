@@ -588,8 +588,8 @@ class ShardingMaster {
    */
   _setHBTimeout() {
     if (this._hbTimeout) clearTimeout(this._hbTimeout);
-    let delta = Date.now() - this._nextHeartbeatTime;
-    if (delta < -1000) delta = 5000;
+    let delta = this._nextHeartbeatTime - Date.now();
+    if (delta < -1000 || isNaN(delta)) delta = 5000;
     this._hbTimeout = setTimeout(() => this._refreshShardStatus(), delta);
   }
   /**
@@ -1008,6 +1008,7 @@ class ShardingMaster {
       common.logDebug(
           `${userId} updated status. (${status.messageCountDelta}, ${d})`,
           socket.id);
+      // common.logDebug(`${userId} updated status. (${JSON.stringify(user)})`);
 
       user.currentShardId = user.stats.currentShardId;
       user.currentShardCount = user.stats.currentShardCount;
@@ -1017,6 +1018,7 @@ class ShardingMaster {
       }
 
       this._saveUsers();
+      this._refreshShardStatus();
       // TODO: Store history of shard status for historic purposes.
     });
 
