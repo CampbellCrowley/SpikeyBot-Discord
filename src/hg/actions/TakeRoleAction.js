@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const MemberAction = require('./MemberAction.js');
 
@@ -35,15 +35,14 @@ class TakeRoleAction extends MemberAction {
    * @description Update the role with a new value.
    * @public
    * @param {string} rId The ID of the role to set.
-   * @returns {?external:Discord~GuildRole} Found role, or null if unable to
-   * find role. If unable to find, it will not update the value.
    */
   set role(rId) {
     const newRole = this._role.guild.roles.resolve(rId);
-    if (!newRole) return null;
+    if (!newRole) {
+      throw new TypeError('Failed to resolve role from given ID!');
+    }
     this._role = newRole;
     this._saveData.role = newRole.id;
-    return newRole;
   }
   /**
    * @description Create action from save data.

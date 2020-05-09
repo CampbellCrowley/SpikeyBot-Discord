@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const ChannelAction = require('./ChannelAction.js');
 
@@ -33,13 +33,13 @@ class SendMessageAction extends ChannelAction {
    * @description Update the message with a new value.
    * @public
    * @param {string} msg The new message text.
-   * @returns {?string} The new string, or null if failed for some reason.
    */
   set message(msg) {
-    if (typeof msg !== 'string' || msg.length === 0) return null;
+    if (typeof msg !== 'string' || msg.length === 0) {
+      throw new TypeError('Message must be a string!');
+    }
     this._message = msg;
     this._saveData.message = msg;
-    return msg;
   }
   /**
    * @description Create action from save data.

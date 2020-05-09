@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const ChannelAction = require('./ChannelAction.js');
 const MessageMaker = require('../../lib/MessageMaker.js');
@@ -55,13 +55,13 @@ class RunCommandAction extends ChannelAction {
    * @description Update the message with a new value.
    * @public
    * @param {string} msg The new message text.
-   * @returns {?string} The new string, or null if failed for some reason.
    */
   set command(msg) {
-    if (typeof msg !== 'string' || msg.length === 0) return null;
+    if (typeof msg !== 'string' || msg.length === 0) {
+      throw new TypeError('Text must be a string!');
+    }
     this._message = msg;
     this._saveData.command = msg;
-    return msg;
   }
   /**
    * @description Get the current author ID.
@@ -79,21 +79,19 @@ class RunCommandAction extends ChannelAction {
    *   external:Discord~User|
    *   external:Discord~GuildMember
    * } author The new author or ID.
-   * @returns {?string} The new author ID, or null if failed for some reason.
    */
   set author(author) {
     if (typeof author === 'string') {
-      if (author.length === 0) return null;
+      if (author.length === 0) throw new TypeError('Author cannot be empty!');
     } else if (author && author.id) {
       author = author.id;
     } else if (author && author.user && author.user.id) {
       author = author.user.id;
     } else {
-      return null;
+      throw new TypeError('Author is invalid!');
     }
     this._author = author;
     this._saveData.author = author;
-    return author;
   }
   /**
    * @description Create action from save data.
