@@ -803,7 +803,7 @@ function SpikeyBot() {
                 'should happen.');
           }
           parsed.running = true;
-          self.common.mkAndWrite(
+          common.mkAndWrite(
               fullRebootFilename, null, JSON.stringify(parsed), (err) => {
                 if (err) {
                   common.error('Failed to set file state to running.');
