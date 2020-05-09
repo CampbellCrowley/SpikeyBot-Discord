@@ -60,7 +60,7 @@
         {
           "command": "next",
           "description": "Simulate the next day of the Games!",
-          "aliases": "next, nextday, resume",
+          "aliases": "next, nextday, resume, continue, unpause",
           "validOnlyInGuild": true,
           "examples": [
             {

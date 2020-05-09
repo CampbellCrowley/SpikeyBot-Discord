@@ -456,7 +456,8 @@ function HG() {
           ['autoplay', 'autostart', 'auto', 'play', 'go'], mkCmd(startAutoplay),
           cmdOpts),
       new self.command.SingleCommand(
-          ['next', 'nextday', 'resume', 'continue'], mkCmd(nextDay), cmdOpts),
+          ['next', 'nextday', 'resume', 'continue', 'unpause'], mkCmd(nextDay),
+          cmdOpts),
       new self.command.SingleCommand(
           ['step', 'single', 'one', 'nextevent'], mkCmd(commandStep), cmdOpts),
       new self.command.SingleCommand(
