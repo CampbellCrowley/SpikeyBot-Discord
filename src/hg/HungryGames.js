@@ -822,16 +822,7 @@ class HungryGames {
             console.error('FAILED to delete event row', id);
           }
           const filename = `${HungryGames.EventContainer.eventDir}${id}.json`;
-          fs.open(`${filename}.DELETEME`, 'w', 0o664, (err, fd) => {
-            if (err) {
-              console.error(
-                  'Failed to mark HG Event file for deletion: ' +
-                  `${filename}.DELETEME`);
-              console.error(err);
-            }
-            if (fd) fs.close(fd, (err) => err && console.error(err));
-          });
-          fs.unlink(filename, (err) => {
+          this._parent.common.unlink(filename, (err) => {
             if (err) {
               console.error(err);
               cb('UNLINK_FAILED');

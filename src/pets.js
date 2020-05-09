@@ -320,18 +320,9 @@ class Pets extends SubModule {
             const pId = pets[0].id;
 
             const fName = `${this.common.userSaveDir}${uId}/pets/${pId}.json`;
-            fs.open(`${fName}.DELETEME`, 'w', 0o664, (err, fd) => {
+            this.common.unlink(fName, (err) => {
               if (err) {
-                this.error(
-                    'Failed to mark pet file for deletion: ' +
-                    `${fName}.DELETEME`);
-                console.error(err);
-              }
-              if (fd) fs.close(fd, (err) => err && console.error(err));
-            });
-            fs.unlink(fName, (err) => {
-              if (err) {
-                this.error('Failed to delete pet file: ' + fName);
+                this.error(`Failed to delete pet file: ${fName}`);
                 console.error(err);
                 return;
               }

@@ -226,7 +226,7 @@ class BotCommands extends SubModule {
                     return;
                   }
                   try {
-                    fs.closeSync(fs.openSync(file, 'a'));
+                    this.common.mkAndWriteSync(file, null, ' ');
                     this.common.reply(msg, 'Bot Commands', 'Now Allowed');
                   } catch (err) {
                     this.error(
@@ -239,18 +239,9 @@ class BotCommands extends SubModule {
                 });
           });
     } else if (exists && !setTo) {
-      fs.open(`${file}.DELETEME`, 'w', 0o664, (err, fd) => {
+      this.common.unlink(file, (err) => {
         if (err) {
-          this.error(
-              'Failed to mark bot commands save file for deletion: ' +
-              `${file}.DELETEME`);
-          console.error(err);
-        }
-        if (fd) fs.close(fd, (err) => err && console.error(err));
-      });
-      fs.unlink(file, (err) => {
-        if (err) {
-          this.error('Failed to disable bot commands: ' + msg.guild.id);
+          this.error(`Failed to disable bot commands: ${msg.guild.id}`);
           console.error(err);
           this.common.reply(
               msg, 'Bot Commands', 'Failed to toggle due to internal error.');
