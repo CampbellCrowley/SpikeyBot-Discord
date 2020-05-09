@@ -6,6 +6,7 @@ const fs = require('fs');
 const mkdirp = require('mkdirp');
 const sql = require('mysql');
 const auth = require('../auth.js');
+const path = require('path');
 
 /**
  * Commonly required things. Helper functions and constants.
@@ -717,6 +718,14 @@ Common.mkAndWrite = function(filename, dir, data, cb) {
           }
           if (typeof cb === 'function') cb();
         });
+        fs.unlink(`${filename}.DELETEME`, (err) => {
+          if (!err || err.code == 'ENOENT') return;
+          if (this.error) {
+            this.error(
+                `Failed to unlink DELETEME marker: ${filename}.DELETEME`);
+          }
+          console.error(err);
+        });
       })
       .catch((err) => {
         if (err.code !== 'EEXIST') {
@@ -739,6 +748,7 @@ Common.prototype.mkAndWrite = Common.mkAndWrite;
  * @param {string} data The data to write to the file.
  */
 Common.mkAndWriteSync = function(filename, dir, data) {
+  if (!dir) dir = path.dirname(filename);
   try {
     mkdirp.sync(dir);
   } catch (err) {
@@ -753,8 +763,71 @@ Common.mkAndWriteSync = function(filename, dir, data) {
     console.error(err);
     return;
   }
+  try {
+    fs.unlinkSync(`${filename}.DELETEME`);
+  } catch (err) {
+    if (err.code != 'ENOENT') {
+      if (this.error) {
+        this.error(`Failed to unlink DELETEME marker: ${filename}.DELETEME`);
+      }
+      console.error(err);
+      return;
+    }
+  }
 };
 Common.prototype.mkAndWriteSync = Common.mkAndWriteSync;
+
+/**
+ * Delete data from file, and mark it for deletion from other shards.
+ *
+ * @public
+ * @param {string} filename The name of the file to remove.
+ * @param {Function} cb Callback once completed, with optional error parameter.
+ */
+Common.unlink = function(filename, cb) {
+  fs.writeFile(`${filename}.DELETEME`, Date.now(), (err) => {
+    if (!err) return;
+    if (this.error) {
+      this.error(`Failed to mark file for deletion: ${filename}.DELETEME`);
+    }
+    console.error(err);
+  });
+  fs.unlink(filename, (err) => {
+    if (err) {
+      if (this.error) this.error(`Failed to delete file: ${filename}`);
+      console.error(err);
+      if (cb) cb(err);
+    } else {
+      if (cb) cb(null);
+    }
+  });
+};
+Common.prototype.unlink = Common.unlink;
+
+/**
+ * Delete data from file, and mark it for deletion from other shards.
+ * Synchronous.
+ *
+ * @public
+ * @param {string} filename The name of the file to remove.
+ */
+Common.unlinkSync = function(filename) {
+  try {
+    fs.writeFileSync(`${filename}.DELETEME`, Date.now());
+  } catch (err) {
+    if (this.error) {
+      this.error(`Failed to mark file for deletion: ${filename}.DELETEME`);
+    }
+    console.error(err);
+  }
+  try {
+    fs.unlinkSync(filename);
+  } catch (err) {
+    if (this.error) this.error(`Failed to delete file: ${filename}`);
+    console.error(err);
+  }
+};
+Common.prototype.unlinkSync = Common.unlinkSync;
 
 /**
  * Recursively freeze all elements of an object.

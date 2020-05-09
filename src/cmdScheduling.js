@@ -1,7 +1,6 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
-const mkdirp = require('mkdirp');
 const MessageMaker = require('./lib/MessageMaker.js');
 
 require('./subModule.js')
@@ -91,41 +90,10 @@ function CmdScheduling() {
    */
   this.save = function(opt) {
     self.client.guilds.cache.forEach((g) => {
-      const dir = self.common.guildSaveDir + g.id;
-      const filename = dir + saveSubDir;
-      if (opt === 'async') {
-        fs.open(`${filename}.DELETEME`, 'w', 0o664, (err, fd) => {
-          if (err) {
-            this.error(
-                'Failed to mark sCmd file for deletion: ' +
-                `${filename}.DELETEME`);
-            console.error(err);
-          }
-          if (fd) fs.close(fd, (err) => err && console.error(err));
-        });
-        fs.unlink(filename, () => {
-          if (schedules[g.id] && schedules[g.id].length) {
-            schedules[g.id] = schedules[g.id].filter((el) => !el.complete);
-            const data = schedules[g.id].map((el) => el.toJSON());
-            writeSaveData(g.id, data, opt);
-          }
-        });
-      } else {
-        try {
-          fs.closeSync(fs.openSync(`${filename}.DELETEME`, 'w', 0o664));
-          fs.unlinkSync(filename);
-        } catch (err) {
-          if (err.code !== 'ENOENT') {
-            this.error('Failed to unlink sCmd data: ' + g.id);
-            console.error(err);
-          }
-        }
-        if (schedules[g.id] && schedules[g.id].length) {
-          schedules[g.id] = schedules[g.id].filter((el) => !el.complete);
-          const data = schedules[g.id].map((el) => el.toJSON());
-          writeSaveData(g.id, data, opt);
-        }
-      }
+      if (!schedules[g.id]) schedules[g.id] = [];
+      schedules[g.id] = schedules[g.id].filter((el) => !el.complete);
+      const data = schedules[g.id].map((el) => el.toJSON());
+      writeSaveData(g.id, data, opt);
     });
   };
 
@@ -142,39 +110,27 @@ function CmdScheduling() {
     const dir = self.common.guildSaveDir + i;
     const filename = dir + saveSubDir;
     if (opt === 'async') {
-      mkdirp(dir).then(() => {
-        fs.readFile(filename, (err, rec) => {
-          if (!err && rec) {
-            try {
-              const parsed = JSON.parse(rec);
-              if (parsed && parsed.length > 0) {
-                data = rec.filter((el) => el.bot != self.client.user.id)
-                    .concat(data);
-              }
-            } catch (e) {
-              // No data exists.
+      fs.readFile(filename, (err, rec) => {
+        if (!err && rec) {
+          try {
+            const parsed = JSON.parse(rec);
+            if (parsed && parsed.length > 0) {
+              data = rec.filter((el) => el.bot != self.client.user.id)
+                  .concat(data);
             }
+          } catch (e) {
+            // No data exists.
           }
-          const finalData = JSON.stringify(data);
-          fs.writeFile(filename, finalData, (err) => {
-            if (err) {
-              self.error('Failed to write file: ' + filename);
-              console.error(err);
-            }
-          });
+        }
+        const finalData = JSON.stringify(data);
+        self.common.mkAndWrite(filename, dir, finalData, (err) => {
+          if (err) {
+            self.error('Failed to write file: ' + filename);
+            console.error(err);
+          }
         });
-      }).catch((err) => {
-        self.error('Failed to make directory: ' + dir);
-        console.log(err);
       });
     } else {
-      try {
-        mkdirp.sync(dir);
-      } catch (err) {
-        self.error('Failed to make directory: ' + dir);
-        console.log(err);
-        return;
-      }
       try {
         const rec = fs.readFileSync(filename);
         const parsed = JSON.parse(rec);
@@ -184,12 +140,7 @@ function CmdScheduling() {
       } catch (err) {
         // No data exists.
       }
-      try {
-        fs.writeFileSync(filename, JSON.stringify(data));
-      } catch (err) {
-        self.error('Failed to write file: ' + filename);
-        console.error(err);
-      }
+      self.common.mkAndWriteSync(filename, dir, JSON.stringify(data));
     }
   }
 

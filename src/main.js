@@ -397,24 +397,8 @@ function Main() {
                       return;
                     }
                     setTimer(parsed);
-                    fs.open(`${filename}.DELETEME`, 'w', 0o664, (err, fd) => {
-                      if (err) {
-                        self.error(
-                            'Failed to mark timer save file for deletion: ' +
-                                `${filename}.DELETEME`,
-                            'Main');
-                        console.error(err);
-                      }
-                      if (fd) fs.close(fd, (err) => err && console.error(err));
-                    });
-                    fs.unlink(filename, (err4) => {
-                      if (err4) {
-                        self.error(
-                            'Failed to delete timer save file: ' + filename,
-                            'Main');
-                        console.error(err4);
-                      }
-                    });
+
+                    self.common.unlink(filename);
                   };
                 }(filename));
               }
@@ -424,7 +408,7 @@ function Main() {
       });
     }
 
-    self.client.guilds.cache.forEach(function(g) {
+    self.client.guilds.cache.forEach((g) => {
       fs.readFile(
           self.common.guildSaveDir + g.id + '/main-config.json',
           function(err, file) {
@@ -453,7 +437,7 @@ function Main() {
           });
     });
 
-    fs.readFile('./save/rigged-counter.txt', function(err, file) {
+    fs.readFile('./save/rigged-counter.txt', (err, file) => {
       if (err) {
         self.client.riggedCounter = 0;
         console.log(err);

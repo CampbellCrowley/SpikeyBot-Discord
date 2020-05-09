@@ -1441,12 +1441,12 @@ class ShardingMaster {
       this.logWarning('Shard sent file outside of project directory: ' + file);
       return;
     }
-    fs.writeFile(file, data, (err) => {
+    common.mkAndWrite(file, null, data, (err) => {
       if (err) {
-        this.error('Failed to write file from shard to disk: ' + file);
+        this.error(`Failed to write file from shard to disk: ${file}`);
         console.error(err);
       } else {
-        this.logDebug('Wrote file from shard to disk: ' + file);
+        this.logDebug(`Wrote file from shard to disk: ${file}`);
       }
     });
   }

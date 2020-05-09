@@ -1,7 +1,6 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
-const mkdirp = require('mkdirp'); // mkdir -p
 const rimraf = require('rimraf'); // rm -rf
 const yj = require('yieldable-json');
 
@@ -730,30 +729,26 @@ class HungryGames {
       cb('ALREADY_EXISTS');
       return null;
     }
-    mkdirp(`${newDir}${creator}`).then(() => {
-      fs.writeFile(filename, JSON.stringify(evt), (err) => {
+    const str = JSON.stringify(evt);
+    this._parent.common.mkAndWrite(filename, newDir, str, (err) => {
+      if (err) {
+        console.error(err);
+        cb('WRITE_FAILED');
+        return;
+      }
+
+      const toSend = global.sqlCon.format(
+          'INSERT INTO HGEvents (Id, CreatorId, DateCreated, Privacy, ' +
+              'EventType) VALUES (?, ?, FROM_UNIXTIME(?), "unlisted", ?)',
+          [evt.id, evt.creator, now / 1000, evt.type]);
+      global.sqlCon.query(toSend, (err) => {
         if (err) {
           console.error(err);
-          cb('WRITE_FAILED');
+          cb('SQL_FAILED');
           return;
         }
-
-        const toSend = global.sqlCon.format(
-            'INSERT INTO HGEvents (Id, CreatorId, DateCreated, Privacy, ' +
-                'EventType) VALUES (?, ?, FROM_UNIXTIME(?), "unlisted", ?)',
-            [evt.id, evt.creator, now / 1000, evt.type]);
-        global.sqlCon.query(toSend, (err) => {
-          if (err) {
-            console.error(err);
-            cb('SQL_FAILED');
-            return;
-          }
-          cb(null, evt);
-        });
+        cb(null, evt);
       });
-    }).catch((err) => {
-      console.error(err);
-      cb('MKDIR_FAILED');
     });
     return evt.id;
   }
@@ -915,7 +910,8 @@ class HungryGames {
         if (err) console.error(err);
       });
 
-      fs.writeFile(filename, JSON.stringify(evt), (err) => {
+      const str = JSON.stringify(evt);
+      this._parent.common.mkAndWrite(filename, newDir, str, (err) => {
         if (err) {
           console.error(err);
           cb('WRITE_FAILED');
@@ -1107,49 +1103,31 @@ class HungryGames {
         return;
       }
       const data = obj[1].serializable;
-      const dir = this._parent.common.guildSaveDir + id + this.hgSaveDir;
-      const filename = dir + this.saveFile;
+      const dir = `${this._parent.common.guildSaveDir}${id}${this.hgSaveDir}`;
+      const filename = `${dir}${this.saveFile}`;
       const saveStartTime = Date.now();
+      let stringified;
+      try {
+        stringified = JSON.stringify(data);
+      } catch (err) {
+        this._parent.error('Failed to stringify synchronously');
+        console.error(err);
+        return;
+      }
       if (opt == 'async') {
-        mkdirp(dir).then(() => {
-          let stringified;
-          try {
-            stringified = JSON.stringify(data);
-          } catch (err) {
-            this._parent.error('Failed to stringify synchronously');
+        this._parent.common.mkAndWrite(filename, dir, stringified, (err) => {
+          if (err) {
+            this._parent.error(`Failed to save HG data for ${filename}`);
             console.error(err);
-            return;
+          } else if (
+            this._findTimestamps[id] - saveStartTime < -this._purgeDelta) {
+            delete this._games[id];
+            delete this._findTimestamps[id];
+            this._parent.debug(`Purged ${id}`);
           }
-          fs.writeFile(filename, stringified, (err2) => {
-            if (err2) {
-              this._parent.error('Failed to save HG data for ' + filename);
-              console.error(err2);
-            } else if (
-              this._findTimestamps[id] - saveStartTime < -this._purgeDelta) {
-              delete this._games[id];
-              delete this._findTimestamps[id];
-              this._parent.debug(`Purged ${id}`);
-            }
-          });
-        }).catch((err) => {
-          this._parent.error('Failed to create directory for ' + dir);
-          console.error(err);
         });
       } else {
-        try {
-          mkdirp.sync(dir);
-        } catch (err) {
-          this._parent.error('Failed to create directory for ' + dir);
-          console.error(err);
-          return;
-        }
-        try {
-          fs.writeFileSync(filename, JSON.stringify(data));
-        } catch (err) {
-          this._parent.error('Failed to save HG data for ' + filename);
-          console.error(err);
-          return;
-        }
+        this._parent.common.mkAndWriteSync(filename, dir, stringified);
         if (this._findTimestamps[id] - Date.now() < -this._purgeDelta) {
           delete this._games[id];
           delete this._findTimestamps[id];

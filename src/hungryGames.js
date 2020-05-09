@@ -5,7 +5,6 @@ const Jimp = require('jimp');
 const http = require('http');
 const https = require('https');
 const crypto = require('crypto');
-const mkdirp = require('mkdirp'); // mkdir -p
 const FuzzySearch = require('fuzzy-search');
 const MessageMaker = require('./lib/MessageMaker.js');
 require('./subModule.js').extend(HG);  // Extends the SubModule class.
@@ -869,25 +868,19 @@ function HG() {
       const url = self.common.avatarURL +
           (self.common.isRelease ? 'avatars/' : 'dev/avatars/') + id + '/' +
           imgName;
-      mkdirp(dir).then(() => {
-        const fetchSize = HungryGames.UserIconUrl.fetchSize;
-        image.resize(fetchSize, fetchSize);
-        image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
-          if (err) {
-            self.error('Failed to convert image into buffer: ' + avatar);
-            console.error(err);
-            return;
-          }
-          fs.writeFile(filename, buffer, (err) => {
-            if (err) {
-              self.error('Failed to cache NPC avatar: ' + filename);
-              console.error(err);
-            }
-          });
+      const fetchSize = HungryGames.UserIconUrl.fetchSize;
+      image.resize(fetchSize, fetchSize);
+      image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
+        if (err) {
+          self.error(`Failed to convert image into buffer: ${avatar}`);
+          console.error(err);
+          return;
+        }
+        self.common.mkAndWrite(filename, dir, buffer, (err) => {
+          if (!err) return;
+          self.error(`Failed to cache NPC avatar: ${filename}`);
+          console.error(err);
         });
-      }).catch((err) => {
-        self.error('Failed to create NPC directory to cache avatar: ' + dir);
-        console.error(err);
       });
       return url;
     });
@@ -3264,7 +3257,8 @@ function HG() {
 
       cb(null, additional, stringified);
 
-      fs.writeFile(dir + '/HGLegacyEventBackup.json', stringified, (err) => {
+      const filename = `${dir}/HGLegacyEventBackup.json`;
+      self.common.mkAndWrite(filename, dir, stringified, (err) => {
         if (err) {
           self.error('Failed to save HG Legacy event backup file.');
           console.error(err);
@@ -5056,25 +5050,19 @@ function HG() {
     return toJimp(url).then((image) => {
       if (fromCache) return image;
       if (filename && image) {
-        mkdirp(dir).then(() => {
-          image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
+        image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
+          if (err) {
+            self.error(
+                `Failed to convert image into buffer: ${filename || url}`);
+            console.error(err);
+            return;
+          }
+          self.common.mkAndWrite(filename, dir, buffer, (err) => {
             if (err) {
-              self.error(
-                  'Failed to convert image into buffer: ' + (filename || url));
+              self.error(`Failed to cache avatar: ${filename}`);
               console.error(err);
-              return;
             }
-            fs.writeFile(filename, buffer, (err) => {
-              if (err) {
-                self.error('Failed to cache avatar: ' + filename);
-                console.error(err);
-              }
-            });
           });
-        }).catch((err) => {
-          self.error(
-              'Failed to create user directory to cache avatar: ' + dir);
-          console.error(err);
         });
       }
       return image;
@@ -5091,14 +5079,12 @@ function HG() {
       if (typeof path === 'string' && path.startsWith('http')) {
         path = {
           url: path,
-          headers: {
-            'User-Agent': self.common.ua,
-          },
+          headers: {'User-Agent': self.common.ua},
         };
       }
       return Jimp.read(path).catch((err) => {
         if (fromCache) {
-          self.error('Failed to read from cache: ' + path);
+          self.error(`Failed to read from cache: ${path}`);
           console.error(err);
           fromCache = false;
           return toJimp(url);

@@ -1,4 +1,4 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 require('./mainModule.js')(Command);  // Extends the MainModule class.
@@ -84,40 +84,22 @@ function Command() {
       const filename = dir + commandSettingsFile;
 
       if (opt == 'async') {
-        fs.mkdir(dir, (err) => {
+        self.common.mkAndWrite(filename, dir, JSON.stringify(el[1]), (err) => {
           if (err) {
-            if (err.code !== 'EEXIST') {
-              self.error('Failed to make guild directory for saving: ' + dir);
-              console.error(err);
-              return;
-            }
-          }
-          fs.writeFile(filename, JSON.stringify(el[1]), (err) => {
-            if (err) {
-              self.error(
-                  'Failed to write command settings to file: ' + filename);
-              console.error(err);
-              return;
-            }
-          });
-        });
-      } else {
-        try {
-          fs.mkdirSync(dir);
-        } catch (err) {
-          if (err.code !== 'EEXIST') {
-            self.error('Failed to make guild directory for saving: ' + dir);
+            self.error(`Failed to write command settings to file: ${filename}`);
             console.error(err);
             return;
           }
-        }
-        try {
-          fs.writeFileSync(filename, JSON.stringify(el[1]));
-        } catch (err) {
-          self.error('Failed to write command settings to file: ' + filename);
-          console.error(err);
-          return;
-        }
+        });
+      } else {
+        self.common.mkAndWriteSync(
+            filename, dir, JSON.stringify(el[1]), (err) => {
+              if (err) {
+                self.error(
+                    `Failed to write command settings to file: ${filename}`);
+                console.error(err);
+              }
+            });
       }
     });
   };

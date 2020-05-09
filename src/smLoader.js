@@ -115,7 +115,8 @@ function SMLoader() {
     const data = fs.readFileSync(smListFilename);
     const parsed = JSON.parse(data);
     parsed[self.bot.getFullBotName()] = goalSubModuleNames;
-    fs.writeFileSync(smListFilename, JSON.stringify(parsed, null, 2));
+    self.common.mkAndWriteSync(
+        smListFilename, null, JSON.stringify(parsed, null, 2));
 
     if (self.client.shard) {
       self.client.commandReload = null;

@@ -770,11 +770,12 @@ function Patreon() {
           Object.assign(tokenData, parsed);
           /* eslint-disable-next-line @typescript-eslint/camelcase */
           tokenData.expires_at = now + (tokenData.expires_in * 1000);
-          fs.writeFile(tokenFile, JSON.stringify(tokenData), (err) => {
-            if (!err) return;
-            self.error('Failed to save token data to file: ' + tokenFile);
-            console.error(err, tokenData);
-          });
+          self.common.mkAndWrite(
+              tokenFile, null, JSON.stringify(tokenData), (err) => {
+                if (!err) return;
+                self.error(`Failed to save token data to file: ${tokenFile}`);
+                console.error(err, tokenData);
+              });
           fetchAccessToken(cb);
         } else {
           self.common.error(content);

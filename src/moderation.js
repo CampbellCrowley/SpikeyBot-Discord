@@ -359,9 +359,13 @@ class Moderation extends SubModule {
     if (!modLog) return;
     const additional = member.joinedTimestamp &&
         this._formatDelay(Date.now() - member.joinedTimestamp);
-    modLog.output(
-        member.guild, 'memberLeave', member.user, null, 'Time on server',
-        additional);
+    if (additional) {
+      modLog.output(
+          member.guild, 'memberLeave', member.user, null, 'Time on server',
+          additional);
+    } else {
+      modLog.output(member.guild, 'memberLeave', member.user);
+    }
   }
   /**
    * @description Handle someone joining the guild.

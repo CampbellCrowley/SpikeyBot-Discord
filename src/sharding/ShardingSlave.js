@@ -435,12 +435,12 @@ class ShardingSlave {
       this.logWarning('Master sent file outside of project directory: ' + file);
       return;
     }
-    fs.writeFile(file, data, (err) => {
+    common.mkAndWrite(file, null, data, (err) => {
       if (err) {
-        common.error('Failed to write file from master to disk: ' + file);
+        common.error(`Failed to write file from master to disk: ${file}`);
         console.error(err);
       } else {
-        common.logDebug('Wrote file from master to disk: ' + file);
+        common.logDebug(`Wrote file from master to disk: ${file}`);
       }
     });
   }

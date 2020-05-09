@@ -92,36 +92,17 @@ function RoleManager() {
       const filename = dir + saveFile;
       const saveStartTime = Date.now();
       if (opt == 'async') {
-        mkdirp(dir).then(() => {
-          fs.writeFile(filename, JSON.stringify(data), function(err2) {
-            if (err2) {
-              self.error('Failed to save HG data for ' + filename);
-              console.error(err2);
-            } else if (
-              el[1].accessTimestamp - saveStartTime < -15 * 60 * 1000) {
-              delete guildPerms[id];
-              self.debug('Purged ' + id);
-            }
-          });
-        }).catch((err) => {
-          self.error('Failed to create directory for ' + dir);
-          console.error(err);
+        self.common.mkAndWrite(filename, dir, JSON.stringify(data), (err) => {
+          if (err) {
+            self.error(`Failed to save HG data for ${filename}`);
+            console.error(err);
+          } else if (el[1].accessTimestamp - saveStartTime < -15 * 60 * 1000) {
+            delete guildPerms[id];
+            self.debug(`Purged ${id}`);
+          }
         });
       } else {
-        try {
-          mkdirp.sync(dir);
-        } catch (err) {
-          self.error('Failed to create directory for ' + dir);
-          console.error(err);
-          return;
-        }
-        try {
-          fs.writeFileSync(filename, JSON.stringify(data));
-        } catch (err) {
-          self.error('Failed to save role data for ' + filename);
-          console.error(err);
-          return;
-        }
+        self.common.mkAndWriteSync(filename, dir, JSON.stringify(data));
         if (el[1].accessTimestamp - Date.now() < -15 * 60 * 1000) {
           delete guildPerms[id];
           self.debug('Purged ' + id);

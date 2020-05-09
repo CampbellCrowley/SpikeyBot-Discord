@@ -15,7 +15,6 @@ process.setMaxListeners(0);
  */
 const Discord = require('discord.js');
 const fs = require('fs');
-const mkdirp = require('mkdirp');
 const childProcess = require('child_process');
 // Auth is not constant and will be reloaded with common.js.
 let auth = require('../auth.js');
@@ -804,8 +803,8 @@ function SpikeyBot() {
                 'should happen.');
           }
           parsed.running = true;
-          fs.writeFile(
-              fullRebootFilename, JSON.stringify(parsed), (err) => {
+          self.common.mkAndWrite(
+              fullRebootFilename, null, JSON.stringify(parsed), (err) => {
                 if (err) {
                   common.error('Failed to set file state to running.');
                   console.error(err);
@@ -1123,59 +1122,33 @@ function SpikeyBot() {
                 newData[botName] = newPrefix;
                 finalPrefix = JSON.stringify(newData);
               }
-              mkdirp(`${common.guildSaveDir}${gId}`)
-                  .then(writeBotNamePrefix)
-                  .catch((err) => {
-                    common.error(
-                        'Failed to create guild directory! ' + gId + ' (' +
-                        newPrefix + ')');
-                    console.error(err);
-                  });
-              /**
-               * Write the custom prefix to file after making the
-               * directory. This is for bots not using the default
-               * name.
-               *
-               * @private
-               */
-              function writeBotNamePrefix() {
-                fs.writeFile(
-                    common.guildSaveDir + gId + guildCustomPrefixFile,
-                    finalPrefix, (err) => {
-                      if (err) {
-                        common.error(
-                            'Failed to save guild custom prefix! ' +
-                            gId + ' (' + botName + ': ' + newPrefix +
-                            ')');
-                        console.error(err);
-                      } else {
-                        common.logDebug(
-                            'Guild ' + gId + ' updated prefix to ' +
-                            botName + ': ' + newPrefix);
-                      }
-                    });
-              }
-            });
-      } else {
-        mkdirp(`${common.guildSaveDir}${gId}`).then(() => {
-          fs.writeFile(
-              common.guildSaveDir + gId + guildPrefixFile, newPrefix,
-              (err) => {
+              const dir = `${common.guildSaveDir}${gId}`;
+              const fn = `${dir}${guildCustomPrefixFile}`;
+              self.common.mkAndWrite(fn, dir, finalPrefix, (err) => {
                 if (err) {
                   common.error(
                       'Failed to save guild custom prefix! ' + gId + ' (' +
-                      newPrefix + ')');
+                      botName + ': ' + newPrefix + ')');
                   console.error(err);
                 } else {
                   common.logDebug(
-                      'Guild ' + gId + ' updated prefix to ' + newPrefix);
+                      'Guild ' + gId + ' updated prefix to ' + botName + ': ' +
+                      newPrefix);
                 }
               });
-        }).catch((err) => {
-          common.error(
-              'Failed to create guild directory! ' + gId + ' (' +
-              newPrefix + ')');
-          console.error(err);
+            });
+      } else {
+        const dir = `${common.guildSaveDir}${gId}`;
+        const fn = `${dir}${guildPrefixFile}`;
+        self.common.mkAndWrite(fn, dir, newPrefix, (err) => {
+          if (err) {
+            common.error(
+                'Failed to save guild custom prefix! ' + gId + ' (' +
+                newPrefix + ')');
+            console.error(err);
+          } else {
+            common.logDebug(`Guild ${gId} updated prefix to ${newPrefix}`);
+          }
         });
       }
     };
@@ -1306,12 +1279,7 @@ function SpikeyBot() {
           channel: msg_.channel.id,
           running: false,
         };
-        try {
-          fs.writeFileSync(fullRebootFilename, JSON.stringify(toSave));
-        } catch (err) {
-          common.error(`Failed to save ${fullRebootFilename}`);
-          console.log(err);
-        }
+        common.mkAndWriteSync(fullRebootFilename, null, JSON.stringify(toSave));
       }
       if (onlySelf || !client.shard || !hard) {
         process.exit(-1);
