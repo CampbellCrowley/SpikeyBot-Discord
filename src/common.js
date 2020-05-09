@@ -709,7 +709,9 @@ Common.mkAndWrite = function(filename, dir, data, cb) {
   if (!dir) dir = path.dirname(filename);
   mkdirp(dir)
       .then(() => {
-        if (typeof data === 'object') data = JSON.stringify(data);
+        if (typeof data === 'object' && !Buffer.isBuffer(data)) {
+          data = JSON.stringify(data);
+        }
         fs.writeFile(filename, data, (err2) => {
           if (err2) {
             if (this.error) this.error(`Failed to save file: ${filename}`);
@@ -756,6 +758,9 @@ Common.mkAndWriteSync = function(filename, dir, data) {
     if (this.error) this.error(`Failed to make directory: ${dir}`);
     console.error(err);
     return;
+  }
+  if (typeof data === 'object' && !Buffer.isBuffer(data)) {
+    data = JSON.stringify(data);
   }
   try {
     fs.writeFileSync(filename, data);
