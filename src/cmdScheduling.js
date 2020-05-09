@@ -46,7 +46,7 @@ function CmdScheduling() {
         }
         try {
           const parsed = JSON.parse(data);
-          if (!parsed || parsed.length == 0) {
+          if (!parsed && parsed.length !== 0) {
             self.warn('Failed to parse scheduled commands: ' + g.id);
             return;
           }
