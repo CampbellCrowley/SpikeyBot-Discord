@@ -800,7 +800,7 @@ Common.unlink = function(filename, cb) {
     console.error(err);
   });
   fs.unlink(filename, (err) => {
-    if (err) {
+    if (err && err.code != 'ENOENT') {
       if (this.error) this.error(`Failed to delete file: ${filename}`);
       console.error(err);
       if (cb) cb(err);
@@ -830,8 +830,10 @@ Common.unlinkSync = function(filename) {
   try {
     fs.unlinkSync(filename);
   } catch (err) {
-    if (this.error) this.error(`Failed to delete file: ${filename}`);
-    console.error(err);
+    if (err.code != 'ENOENT') {
+      if (this.error) this.error(`Failed to delete file: ${filename}`);
+      console.error(err);
+    }
   }
 };
 Common.prototype.unlinkSync = Common.unlinkSync;

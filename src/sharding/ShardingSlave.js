@@ -209,6 +209,8 @@ class ShardingSlave {
       this._reconnectTimeout = setTimeout(() => {
         common.log('Attempting reconnect after io disconnect.', this.id);
         this._socket.disconnect();
+        this._socket.io.opts.extraHeaders.authorization =
+            this._generateAuthHeader();
         this._socket.connect();
         this._socket.reconnection(true);
         this._reconnectTimeout = null;
