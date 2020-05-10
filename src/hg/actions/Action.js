@@ -145,7 +145,11 @@ class Action {
     const action = Action[obj.className];
     let out = null;
     if (action) {
-      out = action.create(client, id, obj.data);
+      try {
+        out = action.create(client, id, obj.data);
+      } catch (err) {
+        console.error(err);
+      }
       if (!out) {
         console.error('Action.js: Unable to create', obj.className, id, obj);
         return null;

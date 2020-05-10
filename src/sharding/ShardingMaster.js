@@ -856,7 +856,10 @@ class ShardingMaster {
           `Socket disconnected (${num})(${reason})(${id}): ${ipName}`,
           socket.id);
       delete this._sockets[socket.id];
-      if (id) delete this._shardSockets[id];
+      if (id && this._shardSockets[id] &&
+          this._shardSockets[id].id == socket.id) {
+        delete this._shardSockets[id];
+      }
       if (socket.isMasterShard) this._masterShardSocket = null;
     });
 
@@ -897,8 +900,8 @@ class ShardingMaster {
       common.logWarning(
           'Socket attempted connection ID of shard that is already connected!',
           socket.id);
-      socket.disconnect(true);
-      return;
+      // socket.disconnect(true);
+      // return;
     }
 
     if (Math.abs(timestamp - now) > this._config.tsPrecision) {

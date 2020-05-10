@@ -192,8 +192,8 @@ class ShardingSlave {
   _socketConnected() {
     this._lastSeen = Date.now();
     common.log('Socket connected to master', this.id);
+    clearTimeout(this._reconnectTimeout);
     this._reconnectTimeout = null;
-    this._verified = false;
   }
   /**
    * @description Socket disconnected event handler.
@@ -205,12 +205,9 @@ class ShardingSlave {
     common.log(`Socket disconnected from master (${reason})`, this.id);
     this._socket.io.opts.extraHeaders.authorization =
         this._generateAuthHeader();
-    console.log(
-        reason, reason == 'io server disconnect',
-        reason.toString() == 'io server disconnect', typeof reason,
-        this._verified, this._reconnectTimeout);
+    console.log(reason, typeof reason, this._verified, this._reconnectTimeout);
     if (this._verified && !this._reconnectTimeout &&
-        reason.toString() == 'io server disconnect') {
+        reason === 'io server disconnect') {
       this._reconnectTimeout = setTimeout(() => {
         common.log('Attempting reconnect after io disconnect.', this.id);
         this._socket.io.opts.extraHeaders.authorization =
@@ -220,7 +217,6 @@ class ShardingSlave {
           this._socket.connect();
         }
         this._socket.reconnection(true);
-        this._reconnectTimeout = null;
       }, 3000);
     }
   }
@@ -653,6 +649,7 @@ class ShardingSlave {
       common.error('Failed to fetch stats for heartbeat!', this.id);
       console.error(err);
       this._socket.emit('status', s);
+      common.logDebug(`Status Message: ${JSON.stringify(s)}`);
       return;
     }
 
