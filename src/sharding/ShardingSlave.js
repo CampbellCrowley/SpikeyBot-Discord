@@ -246,7 +246,6 @@ class ShardingSlave {
    * success message is second parameter.
    */
   _evalRequest(script, cb) {
-    this._lastSeen = Date.now();
     if (!this._child) {
       cb('Not Running');
       return;
@@ -633,7 +632,12 @@ class ShardingSlave {
     const hbEvalReq = 'this.getStats && this.getStats(true) || null';
 
     common.logDebug('Attempting to fetch stats for heartbeat...');
-    this._evalRequest(hbEvalReq, (...args) => this._hbEvalResHandler(...args));
+    const timeout =
+        setTimeout(() => this._hbEvalResHandler('Stats IPC timeout'), 30000);
+    this._evalRequest(hbEvalReq, (...args) => {
+      clearTimeout(timeout);
+      this._hbEvalResHandler(...args);
+    });
   }
   /**
    * @description Handler for response to status fetching for a heartbeat
