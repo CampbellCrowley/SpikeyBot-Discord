@@ -264,6 +264,7 @@ class Moderation extends SubModule {
     if (!modLog) return;
     const tag = msg.author.tag;
     const id = msg.author.id;
+    const mId = msg.id;
     const channel = msg.channel.name;
     if ((id == this.client.user.id || id == '318552464356016131') &&
         msg.content === '`Autoplaying...`') {
@@ -274,20 +275,19 @@ class Moderation extends SubModule {
         this.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG);
     if (!havePerm) {
       this._finalMessageDeleteSend(
-          msg.guild, msg.author.bot, tag, id, channel, files, msg.content,
+          msg.guild, msg.author.bot, tag, id, mId, channel, files, msg.content,
           null);
     } else {
-      msg.guild
-          .fetchAuditLogs({limit: 1, type: this.AuditLogActions.MESSAGE_DELETE})
+      msg.guild.fetchAuditLogs({limit: 1})
           .then((logs) => {
             this._finalMessageDeleteSend(
-                msg.guild, msg.author.bot, tag, id, channel, files, msg.content,
-                logs);
+                msg.guild, msg.author.bot, tag, id, mId, channel, files,
+                msg.content, logs);
           })
           .catch((err) => {
             this._finalMessageDeleteSend(
-                msg.guild, msg.author.bot, tag, id, channel, files, msg.content,
-                null);
+                msg.guild, msg.author.bot, tag, id, mId, channel, files,
+                msg.content, null);
             this.error('Failed to find executor of deleted message.');
             console.log(err);
           });
@@ -301,23 +301,31 @@ class Moderation extends SubModule {
    * @param {boolean} bot Is the message sent by a bot.
    * @param {string} tag User tag of deleted message.
    * @param {string} id User ID of deleted message.
+   * @param {string} mId Message ID of deleted message.
    * @param {string} channel Name of channel of deleted message.
    * @param {string[]} files Array of URLs to deleted files.
    * @param {string} content Message content of deleted message.
    * @param {?external:Discord~GuildAuditLogs} logs Audit logs for more info.
    */
-  _finalMessageDeleteSend(guild, bot, tag, id, channel, files, content, logs) {
+  _finalMessageDeleteSend(
+      guild, bot, tag, id, mId, channel, files, content, logs) {
     const modLog = this.bot.getSubmodule('./modLog.js');
     if (!modLog) return;
-    const entry = logs.entries.first();
-    const deletedBy = entry && entry.executor && entry.executor.tag;
+    const entry = logs && logs.entries && logs.entries.first();
+    const executor = entry && entry.action == 'MESSAGE_DELETE' &&
+        entry.target.id == id && entry.executor;
+    // It's possible that if a moderator deletes a user's message, then the user
+    // delete's their own message, this will show that the moderator deleted it,
+    // even though they did not.
+    const deletedBy = executor && executor.tag;
     if (deletedBy) {
       modLog.output(
-          guild, bot ? 'messageBotDelete' : 'messageDelete', 'Deleted by',
-          deletedBy, `${tag}'s (${id}) in #${channel}`,
+          guild, bot ? 'messageBotDelete' : 'messageDelete', null, null,
+          `${tag}'s (${id}) in #${channel}`,
           files.length > 0 ?
               `${content.substr(0, 100)}\n\nFiles: ${files.join(' ')}` :
-              content.substr(0, 1000));
+              content.substr(0, 1000),
+          'Possibly deleted by', deletedBy);
     } else {
       modLog.output(
           guild, bot ? 'messageBotDelete' : 'messageDelete', null, null,
@@ -441,15 +449,15 @@ class Moderation extends SubModule {
           guild, 'messagePurge', null, null,
           `${msgs.size} messages deleted from ${channels}.`);
     } else {
-      guild
-          .fetchAuditLogs(
-              {limit: 1, type: this.AuditLogActions.MESSAGE_BULK_DELETE})
+      guild.fetchAuditLogs({limit: 1})
           .then((logs) => {
-            const entry = logs.entries.first();
-            const deletedBy = entry && entry.executor && entry.executor.tag;
+            const entry = logs && logs.entries && logs.entries.first();
+            const deletedBy = entry && entry.action == 'MESSAGE_BULK_DELETE' &&
+                entry.executor && entry.executor.tag;
             modLog.output(
-                guild, 'messagePurge', deletedBy && 'Purged by', deletedBy,
-                `${msgs.size} messages deleted from ${channels}.`);
+                guild, 'messagePurge', null, null,
+                `${msgs.size} messages deleted from ${channels}.`, null,
+                deletedBy && 'Purged by', deletedBy);
           })
           .catch((err) => {
             modLog.output(
