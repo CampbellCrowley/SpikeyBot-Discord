@@ -193,6 +193,7 @@ class ShardingSlave {
     this._lastSeen = Date.now();
     common.log('Socket connected to master', this.id);
     this._reconnectTimeout = null;
+    this._verified = false;
   }
   /**
    * @description Socket disconnected event handler.
@@ -222,7 +223,6 @@ class ShardingSlave {
         this._reconnectTimeout = null;
       }, 3000);
     }
-    this._verified = false;
   }
   /**
    * @description Verify that we are connecting to the master we expect.
