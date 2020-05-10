@@ -1800,7 +1800,7 @@ banned.
 		<ul class="dummy">
 			<li>
 				<a href="src_moderation.js.html">src/moderation.js</a>,
-				 <a href="src_moderation.js.html#sunlight-1-line-661">line 661</a>
+				 <a href="src_moderation.js.html#sunlight-1-line-728">line 728</a>
 			</li>
 		</ul>
 	</dd>
@@ -1948,7 +1948,7 @@ without the bot's help.
 		<ul class="dummy">
 			<li>
 				<a href="src_moderation.js.html">src/moderation.js</a>,
-				 <a href="src_moderation.js.html#sunlight-1-line-505">line 505</a>
+				 <a href="src_moderation.js.html#sunlight-1-line-572">line 572</a>
 			</li>
 		</ul>
 	</dd>
@@ -1971,6 +1971,380 @@ without the bot's help.
     <ul>
         <li>Command#event:smite</li>
     </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_finalMessageDeleteSend"><span class="type-signature">&lt;private> </span>_finalMessageDeleteSend(guild, bot, tag, id, channel, files, content, logs)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Sends message delete to ModLog.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>guild</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">external:Discord~Guild</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Guild context.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>bot</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Is the message sent by a bot.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tag</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">User tag of deleted message.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">User ID of deleted message.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>channel</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Name of channel of deleted message.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>files</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of URLs to deleted files.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>content</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Message content of deleted message.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>logs</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">external:Discord~GuildAuditLogs</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Audit logs for more info.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_moderation.js.html">src/moderation.js</a>,
+				 <a href="src_moderation.js.html#sunlight-1-line-264">line 264</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
     
 
     
@@ -2091,7 +2465,7 @@ without the bot's help.
 		<ul class="dummy">
 			<li>
 				<a href="src_moderation.js.html">src/moderation.js</a>,
-				 <a href="src_moderation.js.html#sunlight-1-line-751">line 751</a>
+				 <a href="src_moderation.js.html#sunlight-1-line-818">line 818</a>
 			</li>
 		</ul>
 	</dd>
@@ -2253,7 +2627,7 @@ without the bot's help.
 		<ul class="dummy">
 			<li>
 				<a href="src_moderation.js.html">src/moderation.js</a>,
-				 <a href="src_moderation.js.html#sunlight-1-line-375">line 375</a>
+				 <a href="src_moderation.js.html#sunlight-1-line-442">line 442</a>
 			</li>
 		</ul>
 	</dd>
@@ -2392,7 +2766,7 @@ kicked.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_moderation.js.html">src/moderation.js</a>,
-				 <a href="src_moderation.js.html#sunlight-1-line-357">line 357</a>
+				 <a href="src_moderation.js.html#sunlight-1-line-424">line 424</a>
 			</li>
 		</ul>
 	</dd>
@@ -2669,7 +3043,7 @@ deleted messages.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_moderation.js.html">src/moderation.js</a>,
-				 <a href="src_moderation.js.html#sunlight-1-line-330">line 330</a>
+				 <a href="src_moderation.js.html#sunlight-1-line-374">line 374</a>
 			</li>
 		</ul>
 	</dd>
@@ -2831,7 +3205,7 @@ deleted messages.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_moderation.js.html">src/moderation.js</a>,
-				 <a href="src_moderation.js.html#sunlight-1-line-247">line 247</a>
+				 <a href="src_moderation.js.html#sunlight-1-line-291">line 291</a>
 			</li>
 		</ul>
 	</dd>
@@ -3017,7 +3391,7 @@ deleted messages.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_moderation.js.html">src/moderation.js</a>,
-				 <a href="src_moderation.js.html#sunlight-1-line-589">line 589</a>
+				 <a href="src_moderation.js.html#sunlight-1-line-656">line 656</a>
 			</li>
 		</ul>
 	</dd>
@@ -4092,7 +4466,7 @@ string if there was an error, or null if success.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_moderation.js.html">src/moderation.js</a>,
-				 <a href="src_moderation.js.html#sunlight-1-line-418">line 418</a>
+				 <a href="src_moderation.js.html#sunlight-1-line-485">line 485</a>
 			</li>
 		</ul>
 	</dd>
@@ -4874,7 +5248,7 @@ doing such may risk putting the module into an uncontrollable state.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
 	
-		on Saturday, May 9, 2020 6:52 PM (-07:00)
+		on Saturday, May 9, 2020 9:26 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

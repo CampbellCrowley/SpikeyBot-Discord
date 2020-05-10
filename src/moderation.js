@@ -224,18 +224,62 @@ class Moderation extends SubModule {
       return;
     }
     const files = msg.attachments.map((el) => el.url);
-    if (msg.author.bot) {
+    const havePerm = msg.guild.me.hasPermission(
+        this.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG);
+    if (!havePerm) {
+      this._finalMessageDeleteSend(
+          msg.guild, msg.author.bot, tag, id, channel, files, msg.content,
+          null);
+    } else {
+      msg.guild
+          .fetchAuditLogs(
+              {limit: 1, type: this.Discord.AuditLogAction.MESSAGE_DELETE})
+          .then((logs) => {
+            this._finalMessageDeleteSend(
+                msg.guild, msg.author.bot, tag, id, channel, files, msg.content,
+                logs);
+          })
+          .catch((err) => {
+            this._finalMessageDeleteSend(
+                msg.guild, msg.author.bot, tag, id, channel, files, msg.content,
+                null);
+            this.error('Failed to find executor of deleted message.');
+            console.log(err);
+          });
+    }
+  }
+
+  /**
+   * @description Sends message delete to ModLog.
+   * @private
+   * @param {external:Discord~Guild} guild Guild context.
+   * @param {boolean} bot Is the message sent by a bot.
+   * @param {string} tag User tag of deleted message.
+   * @param {string} id User ID of deleted message.
+   * @param {string} channel Name of channel of deleted message.
+   * @param {string[]} files Array of URLs to deleted files.
+   * @param {string} content Message content of deleted message.
+   * @param {?external:Discord~GuildAuditLogs} logs Audit logs for more info.
+   */
+  _finalMessageDeleteSend(guild, bot, tag, id, channel, files, content, logs) {
+    const modLog = this.bot.getSubmodule('./modLog.js');
+    if (!modLog) return;
+    const entry = logs.entries.first();
+    const deletedBy = entry && entry.executor && entry.executor.tag;
+    if (deletedBy) {
       modLog.output(
-          msg.guild, 'messageBotDelete', null, null,
-          `${tag}'s (${id}) in #${channel}`, files.length > 0 ?
-              `${msg.content.substr(0, 100)}\n\nFiles: ${files.join(' ')}` :
-              msg.content);
+          guild, bot ? 'messageBotDelete' : 'messageDelete', 'Deleted by',
+          deletedBy, `${tag}'s (${id}) in #${channel}`,
+          files.length > 0 ?
+              `${content.substr(0, 100)}\n\nFiles: ${files.join(' ')}` :
+              content.substr(0, 1000));
     } else {
       modLog.output(
-          msg.guild, 'messageDelete', null, null,
-          `${tag}'s (${id}) in #${channel}`, files.length > 0 ?
-              `${msg.content.substr(0, 100)}\n\nFiles: ${files.join(' ')}` :
-              msg.content);
+          guild, bot ? 'messageBotDelete' : 'messageDelete', null, null,
+          `${tag}'s (${id}) in #${channel}`,
+          files.length > 0 ?
+              `${content.substr(0, 100)}\n\nFiles: ${files.join(' ')}` :
+              content.substr(0, 1000));
     }
   }
   /**
@@ -344,9 +388,32 @@ class Moderation extends SubModule {
     } else {
       channels = channels.join(', ');
     }
-    modLog.output(
-        msgs.first().guild, 'messagePurge', null, null,
-        `${msgs.size} messages deleted from ${channels}.`);
+    const guild = msgs.first().guild;
+    const havePerm = guild.me.hasPermission(
+        this.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG);
+    if (!havePerm) {
+      modLog.output(
+          guild, 'messagePurge', null, null,
+          `${msgs.size} messages deleted from ${channels}.`);
+    } else {
+      guild
+          .fetchAuditLogs(
+              {limit: 1, type: this.Discord.AuditLogAction.MESSAGE_BULK_DELETE})
+          .then((logs) => {
+            const entry = logs.entries.first();
+            const deletedBy = entry && entry.executor && entry.executor.tag;
+            modLog.output(
+                guild, 'messagePurge', deletedBy && 'Purged by', deletedBy,
+                `${msgs.size} messages deleted from ${channels}.`);
+          })
+          .catch((err) => {
+            modLog.output(
+                guild, 'messagePurge', null, null,
+                `${msgs.size} messages deleted from ${channels}.`);
+            this.error('Failed to find executor of purged message.');
+            console.log(err);
+          });
+    }
   }
   /**
    * @description Handle a guild member leaving the guild.
