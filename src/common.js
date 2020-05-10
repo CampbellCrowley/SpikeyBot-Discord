@@ -793,7 +793,7 @@ Common.prototype.mkAndWriteSync = Common.mkAndWriteSync;
  */
 Common.unlink = function(filename, cb) {
   fs.writeFile(`${filename}.DELETEME`, Date.now(), (err) => {
-    if (!err) return;
+    if (!err || err.code == 'ENOENT') return;
     if (this.error) {
       this.error(`Failed to mark file for deletion: ${filename}.DELETEME`);
     }
@@ -822,10 +822,12 @@ Common.unlinkSync = function(filename) {
   try {
     fs.writeFileSync(`${filename}.DELETEME`, Date.now());
   } catch (err) {
-    if (this.error) {
-      this.error(`Failed to mark file for deletion: ${filename}.DELETEME`);
+    if (err.code != 'ENOENT') {
+      if (this.error) {
+        this.error(`Failed to mark file for deletion: ${filename}.DELETEME`);
+      }
+      console.error(err);
     }
-    console.error(err);
   }
   try {
     fs.unlinkSync(filename);
