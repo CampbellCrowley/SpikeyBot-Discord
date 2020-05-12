@@ -256,10 +256,7 @@ class ShardingSlave {
             cb(null, res);
             return res;
           })
-          .catch((err) => {
-            cb(err);
-            throw err;
-          });
+          .catch((err) => cb(err));
       return;
     }
     const promise = new Promise((resolve, reject) => {
@@ -289,11 +286,7 @@ class ShardingSlave {
           cb(null, res);
           return res;
         })
-        .catch((err) => {
-          cb(err);
-          throw err;
-        })
-        .finally(() => {});
+        .catch((err) => cb(err));
   }
   /**
    * @description Trigger the child process to be killed and restarted.
