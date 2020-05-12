@@ -252,8 +252,14 @@ class ShardingSlave {
     }
     if (this._evals.has(script)) {
       this._evals.get(script)
-          .then((res) => cb(null, res))
-          .catch((err) => cb(err));
+          .then((res) => {
+            cb(null, res);
+            return res;
+          })
+          .catch((err) => {
+            cb(err);
+            throw err;
+          });
       return;
     }
     const promise = new Promise((resolve, reject) => {
@@ -278,7 +284,16 @@ class ShardingSlave {
       });
     });
     this._evals.set(script, promise);
-    promise.then((res) => cb(null, res)).catch((err) => cb(err));
+    promise
+        .then((res) => {
+          cb(null, res);
+          return res;
+        })
+        .catch((err) => {
+          cb(err);
+          throw err;
+        })
+        .finally(() => {});
   }
   /**
    * @description Trigger the child process to be killed and restarted.
@@ -629,11 +644,11 @@ class ShardingSlave {
           this.id);
       return;
     }
-    const hbEvalReq = 'this.getStats && this.getStats(true) || null';
+    const hbEvalReq = '(this.getStats && this.getStats(true)) || false';
 
     common.logDebug('Attempting to fetch stats for heartbeat...');
     const timeout =
-        setTimeout(() => this._hbEvalResHandler('Stats IPC timeout'), 30000);
+        setTimeout(() => this._hbEvalResHandler('Stats IPC timeout'), 10000);
     this._evalRequest(hbEvalReq, (...args) => {
       clearTimeout(timeout);
       this._hbEvalResHandler(...args);
@@ -651,7 +666,7 @@ class ShardingSlave {
     const s = this._status;
     if (err || !res) {
       common.error('Failed to fetch stats for heartbeat!', this.id);
-      console.error(err);
+      if (err) console.error(err);
       this._socket.emit('status', s);
       common.logDebug(`Status Message: ${JSON.stringify(s)}`);
       return;

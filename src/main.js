@@ -2856,8 +2856,10 @@ function Main() {
       embed.addField('Users', userString, true);
 
       const shardUptimes = values.uptimes.map((el, i) => {
-        const mem = values.memory[i];
-        return `\`Shard #${i} (${values.versions[i]})\`\n- up ${el}\n- ${mem}`;
+        // const mem = values.memory[i];
+        // return `\`Shard #${i} (${values.versions[i]})\`\n- up ${el}\n-
+        // ${mem}`;
+        return `\`Shard #${i}\`\n- up ${el}`;
       });
       const shardString = 'Number of shards: ' + fmtNum(values.numShards) +
           '\nThis guild/channel is in shard #' + values.reqShard + '\n' +
