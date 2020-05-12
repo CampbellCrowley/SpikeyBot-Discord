@@ -646,7 +646,7 @@ class ShardingSlave {
     }
     const hbEvalReq = '(this.getStats && this.getStats(true)) || false';
 
-    common.logDebug('Attempting to fetch stats for heartbeat...');
+    // common.logDebug('Attempting to fetch stats for heartbeat...');
     const timeout =
         setTimeout(() => this._hbEvalResHandler('Stats IPC timeout'), 10000);
     this._evalRequest(hbEvalReq, (...args) => {

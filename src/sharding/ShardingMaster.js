@@ -205,6 +205,17 @@ class ShardingMaster {
     this._masterShardSocket = null;
 
     /**
+     * ID of the shard we last sent an heartbeat request to that has not beel
+     * resolved. This is only used for 'pull' style updating for debugging
+     * heartbeats that don't get replies.
+     *
+     * @private
+     * @type {?string}
+     * @default
+     */
+    this._hbWaitID = null;
+
+    /**
      * Webserver instance.
      *
      * @private
@@ -977,6 +988,7 @@ class ShardingMaster {
 
     socket.on('status', (status) => {
       user.lastSeen = Date.now();
+      if (userId === this._hbWaitID) this._hbWaitID = null;
       try {
         // console.log(userId, ':', status);
         status = ShardingMaster.ShardStatus.from(status);
@@ -1007,10 +1019,10 @@ class ShardingMaster {
       } else {
         user.lastHeartbeat = user.lastSeen;
       }
-      const d = user.lastSeen - user.lastHeartbeat;
-      common.logDebug(
-          `${userId} updated status. (${status.messageCountDelta}, ${d})`,
-          socket.id);
+      // const d = user.lastSeen - user.lastHeartbeat;
+      // common.logDebug(
+      //     `${userId} updated status. (${status.messageCountDelta}, ${d})`,
+      //     socket.id);
       // common.logDebug(`${userId} updated status. (${JSON.stringify(user)})`);
 
       user.currentShardId = user.stats.currentShardId;
@@ -1428,7 +1440,12 @@ class ShardingMaster {
         },
       };
       socket.emit('update', req);
-      common.logDebug('Sent heartbeat request to ' + updating.id);
+      // common.logDebug('Sent heartbeat request to ' + updating.id);
+      if (this._hbWaitID) {
+        common.logWarning(
+            `${this._hbWaitID} did not reply to heartbeat request!`);
+      }
+      this._hbWaitID = updating.id;
     }
   }
 
