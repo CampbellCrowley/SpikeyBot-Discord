@@ -644,7 +644,7 @@ class ShardingSlave {
           this.id);
       return;
     }
-    const hbEvalReq = '(this.getStats && this.getStats(true)) || false';
+    const hbEvalReq = 'this.getStats(true)';
 
     // common.logDebug('Attempting to fetch stats for heartbeat...');
     const timeout =
@@ -667,38 +667,49 @@ class ShardingSlave {
     if (err || !res) {
       common.error('Failed to fetch stats for heartbeat!', this.id);
       if (err) console.error(err);
-      this._socket.emit('status', s);
-      common.logDebug(`Status Message: ${JSON.stringify(s)}`);
-      return;
+      // this._socket.emit('status', s);
+      // common.logDebug(`Status Message: ${JSON.stringify(s)}`);
+      // return;
     }
 
     this._fetchDiskStats((err, stats) => {
       const delta = (s.timestamp > s.startTime) ? now - s.timestamp : 0;
       s.timestamp = now;
       s.timeDelta = delta;
-      s.memHeapUsed = res.memory.heapUsed;
-      s.memHeapTotal = res.memory.heapTotal;
-      s.memRSS = res.memory.rss;
-      s.memExternal = res.memory.external;
-      if (s.cpuLoad.length !== res.cpus.length) {
+      s.memHeapUsed = res && res.memory.heapUsed;
+      s.memHeapTotal = res && res.memory.heapTotal;
+      s.memRSS = res && res.memory.rss;
+      s.memExternal = res && res.memory.external;
+      if (!res) {
+        s.cpuLoad.forEach((_, i) => s.cpuLoad[i] = null);
+      } else if (s.cpuLoad.length !== res.cpus.length) {
         s.cpuLoad = new Array(res.cpus.length);
       }
-      res.cpus.forEach((el, i) => {
-        const t = el.times;
-        let total = 0;
-        let prevTotal = 0;
-        for (const c in t) {
-          if (!c) continue;
-          total += t[c];
-          prevTotal += (s.cpus[i] || el).times[c];
-        }
-        const totalDiff = total - prevTotal;
-        s.cpuLoad[i] = t.user / totalDiff;
-      });
-      s.cpus = res.cpus;
+      if (res) {
+        res.cpus.forEach((el, i) => {
+          const t = el.times;
+          let total = 0;
+          let prevTotal = 0;
+          for (const c in t) {
+            if (!c) continue;
+            total += t[c];
+            prevTotal += (s.cpus[i] || el).times[c];
+          }
+          const totalDiff = total - prevTotal;
+          s.cpuLoad[i] = t.user / totalDiff;
+        });
+        s.cpus = res.cpus;
+      } else {
+        s.cpus.forEach((_, i) => s.cpus[i] = null);
+      }
       const prevDelta = s.messageCountDelta || 0;
-      s.messageCountDelta = (res.numMessages || 0) - (s.messageCountTotal || 0);
-      s.messageCountTotal = res.numMessages || 0;
+      if (res) {
+        s.messageCountDelta =
+            (res.numMessages || 0) - (s.messageCountTotal || 0);
+      } else {
+        s.messageCountDelta = 0;
+      }
+      s.messageCountTotal = res && res.numMessages || 0;
       s.storageUsedTotal = stats.root;
       s.storageUsedUsers = stats.save;
 
@@ -712,8 +723,8 @@ class ShardingSlave {
           common.error('No messages received for last two heartbeats!');
           this._respawnChild();
         }
-      } else {
-        common.logDebug('Heartbeat Sent');
+        /* } else {
+          common.logDebug('Heartbeat Sent'); */
       }
     });
   }
