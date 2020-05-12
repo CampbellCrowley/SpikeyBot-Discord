@@ -510,6 +510,7 @@ class ShardingSlave {
     this._child = null;
     this._status.currentShardId = -1;
     this._status.currentShardCount = -1;
+    this._evals.clear();
     if (this._status.goalShardId >= 0) this._spawnChild();
   }
 
