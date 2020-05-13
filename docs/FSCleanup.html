@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: MemWatcher</title>
+	<title>SpikeyBot-Discord Class: FSCleanup</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,13 +86,13 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: MemWatcher</h1>
+	<h1 class="page-title">Class: FSCleanup</h1>
 <section>
 
 <header>
     
         <h2>
-        MemWatcher
+        FSCleanup
         </h2>
         
     
@@ -105,7 +105,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="MemWatcher"><span class="type-signature"></span>new MemWatcher()</h4>
+    <h4 class="name" id="FSCleanup"><span class="type-signature"></span>new FSCleanup()</h4>
     
     
 </dt>
@@ -113,8 +113,7 @@
 
     
     <div class="description">
-        Manages watching memory limits and attempts to mitigate issues
-that may arise as a result.
+        Creates subModule.
     </div>
     
 
@@ -160,8 +159,8 @@ that may arise as a result.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_memWatcher.js.html">src/memWatcher.js</a>,
-				 <a href="src_memWatcher.js.html#sunlight-1-line-16">line 16</a>
+				<a href="src_fsCleanup.js.html">src/fsCleanup.js</a>,
+				 <a href="src_fsCleanup.js.html#sunlight-1-line-16">line 16</a>
 			</li>
 		</ul>
 	</dd>
@@ -218,264 +217,6 @@ that may arise as a result.
         <h3 class="subsection-title">Members</h3>
 
         <dl>
-            
-<hr>
-<dt class="name" id="_frequency">
-    <h4 id="_frequency"><span class="type-signature">&lt;private, constant> </span>_frequency<span class="type-signature"> :number</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        How often to check memory usage.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>5 Minutes</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_memWatcher.js.html">src/memWatcher.js</a>,
-				 <a href="src_memWatcher.js.html#sunlight-1-line-27">line 27</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="_interval">
-    <h4 id="_interval"><span class="type-signature">&lt;private, nullable> </span>_interval<span class="type-signature"> :number</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Created interval for checking memory usage.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_memWatcher.js.html">src/memWatcher.js</a>,
-				 <a href="src_memWatcher.js.html#sunlight-1-line-48">line 48</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="_threshold">
-    <h4 id="_threshold"><span class="type-signature">&lt;private, constant> </span>_threshold<span class="type-signature"> :number</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Amount of memory in bytes away from the limit to force this
-process to suicide.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>100000000 bytes (100MB)</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_memWatcher.js.html">src/memWatcher.js</a>,
-				 <a href="src_memWatcher.js.html#sunlight-1-line-36">line 36</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
             
 <hr>
 <dt class="name" id="bot">
@@ -1796,95 +1537,6 @@ register command listeners.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="check"><span class="type-signature"></span>check()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Check the current memory usage. Called in the interval, but
-can also be fired manually.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_memWatcher.js.html">src/memWatcher.js</a>,
-				 <a href="src_memWatcher.js.html#sunlight-1-line-63">line 63</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
     <h4 class="name" id="debug"><span class="type-signature">&lt;protected> </span>debug(msg)</h4>
     
     
@@ -2926,95 +2578,6 @@ synchronous.</td>
 			<li>
 				<a href="src_subModule.js.html">src/subModule.js</a>,
 				 <a href="src_subModule.js.html#sunlight-1-line-251">line 251</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="suicide"><span class="type-signature"></span>suicide()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Attempts to force the bot to die because we are probably about
-to run out of memory and are about to crash anyways.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_memWatcher.js.html">src/memWatcher.js</a>,
-				 <a href="src_memWatcher.js.html#sunlight-1-line-88">line 88</a>
 			</li>
 		</ul>
 	</dd>

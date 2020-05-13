@@ -216,7 +216,7 @@ class ShardingSlave {
           this._socket.disconnect();
           this._socket.connect();
         }
-        this._socket.reconnection(true);
+        this._socket.reconnection && this._socket.reconnection(true);
       }, 3000);
     }
   }
@@ -301,7 +301,7 @@ class ShardingSlave {
     }
     clearTimeout(this._respawnTimeout);
     if (this._child && this._status.stopTime > this._status.startTime &&
-        Date.now() - this._status.stopTime > 5000) {
+        Date.now() - this._status.stopTime > 30000) {
       common.logWarning('Child failed to shutdown! Forcefully killing...');
       this._child.kill('SIGKILL');
     } else if (this._child) {
@@ -369,7 +369,7 @@ class ShardingSlave {
       style === 'pull' && Date.now() - this._lastSeen > rebootDelta &&
         this._status.goalShardId >= 0 && this._verified) {
       this._socket.disconnect();
-      this._socket.reconnecting(true);
+      this._socket.connect();
     } else if (
       style === 'pull' && Date.now() - this._lastSeen > deathDelta &&
         this._status.goalShardId >= 0) {
