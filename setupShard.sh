@@ -11,7 +11,7 @@ crontab tmpcrontab
 rm tmpcrontab
 
 crontab -u admin -l > tmpcrontab
-echo '45 */2 * * * /usr/bin/sh /home/admin/SpikeyBot/sync.sh' >> tmpcrontab
+echo '45 */2 * * * /usr/bin/bash /home/admin/SpikeyBot/sync.sh' >> tmpcrontab
 crontab -u admin tmpcrontab
 rm tmpcrontab
 
@@ -44,14 +44,8 @@ echo 'Host kamino1
 
 sudo -u admin ssh-copy-id -i ~/.ssh/id_rsa_nopass kamino1
 
-# echo 'nice rsync -urpt --rsync-path="nice rsync" --exclude="shards/*" /home/admin/SpikeyBot-Discord/save/ admin@kamino1:/home/admin/SpikeyBot-Discord/save/ &&\
-# nice rsync -urpt --rsync-path="nice rsync" --exclude="shards/*" admin@kamino1:/home/admin/SpikeyBot-Discord/save/ /home/admin/SpikeyBot-Discord/save/' > /home/admin/sync.sh
-# chown admin:admin /home/admin/sync.sh
-# chmod u+x /home/admin/sync.sh
-
 echo 'Syncing user-data... this will take a while.'
-# sh ./sync.sh
-sh ./SpikeyBot-Discord/sync.sh
+bash ./SpikeyBot-Discord/sync.sh
 
 echo '#!/bin/sh
 cd /home/admin/ServerManager/
