@@ -383,6 +383,7 @@ function Main() {
             return function(err2, timerItems) {
               if (err2) return;
               for (let j = 0; j < timerItems.length; j++) {
+                if (timerItems[j].endswith('.DELETEME')) continue;
                 const filename = dir + timerItems[j];
                 fs.readFile(filename, function(filename) {
                   return function(err3, file) {
