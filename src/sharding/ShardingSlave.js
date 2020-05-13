@@ -710,7 +710,8 @@ class ShardingSlave {
       this._socket.emit('status', s);
 
       common.logDebug(`Status Message: ${JSON.stringify(s)}`);
-      if (this._settings.config.heartbeat.useMessageStats) {
+      if (this._settings.config.heartbeat.useMessageStats &&
+          now - s.startTime > this._settings.config.heartbeat.interval) {
         // common.logDebug(
         //     `Message delta: ${s.messageCountDelta}, Prev: ${prevDelta}`);
         if (prevDelta === 0 && s.messageCountDelta === 0 && !s.isMaster) {

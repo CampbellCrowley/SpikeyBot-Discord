@@ -496,7 +496,8 @@ class ShardingMaster {
       const el = correct[i];
 
       if (now - el.lastHeartbeat > hbConf.requestRebootAfter &&
-          now - el.lastHeartbeat < hbConf.expectRebootAfter) {
+          now - el.lastHeartbeat < hbConf.expectRebootAfter &&
+          el.currentShardId >= 0) {
         common.logWarning(
             'Shard has not responded for too long, enqueuing shutdown: ' +
             el.id + ' ' + el.goalShardId);
