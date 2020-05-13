@@ -1,0 +1,2 @@
+knownShards.json
+shards/*
