@@ -112,12 +112,6 @@ function SMLoader() {
     self.command.removeListener('load');
     self.command.removeListener('help');
 
-    const data = fs.readFileSync(smListFilename);
-    const parsed = JSON.parse(data);
-    parsed[self.bot.getFullBotName()] = goalSubModuleNames;
-    self.common.mkAndWriteSync(
-        smListFilename, null, JSON.stringify(parsed, null, 2));
-
     if (self.client.shard) {
       self.client.commandReload = null;
       self.client.commandUnload = null;
@@ -142,6 +136,39 @@ function SMLoader() {
       }
     }
   };
+
+  /**
+   * @description Timeout for delay to save SMList.
+   * @private
+   * @type {?Timeout}
+   * @default
+   */
+  let saveTimeout = null;
+
+  /**
+   * @description Save the current goal submodules to file.
+   * @private
+   * @param {boolean} [force=false] Force immediately saving instead of delaying
+   *     a bit.
+   */
+  function saveSMList(force) {
+    if (!force) {
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => saveSMList(true), 1000);
+      return;
+    }
+    fs.readFile(smListFilename, (err, data) => {
+      try {
+        const parsed = JSON.parse(data);
+        parsed[self.bot.getFullBotName()] = goalSubModuleNames;
+        self.common.mkAndWriteSync(
+            smListFilename, null, JSON.stringify(parsed, null, 2));
+      } catch (err) {
+        self.common.error(`Failed to parse ${smListFilename}`);
+        console.error(err);
+      }
+    });
+  }
 
   /**
    * Properties to merge into other objects. `bot` is merged into self.bot,
@@ -369,6 +396,7 @@ function SMLoader() {
       console.log(err);
       message = 'Failed to Unload';
     }
+    saveSMList();
     cb(message);
     if (unloadCallbacks[name]) {
       unloadCallbacks[name].splice(0).forEach((el) => {
