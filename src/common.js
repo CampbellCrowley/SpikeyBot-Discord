@@ -316,9 +316,7 @@ function Common() {
     }
     if (self.isTest || (perms && !perms.has('EMBED_LINKS'))) {
       return msg.channel
-          .send(
-              Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''),
-              {disableMentions: 'all'})
+          .send(Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''))
           .catch((err) => {
             self.error(
                 'Failed to send reply to channel: ' + msg.channel.id, trace);
@@ -333,14 +331,11 @@ function Common() {
       } else {
         embed.setDescription(text + (post ? '\n' + post : ''));
       }
-      return msg.channel
-          .send(Common.mention(msg), {embed: embed, disableMentions: 'all'})
-          .catch((err) => {
-            self.error(
-                'Failed to send embed reply to channel: ' + msg.channel.id,
-                trace);
-            throw err;
-          });
+      return msg.channel.send(Common.mention(msg), embed).catch((err) => {
+        self.error(
+            'Failed to send embed reply to channel: ' + msg.channel.id, trace);
+        throw err;
+      });
     }
   };
 
