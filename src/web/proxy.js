@@ -675,7 +675,11 @@ function WebProxy() {
         }
         self.bot.patreon.getAllPerms(ud.id, null, null, (err, info) => {
           if (err) {
-            self.error(err);
+            if (err !==
+                'User has not connected their Patreon account ' +
+                    'to their Discord account.') {
+              self.error(err);
+            }
             loginInfo.isPatron = null;
           } else if (info && info.status) {
             loginInfo.isPatron = true;
