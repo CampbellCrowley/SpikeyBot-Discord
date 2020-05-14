@@ -1124,7 +1124,7 @@ function SpikeyBot() {
               }
               const dir = `${common.guildSaveDir}${gId}`;
               const fn = `${dir}${guildCustomPrefixFile}`;
-              self.common.mkAndWrite(fn, dir, finalPrefix, (err) => {
+              common.mkAndWrite(fn, dir, finalPrefix, (err) => {
                 if (err) {
                   common.error(
                       'Failed to save guild custom prefix! ' + gId + ' (' +
@@ -1140,7 +1140,7 @@ function SpikeyBot() {
       } else {
         const dir = `${common.guildSaveDir}${gId}`;
         const fn = `${dir}${guildPrefixFile}`;
-        self.common.mkAndWrite(fn, dir, newPrefix, (err) => {
+        common.mkAndWrite(fn, dir, newPrefix, (err) => {
           if (err) {
             common.error(
                 'Failed to save guild custom prefix! ' + gId + ' (' +
