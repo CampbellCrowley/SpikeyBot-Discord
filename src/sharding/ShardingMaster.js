@@ -1080,7 +1080,9 @@ class ShardingMaster {
    */
   broadcastEvalToShards(script, cb) {
     const sockets = Object.entries(this._shardSockets);
-    const num = this.getGoalShardCount();
+    const registered = this.getRegisteredShardCount();
+    const goal = this.getGoalShardCount();
+    const num = Math.min(registered, goal);
     if (num <= 0) {
       cb('No Shards');
       return;
@@ -1119,8 +1121,9 @@ class ShardingMaster {
     }
     let dbg = '';
     sockets.forEach((ent) => {
-      const id = this._knownUsers[ent[0]].goalShardId;
-      if (id < 0 || id == 1000) {
+      const user = this._knownUsers[ent[0]];
+      const id = user.goalShardId;
+      if (id < 0 || user.isMaster || !user.lastSeen) {
         dbg += `${id}${ent[0]}: NO, `;
         done();
         return;
