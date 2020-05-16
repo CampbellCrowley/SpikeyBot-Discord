@@ -38,6 +38,7 @@ sudo -u admin mkdir .ssh
 sudo -u admin ssh-keygen -t rsa -f /home/admin/.ssh/id_rsa_nopass -q -N ""
 echo 'Host kamino1
   Hostname 10.138.62.205
+  # Hostname 167.99.105.215
   # Hostname kamino1.campbellcrowley.com
   User admin
   IdentityFile ~/.ssh/id_rsa_nopass' | sudo -u admin tee /home/admin/.ssh/config
@@ -45,6 +46,7 @@ echo 'Host kamino1
 sudo -u admin ssh-copy-id -i ~/.ssh/id_rsa_nopass kamino1
 
 echo 'Syncing user-data... this will take a while.'
+cd ./SpikeyBot-Discord/
 bash ./SpikeyBot-Discord/sync.sh
 
 echo '#!/bin/sh
