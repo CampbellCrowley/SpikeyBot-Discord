@@ -724,13 +724,13 @@ class HungryGames {
     }
 
     const newDir = HungryGames.EventContainer.eventDir;
-    const filename = newDir + evt.id + '.json';
+    const filename = `${newDir}${evt.id}.json`;
     if (fs.existsSync(filename)) {
       cb('ALREADY_EXISTS');
       return null;
     }
     const str = JSON.stringify(evt);
-    this._parent.common.mkAndWrite(filename, newDir, str, (err) => {
+    this._parent.common.mkAndWrite(filename, null, str, (err) => {
       if (err) {
         console.error(err);
         cb('WRITE_FAILED');
