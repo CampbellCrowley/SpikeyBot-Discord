@@ -77,7 +77,6 @@
 .sunlight-line-highlight-overlay .sunlight-line-highlight-active {
 	background-color: #E7FCFA;
 }
-
 /* menu */
 .sunlight-menu {
 	background-color: #FFFFCC;
@@ -97,10 +96,6 @@
 	text-decoration: none !important;
 	border: none !important;
 }
-
-
-
-
 .sunlight-string,
 .sunlight-char,
 .sunlight-heredoc,
@@ -115,7 +110,6 @@
 .sunlight-diff .sunlight-removed {
 	color: #990000 !important;
 }
-
 .sunlight-ident,
 .sunlight-operator,
 .sunlight-punctuation,
@@ -123,7 +117,6 @@
 .sunlight-diff .sunlight-unchanged {
 	color: #000000 !important;
 }
-
 .sunlight-comment,
 .sunlight-xmlDocCommentContent,
 .sunlight-nginx .sunlight-ssiCommand,
@@ -136,7 +129,6 @@
 .sunlight-cdata {
 	color: #CC6600 !important;
 }
-
 .sunlight-named-ident,
 .sunlight-constant,
 .sunlight-javascript .sunlight-globalVariable,
@@ -188,7 +180,6 @@
 .sunlight-diff .sunlight-rangeInfo {
 	color: #B069AF !important;
 }
-
 .sunlight-variable,
 .sunlight-specialVariable,
 .sunlight-environmentVariable,
@@ -230,9 +221,6 @@
 .sunlight-erlang .sunlight-quotedAtom {
 	color: #999900 !important;
 }
-
-
-
 /* xml */
 .sunlight-xml .sunlight-string {
 	color: #990099 !important;
@@ -248,12 +236,10 @@
 .sunlight-xml .sunlight-doctype {
 	color: #2B91AF !important;
 }
-
 /* javascript */
 .sunlight-javascript .sunlight-reservedWord {
 	font-style: italic !important;
 }
-
 /* css */
 .sunlight-css .sunlight-microsoftFilterPrefix {
 	color: #FF00FF !important;
@@ -274,7 +260,6 @@
 .sunlight-css .sunlight-pseudoElement {
 	color: #368B87 !important;
 }
-
 /* bash */
 .sunlight-bash .sunlight-hashBang {
 	color: #3D97F5 !important;
@@ -286,19 +271,16 @@
 .sunlight-bash .sunlight-specialVariable {
 	color: #FF0000 !important;
 }
-
 /* python */
 .sunlight-python .sunlight-specialMethod {
 	font-weight: bold !important;
 	color: #A07DD3;
 }
-
 /* ruby */
 .sunlight-ruby .sunlight-symbol {
 	font-weight: bold !important;
 	color: #ED7272 !important;
 }
-
 /* brainfuck */
 .sunlight-brainfuck {
 	font-weight: bold !important;
@@ -325,19 +307,16 @@
 .sunlight-brainfuck .sunlight-openLoop, .sunlight-brainfuck .sunlight-closeLoop {
 	background-color: #FFFFFF !important;
 }
-
 /* 6502 asm */
 .sunlight-6502asm .sunlight-label {
 	font-weight: bold !important;
 	color: #000000 !important;
 	background: none !important;
 }
-
 /* lisp */
 .sunlight-lisp .sunlight-macro {
 	font-style: italic !important;
 }
-
 /* erlang */
 .sunlight-erlang .sunlight-atom {
 	font-weight: bold !important;

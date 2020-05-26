@@ -76,7 +76,6 @@
 .sunlight-line-highlight-overlay .sunlight-line-highlight-active {
 	background-color: #4B4B4B;
 }
-
 /* menu */
 .sunlight-menu {
 	background-color: #FFFFCC;
@@ -96,10 +95,6 @@
 	text-decoration: none !important;
 	border: none !important;
 }
-
-
-
-
 .sunlight-string,
 .sunlight-char,
 .sunlight-heredoc,
@@ -233,10 +228,6 @@
 .sunlight-erlang .sunlight-quotedAtom {
 	color: #F8CA16 !important;
 }
-
-
-
-
 /* html/xml */
 .sunlight-xml .sunlight-tagName,
 .sunlight-xml .sunlight-operator,
@@ -251,12 +242,10 @@
 	background-color: #E6E585 !important;
 	color: #000000 !important;
 }
-
 /* javascript */
 .sunlight-javascript .sunlight-reservedWord {
 	font-style: italic !important;
 }
-
 /* css */
 .sunlight-css .sunlight-element {
 	color: #E9EE97 !important;
@@ -273,12 +262,10 @@
 .sunlight-css .sunlight-pseudoClass, .sunlight-css .sunlight-pseudoElement {
 	color: #73D693 !important;
 }
-
 /* bash */
 .sunlight-bash .sunlight-hashBang {
 	color: #FFFF00 !important;
 }
-
 .sunlight-bash .sunlight-verbatimCommand {
 	color: #BBA4EE !important;
 }
@@ -286,19 +273,16 @@
 .sunlight-bash .sunlight-specialVariable {
 	color: #ED8585 !important;
 }
-
 /* python */
 .sunlight-python .sunlight-specialMethod {
 	font-weight: bold !important;
 	color: #B0A3C2;
 }
-
 /* ruby */
 .sunlight-ruby .sunlight-symbol {
 	font-weight: bold !important;
 	color: #90EEA2 !important;
 }
-
 /* brainfuck */
 .sunlight-brainfuck {
 	font-weight: bold !important;
@@ -325,19 +309,16 @@
 .sunlight-brainfuck .sunlight-openLoop, .sunlight-brainfuck .sunlight-closeLoop {
 	background-color: #FFFFFF !important;
 }
-
 /* 6502 asm */
 .sunlight-6502asm .sunlight-label {
 	background: none !important;
 	color: #FFFFFF !important;
 	text-decoration: underline !important;
 }
-
 /* lisp */
 .sunlight-lisp .sunlight-macro {
 	font-style: italic !important;
 }
-
 /* erlang */
 .sunlight-erlang .sunlight-atom {
 	color: #FFFFFF !important;
