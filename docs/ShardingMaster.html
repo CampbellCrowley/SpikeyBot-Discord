@@ -1,22 +1,16 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>SpikeyBot-Discord Class: ShardingMaster</title>
-
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
-
 	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
-
 </head>
-
 <body>
-
 <div class="navbar navbar-default navbar-fixed-top ">
 <div class="container">
 	<div class="navbar-header">
@@ -29,37 +23,31 @@
 	</div>
 	<div class="navbar-collapse collapse" id="topNavigation">
 		<ul class="nav navbar-nav">
-			
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="EE.html">EE</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Events.html">Events</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-Action.html">HungryGames~Action</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></li><li><a href="ShardingMaster.ShardMasterConfig.html">ShardingMaster.ShardMasterConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.HeartbeatConfig.html">ShardingMaster.ShardMasterConfig.HeartbeatConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></li><li><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></li><li><a href="ShardingSlave.html">ShardingSlave</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="external-Discord.html">Discord</a></li>
 				</ul>
 			</li>
-			
 		</ul>
-        
             <div class="col-sm-3 col-md-3">
                 <form class="navbar-form" role="search">
                     <div class="input-group">
@@ -70,243 +58,86 @@
                     </div>
                 </form>
             </div>
-        
 	</div>
-
 </div>
 </div>
-
-
 <div class="container" id="toc-content">
 <div class="row">
-
-	
 	<div class="col-md-8">
-	
 		<div id="main">
-			
-
 	<h1 class="page-title">Class: ShardingMaster</h1>
 <section>
-
 <header>
-    
         <h2>
         ShardingMaster
         </h2>
-        
-    
 </header>
-
-
 <article>
     <div class="container-overview">
-    
-        
 <hr>
 <dt>
     <h4 class="name" id="ShardingMaster"><span class="type-signature"></span>new ShardingMaster( [port] [, address] [, path])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Start the webserver.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
         <th>Default</th>
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>port</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">number</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                     8024
-                
                 </td>
-            
-
             <td class="description last">Port to listen for shard connections.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>address</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                     '127.0.0.1'
-                
                 </td>
-            
-
             <td class="description last">Address to listen for shard
 connections.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>path</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                     '/socket.io/'
-                
                 </td>
-            
-
             <td class="description last">Path prefix to watch for socket
 connections.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -316,119 +147,35 @@ connections.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-    
     </div>
-
-    
-
-    
-
-    
         <h3 class="subsection-title">Classes</h3>
-
         <dl>
             <dt><a href="ShardingMaster.ShardInfo.html">ShardInfo</a></dt>
             <dd></dd>
-        
             <dt><a href="ShardingMaster.ShardMasterConfig.html">ShardMasterConfig</a></dt>
             <dd></dd>
-        
             <dt><a href="ShardingMaster.ShardStatus.html">ShardStatus</a></dt>
             <dd></dd>
         </dl>
-    
-
-    
-
-    
-
-    
         <h3 class="subsection-title">Members</h3>
-
         <dl>
-            
 <hr>
 <dt class="name" id="_app">
     <h4 id="_app"><span class="type-signature">&lt;private> </span>_app<span class="type-signature"> :http.Server</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Webserver instance.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">http.Server</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -438,78 +185,23 @@ connections.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_auth">
     <h4 id="_auth"><span class="type-signature">&lt;private, nullable> </span>_auth<span class="type-signature"> :object</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The current authentication information.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">object</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -519,78 +211,23 @@ connections.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_config">
     <h4 id="_config"><span class="type-signature">&lt;private, nullable> </span>_config<span class="type-signature"> :ShardMasterConfig</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The current config for sharding.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">ShardMasterConfig</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -600,79 +237,24 @@ connections.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_detectedNumShards">
     <h4 id="_detectedNumShards"><span class="type-signature">&lt;private> </span>_detectedNumShards<span class="type-signature"> :number</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The number of shards recommended by Discord from our last
 request.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">number</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -682,78 +264,23 @@ request.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_hbTimeout">
     <h4 id="_hbTimeout"><span class="type-signature">&lt;private, nullable> </span>_hbTimeout<span class="type-signature"> :number</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Timeout for heartbeat interval loop.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">number</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -763,80 +290,25 @@ request.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_hbWaitID">
     <h4 id="_hbWaitID"><span class="type-signature">&lt;private, nullable> </span>_hbWaitID<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         ID of the shard we last sent an heartbeat request to that has not beel
 resolved. This is only used for 'pull' style updating for debugging
 heartbeats that don't get replies.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -846,81 +318,26 @@ heartbeats that don't get replies.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_heartbeatLoopStartTime">
     <h4 id="_heartbeatLoopStartTime"><span class="type-signature">&lt;private> </span>_heartbeatLoopStartTime<span class="type-signature"> :number</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The timestamp at which the heartbeat interval loop was most
 recently started. This is used when
 ShardingMaster.ShardMasterConfig.HeartbeatConfig~disperse is
 being used in order to only update one shard for each heartbeat event.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">number</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -930,78 +347,23 @@ being used in order to only update one shard for each heartbeat event.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_io">
     <h4 id="_io"><span class="type-signature">&lt;private> </span>_io<span class="type-signature"> :socketIo.Server</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Socket.io instance.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">socketIo.Server</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1011,88 +373,32 @@ being used in order to only update one shard for each heartbeat event.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_ipConnectHistory">
     <h4 id="_ipConnectHistory"><span class="type-signature">&lt;private> </span>_ipConnectHistory<span class="type-signature"> :Array.&lt;Array.&lt;string, number>></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         History of recent connections ordered by oldest to latest.
 Each index contains an array of length 2, storing the IP address and the
 timestamp of a connection attempt. This is used to start ignoring an IP
 address if too many connection attempts are made within a short time.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">Array.&lt;Array.&lt;string, number>></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
 			<li>[]</li>
 		</ul>
 	</dd>
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1102,79 +408,24 @@ address if too many connection attempts are made within a short time.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_knownUsers">
     <h4 id="_knownUsers"><span class="type-signature">&lt;private, nullable> </span>_knownUsers<span class="type-signature"> :object.&lt;ShardInfo></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The currently known shards mapped by their name, containing
 some information about them including their public key.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">object.&lt;ShardInfo></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1184,79 +435,24 @@ some information about them including their public key.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_masterShardSocket">
     <h4 id="_masterShardSocket"><span class="type-signature">&lt;private, nullable> </span>_masterShardSocket<span class="type-signature"> :Socket</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The socket that the master shard is currently connected on, or null if
 disconnected.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">Socket</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1266,78 +462,23 @@ disconnected.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_nextHeartbeatTime">
     <h4 id="_nextHeartbeatTime"><span class="type-signature">&lt;private> </span>_nextHeartbeatTime<span class="type-signature"> :number</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The timestamp at which the next heartbeat event is to fire.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">number</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1347,79 +488,24 @@ disconnected.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_privKey">
     <h4 id="_privKey"><span class="type-signature">&lt;private, nullable> </span>_privKey<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The string representation of the private key used for
 signing initial handshake to shard.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1429,86 +515,30 @@ signing initial handshake to shard.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
 	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
 	<dd class="tag-see">
 		<ul>
 			<li>ShardingMaster~_loadMasterKeys</li>
 			</ul>
 	</dd>
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_pubKey">
     <h4 id="_pubKey"><span class="type-signature">&lt;private, nullable> </span>_pubKey<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The string representation of the public key used for signing
 initial handshake to shard.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1518,86 +548,30 @@ initial handshake to shard.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
 	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
 	<dd class="tag-see">
 		<ul>
 			<li>ShardingMaster~_loadMasterKeys</li>
 			</ul>
 	</dd>
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_shardNumTimestamp">
     <h4 id="_shardNumTimestamp"><span class="type-signature">&lt;private> </span>_shardNumTimestamp<span class="type-signature"> :number</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The timestamp the last time the recommended shard count was
 requested.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">number</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1607,79 +581,24 @@ requested.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_shardSockets">
     <h4 id="_shardSockets"><span class="type-signature">&lt;private> </span>_shardSockets<span class="type-signature"> :object.&lt;Socket></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Map of the currently connected sockets for each shard, mapped by the
 shard names.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">object.&lt;Socket></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1689,78 +608,23 @@ shard names.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_sockets">
     <h4 id="_sockets"><span class="type-signature">&lt;private> </span>_sockets<span class="type-signature"> :object.&lt;Socket></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Map of all currently connected sockets mapped by socket.id.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">object.&lt;Socket></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1770,79 +634,24 @@ shard names.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_userSaveTimeout">
     <h4 id="_userSaveTimeout"><span class="type-signature">&lt;private, nullable> </span>_userSaveTimeout<span class="type-signature"> :number</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Timeout used to prevent multiple calls to _saveUsers
 within a short time.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">number</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1852,79 +661,24 @@ within a short time.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_usersIgnoreNext">
     <h4 id="_usersIgnoreNext"><span class="type-signature">&lt;private> </span>_usersIgnoreNext<span class="type-signature"> :boolean</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Toggle for when we write known users to file to not re-read
 them again.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">boolean</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1934,201 +688,60 @@ them again.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
         </dl>
-    
-
-    
         <h3 class="subsection-title">Methods</h3>
-
         <dl>
-            
 <hr>
 <dt>
     <h4 class="name" id="._sendEmail"><span class="type-signature">&lt;private, static> </span>_sendEmail(cmd, args, opts, stdin)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Sends an email given the raw inputs.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>cmd</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The command to run to start the mail process.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>args</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Array.&lt;string></span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The arguments to pass.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>opts</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">object</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Options to pass to spawn.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>stdin</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The data to write to stdin of the process.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2138,214 +751,61 @@ them again.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="._sendShardCreateEmail"><span class="type-signature">&lt;private, static> </span>_sendShardCreateEmail(conf, filename [, info])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Send the newly created config to sysadmins.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>conf</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Mail config
 object.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>filename</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The path to the file of the shard's configuration
 to send to sysadmins.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>info</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Shard info of created shard for
 additional information to sysadmins.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2355,187 +815,55 @@ additional information to sysadmins.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="._sendShardCreateFailEmail"><span class="type-signature">&lt;private, static> </span>_sendShardCreateFailEmail(conf [, errs])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Send an email to sysadmins alerting them that a new shard must
 be created, but we were unable to for some reason.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>conf</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Mail config
 object.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>errs</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Error</span>
 |
-
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                     &lt;repeatable><br>
-                
                 </td>
-            
-
-            
-
             <td class="description last">The error generated with information as to
 why creation failed.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2545,138 +873,39 @@ why creation failed.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id=".generateKeyPair"><span class="type-signature">&lt;static> </span>generateKeyPair(cb)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Generates a key pair using configured settings for either the
 master or its shards. The settings used cannot differ between any parties
 involved, otherwise all keys must be changed.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>cb</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">function</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Callback with optional error, then public key, then
 private key.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2686,92 +915,23 @@ private key.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
 	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
 	<dd class="tag-see">
 		<ul>
 			<li><a href="https://nodejs.org/api/crypto.html#crypto_crypto_generatekeypair_type_options_callback">https://nodejs.org/api/crypto.html#crypto_crypto_generatekeypair_type_options_callback</a></li>
 			</ul>
 	</dd>
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_generateShardName"><span class="type-signature">&lt;private> </span>_generateShardName()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Generate a unique name for a new shard.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2781,172 +941,53 @@ private key.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     New unique shard name.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">string</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_getCurrentConfigured"><span class="type-signature">&lt;private> </span>_getCurrentConfigured( [goal])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Get references to all shards currently configured for the
 given goal number of shards, and are connected and controllable.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>goal</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">number</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The goal number of shards. If not specified, getGoalShardCount will be used.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2956,172 +997,53 @@ given goal number of shards, and are connected and controllable.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     Array of the shards that are configured correctly
 and don't need updating.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">Array.&lt;ShardInfo></span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_getCurrentUnboundIds"><span class="type-signature">&lt;private> </span>_getCurrentUnboundIds( [goal])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Get list of IDs for shards that do not exist, but need to.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>goal</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">number</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The goal number of shards. If not specified, getGoalShardCount will be used.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3131,172 +1053,53 @@ and don't need updating.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     Array of the shard IDs that need to be configured.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">Array.&lt;number></span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_getCurrentUnconfigured"><span class="type-signature">&lt;private> </span>_getCurrentUnconfigured( [goal])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Get references to all shards currently NOT configured for the
 given goal number of shards, but ARE connected and controllable.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>goal</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">number</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The goal number of shards. If not specified, getGoalShardCount will be used.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3306,111 +1109,31 @@ given goal number of shards, but ARE connected and controllable.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     Array of the shards that are NOT configured
 correctly and DO need updating.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">Array.&lt;ShardInfo></span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_getMasterUser"><span class="type-signature">&lt;private> </span>_getMasterUser()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Get the master shard from the known users. Assumes only one
 master exists.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3420,160 +1143,49 @@ master exists.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     The matched shard info, or null if it couldn't be
 found.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">ShardInfo</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_getShardById"><span class="type-signature">&lt;private> </span>_getShardById(shardId)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Get a reference to a ShardInfo object using its shard ID.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>shardId</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">number</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The shard ID used by Discord.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3583,186 +1195,58 @@ found.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     The matched shard info, or null if it couldn't be
 found.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">ShardInfo</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_handler"><span class="type-signature">&lt;private> </span>_handler(req, res)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Handler for all http requests. This may get used in the future for API
 requests. Currently unused and always replies with a "501 Not Implemented"
 response.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>req</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">http.IncomingMessage</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The client's request.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>res</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">http.ServerResponse</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Our response to the client.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3772,86 +1256,18 @@ response.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_loadMasterKeys"><span class="type-signature">&lt;private> </span>_loadMasterKeys()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Check if key-pair exists for this master. If not, they will be
 generated, and the newly generated keys will be used.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3861,140 +1277,40 @@ generated, and the newly generated keys will be used.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_makeSerializableError"><span class="type-signature">&lt;private> </span>_makeSerializableError(err)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Convert an Error object into a serializable object format that
 can be send easily over a socket.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>err</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Error</span>
 |
-
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The error to make into a basic object. If
 falsey, returns null. If string, the string is returned unmodified.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4004,191 +1320,61 @@ falsey, returns null. If string, the string is returned unmodified.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     A simple object or null if falsey value passed or
 string if string was passed.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">object</span>
 |
-
 <span class="param-type">string</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_receiveFile"><span class="type-signature">&lt;private> </span>_receiveFile(filename, data)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         We received a file from a shard that it intends for us to
 write to disk at the given filename relative to the project root.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>filename</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Filename relative to project directory.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>data</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
 |
-
 <span class="param-type">Buffer</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The data to write to the file.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4198,87 +1384,19 @@ write to disk at the given filename relative to the project root.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_refreshShardStatus"><span class="type-signature">&lt;private> </span>_refreshShardStatus()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         The config was changed or may differ from the current setup,
 attempt to make changes to match the current setup the requested
 configuration.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4288,156 +1406,45 @@ configuration.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_saveUsers"><span class="type-signature">&lt;private> </span>_saveUsers( [force])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Write updated known list of users to disk.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
         <th>Default</th>
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>force</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">boolean</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                     false
-                
                 </td>
-            
-
             <td class="description last">Force saving immediately. False otherwise
 waits a moment for multiple calls, then saves once all calls have subsided.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4447,159 +1454,43 @@ waits a moment for multiple calls, then saves once all calls have subsided.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_sendFile"><span class="type-signature">&lt;private> </span>_sendFile(filename, cb)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Shard has requested one of our files.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>filename</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Filename relative to project directory.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>cb</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">function</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Callback to send the error or file back on.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4609,139 +1500,39 @@ waits a moment for multiple calls, then saves once all calls have subsided.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_sendHeartbeatRequest"><span class="type-signature">&lt;private> </span>_sendHeartbeatRequest(user)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Format and send the request for a shard heartbeat.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>user</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">number</span>
 |
-
 <span class="param-type"><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Either the goal shard ID, or
 the shard user information.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4751,138 +1542,38 @@ the shard user information.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_serverError"><span class="type-signature">&lt;private> </span>_serverError(err)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Server has encountered an error, and must close.
     </div>
-    
-
-    
-
-    
-
-    
         <h5>This:</h5>
         <ul><li>bound</li></ul>
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>err</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Error</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The emitted error event.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4892,86 +1583,18 @@ the shard user information.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_setHBTimeout"><span class="type-signature">&lt;private> </span>_setHBTimeout()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Reset the heartbeat timeout interval for refreshing shard
 statuses.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4981,138 +1604,38 @@ statuses.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_socketConnection"><span class="type-signature">&lt;private> </span>_socketConnection(socket)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Handler for a new socket connecting.
     </div>
-    
-
-    
-
-    
-
-    
         <h5>This:</h5>
         <ul><li>bound</li></ul>
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>socket</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">socketIo~Socket</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The socket.io socket that connected.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5122,85 +1645,17 @@ statuses.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_updateAuth"><span class="type-signature">&lt;private> </span>_updateAuth()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Update the authentication tokens from file.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5210,85 +1665,17 @@ statuses.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_updateConfig"><span class="type-signature">&lt;private> </span>_updateConfig()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Update the configuration from file.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5298,85 +1685,17 @@ statuses.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="_updateUsers"><span class="type-signature">&lt;private> </span>_updateUsers()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Update known list of users and their associated keys.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5386,162 +1705,46 @@ statuses.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="broadcastEvalToShards"><span class="type-signature"></span>broadcastEvalToShards(script, cb)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Broadcast a message to all connected shards, except for the
 master.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>script</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Text for each shard to evaluate.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>cb</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">function</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Callback once all shards have replied. First argument
 is optional error message, second will be an array of responses, indexed by
 shard ID.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5551,85 +1754,17 @@ shard ID.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="exit"><span class="type-signature"></span>exit()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Cleanup and fully shutdown gracefully.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5639,158 +1774,47 @@ shard ID.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="generateShardConfig"><span class="type-signature"></span>generateShardConfig( [isMaster])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Creates a configuration for a new shard. This config contains
 the shard's key-pair, name, and the host information to find this
 master. This file will be saved directly to disk, as well as emailed to
 sysadmins.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
         <th>Default</th>
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>isMaster</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">boolean</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                     false
-                
                 </td>
-            
-
             <td class="description last">Is this config for a master shard.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5800,148 +1824,41 @@ sysadmins.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="getCurrentConfiguredCount"><span class="type-signature"></span>getCurrentConfiguredCount( [goal])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Fetches the current number of shards that are configured for
 the goal number of shards.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>goal</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">number</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The goal number of shards. If not specified, getGoalShardCount will be used.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5951,110 +1868,30 @@ the goal number of shards.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     The number of shards configured.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">number</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="getCurrentShardCount"><span class="type-signature"></span>getCurrentShardCount()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Fetches the current number of shards connected to us that we
 are controlling.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6064,111 +1901,31 @@ are controlling.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     The current number of shards we are controlling.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">number</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="getGoalShardCount"><span class="type-signature"></span>getGoalShardCount()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Fetch the current goal number of shards we are attempting to
 keep alive. Returns -1 if goal has not been set yet, or is otherwise
 unavailable.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6178,111 +1935,31 @@ unavailable.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     The number of shards we are attempting to create, -1 if
 the value is otherwise unknown.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">number</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="getKnownShardCount"><span class="type-signature"></span>getKnownShardCount()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Fetches the current number of shards that we know about and
 may talk to us.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6292,109 +1969,29 @@ may talk to us.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     The number of shards allowed to startup.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">number</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="getNumClients"><span class="type-signature"></span>getNumClients()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Returns the number of connected clients.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6404,110 +2001,30 @@ may talk to us.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     Number of sockets.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">number</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="getRegisteredShardCount"><span class="type-signature"></span>getRegisteredShardCount()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Fetches the number of shards that have ever successfully
 connected to us.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6517,159 +2034,48 @@ connected to us.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     The number of shards we will probably be startable.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">number</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="rebootRequest"><span class="type-signature"></span>rebootRequest(msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         A reboot of some form has been requested. Parse, and comply.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The reboot command.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6679,148 +2085,41 @@ connected to us.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="respawnAll"><span class="type-signature"></span>respawnAll( [cb])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Kills all running shards and respawns them.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>cb</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">function</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Callback once all shards have been rebooted or an
 error has occurred.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6830,160 +2129,44 @@ error has occurred.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="sendSQL"><span class="type-signature"></span>sendSQL(query, cb)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Send an SQL query to our database.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>query</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The query to send to database.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>cb</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">function</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">First argument is optional error, otherwise query
 response.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6993,59 +2176,19 @@ response.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
         </dl>
-    
-
-    
-
-    
 </article>
-
 </section>
-
-
-
-
 		</div>
 	</div>
-
 	<div class="clearfix"></div>
-
-	
 		<div class="col-md-3">
 			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
 		</div>
-	
-
 </div>
 </div>
-
-
     <div class="modal fade" id="searchResults">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -7060,41 +2203,27 @@ response.</td>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div>
-
-
 <footer>
-
-
 	<span class="copyright">
 	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
 	</span>
-
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
-	
 		on Saturday, May 23, 2020 8:45 PM (-07:00)
-	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
 </footer>
-
 <script src="scripts/docstrap.lib.js"></script>
 <script src="scripts/toc.js"></script>
-
     <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
-
-
 <script>
 $( function () {
 	$( "[id*='$']" ).each( function () {
 		var $this = $( this );
-
 		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
 	} );
-
 	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
 		var $this = $( this );
-
 		var example = $this.find( "code" );
 		exampleText = example.html();
 		var lang = /{@lang (.*?)}/.exec( exampleText );
@@ -7106,23 +2235,18 @@ $( function () {
 			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
 			lang = langClassMatch ? langClassMatch[1] : "javascript";
 		}
-
 		if ( lang ) {
-
 			$this
 			.addClass( "sunlight-highlight-" + lang )
 			.addClass( "linenums" )
 			.html( example.html() );
-
 		}
 	} );
-
 	Sunlight.highlightAll( {
 		lineNumbers : true,
 		showMenu : true,
 		enableDoclinks : true
 	} );
-
 	$.catchAnchorLinks( {
         navbarOffset: 10
 	} );
@@ -7134,25 +2258,16 @@ $( function () {
 		showAndHide : false,
 		smoothScrolling: true
 	} );
-
 	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
 	$( '.dropdown-toggle' ).dropdown();
-
     $( "table" ).each( function () {
       var $this = $( this );
       $this.addClass('table');
     } );
-
 } );
 </script>
-
-
-
 <!--Navigation and Symbol Display-->
-
-
 <!--Google Analytics-->
-
 <script>
 	(function ( i, s, o, g, r, a, m ) {
 		i['GoogleAnalyticsObject'] = r;
@@ -7165,19 +2280,13 @@ $( function () {
 		a.src = g;
 		m.parentNode.insertBefore( a, m )
 	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
-
 	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
 	ga( 'send', 'pageview' );
 </script>
-
-
-
     <script type="text/javascript">
         $(document).ready(function() {
             SearcherDisplay.init();
         });
     </script>
-
-
 </body>
 </html>

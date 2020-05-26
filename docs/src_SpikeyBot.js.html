@@ -1,22 +1,16 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>SpikeyBot-Discord Source: src/SpikeyBot.js</title>
-
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
-
 	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
-
 </head>
-
 <body>
-
 <div class="navbar navbar-default navbar-fixed-top ">
 <div class="container">
 	<div class="navbar-header">
@@ -29,37 +23,31 @@
 	</div>
 	<div class="navbar-collapse collapse" id="topNavigation">
 		<ul class="nav navbar-nav">
-			
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="EE.html">EE</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Events.html">Events</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-Action.html">HungryGames~Action</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></li><li><a href="ShardingMaster.ShardMasterConfig.html">ShardingMaster.ShardMasterConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.HeartbeatConfig.html">ShardingMaster.ShardMasterConfig.HeartbeatConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></li><li><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></li><li><a href="ShardingSlave.html">ShardingSlave</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="external-Discord.html">Discord</a></li>
 				</ul>
 			</li>
-			
 		</ul>
-        
             <div class="col-sm-3 col-md-3">
                 <form class="navbar-form" role="search">
                     <div class="input-group">
@@ -70,34 +58,22 @@
                     </div>
                 </form>
             </div>
-        
 	</div>
-
 </div>
 </div>
-
-
 <div class="container" id="toc-content">
 <div class="row">
-
-	
 	<div class="col-md-12">
-	
 		<div id="main">
-			
-
 		<h1 class="page-title">Source: src/SpikeyBot.js</h1>
-    
 <section>
     <article>
         <pre
             class="sunlight-highlight-javascript linenums">// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-
 // Increase maximum listener count because we often burst many listeners for a
 // short time.
 // process.setMaxListeners(50);
-
 // Temporarily remove this limit since IDK how to fix it atm...
 process.setMaxListeners(0);
 /**
@@ -112,7 +88,6 @@ const childProcess = require('child_process');
 // Auth is not constant and will be reloaded with common.js.
 let auth = require('../auth.js');
 // common.js is also required, but is managed within the SpikeyBot class.
-
 /**
  * Handler for an unhandledRejection or uncaughtException, to prevent the bot
  * from silently crashing without an error.
@@ -143,7 +118,6 @@ function unhandledRejection(...args) {
 }
 process.on('unhandledRejection', unhandledRejection);
 process.on('uncaughtException', unhandledRejection);
-
 // Catch MaxListenersExceededWarning and provide more useful information.
 const EventEmitter = require('events').EventEmitter;
 const originalAddListener = EventEmitter.prototype.addListener;
@@ -151,10 +125,8 @@ const originalAddListener = EventEmitter.prototype.addListener;
 const addListener = function(...args) {
   originalAddListener.apply(this, args);
   const type = args[0];
-
   const numListeners = this.listeners(type).length;
   const max = typeof this._maxListeners === 'number' ? this._maxListeners : 10;
-
   if (max !== 0 &amp;&amp; numListeners > max) {
     const error = new Error(
         'Too many listeners of type "' + type +
@@ -162,13 +134,11 @@ const addListener = function(...args) {
         numListeners + '.');
     throw error;
   }
-
   return this;
 };
 /* eslint-enable no-invalid-this */
 EventEmitter.prototype.addListener = addListener;
 EventEmitter.prototype.on = addListener;
-
 /**
  * @classdesc Main class that manages the bot.
  * @class
@@ -189,7 +159,6 @@ function SpikeyBot() {
    */
   this.version = JSON.parse(fs.readFileSync('package.json')).version + '#' +
       childProcess.execSync('git rev-parse --short HEAD').toString().trim();
-
   /**
    * Timestamp at which this process was started.
    *
@@ -198,7 +167,6 @@ function SpikeyBot() {
    * @constant
    */
   this.startTimestamp = Date.now();
-
   /**
    * Is the bot currently responding as a unit test.
    *
@@ -222,7 +190,6 @@ function SpikeyBot() {
    * @type {boolean}
    */
   let noLogin = process.env.SHARDING_MASTER === 'true';
-
   /**
    * The filename of the Command mainModule.
    *
@@ -360,7 +327,6 @@ function SpikeyBot() {
    * @type {?number}
    */
   const shardId = process.env.SHARDS;
-
   /**
    * Number of bytes to allocate for each shard memory. Passed as
    * `--max-old-space-size=` to the spawned node process. Null for default.
@@ -370,7 +336,6 @@ function SpikeyBot() {
    * @type {?number}
    */
   let shardMem = null;
-
   /**
    * The name of the client secret to use. Defaults to release either release or
    * dev depending on the --dev flag.
@@ -380,7 +345,6 @@ function SpikeyBot() {
    * @type {string}
    */
   let botName = null;
-
   /**
    * Number of milliseconds to delay the call to client.login in order to
    * prevent race conditions of multiple bots in the same directory. This is set
@@ -392,7 +356,6 @@ function SpikeyBot() {
    * @type {number}
    */
   let delayBoot = 0;
-
   /**
    * Enable inspecting/profiling for a shard to launch. Set via cli flags, -1 to
    * disable. Currently only supports enabling. The `--inspect` flag will be
@@ -404,7 +367,6 @@ function SpikeyBot() {
    * @type {number}
    */
   let inspectShard = -1;
-
   /**
    * Is the bot currently rebooting.
    *
@@ -413,7 +375,6 @@ function SpikeyBot() {
    * @type {boolean}
    */
   let rebooting = false;
-
   /**
    * Getter for the bot's name. If name is null, it is most likely because there
    * is no custom name and common.isRelease should be used instead.
@@ -428,7 +389,6 @@ function SpikeyBot() {
     if (isBackup) return 'FALLBACK';
     return botName;
   };
-
   /**
    * Getter for the bot's name. If botName is null, this will give either
    * `release` or `dev`.
@@ -442,7 +402,6 @@ function SpikeyBot() {
     if (isBackup) return 'FALLBACK';
     return botName || (isDev ? 'dev' : 'release');
   };
-
   // Parse cli args.
   for (let i = 2; i &lt; process.argv.length; i++) {
     if (process.argv[i] === '--dev') {
@@ -487,12 +446,8 @@ function SpikeyBot() {
       throw new Error(`Unrecognized argument '${process.argv[i]}'`);
     }
   }
-
-
   enableSharding = numShards &amp;&amp; shardId === undefined;
-
   const isDev = setDev;
-
   let common;
   /**
    * Delete cache and re-require common.js and auth.js.
@@ -505,13 +460,11 @@ function SpikeyBot() {
     delete require.cache[require.resolve('./common.js')];
     common = require('./common.js');
     common.begin(testInstance, !isDev);
-
     for (const m of mainModules) {
       m.begin(Discord, client, command, common, self);
     }
   };
   self.reloadCommon();
-
   if (common.isSlave || common.isMaster) {
     // Create interval to ensure the parent process hasn't orphaned us.
     setInterval(() => {
@@ -537,7 +490,6 @@ function SpikeyBot() {
       }
     }, 1000);
   }
-
   /**
    * Create a ShardingManager and spawn shards. This shall only be called at
    * most once, and `login()` shall not be called after this.
@@ -591,7 +543,6 @@ function SpikeyBot() {
     });
     manager.spawn();
   }
-
   if (enableSharding) {
     if (delayBoot) {
       setTimeout(createShards, delayBoot);
@@ -600,7 +551,6 @@ function SpikeyBot() {
     }
     return;
   }
-
   let disabledEvents = ['TYPING_START'];
   let defaultPresence = {
     status: 'online',
@@ -655,14 +605,11 @@ function SpikeyBot() {
       'WEBHOOKS_UPDATE',
     ];
   }
-
-
   // If we are not managing shards, just start normally.
   const client = new Discord.Client({
     disabledEvents: disabledEvents,
     presence: defaultPresence,
   });
-
   /**
    * The full filename where information about the bot rebooting is stored.
    *
@@ -676,8 +623,6 @@ function SpikeyBot() {
   const fullRebootFilename = client.shard ?
       `${rebootFilename}-${client.shard.ids[0]}.json` :
       `${rebootFilename}.json`;
-
-
   if (!isBackup) {
     // Attempt to load mainmodules.
     for (let i = 0; i &lt; mainModuleNames.length; i++) {
@@ -703,11 +648,8 @@ function SpikeyBot() {
     mainModuleNames = [];
     mainModules.splice(0);
   }
-
   const defaultPrefix = isDev ? '~' : '?';
-
   if (minimal) common.log('STARTING IN MINIMAL MODE');
-
   /**
    * Has the bot been initialized already.
    *
@@ -716,7 +658,6 @@ function SpikeyBot() {
    * @type {boolean}
    */
   let initialized = false;
-
   /**
    * The Interval in which we will save and purge data on all mainmodules.
    * Begins after onReady.
@@ -739,7 +680,6 @@ function SpikeyBot() {
    * @type {number}
    */
   const saveFrequency = 2 * 60 * 1000;
-
   /**
    * Cache of all loaded guild's command prefixes. Populated asyncronously after
    * client ready event.
@@ -748,7 +688,6 @@ function SpikeyBot() {
    * @type {object.&lt;string>}
    */
   const guildPrefixes = {};
-
   /**
    * The path in the guild's subdirectory where we store custom prefixes.
    *
@@ -758,7 +697,6 @@ function SpikeyBot() {
    * @type {string}
    */
   const guildPrefixFile = '/prefix.txt';
-
   /**
    * The path in the guild's subdirectory where we store custom prefixes for
    * bots with custom names.
@@ -769,7 +707,6 @@ function SpikeyBot() {
    * @type {string}
    */
   const guildCustomPrefixFile = '/prefixes.json';
-
   /**
    * Checks if given message is the given command.
    *
@@ -801,7 +738,6 @@ function SpikeyBot() {
       status: ((testInstance || isBackup) ? 'dnd' : 'online'),
     });
   }
-
   // BEGIN //
   client.on('ready', onReady);
   /**
@@ -980,12 +916,9 @@ function SpikeyBot() {
     // Reset save interval
     clearInterval(saveInterval);
     saveInterval = setInterval(saveAll, saveFrequency);
-
     initialized = true;
   }
-
   client.on('shardReady', (id) => common.log('Shard Ready', `Shard ${id}`));
-
   client.on('disconnect', onDisconnect);
   /**
    * The bot has disconnected from Discord and will not be attempting to
@@ -1000,7 +933,6 @@ function SpikeyBot() {
     common.error(
         'Disconnected from Discord! ' + event.code + ' ' + event.reason);
   }
-
   client.on('reconnecting', onReconnecting);
   /**
    * The bot has disconnected from Discord, and is reconnecting.
@@ -1012,7 +944,6 @@ function SpikeyBot() {
     disconnectReason = 'Reconnecting to network.';
     common.error('Reconnecting to Discord!');
   }
-
   if (isBackup) {
     client.on('presenceUpdate', onPresenceUpdate);
   }
@@ -1030,7 +961,6 @@ function SpikeyBot() {
         (newMem.presence.activity &amp;&amp; newMem.presence.activity.name ||
          'NoActivity'));
   }
-
   if (!isBackup) {
     client.on('message', onMessage);
   }
@@ -1048,7 +978,6 @@ function SpikeyBot() {
       client.totalMessageCount = 0;
     }
     client.totalMessageCount++;
-
     // Message was sent by Discord, not a user.
     if (msg.system) return;
     if (testInstance) {
@@ -1070,20 +999,15 @@ function SpikeyBot() {
         return;
       }
     }
-
     // Only respond to messages in the test channel if we are in unit test mode.
     // In unit test mode, only respond to messages in the test channel.
     if (testMode != (msg.channel.id == common.testChannel)) return;
-
     if (!testMode &amp;&amp; msg.author.bot) return;
-
     msg.prefix = self.getPrefix(msg.guild);
     if (self.getLocale &amp;&amp; msg.guild) msg.locale = self.getLocale(msg.guild.id);
-
     if (msg.guild === null &amp;&amp; !msg.content.startsWith(msg.prefix)) {
       msg.content = `${msg.prefix}${msg.content}`;
     }
-
     if (isCmd(msg, '')) {
       let commandSuccess = command.validate(msg.content.split(/ |\n/)[0], msg);
       let logged = '';
@@ -1182,10 +1106,8 @@ function SpikeyBot() {
       } */
     }
   }
-
   if (!minimal &amp;&amp; !isBackup) {
     command.on('updategame', commandUpdateGame);
-
     command.on(
         new command.SingleCommand(['changeprefix'], commandChangePrefix, {
           validOnlyInGuild: true,
@@ -1329,7 +1251,6 @@ function SpikeyBot() {
           });
     }
   }
-
   if (!isBackup) {
     command.on('reboot', commandReboot);
   }
@@ -1465,7 +1386,6 @@ function SpikeyBot() {
               'command. Sorry!');
     }
   }
-
   if (!isBackup) {
     command.on('mainreload', commandReload);
   }
@@ -1510,7 +1430,6 @@ function SpikeyBot() {
               'command. Sorry!');
     }
   }
-
   if (client.shard) {
     /**
      * @description When another shard requests that we reload MainModules.
@@ -1523,7 +1442,6 @@ function SpikeyBot() {
       reloadMainModules(toReload, reloaded);
     };
   }
-
   /**
    * Reloads mainmodules from file. Reloads all modules if `toReload` is not
    * specified. `reloaded` will contain the list of messages describing which
@@ -1548,11 +1466,9 @@ function SpikeyBot() {
       toReload = [toReload];
     }
     if (typeof schedule === 'undefined') schedule = true;
-
     let error = false;
     let force = false;
     let noSchedule = false;
-
     let numArg = 0;
     if (toReload.find((el) => '--force' == el)) {
       force = true;
@@ -1562,7 +1478,6 @@ function SpikeyBot() {
       noSchedule = true;
       numArg++;
     }
-
     for (let i = 0; i &lt; mainModules.length; i++) {
       if (toReload.length > numArg) {
         if (!toReload.find((el) => mainModuleNames[i] == el)) {
@@ -1654,7 +1569,6 @@ function SpikeyBot() {
     }
     return error;
   }
-
   /**
    * Trigger all mainmodules to save their data.
    *
@@ -1680,7 +1594,6 @@ function SpikeyBot() {
       }
     }
   }
-
   if (!isBackup) {
     command.on('saveall', commandSaveAll);
   }
@@ -1705,7 +1618,6 @@ function SpikeyBot() {
     saveAll();
     msg.channel.send(common.mention(msg) + ' `Triggered data save`');
   }
-
   /**
    * Check current loaded mainModule commit to last modified commit, and reload
    * if the file has changed for all mainModules.
@@ -1746,7 +1658,6 @@ function SpikeyBot() {
       smLoader.reload();
     }
   };
-
   /**
    * Get this guild's custom prefix. Returns the default prefix otherwise.
    *
@@ -1760,7 +1671,6 @@ function SpikeyBot() {
     if (typeof id === 'object') id = id.id;
     return guildPrefixes[id] || defaultPrefix;
   };
-
   /**
    * Load prefixes from file for the given guilds asynchronously.
    *
@@ -1795,7 +1705,6 @@ function SpikeyBot() {
     };
     fs.readFile(guildFile, onFileRead(id));
   }
-
   if (delayBoot > 0) {
     if (!noLogin) {
       setTimeout(login, delayBoot);
@@ -1809,12 +1718,10 @@ function SpikeyBot() {
       onReady();
     }
   }
-
   process.on('SIGINT', exit);
   process.on('SIGHUP', exit);
   process.on('SIGTERM', exit);
   process.on('exit', exit);
-
   /**
    * Trigger a graceful shutdown with process signals. Does not trigger shutdown
    * if exit is -1.
@@ -1856,27 +1763,15 @@ function SpikeyBot() {
     });
   }
 }
-
 module.exports = new SpikeyBot();
 </pre>
     </article>
 </section>
-
-
-
-
-
 		</div>
 	</div>
-
 	<div class="clearfix"></div>
-
-	
-
 </div>
 </div>
-
-
     <div class="modal fade" id="searchResults">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -1891,41 +1786,27 @@ module.exports = new SpikeyBot();
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div>
-
-
 <footer>
-
-
 	<span class="copyright">
 	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
 	</span>
-
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
-	
 		on Saturday, May 23, 2020 8:45 PM (-07:00)
-	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
 </footer>
-
 <script src="scripts/docstrap.lib.js"></script>
 <script src="scripts/toc.js"></script>
-
     <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
-
-
 <script>
 $( function () {
 	$( "[id*='$']" ).each( function () {
 		var $this = $( this );
-
 		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
 	} );
-
 	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
 		var $this = $( this );
-
 		var example = $this.find( "code" );
 		exampleText = example.html();
 		var lang = /{@lang (.*?)}/.exec( exampleText );
@@ -1937,23 +1818,18 @@ $( function () {
 			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
 			lang = langClassMatch ? langClassMatch[1] : "javascript";
 		}
-
 		if ( lang ) {
-
 			$this
 			.addClass( "sunlight-highlight-" + lang )
 			.addClass( "linenums" )
 			.html( example.html() );
-
 		}
 	} );
-
 	Sunlight.highlightAll( {
 		lineNumbers : true,
 		showMenu : true,
 		enableDoclinks : true
 	} );
-
 	$.catchAnchorLinks( {
         navbarOffset: 10
 	} );
@@ -1965,25 +1841,16 @@ $( function () {
 		showAndHide : false,
 		smoothScrolling: true
 	} );
-
 	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
 	$( '.dropdown-toggle' ).dropdown();
-
     $( "table" ).each( function () {
       var $this = $( this );
       $this.addClass('table');
     } );
-
 } );
 </script>
-
-
-
 <!--Navigation and Symbol Display-->
-
-
 <!--Google Analytics-->
-
 <script>
 	(function ( i, s, o, g, r, a, m ) {
 		i['GoogleAnalyticsObject'] = r;
@@ -1996,19 +1863,13 @@ $( function () {
 		a.src = g;
 		m.parentNode.insertBefore( a, m )
 	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
-
 	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
 	ga( 'send', 'pageview' );
 </script>
-
-
-
     <script type="text/javascript">
         $(document).ready(function() {
             SearcherDisplay.init();
         });
     </script>
-
-
 </body>
 </html>

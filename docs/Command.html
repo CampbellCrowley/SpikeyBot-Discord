@@ -1,22 +1,16 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>SpikeyBot-Discord Class: Command</title>
-
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
-
 	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
-
 </head>
-
 <body>
-
 <div class="navbar navbar-default navbar-fixed-top ">
 <div class="container">
 	<div class="navbar-header">
@@ -29,37 +23,31 @@
 	</div>
 	<div class="navbar-collapse collapse" id="topNavigation">
 		<ul class="nav navbar-nav">
-			
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="EE.html">EE</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Events.html">Events</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-Action.html">HungryGames~Action</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></li><li><a href="ShardingMaster.ShardMasterConfig.html">ShardingMaster.ShardMasterConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.HeartbeatConfig.html">ShardingMaster.ShardMasterConfig.HeartbeatConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></li><li><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></li><li><a href="ShardingSlave.html">ShardingSlave</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="external-Discord.html">Discord</a></li>
 				</ul>
 			</li>
-			
 		</ul>
-        
             <div class="col-sm-3 col-md-3">
                 <form class="navbar-form" role="search">
                     <div class="input-group">
@@ -70,90 +58,30 @@
                     </div>
                 </form>
             </div>
-        
 	</div>
-
 </div>
 </div>
-
-
 <div class="container" id="toc-content">
 <div class="row">
-
-	
 	<div class="col-md-8">
-	
 		<div id="main">
-			
-
 	<h1 class="page-title">Class: Command</h1>
 <section>
-
 <header>
-    
         <h2>
         Command
         </h2>
-        
             <div class="class-description">Manages the command event firing for all commands. This is not a
 normal submodule, and is treated differently in the SpikeyBot class.</div>
-        
-    
 </header>
-
-
 <article>
     <div class="container-overview">
-    
-        
 <hr>
 <dt>
     <h4 class="name" id="Command"><span class="type-signature"></span>new Command()</h4>
-    
-    
 </dt>
 <dd>
-
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -163,106 +91,38 @@ normal submodule, and is treated differently in the SpikeyBot class.</div>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-    
     </div>
-
-    
         <h3 class="subsection-title">Extends</h3>
-
-        
-
-
     <ul>
         <li><a href="MainModule.html">MainModule</a></li>
     </ul>
-
-
-    
-
-    
-
-    
         <h3 class="subsection-title">Classes</h3>
-
         <dl>
             <dt><a href="Command-CommandSetting.html">CommandSetting</a></dt>
             <dd></dd>
-        
             <dt><a href="Command-SingleCommand.html">SingleCommand</a></dt>
             <dd></dd>
         </dl>
-    
-
-    
-
-    
-
-    
         <h3 class="subsection-title">Members</h3>
-
         <dl>
-            
 <hr>
 <dt class="name" id="bot">
     <h4 id="bot"><span class="type-signature">&lt;nullable> </span>bot<span class="type-signature"> :<a href="SpikeyBot.html">SpikeyBot</a></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The parent SpikeyBot instance. Defaults to required cache value for
 autocompletion, updates to current reference at init.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type"><a href="SpikeyBot.html">SpikeyBot</a></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -271,29 +131,6 @@ autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -303,57 +140,24 @@ autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="client">
     <h4 id="client"><span class="type-signature"></span>client<span class="type-signature"> :external:Discord~Client</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The current bot client. Defaults to require cache value for editor
 autocompletion, updates to current reference at init.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">external:Discord~Client</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -362,29 +166,6 @@ autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -394,58 +175,25 @@ autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="command">
     <h4 id="command"><span class="type-signature"></span>command<span class="type-signature"> :<a href="Command.html">Command</a></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The command object for registering command listeners. Defaults to require
 cache value for editor autocompletion, updates to current reference at
 init.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type"><a href="Command.html">Command</a></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -454,29 +202,6 @@ init.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -486,63 +211,14 @@ init.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="CommandSetting">
     <h4 id="CommandSetting"><span class="type-signature"></span>CommandSetting<span class="type-signature"></span></h4>
-
-    
 </dt>
 <dd>
-    
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -552,64 +228,30 @@ init.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
 	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
 	<dd class="tag-see">
 		<ul>
 			<li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li>
 			</ul>
 	</dd>
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="commit">
     <h4 id="commit"><span class="type-signature">&lt;constant> </span>commit<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The commit at HEAD at the time this module was loaded. Essentially the
 version of this submodule.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -618,29 +260,6 @@ version of this submodule.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -650,57 +269,24 @@ version of this submodule.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="common">
     <h4 id="common"><span class="type-signature"></span>common<span class="type-signature"> :<a href="Common.html">Common</a></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The common object. Defaults to require cache value for editor
 autocompletion, updates to current reference at init.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type"><a href="Common.html">Common</a></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -709,29 +295,6 @@ autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -741,76 +304,23 @@ autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="deleteEvent">
     <h4 id="deleteEvent"><span class="type-signature"></span>deleteEvent<span class="type-signature"></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Alias for Command.removeListener.
     </div>
-    
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
 	<dt class="important tag-deprecated method-doc-label method-doc-details-label">Deprecated:</dt>
-	
     <dd class="yes-def tag-deprecated">
         <ul class="dummy">
             <li>Yes</li>
         </ul>
     </dd>
-    
-    
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -820,57 +330,24 @@ autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="Discord">
     <h4 id="Discord"><span class="type-signature"></span>Discord<span class="type-signature"> :<a href="external-Discord.html">external:Discord</a></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The current Discord object instance of the bot. Defaults to require cache
 value for editor autocompletion, updates to current reference at init.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type"><a href="external-Discord.html">external:Discord</a></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -879,29 +356,6 @@ value for editor autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -911,62 +365,27 @@ value for editor autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="helpMessage">
     <h4 id="helpMessage"><span class="type-signature">&lt;abstract> </span>helpMessage<span class="type-signature"> :undefined|string|external:Discord~MessageEmbed</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The help message to show the user in the main help message.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">undefined</span>
 |
-
 <span class="param-type">string</span>
 |
-
 <span class="param-type">external:Discord~MessageEmbed</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -975,29 +394,6 @@ value for editor autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1007,56 +403,23 @@ value for editor autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="initialized">
     <h4 id="initialized"><span class="type-signature">&lt;protected, readonly> </span>initialized<span class="type-signature"> :boolean</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Has this subModule been initialized yet (Has begin() been called).
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">boolean</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -1065,29 +428,6 @@ value for editor autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1097,58 +437,25 @@ value for editor autocompletion, updates to current reference at init.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="loadTime">
     <h4 id="loadTime"><span class="type-signature">&lt;constant> </span>loadTime<span class="type-signature"> :number</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The time at which this module was loaded for use in checking if the
 module needs to be reloaded because the file has been modified since
 loading.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">number</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -1157,29 +464,6 @@ loading.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1189,57 +473,24 @@ loading.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="myName">
     <h4 id="myName"><span class="type-signature">&lt;protected> </span>myName<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The name of this submodule. Used for differentiating in the log. Should
 be defined before begin().
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -1248,34 +499,10 @@ be defined before begin().
 			</li>
 		</ul>
 	</dd>
-	
-
-    
     <dt class="tag-overrides">Overrides:</dt>
     <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="MainModule.html#myName">MainModule#myName</a>
     </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1285,57 +512,24 @@ be defined before begin().
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="postPrefix">
     <h4 id="postPrefix"><span class="type-signature">&lt;abstract> </span>postPrefix<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The postfix for the global prefix for this subModule. Must be defined
 before begin(), otherwise it is ignored.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -1344,29 +538,6 @@ before begin(), otherwise it is ignored.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1376,63 +547,14 @@ before begin(), otherwise it is ignored.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="SingleCommand">
     <h4 id="SingleCommand"><span class="type-signature"></span>SingleCommand<span class="type-signature"></span></h4>
-
-    
 </dt>
 <dd>
-    
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1442,85 +564,29 @@ before begin(), otherwise it is ignored.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
 	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
 	<dd class="tag-see">
 		<ul>
 			<li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li>
 			</ul>
 	</dd>
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="~cmds">
     <h4 id="~cmds"><span class="type-signature">&lt;private, inner> </span>cmds<span class="type-signature"> :object.&lt;SingleCommand></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         All tracked commands mapped by command name.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">object.&lt;SingleCommand></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1530,85 +596,29 @@ before begin(), otherwise it is ignored.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="~commandSettingsFile">
     <h4 id="~commandSettingsFile"><span class="type-signature">&lt;private, inner, constant> </span>commandSettingsFile<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Filename in the guild's subdirectory where command settings are stored.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
 			<li>/commandSettings.json</li>
 		</ul>
 	</dd>
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1618,67 +628,17 @@ before begin(), otherwise it is ignored.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="~eventList">
     <h4 id="~eventList"><span class="type-signature">&lt;inner> </span>eventList<span class="type-signature"></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Currently registered event listeners for non-command events.
     </div>
-    
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1688,79 +648,24 @@ before begin(), otherwise it is ignored.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="~onlyservermessage">
     <h4 id="~onlyservermessage"><span class="type-signature">&lt;private, inner, constant> </span>onlyservermessage<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The message to send to the user if they attempt a server-only command in a
 non-server channel.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1770,79 +675,24 @@ non-server channel.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="~userSettings">
     <h4 id="~userSettings"><span class="type-signature">&lt;private, inner, constant> </span>userSettings<span class="type-signature"> :object.&lt;object.&lt;CommandSetting>></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Specific settings defined by users as restrictions on commands. Mapped by
 guild id, then by the command.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">object.&lt;object.&lt;CommandSetting>></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1852,153 +702,46 @@ guild id, then by the command.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
         </dl>
-    
-
-    
         <h3 class="subsection-title">Methods</h3>
-
         <dl>
-            
 <hr>
 <dt>
     <h4 class="name" id="addEventListener"><span class="type-signature"></span>addEventListener(name, handler)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Register an event listener.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>name</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The name of the event to listen for.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>handler</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">function</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The function to call when the event is fired.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2008,210 +751,65 @@ guild id, then by the command.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="begin"><span class="type-signature"></span>begin(Discord, client, command, common, bot)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Initialize this submodule.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>Discord</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The Discord object for the API library.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>client</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Client</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The client that represents this bot.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>command</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="Command.html">Command</a></span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The command instance in which to
 register command listeners.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>common</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="Common.html">Common</a></span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Class storing common functions.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>bot</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="SpikeyBot.html">SpikeyBot</a></span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The parent SpikeyBot instance.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -2220,29 +818,6 @@ register command listeners.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2252,113 +827,36 @@ register command listeners.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="debug"><span class="type-signature">&lt;protected> </span>debug(msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Log using common.logDebug, but automatically set name.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The message to log.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -2367,29 +865,6 @@ register command listeners.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2399,63 +874,17 @@ register command listeners.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="end"><span class="type-signature"></span>end()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Trigger subModule to shutdown and get ready for process terminating.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -2464,29 +893,6 @@ register command listeners.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2496,113 +902,36 @@ register command listeners.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="error"><span class="type-signature">&lt;protected> </span>error(msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Log using common.error, but automatically set name.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The message to log.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -2611,29 +940,6 @@ register command listeners.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2643,64 +949,18 @@ register command listeners.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="export"><span class="type-signature"></span>export()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Export data required to maintain the bot across reloading this module.
 Expected to be returned directly to this.import once reloaded.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -2709,34 +969,10 @@ Expected to be returned directly to this.import once reloaded.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
     <dt class="tag-overrides">Overrides:</dt>
     <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="MainModule.html#export">MainModule#export</a>
     </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2746,256 +982,82 @@ Expected to be returned directly to this.import once reloaded.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     The data to be exported.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type"><a href="MainModule.html#~ModuleData">MainModule~ModuleData</a></span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="find"><span class="type-signature"></span>find(cmd, msg [, setCmd])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Returns the callback function for the given event.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
         <th>Default</th>
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>cmd</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
                     &lt;nullable><br>
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                 </td>
-            
-
             <td class="description last">Command to force search for, and ignore command that
 could be matched with msg.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Message</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                 </td>
-            
-
             <td class="description last">Message that is to trigger this command. This
 object will be updated with the command name that was found as msg.cmd.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>setCmd</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">boolean</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                     false
-                
                 </td>
-            
-
             <td class="description last">Set the cmd variable in the msg object to
 match the found command.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3005,187 +1067,59 @@ match the found command.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     The single command object reference, or
 null if it could not be found.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type"><a href="Command-SingleCommand.html">Command~SingleCommand</a></span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="findAll"><span class="type-signature"></span>findAll(cmd, msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Returns all the callback functions for the given event with wildcards
 allowed.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>cmd</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Command and subcommands to search for without guild
 prefixes.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Message</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Message object to use to remove command prefix
 if it exist.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3195,184 +1129,56 @@ if it exist.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     The command object references, or an
 empty array if it could not be found.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">Array.&lt;<a href="Command-SingleCommand.html">Command~SingleCommand</a>></span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="fire"><span class="type-signature"></span>fire(name, args)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Fire all handlers listening for an event.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>name</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The name of the event to fire.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>args</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">*</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The arguments to pass to the handlers.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3382,85 +1188,17 @@ empty array if it could not be found.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="getAllNames"><span class="type-signature"></span>getAllNames()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Fetches a list of all currently registered commands.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3470,109 +1208,29 @@ empty array if it could not be found.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     Array of all registered commands.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">Array.&lt;string></span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="getDefaultSettings"><span class="type-signature"></span>getDefaultSettings()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Fetch all commands and their default setting values.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3582,166 +1240,54 @@ empty array if it could not be found.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
 	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
 	<dd class="tag-see">
 		<ul>
 			<li><a href="Command.html#~cmds">Command~cmds</a></li>
 			</ul>
 	</dd>
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     All currently registered commands.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">object.&lt;SingleCommand></span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="getUserSettings"><span class="type-signature"></span>getUserSettings(gId)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Fetch all user-defined settings for a guild.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>gId</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The guild id of which to fetch the settings.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3751,152 +1297,55 @@ empty array if it could not be found.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     The settings for the guild mapped by
 command name. If it doesn't exist, an object will first be created.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">object.&lt;CommandSetting></span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="import"><span class="type-signature"></span>import(data)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Imports data from a previous instance of this class in order to maintain
 references to other objects and classes across reloads.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>data</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="MainModule.html#~ModuleData">MainModule~ModuleData</a></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
                     &lt;nullable><br>
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The data that was exported previously,
 or null if no data to import.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -3905,34 +1354,10 @@ or null if no data to import.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-    
     <dt class="tag-overrides">Overrides:</dt>
     <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="MainModule.html#import">MainModule#import</a>
     </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3942,64 +1367,18 @@ or null if no data to import.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="initialize"><span class="type-signature">&lt;protected> </span>initialize()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         The function called at the end of begin() for further initialization
 specific to the subModule. Must be defined before begin() is called.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -4008,34 +1387,10 @@ specific to the subModule. Must be defined before begin() is called.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
     <dt class="tag-overrides">Overrides:</dt>
     <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="MainModule.html#initialize">MainModule#initialize</a>
     </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4045,113 +1400,36 @@ specific to the subModule. Must be defined before begin() is called.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="log"><span class="type-signature">&lt;protected> </span>log(msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Log using common.log, but automatically set name.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The message to log.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -4160,29 +1438,6 @@ specific to the subModule. Must be defined before begin() is called.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4192,236 +1447,72 @@ specific to the subModule. Must be defined before begin() is called.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="on"><span class="type-signature"></span>on(cmd [, cb] [, onlyserver])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Registers a listener for a command.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
         <th>Default</th>
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>cmd</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
 |
-
 <span class="param-type">Array.&lt;string></span>
 |
-
 <span class="param-type"><a href="Command-SingleCommand.html">Command~SingleCommand</a></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                 </td>
-            
-
             <td class="description last">Command to listen for.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>cb</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="global.html#commandHandler">commandHandler</a></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                 </td>
-            
-
             <td class="description last">Function to call when command is triggered.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>onlyserver</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">boolean</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                     false
-                
                 </td>
-            
-
             <td class="description last">Whether the command is only allowed
 on a server.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4431,42 +1522,13 @@ on a server.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="reloadable"><span class="type-signature">&lt;abstract> </span>reloadable()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Check if this module is in a state that is ready to be
 reloaded. If false is returned, this module should not be unloaded and
@@ -4474,24 +1536,7 @@ doing such may risk putting the module into an uncontrollable state. This
 is different from unloadable, which checks if this module can be stopped
 completely, this checks if the module can be stopped and restarted.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -4500,29 +1545,6 @@ completely, this checks if the module can be stopped and restarted.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4532,191 +1554,62 @@ completely, this checks if the module can be stopped and restarted.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
 	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
 	<dd class="tag-see">
 		<ul>
 			<li>SubModule~unloadable</li>
 			</ul>
 	</dd>
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     True if can be reloaded, false if cannot.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">boolean</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="removeEventListener"><span class="type-signature"></span>removeEventListener(name, handler)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Remove an event listener.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>name</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The name of the event to listen for.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>handler</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">function</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">THe handler that is currently registered to
 listen on this event.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4726,139 +1619,39 @@ listen on this event.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="removeListener"><span class="type-signature"></span>removeListener(cmd)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Remove listener for a command.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>cmd</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
 |
-
 <span class="param-type">Array.&lt;string></span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Command or alias of command to remove listener
 for.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4868,134 +1661,45 @@ for.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="save"><span class="type-signature"></span>save( [opt])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Saves all data to files necessary for saving current state.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
         <th>Default</th>
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>opt</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                     'sync'
-                
                 </td>
-            
-
             <td class="description last">Can be 'async', otherwise defaults to
 synchronous.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -5004,34 +1708,10 @@ synchronous.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-    
     <dt class="tag-overrides">Overrides:</dt>
     <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="MainModule.html#save">MainModule#save</a>
     </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5041,63 +1721,17 @@ synchronous.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="shutdown"><span class="type-signature">&lt;protected> </span>shutdown()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Shutdown and disable this submodule. Removes all event listeners.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -5106,34 +1740,10 @@ synchronous.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-    
     <dt class="tag-overrides">Overrides:</dt>
     <dd class="tag-overrides"><ul class="dummy"><li>
         <a href="MainModule.html#shutdown">MainModule#shutdown</a>
     </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5143,65 +1753,19 @@ synchronous.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="terminate"><span class="type-signature">&lt;abstract> </span>terminate()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Signal that the bot is shutting down and will not be
 restarting immediately. This is triggered on all shutdowns where all
 <a href="MainModule.html">MainModule</a>s and <a href="SubModule.html">SubModule</a>s will be unloaded.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -5210,29 +1774,6 @@ restarting immediately. This is triggered on all shutdowns where all
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5242,186 +1783,55 @@ restarting immediately. This is triggered on all shutdowns where all
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="trigger"><span class="type-signature"></span>trigger(msg [, msg2])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Trigger a command firing and call it's handler passing in msg as only
 argument.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Message</span>
 |
-
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Message received from Discord to pass
 to handler and to use to find the correct handler, OR a string to override
 the command to trigger from msg.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>msg2</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Message</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The message received from Discord if the
 first argument is a string.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5431,89 +1841,31 @@ first argument is a string.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     True if command was handled by us.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">boolean</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="unloadable"><span class="type-signature">&lt;abstract> </span>unloadable()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Check if this module is in a state that is ready to be
 unloaded. If false is returned, this module should not be unloaded and
 doing such may risk putting the module into an uncontrollable state.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -5522,29 +1874,6 @@ doing such may risk putting the module into an uncontrollable state.
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5554,252 +1883,84 @@ doing such may risk putting the module into an uncontrollable state.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
 	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
 	<dd class="tag-see">
 		<ul>
 			<li>SubModule~reloadable</li>
 			</ul>
 	</dd>
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     True if can be unloaded, false if cannot.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">boolean</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="validate"><span class="type-signature"></span>validate(cmd, msg [, func])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Checks that the given command can be run with the given context. Does not
 actually fire the event.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>cmd</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
                     &lt;nullable><br>
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The command to validate. Null to use msg to find the
 command to validate.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Message</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
                     &lt;nullable><br>
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The message that will fire the event. If
 null, checks for channel and guild specific changes will not be
 validated.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>func</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="Command-SingleCommand.html">Command~SingleCommand</a></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">A command handler override to use for
 settings lookup. If this is not specified, the handler associated with
 cmd will be fetched.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5809,137 +1970,48 @@ cmd will be fetched.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     Message causing failure, or null if valid.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">string</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="warn"><span class="type-signature">&lt;protected> </span>warn(msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Log using common.logWarning, but automatically set name.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The message to log.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
 	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
 	<dd class="inherited-from">
 		<ul class="dummy">
@@ -5948,29 +2020,6 @@ cmd will be fetched.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -5980,135 +2029,36 @@ cmd will be fetched.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="~commandAllowCmd"><span class="type-signature">&lt;private, inner> </span>commandAllowCmd(msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Allow user to unmute a command.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Message</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The message the user sent that triggered this.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6118,135 +2068,36 @@ cmd will be fetched.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="~commandBlockCmd"><span class="type-signature">&lt;private, inner> </span>commandBlockCmd(msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Allow user to mute a command.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Message</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The message the user sent that triggered this.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6256,135 +2107,36 @@ cmd will be fetched.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="~commandDisable"><span class="type-signature">&lt;private, inner> </span>commandDisable(msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Allow user to disable a command.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Message</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The message the user sent that triggered this.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6394,135 +2146,36 @@ cmd will be fetched.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="~commandEnable"><span class="type-signature">&lt;private, inner> </span>commandEnable(msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Allow user to enable a command.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Message</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The message the user sent that triggered this.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6532,135 +2185,36 @@ cmd will be fetched.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="~commandReset"><span class="type-signature">&lt;private, inner> </span>commandReset(msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Reset all custom command settings to default.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Message</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The message the user sent that triggered this.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6670,140 +2224,40 @@ cmd will be fetched.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
     <h5>Fires:</h5>
     <ul>
         <li>Command.events#event:settingsReset</li>
     </ul>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="~commandShow"><span class="type-signature">&lt;private, inner> </span>commandShow(msg)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Show user the currently configured settings for commands.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>msg</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Discord~Message</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">The message the user sent that triggered this.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6813,135 +2267,36 @@ cmd will be fetched.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="~escapeRegExp"><span class="type-signature">&lt;private, inner> </span>escapeRegExp(str)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Escape a given string to be passed into a regular expression.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>str</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Input to escape.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -6951,83 +2306,31 @@ cmd will be fetched.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     Escaped string.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">string</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
         </dl>
-    
-
-    
-
-    
 </article>
-
 </section>
-
-
-
-
 		</div>
 	</div>
-
 	<div class="clearfix"></div>
-
-	
 		<div class="col-md-3">
 			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
 		</div>
-	
-
 </div>
 </div>
-
-
     <div class="modal fade" id="searchResults">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -7042,41 +2345,27 @@ cmd will be fetched.</td>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div>
-
-
 <footer>
-
-
 	<span class="copyright">
 	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
 	</span>
-
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
-	
 		on Saturday, May 23, 2020 8:45 PM (-07:00)
-	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
 </footer>
-
 <script src="scripts/docstrap.lib.js"></script>
 <script src="scripts/toc.js"></script>
-
     <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
-
-
 <script>
 $( function () {
 	$( "[id*='$']" ).each( function () {
 		var $this = $( this );
-
 		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
 	} );
-
 	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
 		var $this = $( this );
-
 		var example = $this.find( "code" );
 		exampleText = example.html();
 		var lang = /{@lang (.*?)}/.exec( exampleText );
@@ -7088,23 +2377,18 @@ $( function () {
 			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
 			lang = langClassMatch ? langClassMatch[1] : "javascript";
 		}
-
 		if ( lang ) {
-
 			$this
 			.addClass( "sunlight-highlight-" + lang )
 			.addClass( "linenums" )
 			.html( example.html() );
-
 		}
 	} );
-
 	Sunlight.highlightAll( {
 		lineNumbers : true,
 		showMenu : true,
 		enableDoclinks : true
 	} );
-
 	$.catchAnchorLinks( {
         navbarOffset: 10
 	} );
@@ -7116,25 +2400,16 @@ $( function () {
 		showAndHide : false,
 		smoothScrolling: true
 	} );
-
 	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
 	$( '.dropdown-toggle' ).dropdown();
-
     $( "table" ).each( function () {
       var $this = $( this );
       $this.addClass('table');
     } );
-
 } );
 </script>
-
-
-
 <!--Navigation and Symbol Display-->
-
-
 <!--Google Analytics-->
-
 <script>
 	(function ( i, s, o, g, r, a, m ) {
 		i['GoogleAnalyticsObject'] = r;
@@ -7147,19 +2422,13 @@ $( function () {
 		a.src = g;
 		m.parentNode.insertBefore( a, m )
 	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
-
 	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
 	ga( 'send', 'pageview' );
 </script>
-
-
-
     <script type="text/javascript">
         $(document).ready(function() {
             SearcherDisplay.init();
         });
     </script>
-
-
 </body>
 </html>

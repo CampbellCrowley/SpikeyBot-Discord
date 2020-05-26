@@ -1,22 +1,16 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>SpikeyBot-Discord Source: src/web/settings.js</title>
-
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
-
 	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
-
 </head>
-
 <body>
-
 <div class="navbar navbar-default navbar-fixed-top ">
 <div class="container">
 	<div class="navbar-header">
@@ -29,37 +23,31 @@
 	</div>
 	<div class="navbar-collapse collapse" id="topNavigation">
 		<ul class="nav navbar-nav">
-			
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="EE.html">EE</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Events.html">Events</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-Action.html">HungryGames~Action</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></li><li><a href="ShardingMaster.ShardMasterConfig.html">ShardingMaster.ShardMasterConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.HeartbeatConfig.html">ShardingMaster.ShardMasterConfig.HeartbeatConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></li><li><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></li><li><a href="ShardingSlave.html">ShardingSlave</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="external-Discord.html">Discord</a></li>
 				</ul>
 			</li>
-			
 		</ul>
-        
             <div class="col-sm-3 col-md-3">
                 <form class="navbar-form" role="search">
                     <div class="input-group">
@@ -70,24 +58,14 @@
                     </div>
                 </form>
             </div>
-        
 	</div>
-
 </div>
 </div>
-
-
 <div class="container" id="toc-content">
 <div class="row">
-
-	
 	<div class="col-md-12">
-	
 		<div id="main">
-			
-
 		<h1 class="page-title">Source: src/web/settings.js</h1>
-    
 <section>
     <article>
         <pre
@@ -97,9 +75,7 @@ const http = require('http');
 const auth = require('../../auth.js');
 const socketIo = require('socket.io');
 const MessageMaker = require('../lib/MessageMaker.js');
-
 require('../subModule.js').extend(WebSettings);  // Extends the SubModule class.
-
 /**
  * @classdesc Manages changing settings for the bot from a website.
  * @class
@@ -107,10 +83,8 @@ require('../subModule.js').extend(WebSettings);  // Extends the SubModule class.
  */
 function WebSettings() {
   const self = this;
-
   /** @inheritdoc */
   this.myName = 'WebSettings';
-
   /** @inheritdoc */
   this.initialize = function() {
     if (self.common.isSlave) {
@@ -119,7 +93,6 @@ function WebSettings() {
       app.listen(self.common.isRelease ? 8020 : 8021, '127.0.0.1');
     }
     setTimeout(updateModuleReferences, 100);
-
     self.command.addEventListener('settingsChanged', handleSettingsChanged);
     self.command.addEventListener('settingsReset', handleSettingsReset);
   };
@@ -144,7 +117,6 @@ function WebSettings() {
       self.command.removeEventListener('settingsReset', handleSettingsReset);
     }
   };
-
   let ioClient;
   let app;
   let io;
@@ -152,7 +124,6 @@ function WebSettings() {
     app = http.createServer(handler);
     io = socketIo(app, {path: '/socket.io/'});
     io.on('connection', socketConnection);
-
     app.on('error', (err) => {
       if (io) io.close();
       if (app) app.close();
@@ -185,7 +156,6 @@ function WebSettings() {
    * @param {WebSettings~basicCB} [cb] Callback that fires once requested action
    * is complete or has failed. Client may not pass a callback.
    */
-
   /**
    * Stores the current reference to the CmdScheduling subModule. Null if it
    * doesn't exist.
@@ -194,7 +164,6 @@ function WebSettings() {
    * @type {?CmdScheduling}
    */
   let cmdScheduler;
-
   /**
    * Stores the current reference to the RaidBlock subModule. Null if it doesn't
    * exist.
@@ -203,7 +172,6 @@ function WebSettings() {
    * @type {?RaidBlock}
    */
   let raidBlock;
-
   /**
    * Update the references to the aplicable subModules.
    *
@@ -236,7 +204,6 @@ function WebSettings() {
       }
     }
   }
-
   /**
    * Handle CmdScheduling shutting down.
    *
@@ -302,7 +269,6 @@ function WebSettings() {
   function handleCommandCancelled(cmdId, gId) {
     guildBroadcast(gId, 'commandCancelled', cmdId, gId);
   }
-
   /**
    * Handle Command~CommandSetting value changed.
    *
@@ -320,7 +286,6 @@ function WebSettings() {
   function handleSettingsChanged(gId, value, type, id, id2) {
     guildBroadcast(gId, 'settingsChanged', gId, value, type, id, id2);
   }
-
   /**
    * Handle Command~CommandSetting was deleted or reset in a guild.
    *
@@ -332,7 +297,6 @@ function WebSettings() {
   function handleSettingsReset(gId) {
     guildBroadcast(gId, 'settingsReset', gId);
   }
-
   /**
    * Handle a guild going on lockdown.
    *
@@ -345,7 +309,6 @@ function WebSettings() {
   function handleLockdown(event) {
     guildBroadcast(event.id, 'lockdown', event.id, event.settings);
   }
-
   /**
    * Handle a guild lockdown action being performed.
    *
@@ -359,7 +322,6 @@ function WebSettings() {
     guildBroadcast(
         event.id, 'raidAction', event.id, event.action, event.user.id);
   }
-
   /**
    * Start a socketio client connection to the primary running server.
    *
@@ -383,7 +345,6 @@ function WebSettings() {
     }
     clientSocketConnection(ioClient);
   }
-
   /**
    * Handler for all http requests. Should never be called.
    *
@@ -395,7 +356,6 @@ function WebSettings() {
     res.writeHead(418);
     res.end('TEAPOT');
   }
-
   /**
    * Map of all currently connected sockets.
    *
@@ -403,7 +363,6 @@ function WebSettings() {
    * @type {object.&lt;Socket>}
    */
   const sockets = {};
-
   /**
    * Returns the number of connected clients that are not siblings.
    *
@@ -413,7 +372,6 @@ function WebSettings() {
   function getNumClients() {
     return Object.keys(sockets).length - Object.keys(siblingSockets).length;
   }
-
   /**
    * Map of all sockets connected that are siblings.
    *
@@ -421,7 +379,6 @@ function WebSettings() {
    * @type {object.&lt;Socket>}
    */
   const siblingSockets = {};
-
   /**
    * Handler for a new socket connecting.
    *
@@ -434,21 +391,17 @@ function WebSettings() {
     const ipName = self.common.getIPName(
         socket.handshake.headers['x-forwarded-for'] ||
         socket.handshake.address);
-
     self.common.log(
         'Socket    connected Settings (' + Object.keys(sockets).length + '): ' +
             ipName,
         socket.id);
     sockets[socket.id] = socket;
-
     socket.emit('time', Date.now());
-
     // @TODO: Replace this authentication with gpg key-pairs;
     socket.on('vaderIAmYourSon', (verification, cb) => {
       if (verification === auth.webSettingsSiblingVerification) {
         siblingSockets[socket.id] = socket;
         cb(auth.webSettingsSiblingVerificationResponse);
-
         socket.on('_guildBroadcast', (gId, ...args) => {
           for (const i in sockets) {
             if (sockets[i] &amp;&amp; sockets[i].cachedGuilds &amp;&amp;
@@ -461,7 +414,6 @@ function WebSettings() {
         self.common.error('Client failed to authenticate as child.', socket.id);
       }
     });
-
     socket.on('fetchGuilds', (...args) => handle(fetchGuilds, args, false));
     socket.on('fetchGuild', (...args) => handle(self.fetchGuild, args));
     socket.on('fetchMember', (...args) => handle(self.fetchMember, args));
@@ -496,7 +448,6 @@ function WebSettings() {
     socket.on(
         'changeCommandSetting',
         (...args) => handle(self.changeCommandSetting, args));
-
     /**
      * Calls the functions with added arguments, and copies the request to all
      * sibling clients.
@@ -551,7 +502,6 @@ function WebSettings() {
         });
       }
     }
-
     socket.on('disconnect', (reason) => {
       self.common.log(
           'Socket disconnected Settings (' + (Object.keys(sockets).length - 1) +
@@ -561,7 +511,6 @@ function WebSettings() {
       delete sockets[socket.id];
     });
   }
-
   /**
    * Handler for connecting as a client to the server.
    *
@@ -577,11 +526,9 @@ function WebSettings() {
             authenticated = res === auth.webSettingsSiblingVerificationResponse;
           });
     });
-
     socket.on('fetchGuilds', (userData, id, cb) => {
       fetchGuilds(userData, {id: id}, cb);
     });
-
     socket.on('forwardedRequest', (userData, sId, func, args, cb) => {
       if (!authenticated) return;
       const fakeSocket = {
@@ -602,18 +549,15 @@ function WebSettings() {
         self[func].apply(self[func], [userData, fakeSocket].concat(args));
       }
     });
-
     const error = function(...args) {
       console.error(...args);
     };
-
     socket.on('connect_error', error);
     socket.on('connect_timeout', error);
     socket.on('reconnect_error', error);
     socket.on('reconnect_failed', error);
     socket.on('error', error);
   }
-
   /**
    * Broadcast a message to all relevant clients.
    *
@@ -634,8 +578,6 @@ function WebSettings() {
       ioClient.emit('_guildBroadcast', gId, event, gId, ...args);
     }
   }
-
-
   /**
    * Send a message to the given socket informing the client that the command
    * they attempted failed due to insufficient permission.
@@ -651,7 +593,6 @@ function WebSettings() {
         'message', 'Failed to run command "' + cmd +
             '" because you don\'t have permission for this.');
   }
-
   /**
    * Checks if the current shard is responsible for the requested guild.
    *
@@ -663,7 +604,6 @@ function WebSettings() {
     const g = self.client &amp;&amp; self.client.guilds.resolve(gId);
     return (g &amp;&amp; true) || false;
   }
-
   /**
    * Check that the given user has permission to manage the games in the given
    * guild.
@@ -705,16 +645,13 @@ function WebSettings() {
     if (userData.id == self.common.spikeyId) return true;
     const m = g.members.resolve(userData.id);
     if (!m) return false;
-
     const channel = g.channels.resolve(cId);
     if (!channel) return false;
-
     const perms = channel.permissionsFor(m);
     if (!perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return false;
     if (!perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) return false;
     return true;
   }
-
   /**
    * Strips a Discord~GuildMember to only the necessary data that a client will
    * need.
@@ -755,7 +692,6 @@ function WebSettings() {
       joinedTimestamp: m.joinedTimestamp,
     };
   }
-
   /**
    * Forms a Discord~Message similar object from given IDs.
    *
@@ -770,7 +706,6 @@ function WebSettings() {
     const message = new MessageMaker(self, uId, gId, cId, msg);
     return message.guild ? message : null;
   }
-
   /**
    * Basic callback with single argument. The argument is null if there is no
    * error, or a string if there was an error.
@@ -780,7 +715,6 @@ function WebSettings() {
    * @param {?string} err The error response.
    * @param {*} res Response data if no error.
    */
-
   /**
    * Fetch all relevant data for all mutual guilds with the user and send it to
    * the user.
@@ -802,7 +736,6 @@ function WebSettings() {
       // fetching list of guilds.
       return;
     }
-
     const numReplies = (Object.entries(siblingSockets).length || 0);
     let replied = 0;
     const guildBuffer = {};
@@ -842,12 +775,10 @@ function WebSettings() {
     Object.values(siblingSockets).forEach((obj) => {
       obj.emit('fetchGuilds', userData, socket.id, done);
     });
-
     if (self.common.isMaster) {
       done([]);
       return;
     }
-
     try {
       let guilds = [];
       if (userData.guilds &amp;&amp; userData.guilds.length > 0) {
@@ -872,7 +803,6 @@ function WebSettings() {
     }
   }
   this.fetchGuilds = fetchGuilds;
-
   /**
    * Strip a Discord~Guild to the basic information the client will need.
    *
@@ -903,7 +833,6 @@ function WebSettings() {
       return newG;
     });
   }
-
   /**
    * Fetch a single guild.
    *
@@ -926,7 +855,6 @@ function WebSettings() {
           'Fetch Guild attempted without callback', socket.id);
       return;
     }
-
     const guild = self.client &amp;&amp; self.client.guilds.resolve(gId);
     if (!guild) return;
     if (userData.id != self.common.spikeyId &amp;&amp;
@@ -936,7 +864,6 @@ function WebSettings() {
     }
     cb(null, stripGuilds([guild], userData)[0]);
   };
-
   /**
    * Fetch data about a member of a guild.
    *
@@ -960,10 +887,8 @@ function WebSettings() {
       return;
     }
     const finalMember = makeMember(m);
-
     cb(null, finalMember);
   };
-
   /**
    * Client has requested data for a specific channel.
    *
@@ -1000,7 +925,6 @@ function WebSettings() {
     }
     cb(null, stripped);
   };
-
   /**
    * Client has requested all settings for all guilds for the connected user.
    *
@@ -1046,7 +970,6 @@ function WebSettings() {
       socket.emit('settings', null, settings);
     }
   };
-
   /**
    * Client has requested settings specific to raids for single guild.
    *
@@ -1080,7 +1003,6 @@ function WebSettings() {
     }
     cb(null, raidBlock.getSettings(gId));
   };
-
   /**
    * Client has requested settings specific to ModLog for single guild.
    *
@@ -1115,7 +1037,6 @@ function WebSettings() {
     }
     cb(null, modLog.getSettings(gId));
   };
-
   /**
    * Client has requested settings specific to a single command in a single
    * guild. This only supplies user settings, if values are default, this will
@@ -1158,7 +1079,6 @@ function WebSettings() {
     }
     cb(null, settings);
   };
-
   /**
    * Client has requested all scheduled commands for the connected user.
    *
@@ -1211,7 +1131,6 @@ function WebSettings() {
       socket.emit('scheduledCmds', null, sCmds);
     }
   };
-
   /**
    * Client has requested scheduled commands for a guild.
    *
@@ -1286,7 +1205,6 @@ function WebSettings() {
     cmdScheduler.cancelCmd(gId, cmdId);
     cb(null);
   };
-
   /**
    * @description Client has created a new scheduled command.
    * @see {@link CmdScheduling~ScheduledCommand}
@@ -1333,25 +1251,20 @@ function WebSettings() {
       cb('Invalid Command');
       return;
     }
-
     const msg = makeMessage(userData.id, gId, cId, cmd.cmd);
-
     if (!msg) {
       cb('Invalid Member');
       return;
     }
-
     const invalid = self.command.validate(cmd.cmd.split(/\s/)[0], msg);
     if (invalid) {
       cb('Invalid Command');
       return;
     }
-
     const prefix = self.bot.getPrefix(gId);
     if (!cmd.cmd.startsWith(prefix)) {
       cmd.cmd = prefix + cmd.cmd;
     }
-
     const single = self.command.find(cmd.cmd, {prefix: prefix});
     if (!single) {
       cb('Invalid Command');
@@ -1361,7 +1274,6 @@ function WebSettings() {
       cb('Invalid Command');
       return;
     }
-
     const newCmd = new cmdScheduler.ScheduledCommand({
       cmd: cmd.cmd,
       channel: msg.channel,
@@ -1370,14 +1282,12 @@ function WebSettings() {
       repeatDelay: cmd.repeatDelay,
       member: msg.member,
     });
-
     if (!cmdScheduler.registerScheduledCommand(newCmd)) {
       cb('Time is too close to existing command.');
     } else {
       cb(null);
     }
   };
-
   /**
    * Client has requested to change the command prefix for a guild.
    *
@@ -1407,7 +1317,6 @@ function WebSettings() {
     }
     cb(null);
   };
-
   /**
    * Client has requested to change a single raid setting for a guild.
    *
@@ -1447,8 +1356,6 @@ function WebSettings() {
         return;
       }
     }
-
-
     if (typeof settings[key] === typeof value) {
       if (typeof value === 'string' &amp;&amp; value.length > 1000) {
         value = value.substr(0, 1000);
@@ -1459,10 +1366,8 @@ function WebSettings() {
       return;
     }
     cb(null);
-
     guildBroadcast(gId, 'raidSettingsChanged', gId);
   };
-
   /**
    * Client has requested to change a single ModLog setting for a guild.
    *
@@ -1517,10 +1422,8 @@ function WebSettings() {
       return;
     }
     cb(null);
-
     guildBroadcast(gId, 'modLogSettingsChanged', gId);
   };
-
   /**
    * Client has requested to change a single command setting for a guild.
    *
@@ -1560,9 +1463,7 @@ function WebSettings() {
     if (!userSettings[name]) {
       userSettings[name] = new self.command.CommandSetting(command.options);
     }
-
     const setting = userSettings[name];
-
     if (typeof setting[key] === 'object' &amp;&amp; typeof value === 'string') {
       if (typeof id !== 'string' ||
           typeof setting[key][value] === 'undefined') {
@@ -1584,9 +1485,7 @@ function WebSettings() {
     } else {
       setting[key] = value;
     }
-
     cb(null);
-
     guildBroadcast(gId, 'commandSettingsChanged', gId);
   };
 }
@@ -1594,22 +1493,11 @@ module.exports = new WebSettings();
 </pre>
     </article>
 </section>
-
-
-
-
-
 		</div>
 	</div>
-
 	<div class="clearfix"></div>
-
-	
-
 </div>
 </div>
-
-
     <div class="modal fade" id="searchResults">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -1624,41 +1512,27 @@ module.exports = new WebSettings();
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div>
-
-
 <footer>
-
-
 	<span class="copyright">
 	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
 	</span>
-
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
-	
 		on Saturday, May 23, 2020 8:45 PM (-07:00)
-	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
 </footer>
-
 <script src="scripts/docstrap.lib.js"></script>
 <script src="scripts/toc.js"></script>
-
     <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
-
-
 <script>
 $( function () {
 	$( "[id*='$']" ).each( function () {
 		var $this = $( this );
-
 		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
 	} );
-
 	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
 		var $this = $( this );
-
 		var example = $this.find( "code" );
 		exampleText = example.html();
 		var lang = /{@lang (.*?)}/.exec( exampleText );
@@ -1670,23 +1544,18 @@ $( function () {
 			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
 			lang = langClassMatch ? langClassMatch[1] : "javascript";
 		}
-
 		if ( lang ) {
-
 			$this
 			.addClass( "sunlight-highlight-" + lang )
 			.addClass( "linenums" )
 			.html( example.html() );
-
 		}
 	} );
-
 	Sunlight.highlightAll( {
 		lineNumbers : true,
 		showMenu : true,
 		enableDoclinks : true
 	} );
-
 	$.catchAnchorLinks( {
         navbarOffset: 10
 	} );
@@ -1698,25 +1567,16 @@ $( function () {
 		showAndHide : false,
 		smoothScrolling: true
 	} );
-
 	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
 	$( '.dropdown-toggle' ).dropdown();
-
     $( "table" ).each( function () {
       var $this = $( this );
       $this.addClass('table');
     } );
-
 } );
 </script>
-
-
-
 <!--Navigation and Symbol Display-->
-
-
 <!--Google Analytics-->
-
 <script>
 	(function ( i, s, o, g, r, a, m ) {
 		i['GoogleAnalyticsObject'] = r;
@@ -1729,19 +1589,13 @@ $( function () {
 		a.src = g;
 		m.parentNode.insertBefore( a, m )
 	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
-
 	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
 	ga( 'send', 'pageview' );
 </script>
-
-
-
     <script type="text/javascript">
         $(document).ready(function() {
             SearcherDisplay.init();
         });
     </script>
-
-
 </body>
 </html>

@@ -1,22 +1,16 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>SpikeyBot-Discord Source: src/web/hg.js</title>
-
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
-
 	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
-
 </head>
-
 <body>
-
 <div class="navbar navbar-default navbar-fixed-top ">
 <div class="container">
 	<div class="navbar-header">
@@ -29,37 +23,31 @@
 	</div>
 	<div class="navbar-collapse collapse" id="topNavigation">
 		<ul class="nav navbar-nav">
-			
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="EE.html">EE</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Events.html">Events</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-Action.html">HungryGames~Action</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></li><li><a href="ShardingMaster.ShardMasterConfig.html">ShardingMaster.ShardMasterConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.HeartbeatConfig.html">ShardingMaster.ShardMasterConfig.HeartbeatConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></li><li><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></li><li><a href="ShardingSlave.html">ShardingSlave</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="external-Discord.html">Discord</a></li>
 				</ul>
 			</li>
-			
 		</ul>
-        
             <div class="col-sm-3 col-md-3">
                 <form class="navbar-form" role="search">
                     <div class="input-group">
@@ -70,24 +58,14 @@
                     </div>
                 </form>
             </div>
-        
 	</div>
-
 </div>
 </div>
-
-
 <div class="container" id="toc-content">
 <div class="row">
-
-	
 	<div class="col-md-12">
-	
 		<div id="main">
-			
-
 		<h1 class="page-title">Source: src/web/hg.js</h1>
-    
 <section>
     <article>
         <pre
@@ -99,9 +77,7 @@ const auth = require('../../auth.js');
 const crypto = require('crypto');
 const HungryGames = require('../hg/HungryGames.js');
 const MessageMaker = require('../lib/MessageMaker.js');
-
 require('../subModule.js').extend(HGWeb);  // Extends the SubModule class.
-
 /**
  * @classdesc Creates a web interface for managing the Hungry Games. Expects
  * ../hungryGames.js is loaded or will be loaded.
@@ -110,9 +86,7 @@ require('../subModule.js').extend(HGWeb);  // Extends the SubModule class.
 function HGWeb() {
   const self = this;
   this.myName = 'HGWeb';
-
   let hg_ = null;
-
   let ioClient;
   /**
    * Buffer storing all current image uploads and their associated meta-data.
@@ -121,12 +95,10 @@ function HGWeb() {
    * @type {object}
    */
   const imageBuffer = {};
-
   let app;
   let io;
   if (!this.common.isSlave) {
     app = http.createServer(handler);
-
     app.on('error', (err) => {
       if (io) io.close();
       if (app) app.close();
@@ -145,7 +117,6 @@ function HGWeb() {
       }
     });
   }
-
   /**
    * Start a socketio client connection to the primary running server.
    *
@@ -169,7 +140,6 @@ function HGWeb() {
     }
     clientSocketConnection(ioClient);
   }
-
   /**
    * Update the reference to HungryGames.
    *
@@ -197,13 +167,11 @@ function HGWeb() {
       hg_.on('gameStarted', broadcastGame);
       hg_.on('reset', broadcastGame);
       hg_.on('shutdown', unlinkHG);
-
       hg_.client.on('guildMemberAdd', handleGuildMemberAdd);
       hg_.client.on('guildMemberRemove', handleGuildMemberRemove);
     }
     return hg_;
   }
-
   /**
    * Unregister all event handlers from `hg_`.
    *
@@ -226,11 +194,9 @@ function HGWeb() {
     hg_.removeListener('gameStarted', broadcastGame);
     hg_.removeListener('reset', broadcastGame);
     hg_.removeListener('shutdown', unlinkHG);
-
     hg_.client.removeListener('guildMemberAdd', handleGuildMemberAdd);
     hg_.client.removeListener('guildMemberRemove', handleGuildMemberRemove);
   }
-
   /** @inheritdoc */
   this.initialize = function() {
     if (self.common.isSlave) {
@@ -241,7 +207,6 @@ function HGWeb() {
       io.on('connection', socketConnection);
     }
   };
-
   /**
    * Causes a full shutdown of all servers.
    *
@@ -256,7 +221,6 @@ function HGWeb() {
     if (app) app.close();
     unlinkHG();
   };
-
   /**
    * Handler for all http requests. Should never be called.
    *
@@ -268,7 +232,6 @@ function HGWeb() {
     res.writeHead(418);
     res.end('TEAPOT');
   }
-
   /**
    * Map of all currently connected sockets.
    *
@@ -276,7 +239,6 @@ function HGWeb() {
    * @type {object.&lt;Socket>}
    */
   const sockets = {};
-
   /**
    * Returns the number of connected clients that are not siblings.
    *
@@ -286,7 +248,6 @@ function HGWeb() {
   this.getNumClients = function() {
     return Object.keys(sockets).length - Object.keys(siblingSockets).length;
   };
-
   /**
    * Map of all sockets connected that are siblings.
    *
@@ -294,7 +255,6 @@ function HGWeb() {
    * @type {object.&lt;Socket>}
    */
   const siblingSockets = {};
-
   /**
    * Handler for a new socket connecting.
    *
@@ -312,13 +272,11 @@ function HGWeb() {
             ipName,
         socket.id);
     sockets[socket.id] = socket;
-
     // @TODO: Replace this authentication with asymmetric key signatures.
     socket.on('vaderIAmYourSon', (verification, cb) => {
       if (verification === auth.hgWebSiblingVerification) {
         siblingSockets[socket.id] = socket;
         cb(auth.hgWebSiblingVerificationResponse);
-
         socket.on('_guildBroadcast', (gId, ...args) => {
           for (const i in sockets) {
             if (sockets[i] &amp;&amp; sockets[i].cachedGuilds &amp;&amp;
@@ -331,7 +289,6 @@ function HGWeb() {
         self.common.error('Client failed to authenticate as child.', socket.id);
       }
     });
-
     // Unrestricted Access //
     socket.on('fetchDefaultOptions', () => {
       socket.emit('defaultOptions', hg().defaultOptions.entries);
@@ -348,7 +305,6 @@ function HGWeb() {
       }
     });
     // End Unrestricted Access \\
-
     // Restricted Access //
     socket.on('fetchGuilds', (...args) => handle(fetchGuilds, args, false));
     socket.on('fetchGuild', (...args) => handle(self.fetchGuild, args));
@@ -416,7 +372,6 @@ function HGWeb() {
     socket.on('imageChunk', (...args) => handle(self.imageChunk, args));
     socket.on('imageInfo', (...args) => handle(self.imageInfo, args));
     // End Restricted Access \\
-
     /**
      * Calls the functions with added arguments, and copies the request to all
      * sibling clients.
@@ -479,7 +434,6 @@ function HGWeb() {
         });
       }
     }
-
     socket.on('disconnect', (reason) => {
       self.common.log(
           'Socket disconnected HG (' + (Object.keys(sockets).length - 1) +
@@ -503,11 +457,9 @@ function HGWeb() {
         authenticated = res === auth.hgWebSiblingVerificationResponse;
       });
     });
-
     socket.on('fetchGuilds', (userData, id, cb) => {
       fetchGuilds(userData, {id: id}, cb);
     });
-
     socket.on('forwardedRequest', (userData, sId, func, args, cb) => {
       if (!authenticated) return;
       const fakeSocket = {
@@ -528,18 +480,15 @@ function HGWeb() {
         self[func].apply(self[func], [userData, fakeSocket].concat(args));
       }
     });
-
     const error = function(...args) {
       console.error(...args);
     };
-
     socket.on('connect_error', error);
     socket.on('connect_timeout', error);
     socket.on('reconnect_error', error);
     socket.on('reconnect_failed', error);
     socket.on('error', error);
   }
-
   /**
    * This gets fired whenever the day state of any game changes in the hungry
    * games. This then notifies all clients that the state changed, if they care
@@ -563,7 +512,6 @@ function HGWeb() {
         gId, 'dayState', game.currentGame.day.num, game.currentGame.day.state,
         eventState);
   }
-
   /**
    * Broadcast a message to all relevant clients.
    *
@@ -584,7 +532,6 @@ function HGWeb() {
       ioClient.emit('_guildBroadcast', gId, event, gId, ...args);
     }
   }
-
   /**
    * Handles an option being changed and broadcasting the update to clients.
    *
@@ -603,7 +550,6 @@ function HGWeb() {
       guildBroadcast(gId, 'option', opt1, opt2, opt3);
     }
   }
-
   /**
    * Handle a member being added to a guild.
    *
@@ -614,7 +560,6 @@ function HGWeb() {
   function handleGuildMemberAdd(member) {
     handleMemberAdd(hg(), member.guild.id, member.id);
   }
-
   /**
    * Handle a member being removed from a guild.
    *
@@ -625,7 +570,6 @@ function HGWeb() {
   function handleGuildMemberRemove(member) {
     handleMemberRemove(hg(), member.guild.id, member.id);
   }
-
   /**
    * Handle a member being added to a guild.
    *
@@ -638,7 +582,6 @@ function HGWeb() {
   function handleMemberAdd(hg, gId, mId) {
     guildBroadcast(gId, 'memberAdd', mId);
   }
-
   /**
    * Handle a member being removed from a guild.
    *
@@ -651,7 +594,6 @@ function HGWeb() {
   function handleMemberRemove(hg, gId, mId) {
     guildBroadcast(gId, 'memberRemove', mId);
   }
-
   /**
    * Handle actions being modified in a server.
    *
@@ -667,7 +609,6 @@ function HGWeb() {
     guildBroadcast(
         gId, 'actions', game &amp;&amp; game.actions &amp;&amp; game.actions.serializable);
   }
-
   /**
    * Handle events being toggled in a server.
    *
@@ -682,7 +623,6 @@ function HGWeb() {
   function handleEventToggled(hg, gId, type, eId, value) {
     guildBroadcast(gId, 'eventToggled', type, eId, value);
   }
-
   /**
    * Handle events being added to a server.
    *
@@ -696,7 +636,6 @@ function HGWeb() {
   function handleEventAdded(hg, gId, type, eId) {
     guildBroadcast(gId, 'eventAdded', type, eId);
   }
-
   /**
    * Handle events being removed from a server.
    *
@@ -710,7 +649,6 @@ function HGWeb() {
   function handleEventRemoved(hg, gId, type, eId) {
     guildBroadcast(gId, 'eventRemoved', type, eId);
   }
-
   /**
    * Handles broadcasting the game data to all relevant clients.
    *
@@ -724,7 +662,6 @@ function HGWeb() {
     const game = hg.getHG().getGame(gId);
     guildBroadcast(gId, 'game', game &amp;&amp; game.serializable);
   }
-
   /**
    * Send a message to the given socket informing the client that the command
    * they attempted failed due to insufficient permission.
@@ -740,7 +677,6 @@ function HGWeb() {
         'message', 'Failed to run command "' + cmd +
             '" because you don\'t have permission for this.');
   }
-
   /**
    * Checks if the current shard is responsible for the requested guild.
    *
@@ -752,7 +688,6 @@ function HGWeb() {
     const g = self.client &amp;&amp; self.client.guilds.resolve(gId);
     return (g &amp;&amp; true) || false;
   }
-
   /**
    * Check that the given user has permission to manage the games in the given
    * guild.
@@ -772,7 +707,6 @@ function HGWeb() {
     if (userData.id == self.common.spikeyId) return true;
     return !self.command.validate(null, msg);
   }
-
   /**
    * Check that the given user has permission to see and send messages in the
    * given channel, as well as manage the games in the given guild.
@@ -790,18 +724,14 @@ function HGWeb() {
     if (!checkPerm(userData, gId, cId, cmd)) return false;
     if (userData.id == self.common.spikeyId) return true;
     const g = self.client.guilds.resolve(gId);
-
     const channel = g.channels.resolve(cId);
     if (!channel) return false;
-
     const m = g.members.resolve(userData.id);
-
     const perms = channel.permissionsFor(m);
     if (!perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return false;
     if (!perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) return false;
     return true;
   }
-
   /**
    * Forms a Discord~Message similar object from given IDs.
    *
@@ -817,7 +747,6 @@ function HGWeb() {
     const message = new MessageMaker(self, uId, gId, cId, msg);
     return message.guild ? message : null;
   }
-
   /**
    * Strips a Discord~GuildMember to only the necessary data that a client will
    * need.
@@ -861,7 +790,6 @@ function HGWeb() {
       joinedTimestamp: m.joinedTimestamp,
     };
   }
-
   /**
    * Cancel and clean up a current image upload.
    *
@@ -873,7 +801,6 @@ function HGWeb() {
     clearTimeout(imageBuffer[iId].timeout);
     delete imageBuffer[iId];
   }
-
   /**
    * Create an upload ID and buffer for a client to send to. Automatically
    * cancelled after 60 seconds.
@@ -894,7 +821,6 @@ function HGWeb() {
     }, 60000);
     return imageBuffer[id];
   }
-
   /**
    * @description Function calls handlers for requested commands.
    * @typedef HGWeb~SocketFunction
@@ -908,7 +834,6 @@ function HGWeb() {
    * @param {HGWeb~basicCB} [cb] Callback that fires once requested action is
    * complete or has failed. Client may not pass a callback.
    */
-
   /**
    * Basic callback with single argument. The argument is null if there is no
    * error, or a string if there was an error.
@@ -918,7 +843,6 @@ function HGWeb() {
    * @param {?string} err The error response.
    * @param {*} res Response data if no error.
    */
-
   /**
    * Fetch all relevant data for all mutual guilds with the user and send it to
    * the user.
@@ -940,7 +864,6 @@ function HGWeb() {
       // fetching list of guilds.
       return;
     }
-
     const numReplies = (Object.entries(siblingSockets).length || 0);
     let replied = 0;
     const guildBuffer = {};
@@ -980,12 +903,10 @@ function HGWeb() {
     Object.entries(siblingSockets).forEach((obj) => {
       obj[1].emit('fetchGuilds', userData, socket.id, done);
     });
-
     if (self.common.isMaster) {
       done([]);
       return;
     }
-
     try {
       let guilds = [];
       if (userData.guilds &amp;&amp; userData.guilds.length > 0) {
@@ -1011,7 +932,6 @@ function HGWeb() {
       done();
     }
   }
-
   /**
    * Strip a Discord~Guild to the basic information the client will need.
    *
@@ -1038,7 +958,6 @@ function HGWeb() {
                 return p;
               },
               {});
-
       const member = g.members.resolve(userData.id);
       const newG = {};
       newG.iconURL = g.iconURL();
@@ -1068,7 +987,6 @@ function HGWeb() {
       return newG;
     });
   }
-
   /**
    * Fetch a single guild.
    *
@@ -1091,7 +1009,6 @@ function HGWeb() {
           'Fetch Guild attempted without callback', socket.id);
       return;
     }
-
     const guild = self.client &amp;&amp; self.client.guilds.resolve(gId);
     if (!guild) return;
     if (userData.id != self.common.spikeyId &amp;&amp;
@@ -1120,7 +1037,6 @@ function HGWeb() {
     const m = g.members.resolve(mId);
     if (!m) return;
     const finalMember = makeMember(m);
-
     if (typeof cb === 'function') {
       cb(null, finalMember);
     } else {
@@ -1142,9 +1058,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null)) return;
     const g = self.client &amp;&amp; self.client.guilds.resolve(gId);
     if (!g) return;
-
     const roles = g.roles.cache.array();
-
     if (typeof cb === 'function') {
       cb(null, roles);
     } else {
@@ -1169,9 +1083,7 @@ function HGWeb() {
     if (!g) return;
     const m = g.members.resolve(userData.id);
     const channel = g.channels.resolve(cId);
-
     const perms = channel.permissionsFor(m) || {bitfield: 0};
-
     const stripped = {};
     stripped.id = channel.id;
     stripped.permissions = perms.bitfield;
@@ -1179,7 +1091,6 @@ function HGWeb() {
     stripped.position = channel.position;
     if (channel.parent) stripped.parent = {position: channel.parent.position};
     stripped.type = channel.type;
-
     if (typeof cb === 'function') {
       cb(null, stripped);
     } else {
@@ -1207,7 +1118,6 @@ function HGWeb() {
       replyNoPerm(socket, 'fetchGames');
       return;
     }
-
     const game = hg().getHG().getGame(gId);
     if (typeof cb === 'function') {
       cb(null, game &amp;&amp; game.serializable);
@@ -1259,14 +1169,12 @@ function HGWeb() {
       }
       return;
     }
-
     if (!g.channels.resolve(game.outputChannel)
         .permissionsFor(m)
         .has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
       replyNoPerm(socket, 'fetchDay');
       return;
     }
-
     if (typeof cb === 'function') {
       cb(null, game.currentGame.day, game.currentGame.includedUsers);
     } else {
@@ -1312,14 +1220,12 @@ function HGWeb() {
       }
       return;
     }
-
     if (!g.channels.resolve(game.outputChannel)
         .permissionsFor(m)
         .has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
       replyNoPerm(socket, 'fetchNextDay');
       return;
     }
-
     if (typeof cb === 'function') {
       cb(null, game.currentGame.nextDay);
     } else {
@@ -1349,7 +1255,6 @@ function HGWeb() {
       if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
       return;
     }
-
     if (typeof cb === 'function') {
       cb(null, game.actions.serializable);
     } else {
@@ -1375,7 +1280,6 @@ function HGWeb() {
       return;
     }
     const response = hg().getHG().resetGame(gId, 'actions');
-
     if (typeof cb === 'function') cb(null, response);
   };
   /**
@@ -1869,7 +1773,6 @@ function HGWeb() {
       cb('BAD_TYPE');
       return;
     }
-
     hg().getHG().createEvent(evt, (err, evtFinal) => {
       if (err) {
         if (typeof cb === 'function') {
@@ -1884,7 +1787,6 @@ function HGWeb() {
       }
     });
   };
-
   /**
    * @description Add an existing event to a guild's custom events.
    * @public
@@ -1906,12 +1808,10 @@ function HGWeb() {
       return;
     }
     if (typeof cb !== 'function') cb = function() {};
-
     if (!type) {
       cb('BAD_TYPE');
       return;
     }
-
     hg().getHG().fetchGame(gId, (game) => {
       if (!game) {
         cb('NO_GAME');
@@ -1927,7 +1827,6 @@ function HGWeb() {
       });
     });
   };
-
   /**
    * @description Remove an event from a guild's custom events.
    * @public
@@ -1950,7 +1849,6 @@ function HGWeb() {
       return;
     }
     if (typeof cb !== 'function') cb = function() {};
-
     hg().getHG().fetchGame(gId, (game) => {
       if (!game) {
         cb('NO_GAME');
@@ -1964,7 +1862,6 @@ function HGWeb() {
       }
     });
   };
-
   /**
    * Delete a game event.
    *
@@ -1989,7 +1886,6 @@ function HGWeb() {
       }
     });
   };
-
   /**
    * @description Enable or disable an event without deleting it.
    * @see {@link HungryGames.toggleEvent}
@@ -2063,7 +1959,6 @@ function HGWeb() {
       cb('BAD_TYPE');
       return;
     }
-
     hg().getHG().replaceEvent(userData.id, evt, (err) => {
       if (err) {
         if (typeof cb === 'function') {
@@ -2076,7 +1971,6 @@ function HGWeb() {
       }
     });
   };
-
   /**
    * Fetch a single event data.
    *
@@ -2100,7 +1994,6 @@ function HGWeb() {
       }
     });
   };
-
   /**
    * Fetch list of IDs of all events the user has created.
    *
@@ -2117,7 +2010,6 @@ function HGWeb() {
     if (!userData) return;
     hg().getHG().fetchUserEvents(userData.id, cb);
   };
-
   /**
    * Claim legacy events to the user.
    *
@@ -2148,7 +2040,6 @@ function HGWeb() {
       }
     });
   };
-
   /**
    * Force a player in the game to end a day in a certain state.
    *
@@ -2202,7 +2093,6 @@ function HGWeb() {
           }
         });
   };
-
   /**
    * Rename the guild's game.
    *
@@ -2233,7 +2123,6 @@ function HGWeb() {
       cb(name);
     }
   };
-
   /**
    * Rename an NPC in a game.
    *
@@ -2262,7 +2151,6 @@ function HGWeb() {
       cb(typeof error === 'string' ? error : null);
     }
   };
-
   /**
    * Remove an NPC from a game.
    *
@@ -2289,7 +2177,6 @@ function HGWeb() {
       cb(typeof error === 'string' ? error : null);
     }
   };
-
   /**
    * Respond with list of stat groups for the requested guild.
    *
@@ -2332,7 +2219,6 @@ function HGWeb() {
       }
     });
   };
-
   /**
    * Respond with metadata for the requested stat group.
    *
@@ -2380,7 +2266,6 @@ function HGWeb() {
       });
     });
   };
-
   /**
    * Respond with stats for a specific user in a group.
    *
@@ -2429,7 +2314,6 @@ function HGWeb() {
       });
     });
   };
-
   /**
    * Respond with leaderboard information.
    *
@@ -2552,7 +2436,6 @@ function HGWeb() {
       cb('BAD_GROUP');
       return;
     }
-
     game._stats.fetchGroup(groupId, (err, group) => {
       if (err) {
         cb('BAD_GROUP');
@@ -2596,7 +2479,6 @@ function HGWeb() {
       cb('BAD_NAME');
       return;
     }
-
     game._stats.createGroup({name: name}, (group) => {
       group.fetchMetadata((err, meta) => {
         if (err) {
@@ -2632,7 +2514,6 @@ function HGWeb() {
       if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
       return;
     }
-
     game._stats.fetchGroup(groupId, (err, group) => {
       if (err) {
         cb('BAD_GROUP');
@@ -2689,7 +2570,6 @@ function HGWeb() {
           socket.id);
       cancelImageUpload(iId);
     }
-
     if (chunk) {
       chunk = Buffer.from(chunk);
       meta.receivedBytes += chunk.length;
@@ -2706,7 +2586,6 @@ function HGWeb() {
       if (typeof cb === 'function') cb(chunkId);
       return;
     }
-
     if (meta.type == 'NPC') {
       const npcId = hg().NPC.createID();
       const p = hg().NPC.saveAvatar(Buffer.concat(meta.buffer), npcId);
@@ -2772,14 +2651,12 @@ function HGWeb() {
         if (typeof cb === 'function') cb('Malformed Data');
         return;
       }
-
       if (!checkPerm(userData, gId, null, 'ai create')) {
         if (!checkMyGuild(gId)) return;
         if (typeof cb === 'function') cb('NO_PERM');
         replyNoPerm(socket, 'imageInfo');
         return;
       }
-
       const buf = beginImageUpload(userData.id);
       buf.username = meta.username;
       buf.type = meta.type;
@@ -2789,27 +2666,15 @@ function HGWeb() {
     }
   };
 }
-
 module.exports = new HGWeb();
 </pre>
     </article>
 </section>
-
-
-
-
-
 		</div>
 	</div>
-
 	<div class="clearfix"></div>
-
-	
-
 </div>
 </div>
-
-
     <div class="modal fade" id="searchResults">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -2824,41 +2689,27 @@ module.exports = new HGWeb();
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div>
-
-
 <footer>
-
-
 	<span class="copyright">
 	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
 	</span>
-
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
-	
 		on Saturday, May 23, 2020 8:45 PM (-07:00)
-	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
 </footer>
-
 <script src="scripts/docstrap.lib.js"></script>
 <script src="scripts/toc.js"></script>
-
     <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
-
-
 <script>
 $( function () {
 	$( "[id*='$']" ).each( function () {
 		var $this = $( this );
-
 		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
 	} );
-
 	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
 		var $this = $( this );
-
 		var example = $this.find( "code" );
 		exampleText = example.html();
 		var lang = /{@lang (.*?)}/.exec( exampleText );
@@ -2870,23 +2721,18 @@ $( function () {
 			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
 			lang = langClassMatch ? langClassMatch[1] : "javascript";
 		}
-
 		if ( lang ) {
-
 			$this
 			.addClass( "sunlight-highlight-" + lang )
 			.addClass( "linenums" )
 			.html( example.html() );
-
 		}
 	} );
-
 	Sunlight.highlightAll( {
 		lineNumbers : true,
 		showMenu : true,
 		enableDoclinks : true
 	} );
-
 	$.catchAnchorLinks( {
         navbarOffset: 10
 	} );
@@ -2898,25 +2744,16 @@ $( function () {
 		showAndHide : false,
 		smoothScrolling: true
 	} );
-
 	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
 	$( '.dropdown-toggle' ).dropdown();
-
     $( "table" ).each( function () {
       var $this = $( this );
       $this.addClass('table');
     } );
-
 } );
 </script>
-
-
-
 <!--Navigation and Symbol Display-->
-
-
 <!--Google Analytics-->
-
 <script>
 	(function ( i, s, o, g, r, a, m ) {
 		i['GoogleAnalyticsObject'] = r;
@@ -2929,19 +2766,13 @@ $( function () {
 		a.src = g;
 		m.parentNode.insertBefore( a, m )
 	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
-
 	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
 	ga( 'send', 'pageview' );
 </script>
-
-
-
     <script type="text/javascript">
         $(document).ready(function() {
             SearcherDisplay.init();
         });
     </script>
-
-
 </body>
 </html>

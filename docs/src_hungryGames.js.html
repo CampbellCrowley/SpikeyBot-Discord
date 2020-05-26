@@ -1,22 +1,16 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>SpikeyBot-Discord Source: src/hungryGames.js</title>
-
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
-
 	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
-
 </head>
-
 <body>
-
 <div class="navbar navbar-default navbar-fixed-top ">
 <div class="container">
 	<div class="navbar-header">
@@ -29,37 +23,31 @@
 	</div>
 	<div class="navbar-collapse collapse" id="topNavigation">
 		<ul class="nav navbar-nav">
-			
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="EE.html">EE</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Events.html">Events</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-Action.html">HungryGames~Action</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></li><li><a href="ShardingMaster.ShardMasterConfig.html">ShardingMaster.ShardMasterConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.HeartbeatConfig.html">ShardingMaster.ShardMasterConfig.HeartbeatConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></li><li><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></li><li><a href="ShardingSlave.html">ShardingSlave</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="external-Discord.html">Discord</a></li>
 				</ul>
 			</li>
-			
 		</ul>
-        
             <div class="col-sm-3 col-md-3">
                 <form class="navbar-form" role="search">
                     <div class="input-group">
@@ -70,24 +58,14 @@
                     </div>
                 </form>
             </div>
-        
 	</div>
-
 </div>
 </div>
-
-
 <div class="container" id="toc-content">
 <div class="row">
-
-	
 	<div class="col-md-12">
-	
 		<div id="main">
-			
-
 		<h1 class="page-title">Source: src/hungryGames.js</h1>
-    
 <section>
     <article>
         <pre
@@ -101,7 +79,6 @@ const crypto = require('crypto');
 const FuzzySearch = require('fuzzy-search');
 const MessageMaker = require('./lib/MessageMaker.js');
 require('./subModule.js').extend(HG);  // Extends the SubModule class.
-
 /**
  * @classdesc Hunger Games simulator subModule.
  * @class
@@ -112,7 +89,6 @@ require('./subModule.js').extend(HG);  // Extends the SubModule class.
  */
 function HG() {
   const self = this;
-
   /**
    * Name of the HG Web submodule for lookup.
    *
@@ -122,15 +98,12 @@ function HG() {
    * @type {string}
    */
   const webSM = './web/hg.js';
-
   this.myName = 'HG';
   this.postPrefix = 'hg ';
-
   const hgPath = './hg/HungryGames.js';
   delete require.cache[require.resolve(hgPath)];
   const HungryGames = require(hgPath);
   const hg = new HungryGames(self);
-
   /**
    * @description Fetch a reference to the current HungryGames instance.
    * @public
@@ -139,7 +112,6 @@ function HG() {
   this.getHG = function() {
     return hg;
   };
-
   /**
    * The maximum number of bytes allowed to be received from a client in an
    * image upload.
@@ -150,7 +122,6 @@ function HG() {
    * @default 8000000 (8MB)
    */
   this.maxBytes = 8000000;
-
   /**
    * The permission tags for all settings related to the Hungry Games.
    *
@@ -176,7 +147,6 @@ function HG() {
    * @default
    */
   const battleFile = './save/hgBattles.json';
-
   /**
    * Maximum amount of time to wait for reactions to a message.
    *
@@ -186,7 +156,6 @@ function HG() {
    * @default 5 Minutes
    */
   const maxReactAwaitTime = 5 * 1000 * 60;  // 5 Minutes
-
   /**
    * Regex to match all URLs in a string.
    *
@@ -199,7 +168,6 @@ function HG() {
       '(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]' +
           '{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&amp;//=]*)(?![^&lt;]*>)',
       'g');
-
   /**
    * Default options for a game.
    *
@@ -208,7 +176,6 @@ function HG() {
    * @constant
    */
   const defaultOptions = hg.defaultOptions;
-
   const defaultOptSearcher = new FuzzySearch(defaultOptions.keys);
   let cmdSearcher;
   /**
@@ -222,7 +189,6 @@ function HG() {
    * @constant
    */
   this.defaultOptions = defaultOptions;
-
   /**
    * Default color to choose for embedded messages.
    *
@@ -232,7 +198,6 @@ function HG() {
    * @default
    */
   const defaultColor = [200, 125, 0];
-
   /**
    * Color to put above patrons avatars. RGBA Hex (0xRRGGBBAA).
    *
@@ -242,7 +207,6 @@ function HG() {
    * @default
    */
   const patreonColor = 0xF96854FF;
-
   /**
    * Helper object of emoji characters mapped to names.
    *
@@ -283,7 +247,6 @@ function HG() {
     redCircle: '🔴',
     trophy: '🏆',
   };
-
   /**
    * All attacks and outcomes for battles.
    *
@@ -323,7 +286,6 @@ function HG() {
    * @default
    */
   const optionMessages = {};
-
   /**
    * The last time the currently scheduled reaction event listeners are expected
    * to end. Used for checking of submoduleis unloadable.
@@ -332,7 +294,6 @@ function HG() {
    * @type {number}
    */
   let listenersEndTime = 0;
-
   /**
    * All registered event handlers.
    *
@@ -340,7 +301,6 @@ function HG() {
    * @type {object.&lt;Array.&lt;Function>>}
    */
   const eventHandlers = {};
-
   /**
    * @description Parse all default events from file.
    *
@@ -373,7 +333,6 @@ function HG() {
     }
     updateEvents();
   });
-
   /**
    * @description Load all default events from file, described by the loaded
    * list from file.
@@ -389,7 +348,6 @@ function HG() {
     defaultEvents.updateAndFetchAll(
         obj, () => hg.setDefaultEvents(defaultEvents));
   }
-
   /**
    * @description Parse all battles from file.
    *
@@ -419,7 +377,6 @@ function HG() {
     }
     updateBattles();
   });
-
   /**
    * @description Reply to help on a server.
    *
@@ -447,7 +404,6 @@ function HG() {
   const helpObject = JSON.parse(fs.readFileSync('./docs/hgHelp.json'));
   /** @inheritdoc */
   this.helpMessage = 'Module loading...';
-
   /**
    * @description Set all help messages once we know what prefix to use.
    *
@@ -489,7 +445,6 @@ function HG() {
         true);
     self.helpMessage = tmpHelp;
   }
-
   /** @inheritdoc */
   this.initialize = function() {
     const cmdOpts = {
@@ -649,16 +604,12 @@ function HG() {
             },
             null, subCmds);
     self.command.on(hgCmd);
-
     setupHelp();
-
     self.client.on('guildDelete', onGuildDelete);
     self.client.on('channelDelete', onChannelDelete);
-
     self.client.guilds.cache.forEach((g) => {
       hg.fetchGame(g.id, (game) => {
         if (!game) return;
-
         if (game.currentGame &amp;&amp; game.currentGame.day.state > 1 &amp;&amp;
             game.currentGame.inProgress &amp;&amp; !game.currentGame.ended &amp;&amp;
             !game.currentGame.isPaused) {
@@ -673,12 +624,10 @@ function HG() {
         }
       });
     });
-
     cmdSearcher = new FuzzySearch(
         Object.values(hgCmd.subCmds)
             .map((el) => el.aliases)
             .reduce((a, c) => a.concat(c)));
-
     if (self.client.shard) {
       /**
        * @description Fetch a string with the HG stats for this shard.
@@ -688,26 +637,20 @@ function HG() {
       self.client.getHGStats = getStatsString;
     }
   };
-
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.deleteEvent('hg');
     self.client.removeListener('guildDelete', onGuildDelete);
     self.client.removeListener('channelDelete', onChannelDelete);
     self._fire('shutdown');
-
     Object.keys(eventHandlers).forEach((el) => delete eventHandlers[el]);
-
     fs.unwatchFile(eventFileList);
     fs.unwatchFile(battleFile);
-
     hg.shutdown();
-
     if (self.client.shard) {
       self.client.getHGStats = null;
     }
   };
-
   /** @inheritdoc */
   this.unloadable = function() {
     const web = self.bot.getSubmodule(webSM);
@@ -718,7 +661,6 @@ function HG() {
   this.reloadable = function() {
     return self.getNumSimulating() === 0 &amp;&amp; listenersEndTime &lt; Date.now();
   };
-
   /**
    * @description Handle being removed from a guild.
    *
@@ -732,7 +674,6 @@ function HG() {
       self.endGame(null, guild.id, true);
     });
   }
-
   /**
    * @description Handle a channel being deleted. Cleans up games that may be in
    * progress in these channels.
@@ -747,7 +688,6 @@ function HG() {
     if (!hg._games[channel.guild.id]) return;
     self.pauseGame(channel.guild.id);
   }
-
   /**
    * Make a subcommand handler with the given callback function. This is a
    * wrapper around existing functions.
@@ -831,7 +771,6 @@ function HG() {
       });
     };
   }
-
   /**
    * Tell a user their chances of winning have not increased.
    *
@@ -843,7 +782,6 @@ function HG() {
   function commandMakeMeWin(msg) {
     self.common.reply(msg, 'Everyone\'s probability of winning has increased!');
   }
-
   /**
    * Tell a user their chances of losing have not increased.
    *
@@ -856,7 +794,6 @@ function HG() {
     self.common.reply(
         msg, `Your probability of losing has increased by ${nothing()}!`);
   }
-
   /**
    * Handler for a Hungry Games command.
    *
@@ -866,7 +803,6 @@ function HG() {
    * @param {string} id The id of the guild this command was run on for
    * convenience.
    */
-
   /**
    * @description A player object representing a non-player. It makes sense I
    * promise. This represents a Player in the game, that is not attached to a
@@ -984,7 +920,6 @@ function HG() {
    * @public
    */
   this.NPC = NPC;
-
   /**
    * @description Returns an object storing all of the default events for the
    * games.
@@ -1015,7 +950,6 @@ function HG() {
   this.getDefaultWeapons = function() {
     return defaultEvents.getArray('weapon');
   };
-
   // Create //
   /**
    * Create a Hungry Games for a guild.
@@ -1102,7 +1036,6 @@ function HG() {
   this.createGame = function(id, cb) {
     createGame(null, id, true, cb);
   };
-
   /**
    * Given an array of players, lookup the settings for each and update their
    * data. This is asynchronous.
@@ -1122,7 +1055,6 @@ function HG() {
     let permResponses = 0;
     let settingRequests = 0;
     let settingResponses = 0;
-
     /**
      * After retrieving whether the player is an actual patron (ignores
      * overrides), then fetch permissions from them (uses overrides).
@@ -1175,7 +1107,6 @@ function HG() {
         cb();
       }
     }
-
     /**
      * After retrieving a player's settings, update their data with the relevant
      * values.
@@ -1216,14 +1147,12 @@ function HG() {
         cb();
       }
     }
-
     for (let i = 0; i &lt; players.length; i++) {
       self.bot.patreon.checkPerm(
           players[i].id, null,
           ((p) => (err, info) => onCheckPatron(err, info, p))(players[i]));
     }
   }
-
   /**
    * Reset data that the user specifies.
    *
@@ -1261,7 +1190,6 @@ function HG() {
       self.common.reply(msg, 'No game created', finalId);
     }
   }
-
   // Time Control //
   /**
    * Start the games in the channel this was called from.
@@ -1328,7 +1256,6 @@ function HG() {
       });
       if (game) game.loading = false;
     }
-
     createGame(msg, id, true, (g) => {
       if (!g) {
         if (game) {
@@ -1339,21 +1266,17 @@ function HG() {
         self.common.reply(msg, 'Failed to create game for unknown reason.');
         return;
       }
-
       g.currentGame.inProgress = true;
       const finalMessage = makePlayerListEmbed(g);
       finalMessage.setTitle(hg.messages.get('gameStart'));
-
       if (!g.autoPlay) {
         finalMessage.setFooter(
             `"${msg.prefix}${self.postPrefix}next" for next day.`);
       }
-
       let mentions = self.common.mention(msg);
       if (g.options.mentionEveryoneAtStart) {
         mentions += '@everyone';
       }
-
       msg.channel.send(mentions, finalMessage).catch((err) => {
         self.common.reply(
             msg, 'Game started!',
@@ -1522,7 +1445,6 @@ function HG() {
       }
     }
   }
-
   /**
    * Pause the game in by clearing the current interval.
    *
@@ -1542,7 +1464,6 @@ function HG() {
     hg.getGame(id).currentGame.isPaused = true;
     return 'Success';
   };
-
   /**
    * Stop the game in the middle of the day until resumed. Just clears the
    * interval for the game.
@@ -1555,7 +1476,6 @@ function HG() {
   function pauseGame(msg, id) {
     self.common.reply(msg, 'Game Pausing', self.pauseGame(id));
   }
-
   /**
    * Start the next day of the game in the given channel and guild by the given
    * user.
@@ -1647,7 +1567,6 @@ function HG() {
     const iTime = Date.now();
     sim.go(() => {
       game.outputChannel = msg.channel.id;
-
       // Signal ready to display events.
       self._fire('dayStateChange', id);
       HungryGames.ActionManager.dayStart(hg, game);
@@ -1681,7 +1600,6 @@ function HG() {
       }
     }
   }
-
   /**
    * Trigger the end of a day.
    *
@@ -1698,14 +1616,12 @@ function HG() {
     if (game.options.teamSize > 0) {
       current.teams.forEach((team) => team.numAlive > 0 &amp;&amp; numTeams++);
     }
-
     if (current.numAlive != numAlive) {
       self.warn(
           'Realtime alive count is incorrect! ' + current.numAlive + ' vs ' +
           numAlive);
       current.numAlive = numAlive;
     }
-
     const collab = game.options.teammatesCollaborate == 'always' ||
         (game.options.teammatesCollaborate == 'untilend' &amp;&amp;
          numTeams > 1);
@@ -1781,7 +1697,6 @@ function HG() {
       if (!silent &amp;&amp; msg) self.common.reply(msg, 'The game has ended!');
     }
   }
-
   // User Management //
   /**
    * Remove a user from users to be in next game.
@@ -1859,7 +1774,6 @@ function HG() {
       });
     }
   }
-
   /**
    * Removes users from a games of a given guild.
    *
@@ -1930,7 +1844,6 @@ function HG() {
       // Touch the game so it doesn't get purged from memory.
       const game = hg.getGame(id);
       game.loading = true;
-
       const start = Date.now();
       for (i; i >= 0 &amp;&amp; Date.now() - start &lt; hg.maxDelta; i--) {
         if (i &lt; numUsers) {
@@ -1971,16 +1884,13 @@ function HG() {
       cb(finalRes);
       self._fire('refresh', id);
     };
-
     const fetched = function(user) {
       fetchWait--;
       if (user) response.push(excludeIterate(game, user, onlyError, large));
       if (fetchWait === 0) done();
     };
-
     setTimeout(chunk);
   };
-
   /**
    * @description Exclude a single user from the game as a single iteration step
    * of the exclude command.
@@ -2072,7 +1982,6 @@ function HG() {
     }
     return `${response.join('\n')}\n`;
   }
-
   /**
    * Add a user back into the next game.
    *
@@ -2148,7 +2057,6 @@ function HG() {
       });
     }
   }
-
   /**
    * Adds a user back into the next game.
    *
@@ -2223,7 +2131,6 @@ function HG() {
       // Touch the game so it doesn't get purged from memory.
       const game = hg.getGame(id);
       game.loading = true;
-
       const start = Date.now();
       for (i; i >= 0 &amp;&amp; Date.now() - start &lt; hg.maxDelta; i--) {
         if (i &lt; numUsers) {
@@ -2263,16 +2170,13 @@ function HG() {
       cb(finalRes);
       self._fire('refresh', id);
     };
-
     const fetched = function(user) {
       fetchWait--;
       if (user) response.push(includeIterate(game, user, onlyError));
       if (fetchWait === 0) done();
     };
-
     setTimeout(chunk);
   };
-
   /**
    * @description Include a single user from the game as a single iteration step
    * of the include command.
@@ -2369,7 +2273,6 @@ function HG() {
     }
     return `${response.join('\n')}\n`;
   }
-
   /**
    * Show a formatted message of all users and teams in current server.
    *
@@ -2394,7 +2297,6 @@ function HG() {
       console.error(err);
     });
   }
-
   /**
    * @description Create a {@link external:Discord~MessageEmbed} that lists all
    * included and excluded players in the game.
@@ -2437,7 +2339,6 @@ function HG() {
           console.error(game.currentGame.teams);
         } */
       }
-
       let shortName;
       if (obj.nickname &amp;&amp; game.options.useNicknames) {
         shortName = obj.nickname.substring(0, 16);
@@ -2451,13 +2352,11 @@ function HG() {
         }
       }
       if (splitEmbeds) return shortName;
-
       let prefix = '';
       if (myTeam &amp;&amp; myTeam !== prevTeam) {
         prevTeam = myTeam;
         prefix = `__${myTeam.name}__\n`;
       }
-
       return `${prefix}\`${shortName}\``;
     });
     if (game.options.teamSize == 0) {
@@ -2469,7 +2368,6 @@ function HG() {
         return 0;
       });
     }
-
     if (splitEmbeds) {
       game.currentGame.teams.reverse().forEach((el) => {
         finalMessage.addField(
@@ -2516,7 +2414,6 @@ function HG() {
     }
     return finalMessage;
   }
-
   /**
    * Get the username of a user id if available, or their id if they couldn't be
    * found.
@@ -2537,7 +2434,6 @@ function HG() {
     }
     return name;
   }
-
   /**
    * Change an option to a value that the user specifies.
    *
@@ -2596,7 +2492,6 @@ function HG() {
         hg.getGame(id).options, defaultOptions, option, value, text.split(' '),
         id);
   };
-
   /**
    * Recurse through an object to change a certain child value based off a given
    * array of words.
@@ -2648,7 +2543,6 @@ function HG() {
         500) {
           value = 1000;
         } */
-
         const old = obj[option];
         obj[option] = value;
         self._fire('toggleOption', id, ...keys, value);
@@ -2712,7 +2606,6 @@ function HG() {
           JSON.stringify(values);
     }
   }
-
   /**
    * Format the options for the games and show them to the user.
    *
@@ -2722,16 +2615,13 @@ function HG() {
    */
   function showOpts(msg, options) {
     const entries = Object.entries(options);
-
     const bodyList = entries.map(function(obj) {
       const key = obj[0];
       const val = obj[1];
-
       return key + ': ' + JSON.stringify(val) + ' (default: ' +
           JSON.stringify(defaultOptions[key].value) + ')\n' +
           '/* ' + defaultOptions[key].comment + ' */';
     });
-
     let totalLength = 0;
     const bodyFields = [[]];
     let fieldIndex = 0;
@@ -2744,12 +2634,10 @@ function HG() {
       totalLength += bodyList[i].length;
       bodyFields[fieldIndex].push(bodyList[i]);
     }
-
     let page = 0;
     if (msg.optId) page = msg.optId;
     if (page &lt; 0) page = 0;
     if (page >= bodyFields.length) page = bodyFields.length - 1;
-
     const embed = new self.Discord.MessageEmbed();
     embed.setTitle('Current Options');
     embed.setFooter('Page ' + (page + 1) + ' of ' + (bodyFields.length));
@@ -2761,7 +2649,6 @@ function HG() {
         'Change Object Example',
         msg.prefix + self.postPrefix + 'options playerOutcomeProbs kill 23',
         true);
-
     if (optionMessages[msg.id]) {
       msg.edit(embed).then(() => {
         optChangeListener(msg, options, page);
@@ -2774,7 +2661,6 @@ function HG() {
       });
     }
   }
-
   /**
    * The callback for when the user chooses to change page of the options.
    *
@@ -2812,7 +2698,6 @@ function HG() {
       showOpts(msg_, options);
     });
   }
-
   // Team Management //
   /**
    * Entry for all team commands.
@@ -3030,9 +2915,7 @@ function HG() {
     const intVal = game.currentGame.teams[teamId1].players[playerId1];
     game.currentGame.teams[teamId1].players[playerId1] =
         game.currentGame.teams[teamId2].players[playerId2];
-
     game.currentGame.teams[teamId2].players[playerId2] = intVal;
-
     self.common.reply(msg, 'Swapped players!');
   }
   /**
@@ -3063,18 +2946,15 @@ function HG() {
     let user1 = mentions.first().id;
     let teamId1 = 0;
     let playerId1 = 0;
-
     let user2 = 0;
     if (mentions.size >= 2) {
       user2 = mentions.first(2)[1].id;
-
       if (msg.text.indexOf(user2) &lt; msg.text.indexOf(user1)) {
         const intVal = user1;
         user1 = user2;
         user2 = intVal;
       }
     }
-
     let teamId2 = 0;
     teamId1 = game.currentGame.teams.findIndex((team) => {
       const index = team.players.findIndex((player) => {
@@ -3120,10 +3000,8 @@ function HG() {
         msg, 'Moving `' + (user1Final &amp;&amp; user1Final.username || user1) +
             '` from ' + game.currentGame.teams[teamId1].name + ' to ' +
             game.currentGame.teams[teamId2].name);
-
     game.currentGame.teams[teamId2].players.push(
         game.currentGame.teams[teamId1].players.splice(playerId1, 1)[0]);
-
     if (game.currentGame.teams[teamId1].players.length == 0) {
       game.currentGame.teams.splice(teamId1, 1);
     }
@@ -3182,7 +3060,6 @@ function HG() {
     }
     hg.getGame(id).currentGame.teams[teamId].name = message;
   }
-
   /**
    * Swap random users between teams.
    *
@@ -3217,7 +3094,6 @@ function HG() {
       const teamId2 = Math.floor(Math.random() * current.teams.length);
       const playerId2 =
           Math.floor(Math.random() * current.teams[teamId2].players.length);
-
       const intVal = current.teams[teamId1].players[playerId1];
       current.teams[teamId1].players[playerId1] =
           current.teams[teamId2].players[playerId2];
@@ -3225,7 +3101,6 @@ function HG() {
     }
     if (!silent) self.common.reply(msg, 'Teams have been randomized!');
   }
-
   /**
    * Enable or disable an event without deleting it completely.
    *
@@ -3244,11 +3119,9 @@ function HG() {
       return 'Invalid Type';
     }
     if (!hg.getGame(id)) return 'Invalid ID or no game';
-
     const allDisabled = hg.getGame(id).disabledEventIds[type];
     const dIndex = allDisabled.findIndex((el) => el === evtId);
     if (typeof value !== 'boolean') value = dIndex > -1;
-
     if ((dIndex > -1) !== value) {
       return `Already ${value?'Enabled':'Disabled'}`;
     } else if (value) {
@@ -3256,12 +3129,10 @@ function HG() {
       self._fire('eventToggled', id, type, evtId, value);
       return null;
     }
-
     allDisabled.push(evtId);
     self._fire('eventToggled', id, type, evtId, value);
     return null;
   };
-
   /**
    * Tell users to use the website to manage custom events.
    *
@@ -3276,7 +3147,6 @@ function HG() {
         'Please use https://www.spikeybot.com/hg/#?guild=' + id +
             ' to manage custom events.');
   }
-
   /**
    * Update all legacy custom events to the newer ID based system.
    *
@@ -3294,7 +3164,6 @@ function HG() {
               'to perform.');
       return;
     }
-
     self.claimLegacy(game, msg.author.id, (err, res, stringified) => {
       if (err) {
         self.common.reply(msg, 'No Events Claimed', err);
@@ -3311,7 +3180,6 @@ function HG() {
       }
     });
   }
-
   /**
    * @description Claim legacy events to the given owner's account.
    * @public
@@ -3323,23 +3191,19 @@ function HG() {
    */
   this.claimLegacy = function(game, owner, cb) {
     const custom = game.legacyEvents;
-
     if (!custom) {
       cb('No legacy events to claim.');
       return;
     }
-
     const dir = self.common.guildSaveDir + game.id;
     const stringified = JSON.stringify(custom, null, 2);
     let total = 0;
     let done = 0;
     let deleted = false;
     let errored = false;
-
     const checkDone = function() {
       done++;
       if (done &lt; total) return;
-
       const additional =
           (deleted ?
                'Events that give weapons were reset.\n\nYou can edit events ' +
@@ -3348,9 +3212,7 @@ function HG() {
           (errored ?
                '\nSome events failed to be converted due to unknown errors.' :
                '\nNo errors.');
-
       cb(null, additional, stringified);
-
       const filename = `${dir}/HGLegacyEventBackup.json`;
       self.common.mkAndWrite(filename, dir, stringified, (err) => {
         if (err) {
@@ -3361,7 +3223,6 @@ function HG() {
         if (!errored) delete game.legacyEvents;
       });
     };
-
     const iterate = function(type, type2) {
       return function(evt, i) {
         total++;
@@ -3410,23 +3271,19 @@ function HG() {
         });
       };
     };
-
     custom.bloodbath.forEach(iterate('bloodbath', 'normal'));
     custom.player.forEach(iterate('player', 'normal'));
     custom.arena.forEach(iterate('arena', 'arena'));
-
     const wepIterate = iterate('weapon', 'weapon');
     Object.entries(custom.weapon).forEach((el, i) => {
       const evt = Object.assign({}, el[1]);
       evt.name = el[0];
       wepIterate(evt, i);
     });
-
     if (total === 0) {
       cb('No legacy events found to update.');
     }
   };
-
   /**
    * List all currently created NPCs.
    *
@@ -3454,12 +3311,10 @@ function HG() {
       }
       return '`' + shortName + '`';
     }
-
     if (!hg.getGame(id)) {
       self.common.reply(msg, 'A game has not been created yet.');
       return;
     }
-
     const iNPCs = hg.getGame(id).includedNPCs || [];
     const eNPCs = hg.getGame(id).excludedNPCs || [];
     if (specific) {
@@ -3486,12 +3341,10 @@ function HG() {
       let eList = [];
       if (iNPCs.length > 0) iList = iNPCs.map(mapFunc).sort();
       if (eNPCs.length > 0) eList = eNPCs.map(mapFunc).sort();
-
       const numINPCs = iList.length;
       const numENPCs = eList.length;
       if (iList.length >= 5) {
         const numCols = self.calcColNum(iList.length > 10 ? 3 : 2, iList);
-
         const quarterLength = Math.ceil(iList.length / numCols);
         for (let i = 0; i &lt; numCols - 1; i++) {
           const thisMessage =
@@ -3511,7 +3364,6 @@ function HG() {
       }
       if (eList.length >= 5) {
         const numCols = self.calcColNum(eList.length > 10 ? 3 : 2, eList);
-
         const quarterLength = Math.ceil(eList.length / numCols);
         for (let i = 0; i &lt; numCols - 1; i++) {
           const thisMessage =
@@ -3539,7 +3391,6 @@ function HG() {
       });
     }
   }
-
   /**
    * Create a new NPC.
    *
@@ -3575,12 +3426,9 @@ function HG() {
           self.common.reply(msg, 'Please specify a valid username.', username);
           return;
         }
-
         let request = https.request;
         if (url.startsWith('http://')) request = http.request;
-
         const opt = {headers: {'User-Agent': self.common.ua}};
-
         let req;
         try {
           req = request(url, opt, onIncoming);
@@ -3595,7 +3443,6 @@ function HG() {
           console.error(err);
         });
         req.end();
-
         msg.channel.startTyping();
       }
     }
@@ -3779,7 +3626,6 @@ function HG() {
       }
     }
   }
-
   /**
    * @description Create an npc in a guild.
    *
@@ -3798,19 +3644,15 @@ function HG() {
     const splitURL = avatar.match(/\/avatars\/(NPC[A-F0-9]+)\/\w+\.png/);
     if (!splitURL) return 'Invalid Avatar URL.';
     const urlID = splitURL[1];
-
     if (!NPC.checkID(id)) {
       return 'Invalid NPC ID.';
     } else if (urlID !== id) {
       return 'ID does not match avatar ID.';
     }
-
     const npc = new NPC(formatUsername(username), avatar, id);
-
     const pushNPC = function(game) {
       if (!game.includedNPCs) hg.getGame(gId).includedNPCs = [];
       game.includedNPCs.push(npc);
-
       if (!game.currentGame || !game.currentGame.inProgress) {
         self.createGame(gId);
       }
@@ -3825,7 +3667,6 @@ function HG() {
     });
     return null;
   };
-
   /**
    * Clean up username, and format to rules similar to Discord.
    *
@@ -3847,7 +3688,6 @@ function HG() {
    * @public
    */
   this.formatUsername = formatUsername;
-
   /**
    * Rename an NPC.
    *
@@ -3868,7 +3708,6 @@ function HG() {
       return;
     }
     const toRename = mentions.first();
-
     const oldName = toRename.username;
     const trimmed = (msg.text.indexOf(toRename.id) > -1 ?
                          msg.text.replace(toRename.id, '') :
@@ -3882,7 +3721,6 @@ function HG() {
           msg, 'Renamed NPC', '`' + oldName + '` to `' + newName + '`');
     }
   }
-
   /**
    * @description Rename an npc in a guild.
    *
@@ -3896,15 +3734,12 @@ function HG() {
     const npc = hg.getGame(gId).includedNPCs.find((el) => el.id == npcId) ||
         hg.getGame(gId).excludedNPCs.find((el) => el.id == npcId);
     if (!npc) return 'INVALID_NPC';
-
     username = formatUsername(username);
     if (username.length &lt; 2) return 'INVALID_USERNAME';
     npc.username = username;
     npc.name = username;
-
     return null;
   };
-
   /**
    * Delete an NPC.
    *
@@ -3948,7 +3783,6 @@ function HG() {
         hg.getGame(gId).includedNPCs.findIndex((el) => el.id == npc);
     const excIndex =
         hg.getGame(gId).excludedNPCs.findIndex((el) => el.id == npc);
-
     let toDelete;
     if (incIndex > -1) {
       toDelete = hg.getGame(gId).includedNPCs.splice(incIndex, 1)[0];
@@ -3961,9 +3795,7 @@ function HG() {
       return 'Oops, I was only half able to find that NPC. ' +
           'Something is broken...';
     }
-
     if (!hg.getGame(gId).currentGame.inProgress) self.createGame(gId);
-
     const embed = new self.Discord.MessageEmbed();
     embed.setTitle('Deleted NPC');
     embed.setDescription(toDelete.name);
@@ -3971,7 +3803,6 @@ function HG() {
     embed.setThumbnail(toDelete.avatarURL);
     return embed;
   };
-
   /**
    * @description Include an NPC in the game.
    *
@@ -3983,7 +3814,6 @@ function HG() {
   function includeNPC(msg, id) {
     includeUser(msg, id);
   }
-
   /**
    * @description Exclude an NPC from the game.
    *
@@ -3995,7 +3825,6 @@ function HG() {
   function excludeNPC(msg, id) {
     excludeUser(msg, id);
   }
-
   /**
    * @description Send help message to DM and reply to server.
    *
@@ -4019,7 +3848,6 @@ function HG() {
           self.common.reply(msg, blockedmessage).catch(() => {});
         });
   }
-
   /**
    * @description Responds with stats about a player in the games.
    *
@@ -4042,14 +3870,12 @@ function HG() {
     const embed = new self.Discord.MessageEmbed();
     embed.setTitle(`${user.tag}'s HG Stats`);
     embed.setColor([255, 0, 255]);
-
     const checkDone = function() {
       numDone++;
       if (numDone === numTotal) {
         msg.channel.send(self.common.mention(msg), embed);
       }
     };
-
     const groupDone = function(err, group) {
       if (!group) {
         checkDone();
@@ -4089,12 +3915,10 @@ function HG() {
         }
       });
     };
-
     if (game.statGroup) game._stats.fetchGroup(game.statGroup, groupDone);
     game._stats.fetchGroup('global', groupDone);
     game._stats.fetchGroup('previous', groupDone);
   }
-
   /**
    * @description Responds with list of all stat group names and IDs.
    *
@@ -4166,7 +3990,6 @@ function HG() {
       });
     }
   }
-
   /**
    * @description Creates a new stat group.
    *
@@ -4196,7 +4019,6 @@ function HG() {
       self.common.reply(msg, 'Created and selected new stat group', res);
     });
   }
-
   /**
    * @description Selects an existing stat group.
    *
@@ -4236,7 +4058,6 @@ function HG() {
       self.common.reply(msg, 'Selected group', name);
     });
   }
-
   /**
    * @description Renames an existing stat group.
    *
@@ -4279,7 +4100,6 @@ function HG() {
       self.common.reply(msg, 'Renamed group', name);
     });
   }
-
   /**
    * @description Deletes an existing stat group.
    *
@@ -4319,7 +4139,6 @@ function HG() {
       self.common.reply(msg, `Deleted group ${group.id}`, additional);
     });
   }
-
   /**
    * @description Ranks players by stat.
    *
@@ -4408,17 +4227,14 @@ function HG() {
           }
           return `${i+1}) ${name}: ${el.get(col)}`;
         });
-
         const embed = new self.Discord.MessageEmbed();
         embed.setTitle(`Rank by ${col}`);
         const groupName = groupID === 'global' ? 'lifetime' : groupID;
         embed.setDescription(groupName);
         embed.setColor([255, 0, 255]);
-
         const numCols = self.calcColNum(1, list);
         const numTotal = list.length;
         const quarterLength = Math.ceil(numTotal / numCols);
-
         for (let i = 0; i &lt; numCols - 1; i++) {
           const thisMessage =
               list.splice(0, quarterLength).join('\n').slice(0, 1024);
@@ -4429,7 +4245,6 @@ function HG() {
         embed.addField(
             `${(numCols - 1) * quarterLength + 1}-${numTotal}`,
             list.join('\n').slice(0, 1024) || '.', true);
-
         msg.channel.send(self.common.mention(msg), embed).catch((err) => {
           self.error(
               'Failed to send leaderboard in channel: ' + msg.channel.id);
@@ -4442,7 +4257,6 @@ function HG() {
       });
     });
   }
-
   /**
    * @description Replies to the user with stats about all the currently loaded
    * games in this shard.
@@ -4467,7 +4281,6 @@ function HG() {
       self.common.reply(msg, getStatsString());
     }
   }
-
   /**
    * @description Get this shard's stats and format it into a human readable
    * string.
@@ -4501,7 +4314,6 @@ function HG() {
     }
     return message;
   }
-
   /**
    * @description Replies to the user with an image saying "rigged". That is
    * all.
@@ -4516,7 +4328,6 @@ function HG() {
     embed.setColor([187, 26, 52]);
     msg.channel.send(self.common.mention(msg), embed);
   }
-
   /**
    * @description Fetch an array of user IDs that are in the current game and
    * have been referenced in any way due to the given message from the user.
@@ -4528,7 +4339,6 @@ function HG() {
    */
   function parseGamePlayers(msg, game) {
     const mentions = parseMentions(msg);
-
     let firstWord = msg.text.trim().split(' ')[0];
     if (firstWord) firstWord = firstWord.toLowerCase();
     const specialWords = {
@@ -4540,7 +4350,6 @@ function HG() {
       bots: ['bot', 'bots'],
       npcs: ['npc', 'npcs', 'ai', 'ais'],
     };
-
     let players = [];
     const incU = game.currentGame.includedUsers;
     if (specialWords.everyone.includes(firstWord)) {
@@ -4578,7 +4387,6 @@ function HG() {
         return member.user.bot;
       }).map((el) => el.id);
     }
-
     return players.concat(
         mentions
             .filter((u) => {
@@ -4587,7 +4395,6 @@ function HG() {
             })
             .map((el) => el.id));
   }
-
   /**
    * @description Allows the game creator to kill a player in the game.
    *
@@ -4610,7 +4417,6 @@ function HG() {
       return;
     }
     const players = parseGamePlayers(msg, game);
-
     if (!players || players.length == 0) {
       self.common.reply(msg, 'Please specify a player in the games to kill.');
       return;
@@ -4621,7 +4427,6 @@ function HG() {
           self.common.reply(msg, res);
         });
   }
-
   /**
    * @description Allows the game creator to heal or revive a player in the
    * game.
@@ -4645,7 +4450,6 @@ function HG() {
       return;
     }
     const players = parseGamePlayers(msg, game);
-
     if (!players || players.length == 0) {
       self.common.reply(msg, 'Please specify a player in the games to heal.');
       return;
@@ -4656,7 +4460,6 @@ function HG() {
           self.common.reply(msg, res);
         });
   }
-
   /**
    * @description Allows the game creator to wound a player in the game.
    *
@@ -4679,7 +4482,6 @@ function HG() {
       return;
     }
     const players = parseGamePlayers(msg, game);
-
     if (!players || players.length == 0) {
       self.common.reply(msg, 'Please specify a player in the games to wound.');
       return;
@@ -4690,7 +4492,6 @@ function HG() {
           self.common.reply(msg, res);
         });
   }
-
   /**
    * @description Rename the guild's game to the given custom name.
    *
@@ -4709,7 +4510,6 @@ function HG() {
         name || (self.client.guilds.resolve(id).name + '\'s Hungry Games');
     return true;
   };
-
   /**
    * @description Rename a guild's game to a custom name.
    *
@@ -4741,7 +4541,6 @@ function HG() {
               'it is fewer than 100 characters long.');
     }
   }
-
   /**
    * @description Give a certain amount of a weapon to a player.
    *
@@ -4770,7 +4569,6 @@ function HG() {
   function commandTakeWeapon(msg, id) {
     commandModifyWeapon(msg, id, true);
   }
-
   /**
    * @description Actually does the parsing for {@link HG~commandGiveWeapon} and
    * {@link HG~commandTakeWeapon}.
@@ -4833,7 +4631,6 @@ function HG() {
     } else {
       count = (flip ? -1 : 1) * count[1];
     }
-
     game.modifyPlayerWeapon(
         users.first().id, final, hg, count, false,
         (res) => self.common.reply(msg, res));
@@ -4873,7 +4670,6 @@ function HG() {
       self.createReactJoinMessage(msg.channel);
     }
   }
-
   /**
    * @description Send a message with a reaction for users to click on. Records
    * message id and channel id in game data.
@@ -4904,7 +4700,6 @@ function HG() {
       msg.react(emoji.crossedSwords).catch(() => {});
     });
   };
-
   /**
    * @description End the reaction join and update the included users to only
    * include those who reacted to the message.
@@ -4925,7 +4720,6 @@ function HG() {
          'Was a join via react started?');
       return;
     }
-
     let numTotal = 0;
     let numDone = 0;
     let msg;
@@ -4985,7 +4779,6 @@ function HG() {
       });
     }
   };
-
   /**
    * @description Sort the includedUsers and teams for the given game.
    * @public
@@ -5017,7 +4810,6 @@ function HG() {
       }
     });
   };
-
   /**
    * @description Returns the number of games that are currently being shown to
    * users.
@@ -5033,7 +4825,6 @@ function HG() {
     });
     return inProgress.length;
   };
-
   /**
    * @description Get a random word that means "nothing".
    *
@@ -5055,7 +4846,6 @@ function HG() {
     ];
     return nothings[Math.floor(Math.random() * nothings.length)];
   }
-
   /**
    * Calculates the number of columns for the given player list. Assumes maximum
    * character count of 1024 per section. The number of columns also becomes
@@ -5084,7 +4874,6 @@ function HG() {
     }
     return numCols;
   };
-
   /**
    * Update {@link HungryGames~listenersEndTime} because a new listener was
    * registered with the given duration.
@@ -5097,7 +4886,6 @@ function HG() {
       listenersEndTime = Date.now() + duration;
     }
   }
-
   /**
    * @description Parse all mentioned users from all softMentions and Discord
    * mentions, including roles.
@@ -5115,7 +4903,6 @@ function HG() {
     return msg.mentions.users.concat(msg.softMentions.users)
         .concat(mentionedRoleUsers.concat(softRoleUsers));
   }
-
   /**
    * Attempt to fetch an image from a URL. Checks if the file has been cached to
    * the filesystem first.
@@ -5186,7 +4973,6 @@ function HG() {
       });
     }
   };
-
   // Util //
   /**
    * Save all game data to file.
@@ -5208,7 +4994,6 @@ function HG() {
     }
     hg.save(opt);
   };
-
   /**
    * @description Register an event listener. Handlers are called in order they
    * are registered. Earlier events can modify event data.
@@ -5221,7 +5006,6 @@ function HG() {
     if (!eventHandlers[evt]) eventHandlers[evt] = [];
     eventHandlers[evt].push(handler);
   };
-
   /**
    * Remove an event listener;.
    *
@@ -5234,7 +5018,6 @@ function HG() {
     const i = eventHandlers[evt].findIndex((el) => el === handler);
     if (i > -1) eventHandlers[evt].splice(i, 1);
   };
-
   /**
    * Fire an event on all listeners.
    *
@@ -5254,27 +5037,15 @@ function HG() {
     });
   };
 }
-
 module.exports = new HG();
 </pre>
     </article>
 </section>
-
-
-
-
-
 		</div>
 	</div>
-
 	<div class="clearfix"></div>
-
-	
-
 </div>
 </div>
-
-
     <div class="modal fade" id="searchResults">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -5289,41 +5060,27 @@ module.exports = new HG();
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div>
-
-
 <footer>
-
-
 	<span class="copyright">
 	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
 	</span>
-
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
-	
 		on Saturday, May 23, 2020 8:45 PM (-07:00)
-	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
 </footer>
-
 <script src="scripts/docstrap.lib.js"></script>
 <script src="scripts/toc.js"></script>
-
     <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
-
-
 <script>
 $( function () {
 	$( "[id*='$']" ).each( function () {
 		var $this = $( this );
-
 		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
 	} );
-
 	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
 		var $this = $( this );
-
 		var example = $this.find( "code" );
 		exampleText = example.html();
 		var lang = /{@lang (.*?)}/.exec( exampleText );
@@ -5335,23 +5092,18 @@ $( function () {
 			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
 			lang = langClassMatch ? langClassMatch[1] : "javascript";
 		}
-
 		if ( lang ) {
-
 			$this
 			.addClass( "sunlight-highlight-" + lang )
 			.addClass( "linenums" )
 			.html( example.html() );
-
 		}
 	} );
-
 	Sunlight.highlightAll( {
 		lineNumbers : true,
 		showMenu : true,
 		enableDoclinks : true
 	} );
-
 	$.catchAnchorLinks( {
         navbarOffset: 10
 	} );
@@ -5363,25 +5115,16 @@ $( function () {
 		showAndHide : false,
 		smoothScrolling: true
 	} );
-
 	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
 	$( '.dropdown-toggle' ).dropdown();
-
     $( "table" ).each( function () {
       var $this = $( this );
       $this.addClass('table');
     } );
-
 } );
 </script>
-
-
-
 <!--Navigation and Symbol Display-->
-
-
 <!--Google Analytics-->
-
 <script>
 	(function ( i, s, o, g, r, a, m ) {
 		i['GoogleAnalyticsObject'] = r;
@@ -5394,19 +5137,13 @@ $( function () {
 		a.src = g;
 		m.parentNode.insertBefore( a, m )
 	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
-
 	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
 	ga( 'send', 'pageview' );
 </script>
-
-
-
     <script type="text/javascript">
         $(document).ready(function() {
             SearcherDisplay.init();
         });
     </script>
-
-
 </body>
 </html>

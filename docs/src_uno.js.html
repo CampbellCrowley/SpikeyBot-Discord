@@ -1,22 +1,16 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>SpikeyBot-Discord Source: src/uno.js</title>
-
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
-
 	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
-
 </head>
-
 <body>
-
 <div class="navbar navbar-default navbar-fixed-top ">
 <div class="container">
 	<div class="navbar-header">
@@ -29,37 +23,31 @@
 	</div>
 	<div class="navbar-collapse collapse" id="topNavigation">
 		<ul class="nav navbar-nav">
-			
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="EE.html">EE</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Events.html">Events</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-Action.html">HungryGames~Action</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></li><li><a href="ShardingMaster.ShardMasterConfig.html">ShardingMaster.ShardMasterConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.HeartbeatConfig.html">ShardingMaster.ShardMasterConfig.HeartbeatConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></li><li><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></li><li><a href="ShardingSlave.html">ShardingSlave</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="external-Discord.html">Discord</a></li>
 				</ul>
 			</li>
-			
 		</ul>
-        
             <div class="col-sm-3 col-md-3">
                 <form class="navbar-form" role="search">
                     <div class="input-group">
@@ -70,31 +58,20 @@
                     </div>
                 </form>
             </div>
-        
 	</div>
-
 </div>
 </div>
-
-
 <div class="container" id="toc-content">
 <div class="row">
-
-	
 	<div class="col-md-12">
-	
 		<div id="main">
-			
-
 		<h1 class="page-title">Source: src/uno.js</h1>
-    
 <section>
     <article>
         <pre
             class="sunlight-highlight-javascript linenums">// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 require('./subModule.js').extend(Uno);  // Extends the SubModule class.
-
 /**
  * @classdesc Manages an Uno game.
  * @class
@@ -105,7 +82,6 @@ function Uno() {
   const self = this;
   /** @inheritdoc */
   this.myName = 'Uno';
-
   /** @inheritdoc */
   this.initialize = function() {
     pFlags = self.Discord.Permissions.FLAGS;
@@ -120,11 +96,9 @@ function Uno() {
               new self.command.SingleCommand('stats', commandStats),
             ]));
   };
-
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.removeListener('uno');
-
     const list = Object.values(games);
     list.forEach((el) => {
       const list = Object.values(el);
@@ -133,12 +107,10 @@ function Uno() {
       });
     });
   };
-
   /** @inheritdoc */
   this.unloadable = function() {
     return numGames &lt;= 0;
   };
-
   /**
    * ASCII art text to show when a player calls Uno.
    *
@@ -155,7 +127,6 @@ function Uno() {
       '888     888 888  Y88888 888     888 Y8P \n' +
       'Y88b. .d88P 888   Y8888 Y88b. .d88P  "  \n' +
       ' "Y88888P"  888    Y888  "Y88888P"  888 ';
-
   /**
    * The number of currently active games. Used to determine of submodule is
    * unloadable.
@@ -165,14 +136,12 @@ function Uno() {
    * @default
    */
   let numGames = 0;
-
   /**
    * Self.Discord.Permissions.FLAGS.
    *
    * @private
    */
   let pFlags = null;
-
   /**
    * All games currently in progress mapped by guilds, then by the game ID.
    *
@@ -180,7 +149,6 @@ function Uno() {
    * @type {object.&lt;object.&lt;Uno.Game>>}
    */
   const games = {};
-
   /**
    * Delay for NPC to play their card.
    *
@@ -190,7 +158,6 @@ function Uno() {
    * @constant
    */
   const npcDelay = 5000;
-
   /* eslint-disable no-multi-spaces */
   /**
    * Default names of NPCs to add when adding non-bot NPCs.
@@ -209,7 +176,6 @@ function Uno() {
     'CASE',   'Alexa',  'Bixby',
   ];
   /* eslint-enable */
-
   /**
    * Maximum number of players allowed in a game.
    *
@@ -219,7 +185,6 @@ function Uno() {
    * @constant
    */
   const maxPlayerCount = 10;
-
   /**
    * Starts an Uno game. If someone is mentioned it will start a game
    * between the message author and the mentioned person. Otherwise, waits for
@@ -259,7 +224,6 @@ function Uno() {
         (msg.mentions.members.array() || []).concat([msg.member]), msg.member);
     games[msg.guild.id][newGame.id] = newGame;
   }
-
   /**
    * Ends all Uno games.
    *
@@ -285,7 +249,6 @@ function Uno() {
     delete games[msg.guild.id];
     self.common.reply(msg, 'All UNO games have been ended.').catch(() => {});
   }
-
   /**
    * Sends information about current uno games.
    *
@@ -340,7 +303,6 @@ function Uno() {
    * @constant
    */
   const colorPairs = Object.entries(self.Color);
-
   /**
    * Regular expression search for acceptable colors. Case insensitive and
    * global flags are set.
@@ -350,7 +312,6 @@ function Uno() {
    * @type {RegExp}
    */
   const colorRegExp = new RegExp(colorPairs.map((el) => el[0]).join('|'), 'ig');
-
   /**
    * Enum for card faces. The two least significant nibbles are the card face.
    * The most significant used nibbles are for card effects (designated by the
@@ -409,7 +370,6 @@ function Uno() {
   const cardFacePairs = Object.entries(self.CardFace).filter((el) => {
     return !el[0].endsWith('_EFFECT') &amp;&amp; !el[0].endsWith('_MASK');
   });
-
   /**
    * Regular expression search for acceptable card faces. Case insensitive and
    * global flags are set.
@@ -420,7 +380,6 @@ function Uno() {
    */
   const cardFaceRegExp = new RegExp(
       cardFacePairs.map((el) => el[0].replace(/_/g, ' ')).join('|'), 'ig');
-
   /**
    * Class that stores the current information about a particular card. All
    * cards with the same color and face value are represented here using the
@@ -454,7 +413,6 @@ function Uno() {
      * @type {Uno.Color}
      */
     this.color = color;
-
     /**
      * The name of this card retreivable with `toString()`. Null until first
      * `toString()` call.
@@ -463,7 +421,6 @@ function Uno() {
      * @type {?string}
      */
     let myName;
-
     /**
      * Stringifies the face and colors to their key names.
      *
@@ -495,7 +452,6 @@ function Uno() {
       return myName;
     };
   };
-
   /**
    * Class that stores the current state of an Uno game.
    *
@@ -509,9 +465,7 @@ function Uno() {
    */
   this.Game = function(memberList, maker) {
     const game = this;
-
     numGames++;
-
     if (!memberList || !memberList.length) {
       throw new Error('Member list must be an array of Discord.GuildMembers.');
     }
@@ -525,7 +479,6 @@ function Uno() {
      * @type {object.&lt;Discord~GuildMember>}
      */
     const members = {};
-
     do {
       /**
        * The ID of this uno game. Should be unique per guild.
@@ -536,7 +489,6 @@ function Uno() {
        */
       this.id = Math.floor((Math.random() * 1000));
     } while (games[maker.guild.id][game.id]);
-
     /**
      * The array of all player in the game in the order of their turn.
      *
@@ -544,7 +496,6 @@ function Uno() {
      * @type {Array.&lt;Uno.Player|Uno.NPC>}
      */
     const players = [];
-
     /**
      * The category that stores all channels for this game. Null until it is
      * created.
@@ -561,7 +512,6 @@ function Uno() {
      * @type {?Discord~TextChannel}
      */
     this.groupChannel = null;
-
     /**
      * All cards currently not in a player's hand.
      *
@@ -569,7 +519,6 @@ function Uno() {
      * @type {Uno.Card[]}
      */
     let discarded = self.getHand();
-
     /**
      * Has this game been started.
      *
@@ -579,7 +528,6 @@ function Uno() {
      * @type {boolean}
      */
     this.started = false;
-
     /**
      * The timestamp at which this game was first created.
      *
@@ -589,7 +537,6 @@ function Uno() {
      * @type {number}
      */
     this.createTimestamp = Date.now();
-
     /**
      * The timestamp at which this game was last interacted with.
      *
@@ -599,7 +546,6 @@ function Uno() {
      * @type {number}
      */
     this.lastInteractTimestamp = Date.now();
-
     /**
      * The current index of the player whose turn it is.
      *
@@ -608,7 +554,6 @@ function Uno() {
      * @type {number}
      */
     let turn = -1;
-
     /**
      * If we need to wait for the player to choose a color for a wild card.
      * `null` if not waiting, or a reference to the player we are waiting for.
@@ -618,7 +563,6 @@ function Uno() {
      * @type {Uno.Player}
      */
     // let waitingForColor = -1;
-
     /**
      * The current number of cards a player will need to draw if they cannot
      * stack another draw card.
@@ -627,7 +571,6 @@ function Uno() {
      * @type {number}
      */
     // let drawCount = 0;
-
     /**
      * The card played by the previous player in the turn order. Will be null
      * after a player has been skipped, since they did not play a card.
@@ -638,7 +581,6 @@ function Uno() {
      * @type {?Uno.Card}
      */
     // let previousCard = null;
-
     /**
      * The index of the player whose turn it was previously. This is -1 if the
      * current turn is the first turn of the game, and will otherwise be the
@@ -648,7 +590,6 @@ function Uno() {
      * @type {number}
      */
     let previousTurn = -1;
-
     /**
      * The current card on the top of the discard pile that will need to be
      * matched by the next player to play a card.
@@ -659,7 +600,6 @@ function Uno() {
      * @type {?Uno.Card}
      */
     let topCard = null;
-
     /**
      * The current direction of play. Either 1 or -1.
      *
@@ -668,7 +608,6 @@ function Uno() {
      * @type {number}
      */
     let direction = 1;
-
     /**
      * The current Discord~MessageCollector that is listening to messages in the
      * groupChannel.
@@ -678,7 +617,6 @@ function Uno() {
      * type {?Discord~MessageCollector}
      */
     let currentCollector = null;
-
     /**
      * Creates all channels for this game and currently added players.
      *
@@ -690,7 +628,6 @@ function Uno() {
         type: 'category',
         reason: 'An UNO game was started by ' + maker.user.tag,
       };
-
       const groupPerms = [
         {
           id: maker.guild.roles.everyone,
@@ -714,7 +651,6 @@ function Uno() {
           type: 'member',
         });
       }
-
       maker.guild.channels.create('uno-' + game.id, channelOpts).then((c) => {
         game.catChannel = c;
         maker.guild.channels
@@ -742,7 +678,6 @@ function Uno() {
             });
       });
     })();
-
     /**
      * Begins listening for messages in the groupChannel that relate to the
      * setup of the game, and sends a message to the group channel with game
@@ -882,7 +817,6 @@ function Uno() {
         currentCollector = null;
       });
     }
-
     /**
      * Send the list of current players in this game to the group channel.
      */
@@ -893,7 +827,6 @@ function Uno() {
       embed.setColor('WHITE');
       game.groupChannel.send(embed);
     }
-
     /**
      * Deal cards to all players, and start the game.
      *
@@ -905,20 +838,15 @@ function Uno() {
             VIEW_CHANNEL: false,
           },
           'UNO game has starte.');
-
       for (turn = 0; turn &lt; players.length; turn++) {
         players[turn].hand = [];
         drawCards(7, true);
       }
-
       game.groupChannel.send('`Cards have been dealt.`');
-
       turn = -1;
       game.started = true;
-
       // Play the game's first card.
       playCard();
-
       if (currentCollector) {
         currentCollector.stop(
             'Previous collector failed to end before game start.');
@@ -1000,7 +928,6 @@ function Uno() {
         currentCollector = null;
       });
     }
-
     /**
      * Called after a game has been won by somebody. Clears all players of their
      * cards, and resets the game to ready for next game state.
@@ -1015,7 +942,6 @@ function Uno() {
         discarded = discarded.concat(p.hand.splice(0));
       });
     }
-
     /**
      * @description Sends the game help to the group channel.
      *
@@ -1067,7 +993,6 @@ function Uno() {
       }
       return game.groupChannel.send(embed);
     }
-
     /**
      * Called after a player's turn, to trigger the next player's turn.
      *
@@ -1081,7 +1006,6 @@ function Uno() {
         players[turn].channel.send(
             '`Your current hand:`', getCardEmbed(players[turn].hand));
       }
-
       if (turn == -1) turn = Math.floor(Math.random() * players.length);
       turn += direction;
       if (turn &lt; 0) turn = players.length - 1;
@@ -1103,7 +1027,6 @@ function Uno() {
         if (players[turn].npc) setTimeout(playCard, npcDelay);
       }
     }
-
     /**
      * Cause the current player to draw cards from the discarded pile, then skip
      * their turn and continue to the next player.
@@ -1116,7 +1039,6 @@ function Uno() {
       // previousCard = null;
       nextTurn();
     }
-
     /**
      * Cause the current player to draw cards from the discarded pile.
      *
@@ -1146,7 +1068,6 @@ function Uno() {
           }
         });
       }
-
       if (!silent) {
         game.groupChannel.send(
             '`' + players[turn].name + '` drew ' + num + ' card' +
@@ -1163,7 +1084,6 @@ function Uno() {
       }
       players[turn].calledUno = false;
     }
-
     /**
      * Play a card for the current player.
      *
@@ -1269,18 +1189,15 @@ function Uno() {
           }
         }
       }
-
       const card = hand.splice(selected, 1)[0];
       if (topCard) {
         discarded.push(topCard);
       }
       topCard = card;
       // previousCard = card;
-
       if (color) {
         card.color = color;
       }
-
       if (turn > -1 &amp;&amp; players[turn].hand.length > 0) {
         game.groupChannel.send(
             '`' + players[turn].name + '` has ' + players[turn].hand.length +
@@ -1289,7 +1206,6 @@ function Uno() {
       } else {
         game.groupChannel.send(getCardEmbed(card));
       }
-
       if (hand.length == 0) {
         game.groupChannel.send(
             players[turn].mention + ' `has no cards remaining!`\n```' +
@@ -1297,9 +1213,7 @@ function Uno() {
         if (players[turn].npc) endGame();
         return true;
       }
-
       previousTurn = turn;
-
       let skipping = false;
       if (card.face &amp; self.CardFace.REVERSE_EFFECT) {
         direction *= -1;
@@ -1310,25 +1224,20 @@ function Uno() {
       /* if (card.face &amp; self.CardFace.WILD_EFFECT &amp;&amp; !card.color) {
         waitingForColor = players[turn].id;
       } */
-
       nextTurn(skipping || card.face &amp; self.CardFace.SKIP_EFFECT);
-
       if (card.face &amp; self.CardFace.DRAW_TWO_EFFECT) {
         drawCards(2);
         // previousCard = null;
       }
-
       if (card.face &amp; self.CardFace.DRAW_FOUR_EFFECT) {
         drawCards(4);
         // previousCard = null;
       }
-
       if (skipping || card.face &amp; self.CardFace.SKIP_EFFECT) {
         nextTurn();
       }
       return false;
     }
-
     /**
      * Parse a string of text to a playable card.
      *
@@ -1341,25 +1250,20 @@ function Uno() {
       const replaced = text.replace(/_/g, ' ');
       const colorMatch = replaced.match(colorRegExp);
       const faceMatch = replaced.match(cardFaceRegExp);
-
       if (!faceMatch) return null;
       if (faceMatch.length != 1) return null;
       faceMatch[0] = faceMatch[0].replace(/ /g, '_');
-
       let color = self.Color.NONE;
       if (colorMatch &amp;&amp; colorMatch.length == 1) {
         color = self.Color[colorMatch[0].toUpperCase()];
       }
       const face = self.CardFace[faceMatch[0].toUpperCase()];
-
       // If not a wild card, and no color was chosen.
       if (!(face &amp; self.CardFace.WILD_EFFECT) &amp;&amp; color == self.Color.NONE) {
         return null;
       }
-
       return new self.Card(face, color);
     }
-
     /**
      * Checks if the given card may be played next.
      *
@@ -1376,10 +1280,8 @@ function Uno() {
       card2 = card2 || topCard;
       const cardFace = card.face &amp; self.CardFace.BASE_MASK;
       const card2Face = card2.face &amp; self.CardFace.BASE_MASK;
-
       return (cardFace == card2Face) || (card.color == card2.color);
     }
-
     /**
      * A player has called Uno. To say that they are about to have one card,
      * they now have one card after playing, or the previous person now has one
@@ -1415,7 +1317,6 @@ function Uno() {
         }
       }
     }
-
     /**
      * Ends this game and deletes all created channels.
      *
@@ -1437,7 +1338,6 @@ function Uno() {
       delete games[maker.guild.id][game.id];
       numGames--;
     };
-
     /**
      * Add the given guild member to the game.
      *
@@ -1470,7 +1370,6 @@ function Uno() {
           'Player added to game.');
       return true;
     };
-
     /**
      * Add a certain number of NPCs into the game.
      *
@@ -1493,7 +1392,6 @@ function Uno() {
       }
       return added == num;
     };
-
     /**
      * Remove a certain number of NPCs from the game.
      *
@@ -1513,7 +1411,6 @@ function Uno() {
       }
       return j == num;
     };
-
     /**
      * Remove the user with the given ID from the game.
      *
@@ -1526,7 +1423,6 @@ function Uno() {
       if (typeof p === 'object') p = p.id;
       if (!p) return;
       if (!players || !players.length || p.id == maker.id) return;
-
       const index = players.findIndex((player) => player.id == p);
       if (index > -1) {
         players[index].remove();
@@ -1537,7 +1433,6 @@ function Uno() {
         if (turn == index) nextTurn();
       }
     };
-
     /**
      * Returns the list of all players currently in this game.
      *
@@ -1551,7 +1446,6 @@ function Uno() {
       });
     };
   };
-
   /**
    * A single player in the game.
    *
@@ -1564,7 +1458,6 @@ function Uno() {
     if (typeof member !== 'object') {
       throw new Error('A new player must be based off of a GuildMember.');
     }
-
     const permOverwrites = [
       {
         id: member.guild.roles.everyone,
@@ -1585,7 +1478,6 @@ function Uno() {
         type: 'member',
       },
     ];
-
     const channelOpts = Object.assign({
       topic: (member.nickname || member.user.username) + '\'s UNO cards.',
       parent: parent.catChannel,
@@ -1593,7 +1485,6 @@ function Uno() {
       type: 'text',
       reason: 'An UNO game was started.',
     });
-
     /**
      * The Discord ID of this player.
      *
@@ -1627,7 +1518,6 @@ function Uno() {
      * @type {boolean}
      */
     this.npc = false;
-
     /**
      * Whether this player has called uno recently.
      *
@@ -1636,7 +1526,6 @@ function Uno() {
      * @default
      */
     this.calledUno = false;
-
     /**
      * The channel for this player's private messages for the game. Null until
      * the channel is created.
@@ -1677,7 +1566,6 @@ function Uno() {
      * @type {Uno.Card[]}
      */
     this.hand = [];
-
     /**
      * Remove this player from a game. Deletes the player's text channel.
      *
@@ -1689,7 +1577,6 @@ function Uno() {
       }
     };
   };
-
   /**
    * A single non-player character in the game. This is the same as a normal
    * player, except they are not given a text channel, and their actions are
@@ -1745,7 +1632,6 @@ function Uno() {
      * @type {boolean}
      */
     this.npc = true;
-
     /**
      * Whether this player has called uno recently.
      *
@@ -1761,7 +1647,6 @@ function Uno() {
      * @type {Uno.Card[]}
      */
     this.hand = [];
-
     /**
      * Probability this NPC will call uno when necessary.
      *
@@ -1770,7 +1655,6 @@ function Uno() {
      * @default 0.5
      */
     this.probCallUno = options.probCallUno || 0.5;
-
     /**
      * Delay before calling uno if this NPC is going to call it. (Milliseconds).
      *
@@ -1779,7 +1663,6 @@ function Uno() {
      * @default 3000
      */
     this.delayCallUno = options.delayCallUno || 3000;
-
     /**
      * Remove this player from a game. Cleans up references if any exist.
      *
@@ -1787,7 +1670,6 @@ function Uno() {
      */
     this.remove = function() {};
   };
-
   /**
    * Format a hand of cards or a single card into Discord~MessageEmbed.
    *
@@ -1803,9 +1685,7 @@ function Uno() {
       if (!colors[card.color]) colors[card.color] = [card.toString()];
       else colors[card.color].push(card.toString());
     });
-
     const noTitle = hand.length == 1;
-
     colorPairs.forEach((c) => {
       if (!colors[c[1]] || !c[1]) return;
       colors[c[1]].sort();
@@ -1831,10 +1711,8 @@ function Uno() {
         embed.setColor(colorPairs.find((el) => el[1] == hand[0].color)[0]);
       }
     }
-
     return embed;
   }
-
   /**
    * Takes a string that is all caps with underscores and makes it more human
    * readable.
@@ -1851,7 +1729,6 @@ function Uno() {
         })
         .join(' ');
   }
-
   /**
    * @description A default hand of cards that the classic game starts with.
    *
@@ -1920,27 +1797,15 @@ function Uno() {
     /* eslint-enable no-multi-spaces */
   };
 }
-
 module.exports = new Uno();
 </pre>
     </article>
 </section>
-
-
-
-
-
 		</div>
 	</div>
-
 	<div class="clearfix"></div>
-
-	
-
 </div>
 </div>
-
-
     <div class="modal fade" id="searchResults">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -1955,41 +1820,27 @@ module.exports = new Uno();
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div>
-
-
 <footer>
-
-
 	<span class="copyright">
 	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
 	</span>
-
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
-	
 		on Saturday, May 23, 2020 8:45 PM (-07:00)
-	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
 </footer>
-
 <script src="scripts/docstrap.lib.js"></script>
 <script src="scripts/toc.js"></script>
-
     <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
-
-
 <script>
 $( function () {
 	$( "[id*='$']" ).each( function () {
 		var $this = $( this );
-
 		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
 	} );
-
 	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
 		var $this = $( this );
-
 		var example = $this.find( "code" );
 		exampleText = example.html();
 		var lang = /{@lang (.*?)}/.exec( exampleText );
@@ -2001,23 +1852,18 @@ $( function () {
 			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
 			lang = langClassMatch ? langClassMatch[1] : "javascript";
 		}
-
 		if ( lang ) {
-
 			$this
 			.addClass( "sunlight-highlight-" + lang )
 			.addClass( "linenums" )
 			.html( example.html() );
-
 		}
 	} );
-
 	Sunlight.highlightAll( {
 		lineNumbers : true,
 		showMenu : true,
 		enableDoclinks : true
 	} );
-
 	$.catchAnchorLinks( {
         navbarOffset: 10
 	} );
@@ -2029,25 +1875,16 @@ $( function () {
 		showAndHide : false,
 		smoothScrolling: true
 	} );
-
 	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
 	$( '.dropdown-toggle' ).dropdown();
-
     $( "table" ).each( function () {
       var $this = $( this );
       $this.addClass('table');
     } );
-
 } );
 </script>
-
-
-
 <!--Navigation and Symbol Display-->
-
-
 <!--Google Analytics-->
-
 <script>
 	(function ( i, s, o, g, r, a, m ) {
 		i['GoogleAnalyticsObject'] = r;
@@ -2060,19 +1897,13 @@ $( function () {
 		a.src = g;
 		m.parentNode.insertBefore( a, m )
 	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
-
 	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
 	ga( 'send', 'pageview' );
 </script>
-
-
-
     <script type="text/javascript">
         $(document).ready(function() {
             SearcherDisplay.init();
         });
     </script>
-
-
 </body>
 </html>

@@ -1,22 +1,16 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 	<title>SpikeyBot-Discord Class: GuildGame</title>
-
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 	<![endif]-->
 	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
-
 	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
-
 </head>
-
 <body>
-
 <div class="navbar navbar-default navbar-fixed-top ">
 <div class="container">
 	<div class="navbar-header">
@@ -29,37 +23,31 @@
 	</div>
 	<div class="navbar-collapse collapse" id="topNavigation">
 		<ul class="nav navbar-nav">
-			
 			<li class="dropdown">
 				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="EE.html">EE</a></li><li><a href="EventEmitter.html">EventEmitter</a></li><li><a href="Events.html">Events</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-Action.html">HungryGames~Action</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></li><li><a href="ShardingMaster.ShardMasterConfig.html">ShardingMaster.ShardMasterConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.HeartbeatConfig.html">ShardingMaster.ShardMasterConfig.HeartbeatConfig</a></li><li><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">ShardingMaster.ShardMasterConfig.MailConfig</a></li><li><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></li><li><a href="ShardingSlave.html">ShardingSlave</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
 				</ul>
 			</li>
-			
 			<li class="dropdown">
 				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
 					<li><a href="external-Discord.html">Discord</a></li>
 				</ul>
 			</li>
-			
 		</ul>
-        
             <div class="col-sm-3 col-md-3">
                 <form class="navbar-form" role="search">
                     <div class="input-group">
@@ -70,461 +58,148 @@
                     </div>
                 </form>
             </div>
-        
 	</div>
-
 </div>
 </div>
-
-
 <div class="container" id="toc-content">
 <div class="row">
-
-	
 	<div class="col-md-8">
-	
 		<div id="main">
-			
-
 	<h1 class="page-title">Class: GuildGame</h1>
 <section>
-
 <header>
-    
         <h2>
             <span class="ancestors"><a href="HungryGames.html">HungryGames</a>~</span>
-        
         GuildGame
         </h2>
-        
             <div class="class-description">A single instance of a game in a guild.</div>
-        
-    
 </header>
-
-
 <article>
     <div class="container-overview">
-    
-        
 <hr>
 <dt>
     <h4 class="name" id="GuildGame"><span class="type-signature"></span>new GuildGame(bot, id, options [, name] [, includedUsers] [, excludedUsers] [, includedNPCs] [, excludedNPCs], customEventIds, disabledEventIds)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Create a game instance for a single guild.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>bot</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">User id of the current bot instance.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>id</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Guild id of the Guild that this object is for.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>options</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">object.&lt;(number|boolean|string|object)></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The game options.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>name</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Name of this game to be passed to the Game object.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>includedUsers</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Array.&lt;string></span>
 |
-
 <span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Array of user IDs
 that will be included in the next game, or array of Players to include.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>excludedUsers</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Array.&lt;string></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Array of user IDs that have been
 excluded from the games.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>includedNPCs</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Array.&lt;HungryGames~NPC></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Array of NPC objects to include
 in the game.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>excludedNPCs</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Array.&lt;HungryGames~NPC></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Array of NPC objects to exclude
 from the game.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>customEventIds</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Object</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Array of IDs of custom events to load.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>disabledEventIds</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Array.&lt;string></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Array of IDs of events to be disabled
 from game.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -534,107 +209,27 @@ from game.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-    
     </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
         <h3 class="subsection-title">Members</h3>
-
         <dl>
-            
 <hr>
 <dt class="name" id="_autoPlayTimeout">
     <h4 id="_autoPlayTimeout"><span class="type-signature">&lt;private, nullable> </span>_autoPlayTimeout<span class="type-signature"> :Timeout</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The timeout to continue autoplaying after the day ends. Used for
 cancelling if user ends the game between days.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">Timeout</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -644,85 +239,29 @@ cancelling if user ends the game between days.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_autoStep">
     <h4 id="_autoStep"><span class="type-signature">&lt;private> </span>_autoStep<span class="type-signature"> :boolean</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Is this game automatically stepping, or are steps controlled manually.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">boolean</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
 			<li>false</li>
 		</ul>
 	</dd>
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -732,78 +271,23 @@ cancelling if user ends the game between days.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_dayEventInterval">
     <h4 id="_dayEventInterval"><span class="type-signature">&lt;private, nullable> </span>_dayEventInterval<span class="type-signature"> :Timeout</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Interval for day events.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">Timeout</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -813,78 +297,23 @@ cancelling if user ends the game between days.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_stateUpdateCallback">
     <h4 id="_stateUpdateCallback"><span class="type-signature">&lt;private, nullable> </span>_stateUpdateCallback<span class="type-signature"> :<a href="HungryGames-GuildGame.html#~StateUpdateCB">HungryGames~GuildGame~StateUpdateCB</a></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Function to call when state is modified.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type"><a href="HungryGames-GuildGame.html#~StateUpdateCB">HungryGames~GuildGame~StateUpdateCB</a></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -894,78 +323,23 @@ cancelling if user ends the game between days.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="_stats">
     <h4 id="_stats"><span class="type-signature">&lt;private, constant> </span>_stats<span class="type-signature"> :<a href="HungryGames-StatManager.html">HungryGames~StatManager</a></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Manages all stats for all players.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type"><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -975,78 +349,23 @@ cancelling if user ends the game between days.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="actions">
     <h4 id="actions"><span class="type-signature"></span>actions<span class="type-signature"> :<a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The actions to perform when certain events occur.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type"><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1056,79 +375,24 @@ cancelling if user ends the game between days.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="author">
     <h4 id="author"><span class="type-signature">&lt;nullable> </span>author<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The id of the user that last sent a command which interacted with this
 guild game.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1138,85 +402,29 @@ guild game.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="autoPlay">
     <h4 id="autoPlay"><span class="type-signature"></span>autoPlay<span class="type-signature"> :boolean</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Is this game autoplaying?
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">boolean</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
 			<li>false</li>
 		</ul>
 	</dd>
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1226,78 +434,23 @@ guild game.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="bot">
     <h4 id="bot"><span class="type-signature">&lt;constant> </span>bot<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The ID of the current bot account.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1307,79 +460,24 @@ guild game.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="channel">
     <h4 id="channel"><span class="type-signature">&lt;nullable> </span>channel<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The channel id a command was last sent from that affected this guild
 game.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1389,78 +487,23 @@ game.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="currentGame">
     <h4 id="currentGame"><span class="type-signature"></span>currentGame<span class="type-signature"> :<a href="HungryGames-Game.html">HungryGames~Game</a></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Current game information.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type"><a href="HungryGames-Game.html">HungryGames~Game</a></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1470,78 +513,23 @@ game.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="customEventStore">
     <h4 id="customEventStore"><span class="type-signature">&lt;constant> </span>customEventStore<span class="type-signature"> :<a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Storage manager for all custom events.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type"><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1551,13 +539,6 @@ game.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 	<dt class="tag-todo method-doc-label method-doc-details-label">To Do:</dt>
 	<dd class="tag-todo">
 		<ul>
@@ -1566,72 +547,23 @@ find for now, but would be more efficient if a global cache was used
 instead.</li>
 			</ul>
 	</dd>
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="disabledEventIds">
     <h4 id="disabledEventIds"><span class="type-signature"></span>disabledEventIds<span class="type-signature"> :Object</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         List of IDs of events to disable per-category.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">Object</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1641,85 +573,29 @@ instead.</li>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="excludedNPCs">
     <h4 id="excludedNPCs"><span class="type-signature"></span>excludedNPCs<span class="type-signature"> :Array.&lt;HungryGames~NPC></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Array of NPCs that will be excluded from the game.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">Array.&lt;HungryGames~NPC></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
 			<li>[]</li>
 		</ul>
 	</dd>
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1729,85 +605,29 @@ instead.</li>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="excludedUsers">
     <h4 id="excludedUsers"><span class="type-signature"></span>excludedUsers<span class="type-signature"> :Array.&lt;string></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Array of user IDs that will be excluded from the next game.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">Array.&lt;string></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
 			<li>[]</li>
 		</ul>
 	</dd>
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1817,78 +637,23 @@ instead.</li>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="id">
     <h4 id="id"><span class="type-signature">&lt;constant> </span>id<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The ID of the Guild this is for.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1898,85 +663,29 @@ instead.</li>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="includedNPCs">
     <h4 id="includedNPCs"><span class="type-signature"></span>includedNPCs<span class="type-signature"> :Array.&lt;HungryGames~NPC></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Array of NPCs that will be included in the game.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">Array.&lt;HungryGames~NPC></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
 			<li>[]</li>
 		</ul>
 	</dd>
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -1986,85 +695,29 @@ instead.</li>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="includedUsers">
     <h4 id="includedUsers"><span class="type-signature"></span>includedUsers<span class="type-signature"> :Array.&lt;string></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Array of user IDs that will be included in the next game.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">Array.&lt;string></span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
 			<li>[]</li>
 		</ul>
 	</dd>
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2074,86 +727,30 @@ instead.</li>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="loading">
     <h4 id="loading"><span class="type-signature"></span>loading<span class="type-signature"> :boolean</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Does this game currently have any long running operations being
 performed.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">boolean</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
 			<li>false</li>
 		</ul>
 	</dd>
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2163,78 +760,23 @@ performed.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="options">
     <h4 id="options"><span class="type-signature"></span>options<span class="type-signature"> :object</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Game options.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">object</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2244,78 +786,23 @@ performed.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="outputChannel">
     <h4 id="outputChannel"><span class="type-signature">&lt;nullable> </span>outputChannel<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The channel id where the game messages are currently being sent in.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2325,78 +812,23 @@ performed.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="reactMessage">
     <h4 id="reactMessage"><span class="type-signature">&lt;nullable> </span>reactMessage<span class="type-signature"> :Object</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Message ID of the message to fetch reactions from for join via react.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">Object</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2406,69 +838,19 @@ performed.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="serializable">
     <h4 id="serializable"><span class="type-signature"></span>serializable<span class="type-signature"></span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         Get a serializable version of this class instance. Strips all
 private variables, and all functions. Assumes all public variables are
 serializable if they aren't a function.
     </div>
-    
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2478,79 +860,24 @@ serializable if they aren't a function.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt class="name" id="statGroup">
     <h4 id="statGroup"><span class="type-signature">&lt;nullable> </span>statGroup<span class="type-signature"> :string</span></h4>
-
-    
 </dt>
 <dd>
-    
     <div class="description">
         The ID of the currently active <a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a> tracking
 stats.
     </div>
-    
-
-    
         <h5>Type:</h5>
         <ul>
             <li>
-                
 <span class="param-type">string</span>
-
-
-
             </li>
         </ul>
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2560,315 +887,100 @@ stats.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
 </dd>
-
         </dl>
-    
-
-    
         <h3 class="subsection-title">Methods</h3>
-
         <dl>
-            
 <hr>
 <dt>
     <h4 class="name" id=".forcePlayerState"><span class="type-signature">&lt;static> </span>forcePlayerState(game, list, state, messages [, text] [, cb])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Force a player to have a certain outcome in the current day
 being simulated, or the next day that will be simulated. This is acheived
 by adding a custom event in which the player will be affected after their
 normal event for the day.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>game</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The game context.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>list</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">Array.&lt;string></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The array of player IDs of which to affect.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>state</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">The outcome to force the players to have been
 victims of by the end of the simulated day. ("living", "dead", "wounded",
 or "thriving").</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>messages</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="HungryGames-Messages.html">HungryGames~Messages</a></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Reference to current Messages
 instance.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>text</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
 |
-
 <span class="param-type">Array.&lt;<a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a>></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Message to show when the
 user is affected, or array of default events if not specifying a specific
 message.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>cb</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">function</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Callback once complete. Single parameter is the
 output message to tell the user of the outcome of the operation.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -2878,161 +990,45 @@ output message to tell the user of the outcome of the operation.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id=".from"><span class="type-signature">&lt;static> </span>from(data, client)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Create a GuildGame from data parsed from file. Similar to copy
 constructor.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>data</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">object</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">GuildGame like object.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>client</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">external:Discord~Client</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Discord client reference for
 creating <a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a>.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3042,109 +1038,29 @@ creating <a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a>.</td
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     Created GuildGame.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="clearIntervals"><span class="type-signature"></span>clearIntervals()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Clear all timeouts and intervals.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3154,151 +1070,44 @@ creating <a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a>.</td
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="createInterval"><span class="type-signature"></span>createInterval( [cb])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Create an interval for this guild. Calls the callback every
 time the game state is about to be modified. State is updated immediately
 after the callback completes. This also sets `_autoStep` to true.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>cb</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="HungryGames-GuildGame.html#~StateUpdateCB">HungryGames~GuildGame~StateUpdateCB</a></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
-
             <td class="description last">Callback to fire on the
 interval. Optional only if set via setStateUpdateCallback prior to
 call to this function.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3308,85 +1117,17 @@ call to this function.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="end"><span class="type-signature"></span>end()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Force this current game to end immediately.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3396,87 +1137,19 @@ call to this function.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="formTeams"><span class="type-signature"></span>formTeams()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Add users to teams, and remove excluded users from teams.
 Deletes empty teams, and adds teams once all teams have teamSize of
 players.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3486,377 +1159,123 @@ players.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
     <h5>Returns:</h5>
-    
-            
 <div class="param-desc">
     Null if success, string if error.
 </div>
-
-
-
 <dl>
     <dt>
         Type
     </dt>
     <dd>
-        
 <span class="param-type">string</span>
-
-
-
     </dd>
 </dl>
-
-
-        
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="modifyPlayerWeapon"><span class="type-signature"></span>modifyPlayerWeapon(player, weapon [, text] [, count] [, set] [, cb])</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Give or take a weapon from a player.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
         <th>Argument</th>
-        
-
-        
         <th>Default</th>
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>player</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                 </td>
-            
-
             <td class="description last">The ID of the player to modify.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>weapon</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                 </td>
-            
-
             <td class="description last">The weapon ID to give/take.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>text</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">string</span>
 |
-
 <span class="param-type"><a href="HungryGames.html">HungryGames</a></span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                     null
-                
                 </td>
-            
-
             <td class="description last">The message text to show, or
 reference to object storing default events. If no value is given, a random
 message is chosen from `./save/hgMessages.json`.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>count</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">number</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                     1
-                
                 </td>
-            
-
             <td class="description last">The amount to give to the player. Negative to
 take away.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>set</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">boolean</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                     false
-                
                 </td>
-            
-
             <td class="description last">Set the amount to `count` instead of
 incrementing.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>cb</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">function</span>
-
-
-
-            
             </td>
-
-            
                 <td class="attributes">
-                
                     &lt;optional><br>
-                
-
-                
-
-                
                 </td>
-            
-
-            
                 <td class="default">
-                
                 </td>
-            
-
             <td class="description last">Callback once complete. Only parameter is the output
 message to tell the user of the outcome of the operation.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -3866,136 +1285,37 @@ message to tell the user of the outcome of the operation.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="setStateUpdateCallback"><span class="type-signature"></span>setStateUpdateCallback(cb)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Set the state update callback function.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>cb</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type"><a href="HungryGames-GuildGame.html#~StateUpdateCB">HungryGames~GuildGame~StateUpdateCB</a></span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">Callback to fire when
 stepped.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4005,86 +1325,18 @@ stepped.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
-        
-            
 <hr>
 <dt>
     <h4 class="name" id="step"><span class="type-signature"></span>step()</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Progress to the next game state. Calls `_stateUpdateCallback`
 prior to any action, if it's set.
     </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4094,167 +1346,48 @@ prior to any action, if it's set.
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
         </dl>
-    
-
-    
         <h3 class="subsection-title">Type Definitions</h3>
-
         <dl>
-                
 <hr>
 <dt>
     <h4 class="name" id="~StateUpdateCB"><span class="type-signature"></span>StateUpdateCB(dayComplete, doSim)</h4>
-    
-    
 </dt>
 <dd>
-
-    
     <div class="description">
         Callback to fire when game state is about to be modified.
     </div>
-    
-
-    
-
-    
-
-    
-    
         <h5>Parameters:</h5>
-        
-
 <table class="params table table-striped">
     <thead>
     <tr>
-        
         <th>Name</th>
-        
-
         <th>Type</th>
-
-        
-
-        
-
         <th class="last">Description</th>
     </tr>
     </thead>
-
     <tbody>
-    
-
         <tr>
-            
                 <td class="name"><code>dayComplete</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">boolean</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">True if this update is after a day has ended,
 false if the state is still during a day.</td>
         </tr>
-
-    
-
         <tr>
-            
                 <td class="name"><code>doSim</code></td>
-            
-
             <td class="type">
-            
-                
 <span class="param-type">boolean</span>
-
-
-
-            
             </td>
-
-            
-
-            
-
             <td class="description last">True if the next day should be simulated and
 started.</td>
         </tr>
-
-    
     </tbody>
 </table>
-
-    
-
-    
 <dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
 	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
 	<dd class="tag-source">
 		<ul class="dummy">
@@ -4264,57 +1397,19 @@ started.</td>
 			</li>
 		</ul>
 	</dd>
-	
-
-	
-
-	
-
-	
 </dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
 </dd>
-
             </dl>
-    
-
-    
 </article>
-
 </section>
-
-
-
-
 		</div>
 	</div>
-
 	<div class="clearfix"></div>
-
-	
 		<div class="col-md-3">
 			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
 		</div>
-	
-
 </div>
 </div>
-
-
     <div class="modal fade" id="searchResults">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -4329,41 +1424,27 @@ started.</td>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div>
-
-
 <footer>
-
-
 	<span class="copyright">
 	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
 	</span>
-
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
-	
 		on Saturday, May 23, 2020 8:45 PM (-07:00)
-	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
 </footer>
-
 <script src="scripts/docstrap.lib.js"></script>
 <script src="scripts/toc.js"></script>
-
     <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
-
-
 <script>
 $( function () {
 	$( "[id*='$']" ).each( function () {
 		var $this = $( this );
-
 		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
 	} );
-
 	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
 		var $this = $( this );
-
 		var example = $this.find( "code" );
 		exampleText = example.html();
 		var lang = /{@lang (.*?)}/.exec( exampleText );
@@ -4375,23 +1456,18 @@ $( function () {
 			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
 			lang = langClassMatch ? langClassMatch[1] : "javascript";
 		}
-
 		if ( lang ) {
-
 			$this
 			.addClass( "sunlight-highlight-" + lang )
 			.addClass( "linenums" )
 			.html( example.html() );
-
 		}
 	} );
-
 	Sunlight.highlightAll( {
 		lineNumbers : true,
 		showMenu : true,
 		enableDoclinks : true
 	} );
-
 	$.catchAnchorLinks( {
         navbarOffset: 10
 	} );
@@ -4403,25 +1479,16 @@ $( function () {
 		showAndHide : false,
 		smoothScrolling: true
 	} );
-
 	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
 	$( '.dropdown-toggle' ).dropdown();
-
     $( "table" ).each( function () {
       var $this = $( this );
       $this.addClass('table');
     } );
-
 } );
 </script>
-
-
-
 <!--Navigation and Symbol Display-->
-
-
 <!--Google Analytics-->
-
 <script>
 	(function ( i, s, o, g, r, a, m ) {
 		i['GoogleAnalyticsObject'] = r;
@@ -4434,19 +1501,13 @@ $( function () {
 		a.src = g;
 		m.parentNode.insertBefore( a, m )
 	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
-
 	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
 	ga( 'send', 'pageview' );
 </script>
-
-
-
     <script type="text/javascript">
         $(document).ready(function() {
             SearcherDisplay.init();
         });
     </script>
-
-
 </body>
 </html>
