@@ -676,6 +676,10 @@ class ShardingSlave {
           this.id);
       return;
     }
+    if (Date.now() - this._status.startTime < 100) {
+      this._hbEvalResHandler(null, null);
+      return;
+    }
     const hbEvalReq = 'this.getStats(true)';
 
     // common.logDebug('Attempting to fetch stats for heartbeat...');
@@ -696,7 +700,7 @@ class ShardingSlave {
   _hbEvalResHandler(err, res) {
     const now = Date.now();
     const s = this._status;
-    if (err || !res) {
+    if (err || (!res && Date.now() - this._status.startTime < 100)) {
       common.error('Failed to fetch stats for heartbeat!', this.id);
       if (err) console.error(err);
       // this._socket.emit('status', s);
