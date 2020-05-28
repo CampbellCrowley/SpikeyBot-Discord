@@ -1205,7 +1205,7 @@ class ShardingMaster {
    */
   _sendSlaveFile(filename, cb) {
     const file = path.resolve(`${botCWD}/${filename}`);
-    if (!file.startsWith(botCWD)) {
+    if (typeof filename != 'string' || !file.startsWith(botCWD)) {
       common.error(
           `Attempted to send file outside of project directory: ${file}`);
       cb('File path unacceptable');
@@ -1251,7 +1251,7 @@ class ShardingMaster {
    */
   writeFile(filename, data, cb) {
     const file = path.resolve(`${botCWD}/${filename}`);
-    if (!file.startsWith(botCWD)) {
+    if (typeof filename != 'string' || !file.startsWith(botCWD)) {
       this.error(
           `Attempted to write file outside of project directory: ${file}`);
       cb('File path unacceptable');
