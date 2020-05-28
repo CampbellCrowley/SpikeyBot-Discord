@@ -1054,12 +1054,20 @@ class ShardingMaster {
       user.lastSeen = Date.now();
       this.rebootRequest(...args);
     });
+    socket.on('writeFile', (...args) => {
+      user.lastSeen = Date.now();
+      this.writeFile(...args);
+    });
+    socket.on('getFile', (...args) => {
+      user.lastSeen = Date.now();
+      this._sendSlaveFile(...args);
+    });
 
     if (this._config.copyFiles) {
       this._config.copyFiles.forEach((el) => {
         fs.readFile(el, (err, data) => {
           if (err) {
-            common.error('Failed to read file to send to slaves: ' + el);
+            common.error(`Failed to read file to send to slaves: ${el}`);
             console.error(err);
             return;
           }
@@ -1186,6 +1194,92 @@ class ShardingMaster {
     }
     global.sqlCon.query(
         query, (err, ...args) => cb(this._makeSerializableError(err), ...args));
+  }
+
+  /**
+   * @description Send the specified file to the ShardingSlave.
+   *
+   * @private
+   * @param {string} filename Filename relative to project directory.
+   * @param {Function} cb Callback with optional error argument.
+   */
+  _sendSlaveFile(filename, cb) {
+    const file = path.resolve(`${botCWD}/${filename}`);
+    if (!file.startsWith(botCWD)) {
+      common.error(
+          `Attempted to send file outside of project directory: ${file}`);
+      cb('File path unacceptable');
+      return;
+    }
+    // Send original filename, as ShardingSlave expects the same format.
+    fs.readFile(filename, (err, data) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          this._socket.emit('writeFile', filename, null, (err) => {
+            if (err) {
+              common.error(`Failed to read file for slave: ${file}`);
+              console.error(err);
+            } else {
+              cb(null);
+            }
+          });
+        } else {
+          common.error(`Failed to read file for slave: ${file}`);
+          console.error(err);
+          cb(null);
+        }
+      } else {
+        this._socket.emit('writeFile', filename, data, (err) => {
+          if (err) {
+            common.error(`Failed to write file on slave: ${file}`);
+            console.error(err);
+          } else {
+            cb(null);
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * @description Write a given file to disk, or unlink.
+   * @public
+   * @param {string} filename The name of the file to update, relative to
+   *     project directory.
+   * @param {?*} data The data to write to file, or null to unlink the file.
+   * @param {Function} cb First argument is optional error.
+   */
+  writeFile(filename, data, cb) {
+    const file = path.resolve(`${botCWD}/${filename}`);
+    if (!file.startsWith(botCWD)) {
+      this.error(
+          `Attempted to write file outside of project directory: ${file}`);
+      cb('File path unacceptable');
+      return;
+    }
+    if (data === null) {
+      common.unlink(file, (err) => {
+        if (err) {
+          common.error(`Failed to write file to disk: ${file}`);
+          console.error(err);
+          cb('IO Failed');
+        } else {
+          common.logDebug(`Wrote file to disk: ${file}`);
+          cb(null);
+        }
+      });
+    } else {
+      common.mkAndWrite(file, null, data, (err) => {
+        if (err) {
+          common.error(`Failed to write file to disk: ${file}`);
+          console.error(err);
+          cb('IO Failed');
+        } else {
+          common.logDebug(`Wrote file to disk: ${file}`);
+          cb(null);
+        }
+      });
+    }
   }
 
   /**

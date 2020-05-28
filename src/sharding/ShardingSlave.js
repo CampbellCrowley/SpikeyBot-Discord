@@ -458,29 +458,47 @@ class ShardingSlave {
   }
 
   /**
-   * @description Sharding master has requested one of our files.
+   * @description Send the specified file to the ShardingMaster.
    *
    * @private
    * @param {string} filename Filename relative to project directory.
-   * @param {Function} cb Callback to send the error or file back on.
+   * @param {Function} cb Callback with optional error argument.
    */
   _sendMasterFile(filename, cb) {
     this._lastSeen = Date.now();
     const file = path.resolve(`${botCWD}/${filename}`);
     if (!file.startsWith(botCWD)) {
-      common.logWarning(
-          'Master requested file outside of project directory: ' + file);
-      cb(null);
+      common.error(
+          `Attempted to send file outside of project directory: ${file}`);
+      cb('File path unacceptable');
       return;
     }
-    fs.readFile(file, (err, data) => {
+    // Send original filename, as ShardingMaster expects the same format.
+    fs.readFile(filename, (err, data) => {
       if (err) {
-        common.error('Failed to read file that master requested disk: ' + file);
-        console.error(err);
-        cb(null);
+        if (err.code === 'ENOENT') {
+          this._socket.emit('writeFile', filename, null, (err) => {
+            if (err) {
+              common.error(`Failed to delete file on master: ${file}`);
+              console.error(err);
+            } else {
+              cb(null);
+            }
+          });
+        } else {
+          common.error(`Failed to read file for master: ${file}`);
+          console.error(err);
+          cb(null);
+        }
       } else {
-        common.logDebug('Sending file to master from disk: ' + file);
-        cb(data);
+        this._socket.emit('writeFile', filename, data, (err) => {
+          if (err) {
+            common.error(`Failed to write file on master: ${file}`);
+            console.error(err);
+          } else {
+            cb(null);
+          }
+        });
       }
     });
   }
@@ -553,6 +571,26 @@ class ShardingSlave {
             this._child.send({_sSQL: message._sSQL, _error: err});
           } else {
             this._child.send({_sSQL: message._sSQL, _result: res});
+          }
+        });
+        return;
+      } else if (message._sWriteFile) {
+        // Shard has requested to send a file to our primary node.
+        this._sendMasterFile(message.sWriteFile, (err, res) => {
+          if (err) {
+            this._child.send({_sWriteFile: message.sWriteFile, _error: err});
+          } else {
+            this._child.send({_sWriteFile: message.sWriteFile, _result: res});
+          }
+        });
+        return;
+      } else if (message._sGetFile) {
+        // Shard has requested to get a file from our primary node.
+        this._socket.emit('getFile', message.sGetFile, (err, res) => {
+          if (err) {
+            this._child.send({_sGetFile: message.sGetFile, _error: err});
+          } else {
+            this._child.send({_sGetFile: message.sGetFile, _result: res});
           }
         });
         return;
