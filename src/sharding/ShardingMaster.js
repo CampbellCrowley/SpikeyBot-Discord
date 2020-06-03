@@ -850,22 +850,22 @@ class ShardingMaster {
       }
       ++i;
     }
-    if (remove > 0) {
-      this._ipConnectHistory.splice(0, remove);
-    }
+    if (remove > 0) this._ipConnectHistory.splice(0, remove);
     if (ipCount >= this._config.connCount) {
       socket.disconnect(true);
       return;
     }
     common.log(
-        `Socket    connected (${this.getNumClients()}): ${ipName}`, socket.id);
+        `Socket    connected (${this.getNumClients()}): ${ipName.trim()} (#${
+          ipCount}/${this._config.connCount})`,
+        socket.id);
     this._sockets[socket.id] = socket;
 
     socket.on('disconnect', (reason) => {
       const num = this.getNumClients() - 1;
       const id = socket.userId || userId;
       common.log(
-          `Socket disconnected (${num})(${reason})(${id}): ${ipName}`,
+          `Socket disconnected (${num})(${reason})(${id}): ${ipName.trim()}`,
           socket.id);
       delete this._sockets[socket.id];
       if (id && this._shardSockets[id] &&
@@ -912,6 +912,11 @@ class ShardingMaster {
       common.logWarning(
           'Socket attempted connection ID of shard that is already connected!',
           socket.id);
+      // This no longer focibly disconnects because in some cases the client
+      // would attempt to reconnect before the server had identified that the
+      // connection was lost. In these cases we want the new connection to
+      // replace the old.
+      //
       // socket.disconnect(true);
       // return;
     }
