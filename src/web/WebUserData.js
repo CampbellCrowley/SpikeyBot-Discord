@@ -85,7 +85,6 @@ class WebUserData {
      */
     this._session = {
       id: this.sessionId,
-      /* eslint-disable-next-line @typescript-eslint/camelcase */
       expiration_date: this.sessionExpirationDate,
     };
 
@@ -262,7 +261,6 @@ class WebUserData {
     } else {
       this._sessionExpirationDate = new Date(sED).getTime();
     }
-    /* eslint-disable-next-line @typescript-eslint/camelcase */
     this._session.expiration_date = this._sessionExpirationDate;
   }
 

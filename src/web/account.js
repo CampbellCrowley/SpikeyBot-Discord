@@ -507,13 +507,11 @@ function WebAccount() {
         }
       });
     });
-    /* eslint-disable @typescript-eslint/camelcase */
     req.end(querystring.stringify({
       code: code,
       redirect_uri: redirectURL,
       grant_type: 'authorization_code',
     }));
-    /* eslint-enable @typescript-eslint/camelcase */
   }
 
   /**
@@ -952,12 +950,10 @@ function WebAccount() {
           }
         });
       });
-      /* eslint-disable @typescript-eslint/camelcase */
       req.end(querystring.stringify({
         refresh_token: token,
         grant_type: 'refresh_token',
       }));
-      /* eslint-enable @typescript-eslint/camelcase */
     }
   };
   /**

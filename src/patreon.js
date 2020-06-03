@@ -768,7 +768,6 @@ function Patreon() {
             return;
           }
           Object.assign(tokenData, parsed);
-          /* eslint-disable-next-line @typescript-eslint/camelcase */
           tokenData.expires_at = now + (tokenData.expires_in * 1000);
           self.common.mkAndWrite(
               tokenFile, null, JSON.stringify(tokenData), (err) => {

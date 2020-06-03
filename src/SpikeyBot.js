@@ -872,7 +872,6 @@ function SpikeyBot() {
     req.on('error', () => {});
     const user = client.user;
     const id = user && user.id || 'NOID';
-    /* eslint-disable @typescript-eslint/camelcase */
     req.end(JSON.stringify({
       text: `${tag}:${id} JS${self.version}`,
       tag: tag,
@@ -883,7 +882,6 @@ function SpikeyBot() {
       version: self.version,
       fqdn: hostname,
     }));
-    /* eslint-enable @typescript-eslint/camelcase */
     // Reset save interval
     clearInterval(saveInterval);
     saveInterval = setInterval(saveAll, saveFrequency);
