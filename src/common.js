@@ -7,6 +7,7 @@ const mkdirp = require('mkdirp');
 const sql = require('mysql');
 const auth = require('../auth.js');
 const path = require('path');
+const yj = require('yieldable-json');
 
 /**
  * Commonly required things. Helper functions and constants.
@@ -914,6 +915,73 @@ Common.unlinkSync = function(filename) {
   if (this.sendFile) this.sendFile(filename);
 };
 Common.prototype.unlinkSync = Common.unlinkSync;
+
+/**
+ * Read a file's contents, checks other shards for newer version first. This
+ * does not have a syncronous version as the whole point of this is to
+ * potentially fetch a newer file from another server.
+ *
+ * @public
+ * @param {string} filename The name of the file to read.
+ * @param {Function} [cb] Callback once completed, with optional error
+ *     parameter, and parameter of file contents from `fs.readFile`.
+ */
+Common.readFile = function(filename, cb) {
+  if (!cb) throw new TypeError('readFile must have a callback function');
+  if (this.getFile) {
+    this.getFile(filename, (err, res) => {
+      if (err) {
+        cb(err, res);
+        return;
+      }
+      fs.readFile(filename, cb);
+    });
+  } else {
+    fs.readFile(filename, cb);
+  }
+};
+Common.prototype.readFile = Common.readFile;
+
+/**
+ * Parse a JSON string.
+ *
+ * @public
+ * @param {string} str String to parse.
+ * @param {Function} [cb] Callback once completed, with optional error
+ *     parameter, and parameter of parsed data.
+ */
+Common.parse = function(str, cb) {
+  if (!cb) throw new TypeError('parse must have a callback function');
+  yj.parseAsync(str.toString(), cb);
+};
+Common.prototype.readFile = Common.readFile;
+
+/**
+ * Read a file's contents, checks other shards for newer version first, and
+ * parse the file's contents info from JSON to objects. This does not have a
+ * syncronous version as the whole point of this is to potentially fetch a newer
+ * file from another server.
+ *
+ * @public
+ * @param {string} filename The name of the file to read and parse.
+ * @param {Function} [cb] Callback once completed, with optional error
+ *     parameter, and parameter of parsed contents.
+ */
+Common.readAndParse = function(filename, cb) {
+  if (!cb) throw new TypeError('readAndParse must have a callback function');
+  const read = this.readFile || Common.readFile;
+  const parse = this.parse || Common.parse;
+  read(filename, (err, file) => {
+    if (err) {
+      cb(err, file);
+    } else if (!file || file.length == 0) {
+      cb(null, null);
+    } else {
+      parse(file, cb);
+    }
+  });
+};
+Common.prototype.readFile = Common.readFile;
 
 /**
  * Recursively freeze all elements of an object.
