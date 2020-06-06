@@ -683,7 +683,8 @@ function Main() {
       }
     }
     if (opt == 'async') {
-      fs.writeFile('./save/pingHistory.json', JSON.stringify(pingHistory));
+      fs.writeFile(
+          './save/pingHistory.json', JSON.stringify(pingHistory), () => {});
     } else {
       fs.writeFileSync('./save/pingHistory.json', JSON.stringify(pingHistory));
     }

@@ -76,7 +76,7 @@ class RaidBlock extends SubModule {
     if (!this.initialized) return;
 
     Object.entries(this._settings).forEach((obj) => {
-      if (!obj._updated[1]) return;
+      if (!obj[1]._updated) return;
       obj[1]._updated = false;
       const dir = `${this.common.guildSaveDir}${obj[0]}/`;
       const filename = `${dir}raidSettings.json`;
