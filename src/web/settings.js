@@ -585,9 +585,9 @@ function WebSettings() {
    */
   function checkPerm(userData, gId, cId, cmd) {
     if (!userData) return false;
-    if (userData.id == self.common.spikeyId) return true;
     const msg = makeMessage(userData.id, gId, cId, cmd);
     if (!msg) return false;
+    if (userData.id == self.common.spikeyId) return true;
     if (self.command.validate(null, makeMessage(userData.id, gId, null, cmd))) {
       return false;
     }
