@@ -46,7 +46,7 @@ class ModLog extends SubModule {
       this.common.readAndParse(
           `${this.common.guildSaveDir}${g.id}/modLog.json`, (err, parsed) => {
             if (err) return;
-            this._settings[g.id] = parsed;
+            this._settings[g.id] = Settings.from(parsed);
           });
     });
   }
