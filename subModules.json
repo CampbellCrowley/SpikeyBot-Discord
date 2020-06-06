@@ -15,7 +15,6 @@
     "./roleColors.js",
     "./web/stats.js",
     "./web/webApi.js",
-    "./twitch.js",
     "./images.js"
   ],
   "master": [
@@ -83,12 +82,8 @@
     "./roleColors.js",
     "./botCommands.js",
     "./web/hg.js",
-    "./web/webApi.js",
-    "./web/account.js",
     "./web/stats.js",
     "./web/settings.js",
-    "./web/proxy.js",
-    "./twitch.js",
     "./memWatcher.js",
     "./images.js"
   ],
