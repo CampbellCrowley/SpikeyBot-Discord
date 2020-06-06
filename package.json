@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@discordjs/opus": "^0.1.0",
-    "@google-cloud/text-to-speech": "^2.3.0",
+    "@google-cloud/text-to-speech": "^3.0.0",
     "algebra.js": "^0.2.6",
     "async": "^3.2.0",
     "bufferutil": "^4.0.1",
