@@ -59,6 +59,8 @@ class ModLog extends SubModule {
     if (!this.initialized) return;
 
     Object.entries(this._settings).forEach((obj) => {
+      if (!obj[1]._updated) return;
+      obj[1]._updated = false;
       const dir = `${this.common.guildSaveDir}${obj[0]}/`;
       const filename = `${dir}modLog.json`;
       if (opt == 'async') {
@@ -347,6 +349,21 @@ class Settings {
      * @default
      */
     this.logOther = false;
+    /**
+     * @description Have these settings been changed since our last save.
+     * @private
+     * @type {boolean}
+     * @default
+     */
+    this._updated = false;
+  }
+
+  /**
+   * @description Enqueue these settings to be saved to disk.
+   * @public
+   */
+  updated() {
+    this._updated = true;
   }
 
   /**

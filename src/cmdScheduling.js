@@ -91,6 +91,8 @@ function CmdScheduling() {
    */
   this.save = function(opt) {
     self.client.guilds.cache.forEach((g) => {
+      if (!schedulesUpdated[g.id]) return;
+      delete schedulesUpdated[g.id];
       if (!schedules[g.id]) schedules[g.id] = [];
       schedules[g.id] = schedules[g.id].filter((el) => !el.complete);
       const data = schedules[g.id].map((el) => el.toJSON());
@@ -219,6 +221,14 @@ function CmdScheduling() {
    */
   let listeners = {};
 
+  /**
+   * @description All of the guilds that have updated their schedules since last
+   * save.
+   * @private
+   * @type {object.<boolean>}
+   * @default
+   */
+  const schedulesUpdated = {};
   /**
    * All of the currently loaded commands to run. Mapped by Guild ID, then
    * sorted arrays by time to run next command.
@@ -529,6 +539,7 @@ function CmdScheduling() {
       schedules[gId].push(sCmd);
     }
     if (sCmd.message) {
+      schedulesUpdated[gId] = true;
       fireEvent('commandRegistered', sCmd, sCmd.message.guild.id);
     }
     return true;
@@ -802,12 +813,13 @@ function CmdScheduling() {
     const list = schedules[gId];
     if (!list || list.length == 0) return null;
     if (!cmdId) return null;
-    cmdId = (cmdId + '').toUpperCase();
+    cmdId = `${cmdId}`.toUpperCase();
     for (let i = 0; i < list.length; i++) {
       if (list[i].complete) continue;
       if (list[i].id == cmdId) {
         const removed = list.splice(i, 1)[0];
         removed.cancel();
+        schedulesUpdated[gId] = true;
         fireEvent('commandCancelled', removed.id, removed.message.guild.id);
         return removed;
       }
@@ -880,6 +892,7 @@ function CmdScheduling() {
         if (abort) {
           schedules[g][i].cancel();
           schedules[g].splice(i, 1);
+          schedulesUpdated[g] = true;
         } else {
           schedules[g][i].setTimeout();
         }

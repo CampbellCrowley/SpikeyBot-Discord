@@ -111,6 +111,14 @@ function Main() {
   });
 
   /**
+   * All guilds that have updated their settings since the last time we saved
+   * data.
+   *
+   * @private
+   * @type {object.<boolean>}
+   */
+  const settingsUpdated = {};
+  /**
    * All guilds that have disabled the auto-smite feature.
    *
    * @private
@@ -638,6 +646,8 @@ function Main() {
   this.save = function(opt) {
     if (!self.initialized) return;
     self.client.guilds.cache.forEach((g) => {
+      if (!settingsUpdated[g.id]) return;
+      delete settingsUpdated[g.id];
       const dir = `${self.common.guildSaveDir}${g.id}`;
       const filename = `${dir}/main-config.json`;
       const obj = {
@@ -652,14 +662,15 @@ function Main() {
         self.common.mkAndWriteSync(filename, dir, JSON.stringify(obj));
       }
 
-      const filename2 = `${dir}/banCache.json`;
-      if (opt == 'async') {
-        self.common.mkAndWrite(
-            filename2, dir, JSON.stringify(banListCache[g.id]));
-      } else {
-        self.common.mkAndWriteSync(
-            filename2, dir, JSON.stringify(banListCache[g.id]));
-      }
+      // TODO: Enable ban list saving once this is re-implemented.
+      // const filename2 = `${dir}/banCache.json`;
+      // if (opt == 'async') {
+      //   self.common.mkAndWrite(
+      //       filename2, dir, JSON.stringify(banListCache[g.id]));
+      // } else {
+      //   self.common.mkAndWriteSync(
+      //       filename2, dir, JSON.stringify(banListCache[g.id]));
+      // }
     });
     if (!self.client.shard || self.client.shard.ids[0] == 0) {
       const dir = './save/';
@@ -672,11 +683,9 @@ function Main() {
       }
     }
     if (opt == 'async') {
-      self.common.mkAndWrite(
-          './save/pingHistory.json', './save/', JSON.stringify(pingHistory));
+      fs.writeFile('./save/pingHistory.json', JSON.stringify(pingHistory));
     } else {
-      self.common.mkAndWriteSync(
-          './save/pingHistory.json', './save/', JSON.stringify(pingHistory));
+      fs.writeFileSync('./save/pingHistory.json', JSON.stringify(pingHistory));
     }
   };
 
@@ -841,6 +850,7 @@ function Main() {
    * @listens Command#toggleMute
    */
   function commandToggleMute(msg) {
+    settingsUpdated[msg.guild.id] = true;
     if (disabledAutoSmite[msg.guild.id]) {
       disabledAutoSmite[msg.guild.id] = false;
       self.common.reply(
@@ -860,6 +870,7 @@ function Main() {
    * @listens Command#toggleBanMessages
    */
   function commandToggleBanMessages(msg) {
+    settingsUpdated[msg.guild.id] = true;
     if (disabledBanMessage[msg.guild.id]) {
       disabledBanMessage[msg.guild.id] = false;
       self.common.reply(
@@ -880,6 +891,7 @@ function Main() {
    * @listens Command#toggleRigged
    */
   function commandToggleRiggedCounter(msg) {
+    settingsUpdated[msg.guild.id] = true;
     if (disabledRiggedCounter[msg.guild.id]) {
       disabledRiggedCounter[msg.guild.id] = false;
       self.common.reply(msg, 'Enabled showing rigged counter.');
@@ -899,6 +911,7 @@ function Main() {
    * @listens Command#toggleDad
    */
   function commandToggleDad(msg) {
+    settingsUpdated[msg.guild.id] = true;
     if (disabledDadBot[msg.guild.id]) {
       disabledDadBot[msg.guild.id] = false;
       self.common.reply(msg, 'Enabled showing replies to Dad Bot.');

@@ -1365,6 +1365,7 @@ function WebSettings() {
       cb('Bad Payload');
       return;
     }
+    settings.updated();
     cb(null);
 
     guildBroadcast(gId, 'raidSettingsChanged', gId);
@@ -1423,6 +1424,7 @@ function WebSettings() {
       cb('Bad Payload');
       return;
     }
+    settings.updated();
     cb(null);
 
     guildBroadcast(gId, 'modLogSettingsChanged', gId);
@@ -1491,6 +1493,7 @@ function WebSettings() {
     } else {
       setting[key] = value;
     }
+    setting.updated();
 
     cb(null);
 

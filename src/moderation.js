@@ -17,15 +17,22 @@ class Moderation extends SubModule {
     /** @inheritdoc */
     this.myName = 'Moderation';
     /**
+     * @description All guilds that have changed their settings since last save.
+     * @private
+     * @type {object.<boolean>}
+     */
+    this._settingsUpdated = {};
+    /**
      * All guilds that have disabled the auto-smite feature.
+     * Not actually used at this time.
      *
      * @private
      * @type {object.<boolean>}
      */
     this._disabledAutoSmite = {};
-
     /**
      * All guilds that have disabled sending messages when someone is banned.
+     * Not actually used at this time.
      *
      * @private
      * @type {object.<boolean>}
@@ -34,6 +41,7 @@ class Moderation extends SubModule {
     /**
      * The guilds with auto-smite enabled, and members who have mentioned
      * "@everyone", and the timestamps of these mentions.
+     * Not actually used at this time.
      *
      * @private
      * @type {object.<object.<string>>}
@@ -230,6 +238,8 @@ class Moderation extends SubModule {
     if (!this.initialized) return;
 
     this.client.guilds.cache.forEach((obj) => {
+      if (!this._settingsUpdated[obj.id]) return;
+      delete this._settingsUpdated[obj.id];
       const dir = `${this.common.guildSaveDir}${obj.id}/`;
       const filename = `${dir}moderation.json`;
       const data = {

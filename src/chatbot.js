@@ -17,6 +17,14 @@ function ChatBot() {
   this.myName = 'ChatBot';
 
   /**
+   * @description The guilds that have changed their settings since last save.
+   *
+   * @private
+   * @type {object.<boolean>}
+   * @default
+   */
+  const settingsUpdated = {};
+  /**
    * The guilds that have disabled the chatbot feature.
    *
    * @private
@@ -86,11 +94,11 @@ function ChatBot() {
    */
   this.save = function(opt) {
     self.client.guilds.cache.forEach((g) => {
-      const dir = self.common.guildSaveDir + g.id;
-      const filename = dir + '/chatbot-config.json';
-      const obj = {
-        disabledChatBot: disabledChatBot[g.id],
-      };
+      if (!settingsUpdated[g.id]) return;
+      delete settingsUpdated[g.id];
+      const dir = `${self.common.guildSaveDir}${g.id}`;
+      const filename = `${dir}/chatbot-config.json`;
+      const obj = {disabledChatBot: disabledChatBot[g.id]};
       if (opt == 'async') {
         self.common.mkAndWrite(filename, dir, JSON.stringify(obj));
       } else {
@@ -258,6 +266,7 @@ function ChatBot() {
    * @listens Command#togglechatbot
    */
   function commandToggleChatBot(msg) {
+    settingsUpdated[msg.guild.id] = true;
     if (disabledChatBot[msg.guild.id]) {
       disabledChatBot[msg.guild.id] = false;
       self.common.reply(msg, 'Enabled chatbot feature.');

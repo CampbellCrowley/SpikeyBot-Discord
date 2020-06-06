@@ -79,6 +79,8 @@ function Command() {
   /** @inheritdoc */
   this.save = function(opt) {
     Object.entries(userSettings).forEach((el) => {
+      if (!el[1]._updated) return;
+      el[1]._updated = false;
       const dir = self.common.guildSaveDir + el[0];
       const filename = dir + commandSettingsFile;
 
@@ -344,15 +346,11 @@ function Command() {
             const settings = el[1][myName];
             return [el[0], settings];
           })
-          .filter((el) => {
-            return el[1];
-          })
-          .reduce(
-              (p, c) => {
-                p[c[0]] = c[1];
-                return p;
-              },
-              {});
+          .filter((el) => el[1])
+          .reduce((p, c) => {
+            p[c[0]] = c[1];
+            return p;
+          }, {});
     };
   }
   /** @see {@link Command~SingleCommand} */
@@ -390,6 +388,20 @@ function Command() {
      * for everyone, unless they fall under the 'disabled' list.
      */
     this.defaultDisabled = opts.defaultDisabled || false;
+    /**
+     * @description Have these settings been modified since last save.
+     * @protected
+     * @type {boolean}
+     * @default
+     */
+    this._updated = false;
+    /**
+     * @description Enqueue these settings to be saved to disk.
+     * @public
+     */
+    this.updated = function() {
+      me._updated = true;
+    };
     /**
      * The IDs of all places where this command is currently disabled. Any ID
      * will be mapped to a truthy value. Roles will be mapped to the guild ID
@@ -546,6 +558,7 @@ function Command() {
               type +
               '\'. (Expected \'guild\', \'channel\', \'user\', or \'role\'.)');
       }
+      me.updated();
       self.fire('settingsChanged', me.myGuild, value, type, id, id2);
     };
 
