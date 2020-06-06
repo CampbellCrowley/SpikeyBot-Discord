@@ -38,34 +38,35 @@ function CmdScheduling() {
 
     const now = Date.now();
     self.client.guilds.cache.forEach((g) => {
-      fs.readFile(self.common.guildSaveDir + g.id + saveSubDir, (err, data) => {
-        if (err && err.code == 'ENOENT') return;
-        if (err) {
-          self.warn('Failed to load scheduled command: ' + g.id);
-          return;
-        }
-        try {
-          const parsed = JSON.parse(data);
-          if (!parsed && parsed.length !== 0) {
-            self.warn('Failed to parse scheduled commands: ' + g.id);
-            return;
-          }
-          if (!schedules[g.id]) schedules[g.id] = [];
-          for (let i = 0; i < parsed.length; i++) {
-            if (parsed[i].bot != self.client.user.id) continue;
-            if (parsed[i].time < now) {
-              while (parsed[i].repeatDelay > 0 &&
-                     parsed[i].time < now - parsed[i].repeatDelay) {
-                parsed[i].time += parsed[i].repeatDelay;
-              }
+      self.common.readFile(
+          `${self.common.guildSaveDir}${g.id}${saveSubDir}`, (err, data) => {
+            if (err && err.code == 'ENOENT') return;
+            if (err) {
+              self.warn('Failed to load scheduled command: ' + g.id);
+              return;
             }
-            registerScheduledCommand(new ScheduledCommand(parsed[i]), g.id);
-          }
-        } catch (err) {
-          self.error('Failed to parse data for guild commands: ' + g.id);
-          console.error(err);
-        }
-      });
+            try {
+              const parsed = JSON.parse(data);
+              if (!parsed && parsed.length !== 0) {
+                self.warn('Failed to parse scheduled commands: ' + g.id);
+                return;
+              }
+              if (!schedules[g.id]) schedules[g.id] = [];
+              for (let i = 0; i < parsed.length; i++) {
+                if (parsed[i].bot != self.client.user.id) continue;
+                if (parsed[i].time < now) {
+                  while (parsed[i].repeatDelay > 0 &&
+                         parsed[i].time < now - parsed[i].repeatDelay) {
+                    parsed[i].time += parsed[i].repeatDelay;
+                  }
+                }
+                registerScheduledCommand(new ScheduledCommand(parsed[i]), g.id);
+              }
+            } catch (err) {
+              self.error('Failed to parse data for guild commands: ' + g.id);
+              console.error(err);
+            }
+          });
     });
 
     longInterval = self.client.setInterval(reScheduleCommands, maxTimeout);
@@ -107,20 +108,13 @@ function CmdScheduling() {
    * @param {string} [opt='sync'] See {@link save}.
    */
   function writeSaveData(i, data, opt) {
-    const dir = self.common.guildSaveDir + i;
-    const filename = dir + saveSubDir;
+    const dir = `${self.common.guildSaveDir}${i}`;
+    const filename = `${dir}${saveSubDir}`;
     if (opt === 'async') {
-      fs.readFile(filename, (err, rec) => {
-        if (!err && rec) {
-          try {
-            const parsed = JSON.parse(rec);
-            if (parsed && parsed.length > 0) {
-              data = rec.filter((el) => el.bot != self.client.user.id)
-                  .concat(data);
-            }
-          } catch (e) {
-            // No data exists.
-          }
+      self.common.readAndParse(filename, (err, parsed) => {
+        if (!err && parsed && parsed.length > 0) {
+          data =
+              parsed.filter((el) => el.bot != self.client.user.id).concat(data);
         }
         const finalData = JSON.stringify(data);
         self.common.mkAndWrite(filename, dir, finalData, (err) => {
@@ -135,7 +129,8 @@ function CmdScheduling() {
         const rec = fs.readFileSync(filename);
         const parsed = JSON.parse(rec);
         if (parsed && parsed.length > 0) {
-          data = rec.filter((el) => el.bot != self.client.user.id).concat(data);
+          data =
+              parsed.filter((el) => el.bot != self.client.user.id).concat(data);
         }
       } catch (err) {
         // No data exists.

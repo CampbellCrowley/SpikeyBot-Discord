@@ -1,6 +1,5 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const fs = require('fs');
 const SubModule = require('./subModule.js');
 
 /**
@@ -58,19 +57,11 @@ class RaidBlock extends SubModule {
     this.client.on('guildMemberAdd', this._onGuildMemberAdd);
 
     this.client.guilds.cache.forEach((g) => {
-      fs.readFile(
+      this.common.readAndParse(
           `${this.common.guildSaveDir}${g.id}/raidSettings.json`,
-          (err, file) => {
+          (err, parsed) => {
             if (err) return;
-            let parsed;
-            try {
-              parsed = RaidSettings.from(JSON.parse(file));
-              this._settings[g.id] = parsed;
-            } catch (e) {
-              this.error('Failed to parse raidSettings: ' + g.id);
-              console.error(e);
-              return;
-            }
+            this._settings[g.id] = RaidSettings.from(parsed);
           });
     });
   }

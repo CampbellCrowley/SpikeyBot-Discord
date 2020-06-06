@@ -556,21 +556,16 @@ function Patreon() {
       if (err || !info.status) {
         fetchValue(patreonSettingsTemplate, permVals.concat(['default']), cb);
       } else {
-        fs.readFile(
-            self.common.userSaveDir + uId + patreonSettingsFilename,
-            (err, data) => {
-              let parsed = {};
-              if (!err) {
-                try {
-                  parsed = JSON.parse(data);
-                } catch (e) {
-                  self.error(
-                      'Failed to parse user settings file: ' + uId +
-                      patreonSettingsFilename);
-                  console.error(e);
-                  cb('Internal Error', null);
-                  return;
-                }
+        self.common.readAndParse(
+            `${self.common.userSaveDir}${uId}${patreonSettingsFilename}`,
+            (err, parsed) => {
+              if (err) {
+                self.error(
+                    'Failed to parse user settings file: ' + uId +
+                    patreonSettingsFilename);
+                console.error(err);
+                cb('Internal Error', null);
+                return;
               }
               fetchValue(parsed, permVals, onFetchedValue);
             });

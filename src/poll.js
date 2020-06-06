@@ -1,4 +1,4 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const emojiChecker = require('./lib/twemojiChcker.js');
 const fs = require('fs');
@@ -27,6 +27,8 @@ function Polling() {
 
     self.client.guilds.cache.forEach((g) => {
       const dir = self.common.guildSaveDir + g.id + guildSubDir;
+      // TODO: Change this to not need to list all subdirectories. Potentially
+      // use a master-list JSON file for each guild instead.
       fs.readdir(dir, (err, files) => {
         if (err && err.code != 'ENOENT') {
           self.error('Failed to read directory: ' + dir);
@@ -36,15 +38,17 @@ function Polling() {
           return;
         }
         files.forEach((folder) => {
-          fs.readFile(dir + folder + '/' + saveFilename, (err, data) => {
-            if (err) {
-              self.error(
-                  'Failed to read file: ' + dir + folder + '/' + saveFilename);
-              console.error(err);
-              return;
-            }
-            parsePollString(data);
-          });
+          self.common.readFile(
+              `${dir}${folder}/${saveFilename}`, (err, data) => {
+                if (err) {
+                  self.error(
+                      'Failed to read file: ' + dir + folder + '/' +
+                      saveFilename);
+                  console.error(err);
+                  return;
+                }
+                parsePollString(data);
+              });
         });
       });
     });

@@ -1,8 +1,7 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const dialogflow = require('dialogflow');
 const auth = require('../auth.js');
-const fs = require('fs');
 require('./subModule.js').extend(ChatBot);  // Extends the SubModule class.
 
 /**
@@ -61,8 +60,8 @@ function ChatBot() {
     sessionClient = new dialogflow.SessionsClient();
 
     self.client.guilds.cache.forEach((g) => {
-      fs.readFile(
-          self.common.guildSaveDir + g.id + '/chatbot-config.json',
+      self.common.readFile(
+          `${self.common.guildSaveDir}${g.id}/chatbot-config.json`,
           (err, file) => {
             if (err) return;
             let parsed;

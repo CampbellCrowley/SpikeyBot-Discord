@@ -1,8 +1,12 @@
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
 const childProcess = require('child_process');
 require('./subModule.js').extend(Sandbox);  // Extends the SubModule class.
 
 /**
  * @classdesc Creates a safe environment to run untrusted scripts.
+ * This has been deprecated as it is too difficult to completely secure an
+ * environment for our purposes.
  * @class
  * @augments SubModule
  * @listens Command#js

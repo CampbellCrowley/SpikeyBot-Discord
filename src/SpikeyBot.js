@@ -1108,11 +1108,11 @@ function SpikeyBot() {
     this.changePrefix = function(gId, newPrefix) {
       guildPrefixes[gId] = newPrefix;
       if (botName) {
-        fs.readFile(
-            common.guildSaveDir + gId + guildCustomPrefixFile, (err, data) => {
+        common.readAndParse(
+            `${common.guildSaveDir}${gId}${guildCustomPrefixFile}`,
+            (err, parsed) => {
               let finalPrefix = newPrefix;
-              if (data) {
-                const parsed = JSON.parse(data);
+              if (parsed) {
                 parsed[botName] = newPrefix;
                 finalPrefix = JSON.stringify(parsed);
               } else {
@@ -1698,7 +1698,7 @@ function SpikeyBot() {
         }
       };
     };
-    fs.readFile(guildFile, onFileRead(id));
+    common.readFile(guildFile, onFileRead(id));
   }
 
   if (delayBoot > 0) {

@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const SubModule = require('./subModule.js');
@@ -398,15 +398,8 @@ class Pets extends SubModule {
     const self = this;
 
     const read = function() {
-      fs.readFile(fname, (err, data) => {
+      self.common.readAndParse(fname, (err, parsed) => {
         if (err) {
-          cb(err);
-          return;
-        }
-        let parsed;
-        try {
-          parsed = Pet.from(JSON.parse(data));
-        } catch (err) {
           cb(err);
           return;
         }

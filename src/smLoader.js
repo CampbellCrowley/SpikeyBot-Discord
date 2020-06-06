@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const childProcess = require('child_process');
@@ -49,33 +49,22 @@ function SMLoader() {
     Object.assign(self.bot, toAssign.bot);
     Object.assign(self.client, toAssign.client);
 
-    fs.readFile(smListFilename, (err, data) => {
+    self.common.readAndParse(smListFilename, (err, parsed) => {
       if (err) {
         self.error(
             'Failed to read list of subModules from file: ' + smListFilename);
         console.error(err);
         return;
       }
-      try {
-        const parsed = JSON.parse(data);
-        if (!parsed) {
-          self.error('Empty list of subModules from file: ' + smListFilename);
-          return;
-        }
-        goalSubModuleNames = parsed[self.bot.getFullBotName()];
-        if (!goalSubModuleNames) {
-          self.error(
-              'Unable to find subModule list for bot: (' +
-              self.bot.getFullBotName() + ') ' + smListFilename);
-          goalSubModuleNames = parsed['FALLBACK'];
-          return;
-        }
-        self.reload();
-      } catch (e) {
+      goalSubModuleNames = parsed[self.bot.getFullBotName()];
+      if (!goalSubModuleNames) {
         self.error(
-            'Failed to parse subModule list from file: ' + smListFilename);
-        console.error(e);
+            'Unable to find subModule list for bot: (' +
+            self.bot.getFullBotName() + ') ' + smListFilename);
+        goalSubModuleNames = parsed['FALLBACK'];
+        return;
       }
+      self.reload();
     });
     if (self.client.shard) {
       /* eslint-disable no-unused-vars */
@@ -157,16 +146,15 @@ function SMLoader() {
       saveTimeout = setTimeout(() => saveSMList(true), 1000);
       return;
     }
-    fs.readFile(smListFilename, (err, data) => {
-      try {
-        const parsed = JSON.parse(data);
-        parsed[self.bot.getFullBotName()] = goalSubModuleNames;
-        self.common.mkAndWriteSync(
-            smListFilename, null, JSON.stringify(parsed, null, 2));
-      } catch (err) {
-        self.common.error(`Failed to parse ${smListFilename}`);
+    self.common.readAndParse(smListFilename, (err, parsed) => {
+      if (err) {
+        self.error('Failed to save SM List!');
         console.error(err);
+        return;
       }
+      parsed[self.bot.getFullBotName()] = goalSubModuleNames;
+      self.common.mkAndWriteSync(
+          smListFilename, null, JSON.stringify(parsed, null, 2));
     });
   }
 

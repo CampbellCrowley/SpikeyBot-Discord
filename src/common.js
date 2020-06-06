@@ -931,9 +931,13 @@ Common.readFile = function(filename, cb) {
   if (this.getFile) {
     this.getFile(filename, (err, res) => {
       if (err) {
-        cb(err, res);
-        return;
+        if (this.error) this.error(`Failed to getFile ${filename}`);
+        console.error(err);
+      } else if (res) {
+        if (this.logDebug) this.logDebug(`getFile: ${res}`);
+        else console.log(res);
       }
+
       fs.readFile(filename, cb);
     });
   } else {

@@ -172,8 +172,8 @@ class Moderation extends SubModule {
         }));
 
     this.client.guilds.cache.forEach((g) => {
-      if (!fs.existsSync(
-          `${this.common.guildSaveDir}${g.id}/moderation.json`)) {
+      const modFilename = `${this.common.guildSaveDir}${g.id}/moderation.json`;
+      if (!fs.existsSync(modFilename)) {
         // This is here to upgrade to new file-system. After first load
         // main-config.json does not need to be read anymore.
         fs.readFile(
@@ -194,23 +194,15 @@ class Moderation extends SubModule {
               }
             });
       } else {
-        fs.readFile(
-            `${this.common.guildSaveDir}${g.id}/moderation.json`,
-            (err, file) => {
-              if (err) return;
-              let parsed;
-              try {
-                parsed = JSON.parse(file);
-              } catch (e) {
-                return;
-              }
-              if (typeof parsed.disabledAutoSmite === 'boolean') {
-                this._disabledAutoSmite[g.id] = parsed.disabledAutoSmite;
-              }
-              if (typeof parsed.disabledBanMessage === 'boolean') {
-                this._disabledBanMessage[g.id] = parsed.disabledBanMessage;
-              }
-            });
+        this.common.readAndParse(modFilename, (err, parsed) => {
+          if (err) return;
+          if (typeof parsed.disabledAutoSmite === 'boolean') {
+            this._disabledAutoSmite[g.id] = parsed.disabledAutoSmite;
+          }
+          if (typeof parsed.disabledBanMessage === 'boolean') {
+            this._disabledBanMessage[g.id] = parsed.disabledBanMessage;
+          }
+        });
       }
     });
     this.client.on('messageDelete', this._onMessageDelete);

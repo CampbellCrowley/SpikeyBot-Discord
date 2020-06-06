@@ -303,7 +303,7 @@ function HG() {
    * @private
    */
   function updateBattles() {
-    fs.readFile(battleFile, function(err, data) {
+    fs.readFile(battleFile, (err, data) => {
       if (err) return;
       try {
         const parsed = JSON.parse(data);
@@ -317,7 +317,7 @@ function HG() {
     });
   }
   updateBattles();
-  fs.watchFile(battleFile, {persistent: false}, function(curr, prev) {
+  fs.watchFile(battleFile, {persistent: false}, (curr, prev) => {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
       self.debug('Re-reading battles from file');

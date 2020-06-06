@@ -29,8 +29,6 @@ const math = mathjs.create(mathjs.all, {matrix: 'Array'});
  * @listens Command#evaluate
  * @listens Command#graph
  * @listens Command#derive
- * @listens Command#timer
- * @listens Command#timers
  * @listens Command#remind
  * @listens Command#reminder
  * @listens Command#reminders
@@ -101,28 +99,16 @@ function Main() {
    * @type {string}
    */
   let commit = 'Unknown';
-  fs.readFile('package.json', function(err, data) {
+  self.common.readAndParse('package.json', (err, parsed) => {
     if (err) {
       console.log(err);
       return;
     }
-    try {
-      version = JSON.parse(data).version;
-    } catch (e) {
-      console.log(e);
-    }
+    version = parsed.version;
   });
   childProcess.exec('git rev-parse HEAD', (err, stdout) => {
     commit = stdout.toString().trim();
   });
-
-  /**
-   * Array of all timers currently set.
-   *
-   * @private
-   * @type {Main~Timer[]}
-   */
-  let timers = [];
 
   /**
    * All guilds that have disabled the auto-smite feature.
@@ -303,8 +289,6 @@ function Main() {
     self.command.on(['eval', 'evaluate'], commandEvaluate);
     self.command.on('graph', commandGraph);
     self.command.on('derive', commandDerive);
-    self.command.on(
-        ['timer', 'timers', 'remind', 'reminder', 'reminders'], commandTimer);
     self.command.on('createdate', commandCreateDate);
     self.command.on('joindate', commandJoinDate, true);
     self.command.on(['server', 'serverinfo'], commandServerInfo, true);
@@ -372,81 +356,35 @@ function Main() {
       process.on('message', shardMessage);
     }
 
-    if (!self.client.shard || !self.client.shard.ids ||
-        self.client.shard.ids[0] == 0) {
-      fs.readdir(self.common.userSaveDir, (err, items) => {
-        if (err) return;
-        for (let i = 0; i < items.length; i++) {
-          const dir = self.common.userSaveDir + items[i] + '/timers/';
-
-          fs.readdir(dir, function(dir) {
-            return function(err2, timerItems) {
-              if (err2) return;
-              for (let j = 0; j < timerItems.length; j++) {
-                if (timerItems[j].endsWith('.DELETEME')) continue;
-                const filename = dir + timerItems[j];
-                fs.readFile(filename, function(filename) {
-                  return function(err3, file) {
-                    if (err3) return;
-                    let parsed;
-                    try {
-                      parsed = JSON.parse(file);
-                    } catch (e) {
-                      self.error(
-                          'Failed to parse timer file: ' + filename, 'Main');
-                      console.error(e);
-                      return;
-                    }
-                    setTimer(parsed);
-
-                    self.common.unlink(filename);
-                  };
-                }(filename));
-              }
-            };
-          }(dir));
-        }
-      });
-    }
-
     self.client.guilds.cache.forEach((g) => {
-      fs.readFile(
-          self.common.guildSaveDir + g.id + '/main-config.json',
-          function(err, file) {
+      self.common.readAndParse(
+          `${self.common.guildSaveDir}${g.id}/main-config.json`,
+          (err, parsed) => {
             if (err) return;
-            let parsed;
-            try {
-              parsed = JSON.parse(file);
-            } catch (e) {
-              return;
-            }
             disabledAutoSmite[g.id] = parsed.disabledAutoSmite || false;
             disabledBanMessage[g.id] = parsed.disabledBanMessage || false;
             disabledRiggedCounter[g.id] = parsed.disabledRiggedCounter || false;
             disabledDadBot[g.id] = parsed.disabledDadBot || false;
           });
-      fs.readFile(
-          `${self.common.guildSaveDir}${g.id}/banCache.json`, (err, file) => {
+      fs.readAndParse(
+          `${self.common.guildSaveDir}${g.id}/banCache.json`, (err, parsed) => {
             if (err) return;
-            let parsed;
-            try {
-              parsed = JSON.parse(file);
-            } catch (e) {
-              return;
-            }
             banListCache[g.id] = parsed;
           });
     });
 
-    fs.readFile('./save/rigged-counter.txt', (err, file) => {
-      if (err) {
+    self.common.readFile('./save/rigged-counter.txt', (err, file) => {
+      if (err || isNaN(file * 1)) {
         self.client.riggedCounter = 0;
         console.log(err);
         return;
       }
       const tmp = file * 1;
-      if (!isNaN(tmp)) self.client.riggedCounter = tmp;
-      else console.log(tmp, 'is not a number');
+      if (!isNaN(tmp)) {
+        self.client.riggedCounter = tmp;
+      } else {
+        console.log(tmp, 'is not a number');
+      }
     });
 
     // Format help message into rich embed.
@@ -638,7 +576,6 @@ function Main() {
     self.command.removeListener('eval');
     self.command.removeListener('graph');
     self.command.removeListener('derive');
-    self.command.removeListener('timer');
     self.command.removeListener('createdate');
     self.command.removeListener('joindate');
     self.command.removeListener('serverinfo');
@@ -682,7 +619,6 @@ function Main() {
     self.client.removeListener('guildBanAdd', onGuildBanAdd);
     self.client.removeListener('message', onMessage);
 
-    timers.forEach((el) => self.client.clearTimeout(el.timeout));
     if (self.client.shard) {
       process.removeListener('message', shardMessage);
       self.client.updateRiggedCounter = null;
@@ -701,17 +637,6 @@ function Main() {
    */
   this.save = function(opt) {
     if (!self.initialized) return;
-    timers.forEach((el) => {
-      const obj = Object.assign({}, el);
-      delete obj.timeout;
-      const dir = self.common.userSaveDir + obj.id + '/timers/';
-      const filename = dir + obj.time + '.json';
-      if (opt == 'async') {
-        self.common.mkAndWrite(filename, dir, JSON.stringify(obj));
-      } else {
-        self.common.mkAndWriteSync(filename, dir, JSON.stringify(obj));
-      }
-    });
     self.client.guilds.cache.forEach((g) => {
       const dir = `${self.common.guildSaveDir}${g.id}`;
       const filename = `${dir}/main-config.json`;
@@ -1521,105 +1446,6 @@ function Main() {
   }
 
   /**
-   * Set a timer for a certain about of time. After which, the bot will DM the
-   * user the message they specified.
-   *
-   * @private
-   * @type {commandHandler}
-   * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#timer
-   * @listens Command#timers
-   * @listens Command#remind
-   * @listens Command#reminder
-   * @listens Command#reminders
-   */
-  function commandTimer(msg) {
-    const split = msg.content.split(' ').slice(1);
-    if (split.length == 0) {
-      let num = 0;
-      const messages =
-          timers.filter((obj) => obj.id == msg.author.id).map((obj) => {
-            num++;
-            return 'In ' +
-                Math.floor((obj.time - Date.now()) / 1000 / 60 * 10) / 10 +
-                ' minutes: ' + obj.message;
-          });
-      self.common.reply(
-          msg, 'You have ' + num + ' timers set.\n' + messages.join('\n'));
-      return;
-    }
-    let time = split.splice(0, 1);
-    let unit = (split[0] || '').toLowerCase();
-    let skipSplice = false;
-    const matchUnit = (time + '').match(/(\d+)([a-zA-Z]+)\b/);
-    if (matchUnit) {
-      time = matchUnit[1];
-      unit = matchUnit[2];
-      skipSplice = true;
-    }
-    switch (unit) {
-      case 's':
-      case 'sec':
-      case 'secs':
-      case 'second':
-      case 'seconds':
-        time /= 60;
-        if (!skipSplice) split.splice(0, 1);
-        break;
-      case 'm':
-      case 'min':
-      case 'minute':
-      case 'minutes':
-        break;
-      case 'h':
-      case 'hr':
-      case 'hour':
-      case 'hours':
-        time *= 60;
-        if (!skipSplice) split.splice(0, 1);
-        break;
-      case 'd':
-      case 'day':
-      case 'days':
-        time *= 60 * 24;
-        if (!skipSplice) split.splice(0, 1);
-        break;
-      case 'w':
-      case 'week':
-        time *= 60 * 24 * 7;
-        if (!skipSplice) split.splice(0, 1);
-        break;
-      case 'mon':
-      case 'month':
-      case 'months':
-        time *= 60 * 24 * 7 * 30;
-        if (!skipSplice) split.splice(0, 1);
-        break;
-    }
-    const origMessage = split.join(' ');
-    const message = origMessage ||
-        'Your timer for ' + time + ' minute' + (time == '1' ? '' : 's') +
-            ' is over!';
-
-    if (time > 0) {
-      if (time > 2147483647 / 1000 / 60) {
-        time = 2147483647 / 1000 / 60;
-      }
-      setTimer({
-        id: msg.author.id,
-        message: message,
-        time: Date.now() + time * 1000 * 60,
-      });
-
-      self.common.reply(
-          msg, 'Set timer for ' + time + ' minutes.', origMessage);
-    } else {
-      self.common.reply(
-          msg, 'Oops! Please make sure your time is larger than 0.');
-    }
-  }
-
-  /**
    * Tell the user the date when they created their Discord account.
    *
    * @private
@@ -2420,49 +2246,6 @@ function Main() {
             self.bot.getSubmoduleCommits()
                 .map((el) => `${el.name}: ${el.commit}`)
                 .join('\n'));
-  }
-
-  /**
-   * An object storing information about a timer.
-   *
-   * @typedef {object} Main~Timer
-   * @property {string} id The id of the user who set the timer.
-   * @property {string} message The message for when the timer ends.
-   * @property {number} time The time since epoch at which the timer will end.
-   */
-
-  /**
-   * Sets a timer for an amount of time with a message.
-   *
-   * @private
-   * @param {Main~Timer} timer The settings for the timer.
-   */
-  function setTimer(timer) {
-    timers.push(timer);
-    const now = Date.now();
-    const delta = timer.time - now;
-    const dir = `${self.common.userSaveDir}${timer.id}/timers/`;
-    const file = `${dir}${timer.time}.json`;
-
-    // Ignore timers more than a minute in the past.
-    if (delta < -60000) return;
-    timer.timeout = self.client.setTimeout(() => {
-      self.client.users.fetch(timer.id).then((user) => {
-        user.send(timer.message);
-        const now = Date.now();
-        timers = timers.filter((obj) => obj.time > now);
-        fs.open(`${file}.DELETEME`, 'w', 0o664, (err, fd) => {
-          if (err) {
-            self.error(
-                'Failed to mark timer save file for deletion: ' +
-                `${file}.DELETEME`);
-            console.error(err);
-          }
-          if (fd) fs.close(fd, (err) => err && console.error(err));
-        });
-        self.common.unlink(file);
-      });
-    }, delta);
   }
 
   /**

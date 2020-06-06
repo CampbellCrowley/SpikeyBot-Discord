@@ -1,6 +1,5 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const fs = require('fs');
 const SubModule = require('./subModule.js');
 
 /**
@@ -91,15 +90,10 @@ class Echo extends SubModule {
     this.client.on('message', this._onMessage);
 
     this.client.guilds.cache.forEach((g) => {
-      fs.readFile(
-          `${this.common.guildSaveDir}${g.id}/characters.json`, (err, file) => {
+      this.common.readAndParse(
+          `${this.common.guildSaveDir}${g.id}/characters.json`,
+          (err, parsed) => {
             if (err) return;
-            let parsed;
-            try {
-              parsed = JSON.parse(file);
-            } catch (e) {
-              return;
-            }
             this._characters[g.id] = parsed;
           });
     });
