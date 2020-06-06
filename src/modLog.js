@@ -417,6 +417,7 @@ class Settings {
  */
 Settings.from = function(obj) {
   const output = new Settings();
+  if (!obj) return output;
   output.channel = obj.channel || null;
   output.logKicks = obj.logKicks || false;
   output.logBans = obj.logBans || false;
