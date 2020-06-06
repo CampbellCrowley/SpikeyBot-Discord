@@ -559,15 +559,7 @@ function Patreon() {
         self.common.readAndParse(
             `${self.common.userSaveDir}${uId}${patreonSettingsFilename}`,
             (err, parsed) => {
-              if (err) {
-                self.error(
-                    'Failed to parse user settings file: ' + uId +
-                    patreonSettingsFilename);
-                console.error(err);
-                cb('Internal Error', null);
-                return;
-              }
-              fetchValue(parsed, permVals, onFetchedValue);
+              fetchValue(parsed || {}, permVals, onFetchedValue);
             });
       }
     }

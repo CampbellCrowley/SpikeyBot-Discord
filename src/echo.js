@@ -112,6 +112,8 @@ class Echo extends SubModule {
     if (!this.initialized) return;
 
     Object.entries(this._characters).forEach((obj) => {
+      if (!obj[1].updated) return;
+      delete obj[1].updated;
       const dir = `${this.common.guildSaveDir}${obj[0]}/`;
       const filename = `${dir}characters.json`;
       if (opt == 'async') {
@@ -292,6 +294,7 @@ class Echo extends SubModule {
       delete this._characters[msg.guild.id][channel.id][msg.author.id];
       this.common.reply(msg, 'Disabled character');
     }
+    this._characters[msg.guild.id].updated = true;
   }
 
   /**
@@ -309,7 +312,7 @@ class Echo extends SubModule {
     const charList = [];
     if (chanChar) {
       for (const chan of Object.entries(chanChar)) {
-        if (!chan[1]) continue;
+        if (!chan[1] || chan[0] === 'updated') continue;
         const userList = Object.entries(chan[1]);
         if (userList.length == 0) continue;
         for (const u of userList) {
@@ -397,7 +400,7 @@ class Echo extends SubModule {
     const chars = msg.guild && this._characters[msg.guild.id];
     let output = [];
     for (let channel in chars) {
-      if (!channel) continue;
+      if (!channel || channel === 'updated') continue;
       channel = msg.guild.channels.resolve(channel);
       if (!channel) continue;
       const list = [];
@@ -433,6 +436,7 @@ class Echo extends SubModule {
     const channels = Object.keys(this._characters[msg.guild.id]);
 
     channels.forEach((el) => {
+      if (el === 'updated') return;
       const channel = msg.guild.channels.resolve(el);
       if (!channel) return;
       channel.fetchWebhooks()
@@ -442,7 +446,7 @@ class Echo extends SubModule {
           })
           .catch(() => {});
     });
-    this._characters[msg.guild.id] = {};
+    this._characters[msg.guild.id] = {updated: true};
     this.common.reply(msg, 'All characters deleted.');
   }
 
