@@ -980,7 +980,7 @@ Common.parse = function(str, cb) {
   if (!cb) throw new TypeError('parse must have a callback function');
   yj.parseAsync(str.toString(), cb);
 };
-Common.prototype.readFile = Common.readFile;
+Common.prototype.parse = Common.parse;
 
 /**
  * Read a file's contents, checks other shards for newer version first, and
@@ -1007,7 +1007,7 @@ Common.readAndParse = function(filename, cb) {
     }
   });
 };
-Common.prototype.readFile = Common.readFile;
+Common.prototype.readAndParse = Common.readAndParse;
 
 /**
  * Recursively freeze all elements of an object.
