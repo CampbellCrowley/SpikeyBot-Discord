@@ -448,6 +448,7 @@ function Common() {
      * @param {Function} cb Callback with optional error.
      */
     this.getFile = function(filename, cb) {
+      Common.fileFetchHist[filename] = Date.now();
       const listener = (message) => {
         if (!message || message._sGetFile !== filename) return;
         process.removeListener('message', listener);
@@ -916,6 +917,26 @@ Common.unlinkSync = function(filename) {
 };
 Common.prototype.unlinkSync = Common.unlinkSync;
 
+
+/**
+ * @description Filenames and the timestamp they were last fetched from other
+ * shards.
+ * @public
+ * @static
+ * @type {object.<number>}
+ * @default
+ */
+Common.fileFetchHist = {};
+/**
+ * @description Cooldown after fetching a file from other shards before
+ * requesting the new version again.
+ * @public
+ * @static
+ * @type {number}
+ * @default 30 seconds
+ */
+Common.fileFetchDelay = 30000;
+
 /**
  * Read a file's contents, checks other shards for newer version first. This
  * does not have a syncronous version as the whole point of this is to
@@ -928,7 +949,8 @@ Common.prototype.unlinkSync = Common.unlinkSync;
  */
 Common.readFile = function(filename, cb) {
   if (!cb) throw new TypeError('readFile must have a callback function');
-  if (this.getFile) {
+  const lastFetch = Common.fileFetchHist[filename];
+  if (this.getFile && Date.now() - lastFetch > Common.fileFetchDelay) {
     this.getFile(filename, (err, res) => {
       if (err) {
         if (this.error) this.error(`Failed to getFile ${filename}`);
