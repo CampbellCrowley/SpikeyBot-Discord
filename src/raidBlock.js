@@ -541,6 +541,7 @@ class RaidSettings {
  * @returns {RaidBlock~RaidSettings} Created raidsettings object.
  */
 RaidSettings.from = function(obj) {
+  if (!obj) return new RaidSettings();
   const output = new RaidSettings(
       obj.enabled, obj.numJoin, obj.timeInterval, obj.duration, obj.action,
       obj.warnMessage, obj.sendWarning);

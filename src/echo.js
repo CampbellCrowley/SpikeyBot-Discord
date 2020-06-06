@@ -112,7 +112,7 @@ class Echo extends SubModule {
     if (!this.initialized) return;
 
     Object.entries(this._characters).forEach((obj) => {
-      if (!obj[1].updated) return;
+      if (!obj[1] || !obj[1].updated) return;
       delete obj[1].updated;
       const dir = `${this.common.guildSaveDir}${obj[0]}/`;
       const filename = `${dir}characters.json`;
