@@ -366,7 +366,7 @@ function Main() {
             disabledRiggedCounter[g.id] = parsed.disabledRiggedCounter || false;
             disabledDadBot[g.id] = parsed.disabledDadBot || false;
           });
-      fs.readAndParse(
+      self.common.readAndParse(
           `${self.common.guildSaveDir}${g.id}/banCache.json`, (err, parsed) => {
             if (err) return;
             banListCache[g.id] = parsed;
