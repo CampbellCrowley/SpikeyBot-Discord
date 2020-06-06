@@ -65,7 +65,7 @@ function Polling() {
   /** @inheritdoc */
   this.save = function(opt) {
     self.client.guilds.cache.forEach((g) => {
-      const dir = self.common.guildSaveDir + g.id + guildSubDir;
+      const dir = `${self.common.guildSaveDir}${g.id}${guildSubDir}`;
       if (opt == 'async') {
         rimraf(dir, (err) => {
           if (err) {
