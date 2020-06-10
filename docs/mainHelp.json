@@ -74,38 +74,6 @@
           ]
         },
         {
-          "command": "timer",
-          "description": "Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers.",
-          "aliases": "timer, timers, remind, reminder, reminders",
-          "examples": [
-            {
-              "description": "1 minute timer with message",
-              "command": "timer 1 It has been one minute!",
-              "result": "After 60 seconds, the bot will send you a direct message saying \"It has been one minute!\"."
-            },
-            {
-              "description": "60 minute timer with message",
-              "command": "timer 60 It has been one hour!",
-              "result": "After 1 hour, the bot will send you a direct message saying \"It has been one hour!\"."
-            },
-            {
-              "description": "2 day timer without message",
-              "command": "timer 2 days",
-              "result": "After 2 days, the bot will send you a direct message saying \"Your timer for 2880 minutes is over!\".\n(s = seconds, m = minutes, h = hours, d = days, w = weeks, mon = mon, or use the whole word for each)"
-            },
-            {
-              "description": "20 minute timer without message",
-              "command": "timer 20",
-              "result": "After 20 minutes, the bot will send you a direct message saying \"Your timer for 20 minutes is over!\"."
-            },
-            {
-              "description": "List current timers",
-              "command": "timer",
-              "result": "Will reply telling you which timers of yours it currently knows about."
-            }
-          ]
-        },
-        {
           "command": "schedule",
           "description": "Schedule a command to be run after a certain amount of time.",
           "aliases": "sch, sched, schedule, scheduled",

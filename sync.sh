@@ -1,3 +1,5 @@
+exit 0
+
 LIST=$(find ./ -name *.DELETEME | sed 's/.DELETEME$//' | tr '\n' ' ')
 for i in $LIST; do
   if [ -f "$i" ]; then
