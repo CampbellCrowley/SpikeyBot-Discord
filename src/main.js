@@ -1569,14 +1569,16 @@ function Main() {
           true);
       if (!guild.ownerID) {
         embed.addField(
-            'Server', 'Created: ' + guild.createdAt.toUTCString() +
+            'Server',
+            'ID: ' + guild.id + '\nCreated: ' + guild.createdAt.toUTCString() +
                 '\nOwner: _Unknown_\nRegion: ' + guild.region +
                 '\nVerification: ' + guild.verificationLevel + ' (' +
                 guild.verified + ')\nPartnered: ' + guild.partnered,
             true);
       } else {
         embed.addField(
-            'Server', 'Created: ' + guild.createdAt.toUTCString() +
+            'Server',
+            'ID: ' + guild.id + '\nCreated: ' + guild.createdAt.toUTCString() +
                 '\nOwner: <@' + guild.ownerID + '>\nRegion: ' + guild.region +
                 '\nVerification: ' + guild.verificationLevel + ' (' +
                 guild.verified + ')\nPartnered: ' + guild.partnered,

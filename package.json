@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.16.0",
+  "version": "1.16.1",
   "description": "SpikeyBot",
   "homepage": "https://www.spikeybot.com/",
   "bugs": {
@@ -37,7 +37,7 @@
     "utf-8-validate": "^5.0.2",
     "yieldable-json": "^2.0.0",
     "youtube-dl": "^3.0.2",
-    "zlib-sync": "^0.1.6"
+    "zlib-sync": "^0.1.7"
   },
   "contributors": [
     {
@@ -46,14 +46,14 @@
     }
   ],
   "devDependencies": {
-    "@types/node": "^14.0.11",
-    "@typescript-eslint/eslint-plugin": "^3.1.0",
-    "@typescript-eslint/parser": "^3.1.0",
-    "acorn": "^7.2.0",
+    "@types/node": "^14.0.13",
+    "@typescript-eslint/eslint-plugin": "^3.2.0",
+    "@typescript-eslint/parser": "^3.2.0",
+    "acorn": "^7.3.1",
     "chai": "^4.2.0",
     "eslint": "^7.2.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-jsdoc": "^27.0.4",
+    "eslint-plugin-jsdoc": "^27.0.6",
     "ink-docstrap": "^1.3.2",
     "jsdoc": "^3.6.4",
     "mocha": "^7.2.0",
