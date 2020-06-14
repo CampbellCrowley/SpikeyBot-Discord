@@ -1298,7 +1298,10 @@ class ShardingMaster {
    */
   rebootRequest(msg) {
     const list = Object.values(this._knownUsers);
-    if (msg === 'reboot hard' || msg === 'reboot hard force') {
+    if (msg === 'reboot master') {
+      common.logWarning('Rebooting ShardingMaster...');
+      process.exit(-1);
+    } else if (msg === 'reboot hard' || msg === 'reboot hard force') {
       common.logWarning('TRIGGERED HARD REBOOT!');
       list.forEach((s) => {
         if (s.goalShardId === -2) return;

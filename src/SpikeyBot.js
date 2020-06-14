@@ -1294,6 +1294,12 @@ function SpikeyBot() {
     }
     if ((!msg && silent) || common.trustedIds.includes(msg.author.id)) {
       const content = (msg || {content: ''}).content;
+      const master = content.indexOf('master') > -1;
+      if (master) {
+        client.shard.send('reboot master');
+        if (!silent && msg) common.reply(msg, 'Requested reboot master');
+        return;
+      }
       const force = content.indexOf(' force') > -1;
       const doHardReboot = content.indexOf('hard') > -1;
       if (!doHardReboot) {
