@@ -106,6 +106,7 @@ class ShardingMaster {
       }
       if (prev.mtime < curr.mtime) this._updateUsers();
     });
+    this._readStatsHistory();
 
     /**
      * @description History for each known user of the received stats for
@@ -242,7 +243,7 @@ class ShardingMaster {
      * @private
      * @type {http.Server}
      */
-    this._app = http.createServer(this._handler);
+    this._app = http.createServer((...a) => this._handler(...a));
     this._app.on('error', this._serverError);
     /**
      * Socket.io instance.
@@ -860,12 +861,18 @@ class ShardingMaster {
    * @param {http.ServerResponse} res Our response to the client.
    */
   _handler(req, res) {
-    console.log(req.url);
-    /* if (req.url.match(/^\/[^/]+\/(dev\/)?api\/public\/shard-status-history/))
-    { } else { */
-    res.writeHead(404);
-    res.end(req.method === 'GET' ? 'Not Found' : undefined);
-    // }
+    const regex =
+        /^\/www\.spikeybot\.com\/(dev\/)?api\/public\/shard-status-history/;
+    if (req.method === 'GET' && req.url.match(regex)) {
+      const stringified = JSON.stringify(this._usersStatsHistory);
+      res.setHeader('content-type', 'application/json');
+      res.setHeader('content-length', stringified.length);
+      res.writeHead(200);
+      res.end(stringified);
+    } else {
+      res.writeHead(404);
+      res.end(req.method === 'GET' ? '404: Not Found' : undefined);
+    }
   }
 
   /**

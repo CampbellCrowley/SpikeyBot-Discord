@@ -245,8 +245,10 @@ class WebApi extends SubModule {
       [
         '/api/public/patreon-campaign',
         (...a) => this._patreonCampaignEndpoint(...a),
+      ],
+      [
         '/api/public/shard-status-history',
-        (...a) => this.shardStatusHistoryEndpoint(...a),
+        (...a) => this._shardStatusHistoryEndpoint(...a),
       ],
     ];
     const acceptable = endpoints.find((el) => url.startsWith(el[0]));
@@ -268,7 +270,12 @@ class WebApi extends SubModule {
       return;
     }
 
-    acceptable[1](req, res, url, ip);
+    if (!acceptable[1]) {
+      res.writeHead(500);
+      res.end('500: Internal Server Error (No Handler)');
+    } else {
+      acceptable[1](req, res, url, ip);
+    }
   }
 
   /**
@@ -318,7 +325,11 @@ class WebApi extends SubModule {
       res.end('503: Service Unavailable');
       return;
     }
-    this._proxy.web(req, res, {target: 'http://localhost:8024'});
+    if (this.common.isRelease) {
+      this._proxy.web(req, res, {target: 'http://localhost:8024'});
+    } else {
+      this._proxy.web(req, res, {target: 'http://localhost:8025'});
+    }
   }
 
   /**
