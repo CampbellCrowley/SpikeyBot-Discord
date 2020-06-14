@@ -10,6 +10,8 @@ const fs = require('fs');
 const spawn = require('child_process').spawn;
 
 const usersFile = path.resolve(__dirname + '/../../save/knownShards.json');
+const historyFile =
+    path.resolve(__dirname + '/../../save/shardStatsHistory.json');
 const configFile =
     path.resolve(__dirname + '/../../config/shardMasterConfig.js');
 const authFile = path.resolve(__dirname + '/../../auth.js');
@@ -104,6 +106,17 @@ class ShardingMaster {
       }
       if (prev.mtime < curr.mtime) this._updateUsers();
     });
+
+    /**
+     * @description History for each known user of the received stats for
+     * showing graphs and analysis. Mapped by user ID, then array in
+     * chronological order.
+     * @private
+     * @type {object.<ShardStatus[]>}
+     * @default
+     */
+    this._usersStatsHistory = {};
+
     /**
      * @description Toggle for when we write known users to file to not re-read
      * them again.
@@ -168,6 +181,14 @@ class ShardingMaster {
      * @default
      */
     this._userSaveTimeout = null;
+    /**
+     * @description Timeout used to prevent multiple calls to {@link
+     * _writeStatsHistory} within a short time.
+     * @private
+     * @type {?number}
+     * @default
+     */
+    this._historySaveTimeout = null;
 
     /**
      * @description History of recent connections ordered by oldest to latest.
@@ -324,33 +345,28 @@ class ShardingMaster {
    */
   _updateUsers() {
     const file = usersFile;
-    fs.readFile(file, (err, data) => {
+    common.readAndParse(file, (err, users) => {
       if (err) {
-        if (err.code !== 'ENOENT') {
-          common.error(`Failed to read ${file}`);
-          console.error(err);
-        } else {
+        if (err.code === 'ENOENT') {
           this._knownUsers = {};
           common.logDebug(`No users to load ${file}`);
           this._refreshShardStatus();
+        } else {
+          common.error(`Failed to read ${file}`);
+          console.error(err);
         }
         return;
       }
-      try {
-        const users = JSON.parse(data);
-        this._knownUsers = {};
-        const ids = [];
-        for (const u in users) {
-          if (!u || !users[u]) continue;
-          ids.push(u);
-          this._knownUsers[u] = ShardingMaster.ShardInfo.from(users[u]);
-        }
-        common.logDebug(`Updated known users from file: ${ids.join(', ')}`);
-        this._refreshShardStatus();
-      } catch (err) {
-        common.error(`Failed to parse ${file}`);
-        console.error(err);
+      this._knownUsers = {};
+      const ids = [];
+      for (const u in users) {
+        if (!u || !users[u]) continue;
+        ids.push(u);
+        if (!this._usersStatsHistory[u]) this._usersStatsHistory[u] = [];
+        this._knownUsers[u] = ShardingMaster.ShardInfo.from(users[u]);
       }
+      common.logDebug(`Updated known users from file: ${ids.join(', ')}`);
+      this._refreshShardStatus();
     });
   }
   /**
@@ -384,6 +400,45 @@ class ShardingMaster {
     common.mkAndWrite(file, dir, str, (err) => {
       if (!err) return;
       common.error(`Failed to save known users to file: ${file}`);
+      console.error(err);
+    });
+  }
+  /**
+   * @description Read stats history from save file on disk.
+   * @private
+   */
+  _readStatsHistory() {
+    const file = historyFile;
+    common.readAndParse(file, (err, parsed) => {
+      if (err) {
+        if (err.code === 'ENOENT') return;
+        common.logWarning('Failed to read stats history from file: ' + file);
+        console.error(err);
+        return;
+      }
+      for (const u in parsed) {
+        if (!parsed[u] || !Array.isArray(parsed[u])) continue;
+        this._usersStatsHistory[u] = parsed[u];
+      }
+    });
+  }
+  /**
+   * @description Write current stats history to file.
+   * @private
+   * @param {boolean} [force=false] Force saving immediately. False otherwise
+   * waits a moment for multiple calls, then saves once all calls have subsided.
+   */
+  _writeStatsHistory(force = false) {
+    clearTimeout(this._historySaveTimeout);
+    if (!force) {
+      this._historySaveTimeout =
+          setTimeout(() => this._writeStatsHistory(true), 3000);
+      return;
+    }
+    const file = historyFile;
+    common.mkAndWrite(file, null, this._usersStatsHistory, (err) => {
+      if (!err) return;
+      common.error(`Failed to save stats history to file: ${file}`);
       console.error(err);
     });
   }
@@ -805,12 +860,12 @@ class ShardingMaster {
    * @param {http.ServerResponse} res Our response to the client.
    */
   _handler(req, res) {
-    res.writeHead(501);
-    if (req.method === 'GET') {
-      res.end('Not Implemented');
-    } else {
-      res.end();
-    }
+    console.log(req.url);
+    /* if (req.url.match(/^\/[^/]+\/(dev\/)?api\/public\/shard-status-history/))
+    { } else { */
+    res.writeHead(404);
+    res.end(req.method === 'GET' ? 'Not Found' : undefined);
+    // }
   }
 
   /**
@@ -993,7 +1048,8 @@ class ShardingMaster {
     this._refreshShardStatus();
 
     socket.on('status', (status) => {
-      user.lastSeen = Date.now();
+      const now = Date.now();
+      user.lastSeen = now;
       if (userId === this._hbWaitID) this._hbWaitID = null;
       try {
         // console.log(userId, ':', status);
@@ -1038,9 +1094,15 @@ class ShardingMaster {
         this._sendHeartbeatRequest(user);
       }
 
+      this._usersStatsHistory[userId].push(user.stats);
+      while (now - this._usersStatsHistory[userId][0].timestamp >
+             this._config.heartbeat.historyLength) {
+        this._usersStatsHistory[userId].splice(0, 1);
+      }
+
       this._saveUsers();
+      this._writeStatsHistory();
       this._refreshShardStatus();
-      // TODO: Store history of shard status for historic purposes.
     });
 
     socket.on('broadcastEval', (...args) => {

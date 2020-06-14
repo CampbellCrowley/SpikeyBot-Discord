@@ -3,6 +3,7 @@
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
+const httpProxy = require('http-proxy');
 const auth = require('../../auth.js');
 const crypto = require('crypto');
 const sIOClient = require('socket.io-client');
@@ -39,6 +40,13 @@ class WebApi extends SubModule {
      * @type {?http.Server}
      */
     this._app = null;
+
+    /**
+     * @description Internal proxy server for forwarding api requests to other
+     * endpoints.
+     * @private
+     */
+    this._proxy = httpProxy.createProxyServer({ws: true, xfwd: false});
 
     /**
      * @description Data representing available API endpoints, and where to
@@ -237,6 +245,8 @@ class WebApi extends SubModule {
       [
         '/api/public/patreon-campaign',
         (...a) => this._patreonCampaignEndpoint(...a),
+        '/api/public/shard-status-history',
+        (...a) => this.shardStatusHistoryEndpoint(...a),
       ],
     ];
     const acceptable = endpoints.find((el) => url.startsWith(el[0]));
@@ -289,6 +299,26 @@ class WebApi extends SubModule {
       res.writeHead(200);
       res.end(JSON.stringify(data));
     });
+  }
+
+  /**
+   * @description Fetches shard status history information.
+   *
+   * @private
+   * @param {http.IncomingMessage} req Client request.
+   * @param {http.ServerResponse} res Server response.
+   * @param {string} url The requested url. Generally a similar or slightly
+   * modified version of `req.url`.
+   * @param {string} ip IP for logging purposes.
+   */
+  _shardStatusHistoryEndpoint(req, res, url, ip) {
+    this.debug(url, ip);
+    if (!this.common.isMaster) {
+      res.writeHead(503);
+      res.end('503: Service Unavailable');
+      return;
+    }
+    this._proxy.web(req, res, {target: 'http://localhost:8024'});
   }
 
   /**

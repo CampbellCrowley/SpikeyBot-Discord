@@ -904,7 +904,7 @@ Common.fileFetchDelay = 30000;
 
 /**
  * Read a file's contents, checks other shards for newer version first. This
- * does not have a syncronous version as the whole point of this is to
+ * does not have a synchronous version as the whole point of this is to
  * potentially fetch a newer file from another server.
  *
  * @public
@@ -914,7 +914,7 @@ Common.fileFetchDelay = 30000;
  */
 Common.readFile = function(filename, cb) {
   if (!cb) throw new TypeError('readFile must have a callback function');
-  const lastFetch = Common.fileFetchHist[filename];
+  const lastFetch = Common.fileFetchHist[filename] || 0;
   if (this.getFile && Date.now() - lastFetch > Common.fileFetchDelay) {
     this.getFile(filename, (err, res) => {
       if (err) {
@@ -950,8 +950,8 @@ Common.prototype.parse = Common.parse;
 /**
  * Read a file's contents, checks other shards for newer version first, and
  * parse the file's contents info from JSON to objects. This does not have a
- * syncronous version as the whole point of this is to potentially fetch a newer
- * file from another server.
+ * synchronous version as the whole point of this is to potentially fetch a
+ * newer file from another server.
  *
  * @public
  * @param {string} filename The name of the file to read and parse.
