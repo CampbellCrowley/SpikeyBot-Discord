@@ -1198,7 +1198,8 @@ class ShardingMaster {
       return;
     }
     global.sqlCon.query(query, (err, ...args) => {
-      if (err.fatal || err.code === 'PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR') {
+      if (err &&
+          (err.fatal || err.code === 'PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR')) {
         common.connectSQL(true);
       }
       cb(this._makeSerializableError(err), ...args);
