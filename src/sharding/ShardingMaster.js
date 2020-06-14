@@ -205,7 +205,7 @@ class ShardingMaster {
     this._masterShardSocket = null;
 
     /**
-     * ID of the shard we last sent an heartbeat request to that has not beel
+     * ID of the shard we last sent a heartbeat request to that has not been
      * resolved. This is only used for 'pull' style updating for debugging
      * heartbeats that don't get replies.
      *
@@ -1197,8 +1197,12 @@ class ShardingMaster {
       cb('No Database Connection');
       return;
     }
-    global.sqlCon.query(
-        query, (err, ...args) => cb(this._makeSerializableError(err), ...args));
+    global.sqlCon.query(query, (err, ...args) => {
+      if (err.fatal || err.code === 'PROTOCOL_ENQUEUE_AFTER_FATAL_ERROR') {
+        common.connectSQL(true);
+      }
+      cb(this._makeSerializableError(err), ...args);
+    });
   }
 
   /**
@@ -1269,7 +1273,7 @@ class ShardingMaster {
           console.error(err);
           cb('IO Failed');
         } else {
-          common.logDebug(`Wrote file to disk: ${file}`);
+          // common.logDebug(`Wrote file to disk: ${file}`);
           cb(null);
         }
       });
@@ -1280,7 +1284,7 @@ class ShardingMaster {
           console.error(err);
           cb('IO Failed');
         } else {
-          common.logDebug(`Wrote file to disk: ${file}`);
+          // common.logDebug(`Wrote file to disk: ${file}`);
           cb(null);
         }
       });

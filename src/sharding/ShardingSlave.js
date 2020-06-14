@@ -205,7 +205,8 @@ class ShardingSlave {
     common.log(`Socket disconnected from master (${reason})`, this.id);
     this._socket.io.opts.extraHeaders.authorization =
         this._generateAuthHeader();
-    console.log(reason, typeof reason, this._verified, this._reconnectTimeout);
+    // console.log(reason, typeof reason, this._verified,
+    // this._reconnectTimeout);
     if (this._verified && !this._reconnectTimeout &&
         reason === 'io server disconnect') {
       this._reconnectTimeout = setTimeout(() => {
@@ -217,7 +218,7 @@ class ShardingSlave {
           this._socket.connect();
         }
         this._socket.reconnection && this._socket.reconnection(true);
-      }, 3000);
+      }, 5000);
     }
   }
   /**

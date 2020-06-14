@@ -412,6 +412,7 @@ function Common() {
      * @param {Function} cb Callback with optional error.
      */
     this.sendFile = function(filename, cb) {
+      Common.fileFetchHist[filename] = Date.now();
       const listener = (message) => {
         if (!message || message._sWriteFile !== filename) return;
         process.removeListener('message', listener);
@@ -795,14 +796,6 @@ Common.mkAndWrite = function(filename, dir, data, cb) {
           if (this.sendFile) this.sendFile(filename);
           if (typeof cb === 'function') cb();
         });
-        fs.unlink(`${filename}.DELETEME`, (err) => {
-          if (!err || err.code == 'ENOENT') return;
-          if (this.error) {
-            this.error(
-                `Failed to unlink DELETEME marker: ${filename}.DELETEME`);
-          }
-          console.error(err);
-        });
       })
       .catch((err) => {
         if (err.code !== 'EEXIST') {
@@ -844,17 +837,6 @@ Common.mkAndWriteSync = function(filename, dir, data) {
     return;
   }
   if (this.sendFile) this.sendFile(filename);
-  try {
-    fs.unlinkSync(`${filename}.DELETEME`);
-  } catch (err) {
-    if (err.code != 'ENOENT') {
-      if (this.error) {
-        this.error(`Failed to unlink DELETEME marker: ${filename}.DELETEME`);
-      }
-      console.error(err);
-      return;
-    }
-  }
 };
 Common.prototype.mkAndWriteSync = Common.mkAndWriteSync;
 
@@ -867,13 +849,6 @@ Common.prototype.mkAndWriteSync = Common.mkAndWriteSync;
  *     parameter.
  */
 Common.unlink = function(filename, cb) {
-  fs.writeFile(`${filename}.DELETEME`, Date.now(), (err) => {
-    if (!err || err.code == 'ENOENT') return;
-    if (this.error) {
-      this.error(`Failed to mark file for deletion: ${filename}.DELETEME`);
-    }
-    console.error(err);
-  });
   fs.unlink(filename, (err) => {
     if (err && err.code != 'ENOENT') {
       if (this.error) this.error(`Failed to delete file: ${filename}`);
@@ -896,16 +871,6 @@ Common.prototype.unlink = Common.unlink;
  */
 Common.unlinkSync = function(filename) {
   try {
-    fs.writeFileSync(`${filename}.DELETEME`, Date.now());
-  } catch (err) {
-    if (err.code != 'ENOENT') {
-      if (this.error) {
-        this.error(`Failed to mark file for deletion: ${filename}.DELETEME`);
-      }
-      console.error(err);
-    }
-  }
-  try {
     fs.unlinkSync(filename);
   } catch (err) {
     if (err.code != 'ENOENT') {
@@ -919,8 +884,8 @@ Common.prototype.unlinkSync = Common.unlinkSync;
 
 
 /**
- * @description Filenames and the timestamp they were last fetched from other
- * shards.
+ * @description Filenames and the timestamp they were last fetched from or sent
+ * to other shards.
  * @public
  * @static
  * @type {object.<number>}
