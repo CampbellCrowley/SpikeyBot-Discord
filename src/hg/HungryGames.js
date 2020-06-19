@@ -2,7 +2,6 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const rimraf = require('rimraf'); // rm -rf
-const yj = require('yieldable-json');
 
 /**
  * Contains a Hunger Games style simulation.
@@ -1028,33 +1027,18 @@ class HungryGames {
     const filename =
         this._parent.common.guildSaveDir + id + this.hgSaveDir + this.saveFile;
     if (a) {
-      fs.readFile(filename, (err, data) => {
+      this._parent.common.readAndParse(filename, (err, parsed) => {
         if (err) {
           if (err.code === 'ENOENT') {
             cb(null);
-            return;
           } else {
             this._parent.debug('Failed to load game data for guild:' + id);
             console.error(err);
           }
+          return;
         }
-        yj.parseAsync(data.toString(), (err, parsed) => {
-          if (err) {
-            this._parent.error(
-                'Failed to parse game data:' + id +
-                ' Falling back to JSON.parse');
-            console.error(err);
-            try {
-              parsed = JSON.parse(data);
-            } catch (err) {
-              this._parent.error('Failed to parse using JSON.parse');
-              console.error(err);
-              return;
-            }
-          }
-          this._games[id] = parse(parsed);
-          cb(this._games[id]);
-        });
+        this._games[id] = parse(parsed);
+        cb(this._games[id]);
       });
     } else {
       try {
