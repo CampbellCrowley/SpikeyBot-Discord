@@ -321,9 +321,13 @@ class ShardingSlave {
    */
   _updateRequest(settings) {
     this._lastSeen = Date.now();
-    common.logDebug(
-        'New settings received from master: ' + JSON.stringify(settings),
-        this.id);
+    const newStr = JSON.stringify(settings);
+    const oldStr = JSON.stringify(this._settings);
+    if (newStr != oldStr) {
+      common.logDebug(
+          'New settings received from master: ' + JSON.stringify(settings),
+          this.id);
+    }
     if (!settings || typeof settings !== 'object') return;
     this._settings = settings;
     const s = this._status;
@@ -752,7 +756,7 @@ class ShardingSlave {
 
       this._socket.emit('status', s);
 
-      common.logDebug(`Status Message: ${JSON.stringify(s)}`);
+      // common.logDebug(`Status Message: ${JSON.stringify(s)}`);
       if (this._settings.config.heartbeat.useMessageStats &&
           now - s.startTime > this._settings.config.heartbeat.interval) {
         // common.logDebug(

@@ -1,2 +1,3 @@
 knownShards.json
+shardStatsHistory.json
 shards/*
