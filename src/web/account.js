@@ -304,7 +304,7 @@ function WebAccount() {
       function fetchDiscordBot(data) {
         const onData = (user) => {
           data.username = user.username;
-          data.avatarURL = user.displayAvatarURL();
+          data.avatarURL = user.displayAvatarURL({dynamic: true});
           data.createdAt = user.createdAt;
           data.discriminator = user.discriminator;
           data.activity = user.presence.activity;

@@ -2105,10 +2105,11 @@ function Main() {
     if (msg.mentions.users.size > 0) {
       embed.setDescription(
           msg.mentions.users.first().username + '\'s profile picture');
-      embed.setImage(msg.mentions.users.first().displayAvatarURL({size: 2048}));
+      embed.setImage(msg.mentions.users.first().displayAvatarURL(
+          {size: 2048, dynamic: true}));
     } else {
       embed.setDescription(msg.author.username + '\'s profile picture');
-      embed.setImage(msg.author.displayAvatarURL({size: 2048}));
+      embed.setImage(msg.author.displayAvatarURL({size: 2048, dynamic: true}));
     }
     msg.channel.send(embed);
   }

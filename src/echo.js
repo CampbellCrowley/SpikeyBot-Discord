@@ -344,7 +344,7 @@ class Echo extends SubModule {
       const name = `${user.username}${nick}${dates}${mutual}`;
       embed.setColor([255, 0, 255]);
       embed.setTitle(tag);
-      embed.setThumbnail(user.displayAvatarURL({size: 32}));
+      embed.setThumbnail(user.displayAvatarURL({size: 32, dynamic: true}));
       if (charList.length == 1) {
         embed.setDescription(`${name}\n**Character**: ${charList[0]}`);
       } else if (charList.length > 0) {

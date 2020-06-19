@@ -758,7 +758,7 @@ function HGWeb() {
       premiumSinceTimestamp: m.premiumSinceTimestamp,
       user: {
         username: m.user.username,
-        avatarURL: m.user.displayAvatarURL(),
+        avatarURL: m.user.displayAvatarURL({dynamic: true}),
         id: m.user.id,
         bot: m.user.bot,
         // m.user.descriminator seems to be broken and always returns

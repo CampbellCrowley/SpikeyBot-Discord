@@ -219,7 +219,7 @@ class ModLog extends SubModule {
     embed.setColor(this._actionColor(action));
     embed.setFooter(new Date().toString());
     if (user) {
-      embed.setThumbnail(user.displayAvatarURL({size: 32}));
+      embed.setThumbnail(user.displayAvatarURL({size: 32, dynamic: true}));
       embed.addField(user.tag, `<@${user.id}>\n${user.id}`, true);
     }
     if (owner) embed.addField('Moderator', owner.tag, true);
