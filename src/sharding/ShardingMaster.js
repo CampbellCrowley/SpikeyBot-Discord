@@ -1314,8 +1314,9 @@ class ShardingMaster {
         if (err.code === 'ENOENT') {
           socket.emit('writeFile', filename, null, (err) => {
             if (err) {
-              common.error(`Failed to read file for slave: ${file}`);
+              common.error(`Failed to unlink file on slave: ${file}`);
               console.error(err);
+              cb('Failed to write');
             } else {
               cb(null);
             }
@@ -1323,13 +1324,14 @@ class ShardingMaster {
         } else {
           common.error(`Failed to read file for slave: ${file}`);
           console.error(err);
-          cb(null);
+          cb('Failed to read');
         }
       } else {
         socket.emit('writeFile', filename, data, (err) => {
           if (err) {
             common.error(`Failed to write file on slave: ${file}`);
             console.error(err);
+            cb('Failed to write');
           } else {
             cb(null);
           }

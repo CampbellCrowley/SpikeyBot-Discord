@@ -445,12 +445,14 @@ class ShardingSlave {
    * @param {string} filename Filename relative to project directory.
    * @param {?string|Buffer} data The data to write to the file, or null to
    *     delete the file.
+   * @param {Function} cb Callback once completed with optional error.
    */
-  _receiveMasterFile(filename, data) {
+  _receiveMasterFile(filename, data, cb) {
     this._lastSeen = Date.now();
     const file = path.resolve(`${botCWD}/${filename}`);
     if (typeof filename != 'string' || !file.startsWith(botCWD)) {
       this.logWarning('Master sent file outside of project directory: ' + file);
+      cb('File path unacceptable');
       return;
     }
     if (!data) {
@@ -458,8 +460,10 @@ class ShardingSlave {
         if (err) {
           common.error(`Failed to unlink file from master from disk: ${file}`);
           console.error(err);
+          cb('Failed to unlink');
         } else {
           common.logDebug(`Unlinked file from master from disk: ${file}`);
+          cb(null);
         }
       });
     } else {
@@ -467,8 +471,10 @@ class ShardingSlave {
         if (err) {
           common.error(`Failed to write file from master to disk: ${file}`);
           console.error(err);
+          cb('Failed to write');
         } else {
           common.logDebug(`Wrote file from master to disk: ${file}`);
+          cb(null);
         }
       });
     }
@@ -496,8 +502,9 @@ class ShardingSlave {
         if (err.code === 'ENOENT') {
           this._socket.emit('writeFile', filename, null, (err) => {
             if (err) {
-              common.error(`Failed to delete file on master: ${file}`);
+              common.error(`Failed to unlink file on master: ${file}`);
               console.error(err);
+              cb('Failed to unlink');
             } else {
               cb(null);
             }
@@ -505,13 +512,14 @@ class ShardingSlave {
         } else {
           common.error(`Failed to read file for master: ${file}`);
           console.error(err);
-          cb(null);
+          cb('Failed to read');
         }
       } else {
         this._socket.emit('writeFile', filename, data, (err) => {
           if (err) {
             common.error(`Failed to write file on master: ${file}`);
             console.error(err);
+            cb('Failed to write');
           } else {
             cb(null);
           }
