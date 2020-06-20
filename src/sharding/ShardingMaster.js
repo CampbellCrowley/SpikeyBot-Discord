@@ -1145,7 +1145,7 @@ class ShardingMaster {
             console.error(err);
             return;
           }
-          socket.emit('writeFile', el, data);
+          socket.emit('writeFile', el, data, () => {});
         });
       });
     }

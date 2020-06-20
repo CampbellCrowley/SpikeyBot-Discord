@@ -448,6 +448,7 @@ class ShardingSlave {
    * @param {Function} cb Callback once completed with optional error.
    */
   _receiveMasterFile(filename, data, cb) {
+    if (typeof cb !== 'function') cb = () => {};
     this._lastSeen = Date.now();
     const file = path.resolve(`${botCWD}/${filename}`);
     if (typeof filename != 'string' || !file.startsWith(botCWD)) {
@@ -488,6 +489,7 @@ class ShardingSlave {
    * @param {Function} cb Callback with optional error argument.
    */
   _sendMasterFile(filename, cb) {
+    if (typeof cb !== 'function') cb = () => {};
     this._lastSeen = Date.now();
     const file = path.resolve(`${botCWD}/${filename}`);
     if (typeof filename != 'string' || !file.startsWith(botCWD)) {
