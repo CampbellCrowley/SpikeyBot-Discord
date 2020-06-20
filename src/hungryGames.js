@@ -959,7 +959,7 @@ function HG() {
       if (!silent) {
         reply(
             msg, 'createInProgressTitle', 'createInProgressBody',
-            msg.prefix + self.postPrefix);
+            `${msg.prefix}${self.postPrefix}`);
       }
       if (typeof cb === 'function') cb(null);
     } else if (g) {
@@ -1153,7 +1153,7 @@ function HG() {
       file.setName(`HG-${finalId}.json`);
       msg.channel.send(`HG Data for guild ${finalId}`, file);
     } else {
-      self.common.reply(msg, 'No game created', finalId);
+      reply(msg, 'noGame', 'fillOne', finalId);
     }
   }
 
@@ -1230,8 +1230,9 @@ function HG() {
       finalMessage.setTitle(hg.messages.get('gameStart', msg.locale));
 
       if (!g.autoPlay) {
-        finalMessage.setFooter(
-            `"${msg.prefix}${self.postPrefix}next" for next day.`);
+        finalMessage.setFooter(strings.get(
+            'gameStartNextDayInfo', msg.locale,
+            `${msg.prefix}${self.postPrefix}`));
       }
 
       let mentions = self.common.mention(msg);
@@ -1366,7 +1367,7 @@ function HG() {
     } else {
       game.autoPlay = true;
       if (game.currentGame.inProgress && game.currentGame.day.state === 0) {
-        if (self.command.validate(msg.prefix + 'hg next', msg)) {
+        if (self.command.validate(`${msg.prefix}hg next`, msg)) {
           reply(msg, 'noPermNext');
           return;
         }
@@ -1374,7 +1375,7 @@ function HG() {
         msg.channel.send(strings.get('startAutoDay', msg.locale, msg.author.id))
             .catch(() => {});
       } else if (!game.currentGame.inProgress) {
-        if (self.command.validate(msg.prefix + 'hg start', msg)) {
+        if (self.command.validate(`${msg.prefix}hg start`, msg)) {
           reply(msg, 'noPermStart');
           return;
         }
@@ -3286,9 +3287,9 @@ function HG() {
       let shortName;
       shortName = obj.name.substring(0, 16);
       if (shortName != obj.name) {
-        shortName = shortName.substring(0, 13) + '...';
+        shortName = `${shortName.substring(0, 13)}...`;
       }
-      return '`' + shortName + '`';
+      return `\`${shortName}\``;
     }
 
     if (!hg.getGame(id)) {
@@ -4707,12 +4708,14 @@ function HG() {
         !hg.getGame(channel.guild.id)) {
       return;
     }
+    const locale = self.bot.getLocale(channel.guild.id);
+
     const embed = new self.Discord.MessageEmbed();
     embed.setColor(defaultColor);
-    embed.setTitle(`React with any emoji to join!`);
-    embed.setDescription(
-        'If you have reacted, you will be included in the next `' +
-        hg.getGame(channel.guild.id).currentGame.name + '`');
+    embed.setTitle(strings.get('reactToJoinTitle', locale));
+    embed.setDescription(strings.get(
+        'reactToJoinBody', locale,
+        hg.getGame(channel.guild.id).currentGame.name));
     channel.send(embed).then((msg) => {
       hg.getGame(channel.guild.id).reactMessage = {
         id: msg.id,
@@ -4761,7 +4764,7 @@ function HG() {
             msg.reactions.cache.forEach((el) => {
               numTotal++;
               el.users.fetch().then(usersFetched).catch((err) => {
-                self.error('Failed to fetch user reactions: ' + msg.channel.id);
+                self.error(`Failed to fetch user reactions: ${msg.channel.id}`);
                 console.error(err);
                 usersFetched();
               });
@@ -4792,7 +4795,8 @@ function HG() {
       if (numTotal > numDone) return;
       self.excludeUsers('everyone', id, () => {
         hg.getGame(id).reactMessage = null;
-        msg.edit('`Ended`').catch(() => {});
+        const ended = strings.get('ended', self.bot.getLocale(id));
+        msg.edit(`\`${ended}\``).catch(() => {});
         if (list.size == 0) {
           cb(null, 'reactNoUsers');
         } else {
@@ -4857,19 +4861,7 @@ function HG() {
    * @returns {string} A word meaning "nothing".
    */
   function nothing() {
-    const nothings = [
-      'nix',
-      'naught',
-      'nothing',
-      'zilch',
-      'void',
-      'zero',
-      'zip',
-      'zippo',
-      'diddly',
-      emoji.x,
-    ];
-    return nothings[Math.floor(Math.random() * nothings.length)];
+    return strings.get('nothing');
   }
 
   /**

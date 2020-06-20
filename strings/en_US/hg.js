@@ -78,6 +78,8 @@ class EnUsHG extends Locale {
         'groups}.\nactions {reset all actions to default settings}.\nreact ' +
         '{cancels hg react command}.';
     this.startedTitle = 'Game started!';
+    // {} is replaced with command prefix.
+    this.gameStartNextDayInfo = '"{}next" for next day.';
     this.startInProgressTitle = 'A game is already in progress!';
     // Both {0} is replaced with command prefix.
     this.startInProgressBody = '`{0}next` for next day, or `{0}end` to abort)';
@@ -89,6 +91,9 @@ class EnUsHG extends Locale {
         'the "Embed Links" permission in this channel.';
     this.noPermStart =
         'Sorry, but you don\'t have permission to start the games.';
+    this.reactToJoinTitle = 'React with any emoji to join!';
+    this.reactToJoinBody =
+        'If you have reacted, you will be included in the next `{}`';
     this.reactFailedTitle = 'React Join Failed';
     this.reactFailedNotStarted =
         'Unable to find message with reactions. Was a join via react started?';
@@ -336,6 +341,15 @@ class EnUsHG extends Locale {
         'reason.';
     this.rankedBy = 'Rank by {}';
     this.lifetime = 'lifetime';
+
+    this.ended = 'Ended';
+
+    // English will only ever be used for this. Add languages to here, not
+    // another language.
+    this.nothing = [
+      'nix', 'naught', 'nothing', 'zilch', 'void', 'zero', 'zip', 'zippo',
+      'diddly', '❌',
+    ];
 
     this.groupWords = {
       everyone: ['everyone', '@everyone', 'all'],
