@@ -171,8 +171,8 @@ class Strings {
    */
   reply(common, msg, titleKey, bodyKey, ...rep) {
     return common.reply(
-        msg, this.get(titleKey, msg.locale),
-        this.get(bodyKey, msg.locale, ...rep));
+        msg, this.get(titleKey, msg.locale) || '',
+        this.get(bodyKey, msg.locale, ...rep) || '');
   }
 }
 

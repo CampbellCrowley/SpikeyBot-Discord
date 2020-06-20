@@ -61,7 +61,8 @@
     "./twitch.js",
     "./images.js",
     "./memWatcher.js",
-    "./web/fileServer.js"
+    "./web/fileServer.js",
+    "./localeManager.js"
   ],
   "release": [
     "./moderation.js",

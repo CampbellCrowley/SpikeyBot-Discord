@@ -2305,7 +2305,7 @@ chronological order.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1562">line 1562</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1580">line 1580</a>
 			</li>
 		</ul>
 	</dd>
@@ -2522,7 +2522,7 @@ additional information to sysadmins.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1499">line 1499</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1517">line 1517</a>
 			</li>
 		</ul>
 	</dd>
@@ -2712,7 +2712,7 @@ why creation failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1530">line 1530</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1548">line 1548</a>
 			</li>
 		</ul>
 	</dd>
@@ -2853,7 +2853,7 @@ private key.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1417">line 1417</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1435">line 1435</a>
 			</li>
 		</ul>
 	</dd>
@@ -2948,7 +2948,7 @@ private key.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1426">line 1426</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1444">line 1444</a>
 			</li>
 		</ul>
 	</dd>
@@ -4171,7 +4171,7 @@ falsey, returns null. If string, the string is returned unmodified.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1692">line 1692</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1710">line 1710</a>
 			</li>
 		</ul>
 	</dd>
@@ -4453,7 +4453,7 @@ write to disk at the given filename relative to the project root.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1640">line 1640</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1658">line 1658</a>
 			</li>
 		</ul>
 	</dd>
@@ -4864,7 +4864,7 @@ waits a moment for multiple calls, then saves once all calls have subsided.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1663">line 1663</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1681">line 1681</a>
 			</li>
 		</ul>
 	</dd>
@@ -5006,7 +5006,7 @@ the shard user information.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1590">line 1590</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1608">line 1608</a>
 			</li>
 		</ul>
 	</dd>
@@ -5039,7 +5039,7 @@ the shard user information.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="_sendSlaveFile"><span class="type-signature">&lt;private> </span>_sendSlaveFile(filename, cb)</h4>
+    <h4 class="name" id="_sendSlaveFile"><span class="type-signature">&lt;private> </span>_sendSlaveFile(socket, filename, cb)</h4>
     
     
 </dt>
@@ -5078,6 +5078,37 @@ the shard user information.</td>
     </thead>
 
     <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>socket</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Socket</span>
+|
+
+<span class="param-type">number</span>
+|
+
+<span class="param-type"><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Socket.io socket to
+    send file to, or shard info to find socket from.</td>
+        </tr>
+
     
 
         <tr>
@@ -5168,7 +5199,7 @@ the shard user information.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1285">line 1285</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1287">line 1287</a>
 			</li>
 		</ul>
 	</dd>
@@ -5309,7 +5340,7 @@ the shard user information.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1711">line 1711</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1729">line 1729</a>
 			</li>
 		</ul>
 	</dd>
@@ -6215,7 +6246,7 @@ shard ID.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1729">line 1729</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1747">line 1747</a>
 			</li>
 		</ul>
 	</dd>
@@ -6376,7 +6407,7 @@ sysadmins.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1447">line 1447</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1465">line 1465</a>
 			</li>
 		</ul>
 	</dd>
@@ -7255,7 +7286,7 @@ connected to us.
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1369">line 1369</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1387">line 1387</a>
 			</li>
 		</ul>
 	</dd>
@@ -7784,7 +7815,7 @@ response.</td>
 		<ul class="dummy">
 			<li>
 				<a href="src_sharding_ShardingMaster.js.html">src/sharding/ShardingMaster.js</a>,
-				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1331">line 1331</a>
+				 <a href="src_sharding_ShardingMaster.js.html#sunlight-1-line-1349">line 1349</a>
 			</li>
 		</ul>
 	</dd>
@@ -7867,7 +7898,7 @@ response.</td>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
 	
-		on Friday, June 19, 2020 6:35 PM (-07:00)
+		on Friday, June 19, 2020 9:08 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

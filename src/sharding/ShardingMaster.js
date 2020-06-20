@@ -1134,7 +1134,7 @@ class ShardingMaster {
     });
     socket.on('getFile', (...args) => {
       user.lastSeen = Date.now();
-      this._sendSlaveFile(...args);
+      this._sendSlaveFile(socket, ...args);
     });
 
     if (this._config.copyFiles) {
@@ -1279,10 +1279,28 @@ class ShardingMaster {
    * @description Send the specified file to the ShardingSlave.
    *
    * @private
+   * @param {Socket|number|ShardingMaster.ShardInfo} socket Socket.io socket to
+   *     send file to, or shard info to find socket from.
    * @param {string} filename Filename relative to project directory.
    * @param {Function} cb Callback with optional error argument.
    */
-  _sendSlaveFile(filename, cb) {
+  _sendSlaveFile(socket, filename, cb) {
+    if (typeof socket === 'number' && !isNaN(socket)) {
+      const shardInfo = this._getShardById(socket);
+      if (!shardInfo || !shardInfo.id) {
+        cb('Unknown Destination');
+        return;
+      }
+      socket = shardInfo.isMaster ? this._masterShardSocket :
+                                    this._shardSockets[shardInfo.id];
+    } else if (!socket.emit) {
+      socket = socket.isMaster ? this._masterShardSocket :
+                                 this._shardSockets[socket.id];
+    }
+    if (!socket || typeof socket.emit !== 'function') {
+      cb('Unknown Destination');
+      return;
+    }
     const file = path.resolve(`${botCWD}/${filename}`);
     if (typeof filename != 'string' || !file.startsWith(botCWD)) {
       common.error(
@@ -1294,7 +1312,7 @@ class ShardingMaster {
     fs.readFile(filename, (err, data) => {
       if (err) {
         if (err.code === 'ENOENT') {
-          this._socket.emit('writeFile', filename, null, (err) => {
+          socket.emit('writeFile', filename, null, (err) => {
             if (err) {
               common.error(`Failed to read file for slave: ${file}`);
               console.error(err);
@@ -1308,7 +1326,7 @@ class ShardingMaster {
           cb(null);
         }
       } else {
-        this._socket.emit('writeFile', filename, data, (err) => {
+        socket.emit('writeFile', filename, data, (err) => {
           if (err) {
             common.error(`Failed to write file on slave: ${file}`);
             console.error(err);

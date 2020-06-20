@@ -79,20 +79,20 @@ class LocaleManager extends SubModule {
               permissions: this.Discord.Permissions.FLAGS.MANAGE_GUILD,
             }));
 
-    this.client.guilds.forEach((g) => {
+    this.client.guilds.cache.forEach((g) => {
       const fn =
           `${this.common.guildSaveDir}${g.id}${LocaleManager._localeSaveFile}`;
-      fs.readFile(fn, (err, data) => {
+      this.common.readFile(fn, (err, data) => {
         if (err) {
           if (err.code !== 'ENOENT') {
-            this.error('Failed to read guild locale settings:' + fn);
+            this.error(`Failed to read guild locale settings: ${fn}`);
             console.error(err);
           }
           return;
         }
         const str = data.toString();
         if (!Strings.parseLocale(str)) {
-          this.error(str + ' is not a valid locale: ' + fn);
+          this.error(`${str} is not a valid locale: ${fn}`);
           return;
         }
         this._guilds[g.id] = str;
@@ -106,8 +106,10 @@ class LocaleManager extends SubModule {
      * @public
      * @see {@link LocaleManager.getLocale}
      * @type {?Function}
+     * @param {*} args Args passed directly to {@link LocaleManager.getLocale}.
+     * @returns {?string} Locale string, or null.
      */
-    this.bot.getLocale = this.getLocale;
+    this.bot.getLocale = (...args) => this.getLocale(...args);
   }
   /** @inheritdoc */
   shutdown() {
@@ -164,11 +166,10 @@ class LocaleManager extends SubModule {
   /**
    * @description Get the locale of the given language strings.
    * @public
-   * @static
    * @param {string} lang The language string to lookup in the map.
    * @returns {?string} Locale string, or null if unable to find.
    */
-  static langToLocale(lang) {
+  langToLocale(lang) {
     return this._mappings[lang.toLocaleLowerCase()];
   }
 
@@ -219,13 +220,13 @@ class LocaleManager extends SubModule {
     this._guilds[gId] = locale;
     const fn =
         `${this.common.guildSaveDir}${gId}${LocaleManager._localeSaveFile}`;
-    fs.writeFile(fn, locale, (err) => {
+    this.common.mkAndWrite(fn, null, locale, (err) => {
       if (err) {
         this.error('Failed to save locale settings: ' + fn);
         console.error(err);
         return;
       }
-      this.debug('Updated Locale: ' + gId + ' ' + locale);
+      this.debug(`Updated Locale: ${gId} ${locale}`);
     });
   }
 
@@ -247,21 +248,21 @@ class LocaleManager extends SubModule {
   _commandLanguage(msg) {
     const text = msg.text.trim();
     if (!text || text.length < 2) {
-      this._strings.reply(this.common, msg, null, 'invalidLocale');
+      this._strings.reply(this.common, msg, 'title', 'invalidLocale');
       return;
     }
-    const locale = LocaleManager.langToLocale(text);
+    const locale = this.langToLocale(text);
     if (!locale) {
-      this._strings.reply(this.common, msg, null, 'invalidLocale');
+      this._strings.reply(this.common, msg, 'title', 'invalidLocale');
       return;
     }
     const desc = msg.channel.permissionsFor(msg.guild.me)
         .has(this.Discord.Permissions.FLAGS.ADD_REACTIONS) ?
         'fillOne' :
         'confirmLocaleReact';
+    const emoji = '✅';
     const p = this._strings.reply(
         this.common, msg, 'confirmLocale', desc, locale, emoji);
-    const emoji = '✅';
     p.then((msg_) => {
       msg_.react(emoji);
       msg_.awaitReactions(

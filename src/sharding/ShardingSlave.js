@@ -443,7 +443,8 @@ class ShardingSlave {
    *
    * @private
    * @param {string} filename Filename relative to project directory.
-   * @param {string|Buffer} data The data to write to the file.
+   * @param {?string|Buffer} data The data to write to the file, or null to
+   *     delete the file.
    */
   _receiveMasterFile(filename, data) {
     this._lastSeen = Date.now();
@@ -452,14 +453,25 @@ class ShardingSlave {
       this.logWarning('Master sent file outside of project directory: ' + file);
       return;
     }
-    common.mkAndWrite(file, null, data, (err) => {
-      if (err) {
-        common.error(`Failed to write file from master to disk: ${file}`);
-        console.error(err);
-      } else {
-        common.logDebug(`Wrote file from master to disk: ${file}`);
-      }
-    });
+    if (!data) {
+      common.unlink(file, (err) => {
+        if (err) {
+          common.error(`Failed to unlink file from master from disk: ${file}`);
+          console.error(err);
+        } else {
+          common.logDebug(`Unlinked file from master from disk: ${file}`);
+        }
+      });
+    } else {
+      common.mkAndWrite(file, null, data, (err) => {
+        if (err) {
+          common.error(`Failed to write file from master to disk: ${file}`);
+          console.error(err);
+        } else {
+          common.logDebug(`Wrote file from master to disk: ${file}`);
+        }
+      });
+    }
   }
 
   /**

@@ -94,6 +94,10 @@ class BotCommands extends SubModule {
               permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES |
                   this.Discord.Permissions.FLAGS.MANAGE_GUILD,
             })));
+    this.client.guilds.cache.forEach((g) => {
+      this.common.readFile(
+          `${this.common.guildSaveDir}${g.id}${this._filename}`, () => {});
+    });
     this.client.on('message', this._onMessage);
   }
   /** @inheritdoc */
@@ -226,7 +230,7 @@ class BotCommands extends SubModule {
                     return;
                   }
                   try {
-                    this.common.mkAndWriteSync(file, null, ' ');
+                    this.common.mkAndWriteSync(file, null, 'true');
                     this.common.reply(msg, 'Bot Commands', 'Now Allowed');
                   } catch (err) {
                     this.error(
