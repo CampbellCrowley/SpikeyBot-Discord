@@ -30,8 +30,8 @@ class Locale {
    * @this Locale
    * @param {string} key Key of string to lookup.
    * @param {...string} [rep] Placeholder replacement strings.
-   * @returns {?string} String with replaced placeholders, or null if unable to
-   * find.
+   * @returns {sstring} String with replaced placeholders, or key if unable to
+   *     find.
    */
   get(key, ...rep) {
     let s = this.getRaw(key);
@@ -45,7 +45,7 @@ class Locale {
         return out;
       });
     } else {
-      return null;
+      return key;
     }
   }
 

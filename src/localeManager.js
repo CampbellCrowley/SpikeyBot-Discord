@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const SubModule = require('./subModule.js');
@@ -201,10 +201,10 @@ class LocaleManager extends SubModule {
    * @description Get the locale string for a specified guild.
    * @public
    * @param {string} gId The ID of the guild to fetch.
-   * @returns {string} Locale string, or null if default.
+   * @returns {?string} Locale string, or null if default.
    */
   getLocale(gId) {
-    return this._guilds[gId];
+    return gId && this._guilds[gId];
   }
 
   /**
@@ -222,7 +222,7 @@ class LocaleManager extends SubModule {
         `${this.common.guildSaveDir}${gId}${LocaleManager._localeSaveFile}`;
     this.common.mkAndWrite(fn, null, locale, (err) => {
       if (err) {
-        this.error('Failed to save locale settings: ' + fn);
+        this.error(`Failed to save locale settings: ${fn}`);
         console.error(err);
         return;
       }
@@ -248,7 +248,9 @@ class LocaleManager extends SubModule {
   _commandLanguage(msg) {
     const text = msg.text.trim();
     if (!text || text.length < 2) {
-      this._strings.reply(this.common, msg, 'title', 'invalidLocale');
+      this._strings.reply(
+          this.common, msg, 'title', 'currentLocale',
+          msg.locale || this._strings.defaultLocale);
       return;
     }
     const locale = this.langToLocale(text);
@@ -268,7 +270,7 @@ class LocaleManager extends SubModule {
       msg_.awaitReactions(
           (reaction, user) =>
             user.id === msg.author.id && reaction.emoji.name === emoji,
-          {limit: 1, time: 30 * 60 * 1000})
+          {max: 1, time: 30 * 1000})
           .then((reactions) => {
             if (reactions.size === 0) {
               msg_.edit('Timed out');

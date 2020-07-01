@@ -736,6 +736,22 @@ function HG() {
   }
 
   /**
+   * @description Get the locale string in the given guild.
+   * @public
+   *
+   * @see {@link Strings.get}
+   *
+   * @param {string} str String ID to get.
+   * @param {string} gId ID of guild to get locale from.
+   * @param {string} [rep] Replacements for string.
+   * @returns {?string} Found string with replacements, or null.
+   */
+  this.getString = function(str, gId, ...rep) {
+    return strings.get(
+        str, self.bot.getLocale && self.bot.getLocale(gId), ...rep);
+  };
+
+  /**
    * Tell a user their chances of winning have not increased.
    *
    * @private
@@ -3118,10 +3134,7 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function useWebsiteForCustom(msg, id) {
-    self.common.reply(
-        msg, 'This command is no longer available.',
-        'Please use https://www.spikeybot.com/hg/#?guild=' + id +
-            ' to manage custom events.');
+    reply(msg, 'legacyEventCommandResponseTitle', 'legacyEventNoticeBody', id);
   }
 
   /**
@@ -4272,16 +4285,15 @@ function HG() {
     if (self.client.shard) {
       self.client.shard.broadcastEval('this.getHGStats(true)').then((res) => {
         const embed = new self.Discord.MessageEmbed();
-        embed.setTitle('Stats Across Shards');
+        embed.setTitle(strings.get('numsTitle', msg.locale));
         res.forEach((el, i) => embed.addField(`#${i}`, el, true));
         msg.channel.send(embed);
       }).catch((err) => {
-        self.common.reply(
-            msg, 'Oops, something went wrong while fetching stats.');
+        reply(msg, 'numsFailure');
         self.error(err);
       });
     } else {
-      self.common.reply(msg, getStatsString());
+      self.common.reply(msg, getStatsString(false, msg.locale));
     }
   }
 
@@ -4290,21 +4302,24 @@ function HG() {
    * string.
    * @private
    * @param {boolean} [short=false] Provide a short version.
+   * @param {?string} [locale=null] Language to use for strings.
    * @returns {string} The formatted string.
    */
-  function getStatsString(short = false) {
+  function getStatsString(short = false, locale = null) {
     const listenerBlockDuration = listenersEndTime - Date.now();
     let message;
     if (short) {
       message = `${self.getNumSimulating()}/${Object.keys(hg._games).length}`;
     } else {
-      message = 'There are ' + self.getNumSimulating() +
-          ' games currently simulating of ' + Object.keys(hg._games).length +
-          ' currently loaded.';
+      message = strings.get(
+          'numsNumSimulating', locale, self.getNumSimulating(),
+          Object.keys(hg._games).length);
     }
     if (!short && listenerBlockDuration > 0) {
-      message += '\nThe last listener will end in ' +
-          (Math.round(listenerBlockDuration / 100 / 60) / 10) + ' minutes.';
+      message += '\n' +
+          strings.get(
+              'numsLastListener', locale,
+              Math.round(listenerBlockDuration / 100 / 60) / 10);
     }
     const web = !self.common.isSlave && self.bot.getSubmodule(webSM);
     if (web) {
@@ -4420,7 +4435,7 @@ function HG() {
     if (!game) {
       createGame(msg, id, false, (game) => {
         if (!game) {
-          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          reply(msg, 'createFailedUnknown');
           return;
         }
         commandKill(msg, id, game);
@@ -4430,14 +4445,13 @@ function HG() {
     const players = parseGamePlayers(msg, game);
 
     if (!players || players.length == 0) {
-      self.common.reply(msg, 'Please specify a player in the games to kill.');
+      reply(msg, 'effectPlayerKillNoPlayer');
       return;
     }
     HungryGames.GuildGame.forcePlayerState(
         hg.getGame(id), players, 'dead', hg.messages,
-        hg._defaultEventStore.getArray('player'), (res) => {
-          self.common.reply(msg, res);
-        });
+        hg._defaultEventStore.getArray('player'), msg.locale,
+        (res) => reply(msg, res));
   }
 
   /**
@@ -4455,7 +4469,7 @@ function HG() {
     if (!game) {
       createGame(msg, id, false, (game) => {
         if (!game) {
-          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          reply(msg, 'createFailedUnknown');
           return;
         }
         commandHeal(msg, id, game);
@@ -4465,14 +4479,13 @@ function HG() {
     const players = parseGamePlayers(msg, game);
 
     if (!players || players.length == 0) {
-      self.common.reply(msg, 'Please specify a player in the games to heal.');
+      reply(msg, 'effectPlayerHealNoPlayer');
       return;
     }
     HungryGames.GuildGame.forcePlayerState(
         hg.getGame(id), players, 'thriving', hg.messages,
-        hg._defaultEventStore.getArray('player'), (res) => {
-          self.common.reply(msg, res);
-        });
+        hg._defaultEventStore.getArray('player'), msg.locale,
+        (res) => reply(msg, res));
   }
 
   /**
@@ -4489,7 +4502,7 @@ function HG() {
     if (!game) {
       createGame(msg, id, false, (game) => {
         if (!game) {
-          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          reply(msg, 'createFailedUnknown');
           return;
         }
         commandWound(msg, id, game);
@@ -4499,14 +4512,13 @@ function HG() {
     const players = parseGamePlayers(msg, game);
 
     if (!players || players.length == 0) {
-      self.common.reply(msg, 'Please specify a player in the games to wound.');
+      reply(msg, 'effectPlayerWoundNoPlayer');
       return;
     }
     HungryGames.GuildGame.forcePlayerState(
         hg.getGame(id), players, 'wounded', hg.messages,
-        hg._defaultEventStore.getArray('player'), (res) => {
-          self.common.reply(msg, res);
-        });
+        hg._defaultEventStore.getArray('player'), msg.locale,
+        (res) => reply(msg, res));
   }
 
   /**
@@ -4542,7 +4554,7 @@ function HG() {
     if (!game || !game.currentGame) {
       createGame(msg, id, false, (game) => {
         if (!game) {
-          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          reply(msg, 'createFailedUnknown');
           return;
         }
         commandRename(msg, id, game);
@@ -4550,13 +4562,11 @@ function HG() {
       return;
     }
     if (self.renameGame(id, msg.text.trim())) {
-      self.common.reply(
-          msg, 'Renamed game to',
+      reply(
+          msg, 'Renamed game to', 'fillOne',
           msg.text.trim() || self.client.guilds.resolve(id).name);
     } else {
-      self.common.reply(
-          msg, 'Oops! I couldn\'t change the name to that. Please ensure ' +
-              'it is fewer than 100 characters long.');
+      reply(msg, 'renameGameFail');
     }
   }
 
@@ -4708,7 +4718,7 @@ function HG() {
         !hg.getGame(channel.guild.id)) {
       return;
     }
-    const locale = self.bot.getLocale(channel.guild.id);
+    const locale = self.bot.getLocale && self.bot.getLocale(channel.guild.id);
 
     const embed = new self.Discord.MessageEmbed();
     embed.setColor(defaultColor);
@@ -4795,7 +4805,8 @@ function HG() {
       if (numTotal > numDone) return;
       self.excludeUsers('everyone', id, () => {
         hg.getGame(id).reactMessage = null;
-        const ended = strings.get('ended', self.bot.getLocale(id));
+        const locale = self.bot.getLocale && self.bot.getLocale(id);
+        const ended = strings.get('ended', locale);
         msg.edit(`\`${ended}\``).catch(() => {});
         if (list.size == 0) {
           cb(null, 'reactNoUsers');

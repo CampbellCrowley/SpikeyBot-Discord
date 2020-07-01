@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const Locale = require('../../src/locale/Locale.js');
 
@@ -47,6 +47,11 @@ class EnUsHG extends Locale {
         '\nSome events failed to be converted due to unknown errors.';
     this.legacyNoFailures = '\nNo errors.';
     this.legacyNoneFound = 'No legacy events found to update.';
+    this.legacyEventCommandResponseTitle =
+        'This command is no longer available.';
+    this.legacyEventCommandResponseBody =
+        'Please use https://www.spikeybot.com/hg/#?guild={} to manage custom ' +
+        'events.';
     this.loadingTitle = 'Still loading';
     this.loadingBody =
         'A previous command is still loading. Please wait for it to complete.';
@@ -145,6 +150,10 @@ class EnUsHG extends Locale {
     this.endGameLoading =
         'Game is currently loading. Please wait, then try again.';
     this.endGameSuccess = 'The game has ended!';
+    this.renameGameSuccess = 'Renamed game to';
+    this.renameGameFail =
+        'Oops! I couldn\'t change the name to that. Please ensure it is less' +
+        ' than 100 characters long.';
 
     // {0} is the group that was modified (ie: "All users").
     // {1} is what was modified (ie: "have been added to the games.").
@@ -184,6 +193,16 @@ class EnUsHG extends Locale {
     this.excludeBlacklist = '{} added to blacklist.';
     this.includeWhitelist = '{} added to whitelist.';
     this.excludeFailedUnknown = 'Failed to remove {} for an unknown reason.';
+
+    this.effectPlayerKillNoPlayer =
+        'Please specify a player in the games to kill.';
+    this.effectPlayerHealNoPlayer =
+        'Please specify a player in the games to heal.';
+    this.effectPlayerWoundNoPlayer =
+        'Please specify a player in the games to wound.';
+    this.effectPlayerNoPlayer = 'No players given.';
+    this.effectPlayerNoPlayerFound = 'No players found.';
+    this.effectPlayerNoOutcome = 'No outcome given.';
 
     this.playerRefreshInfo = 'To refresh: `{}create`';
 
@@ -342,10 +361,16 @@ class EnUsHG extends Locale {
     this.rankedBy = 'Rank by {}';
     this.lifetime = 'lifetime';
 
+    this.numsTitle = 'Stats Across Shards';
+    this.numsFailure = 'Oops, something went wrong while fetching stats.';
+    this.numsNumSimulating =
+        'There are {0} games currently simulating of {1} currently loaded.';
+    this.numsLastListener = '';
+
     this.ended = 'Ended';
 
     // English will only ever be used for this. Add languages to here, not
-    // another language.
+    // another language file.
     this.nothing = [
       'nix', 'naught', 'nothing', 'zilch', 'void', 'zero', 'zip', 'zippo',
       'diddly', '❌',
@@ -366,6 +391,9 @@ class EnUsHG extends Locale {
     this.noPermNext =
         'Sorry, but you don\'t have permission to start the next day in the ' +
         'games.';
+
+    this.genericNoPerm =
+        'Failed to run "{}" because you don\'t have permission for this.';
 
     this.largeServerDisabled =
         'Sorry, but HG has been temporarily disabled on servers larger than ' +

@@ -163,6 +163,9 @@ class EnUsHGMessages extends Locale {
       '{victim} lose[Vs|] the will to live.',
       '{victim} [Vis|are] unable to hold onto life any longer, and die[Vs|].',
     ];
+    this.forceStateSuccessFew = '{0} will be {1} by the end of the day.';
+    this.forceStateSuccessMany =
+        '{0} players will be {1} by the end of the day.';
     this.forcedDeath = [
       '{victim} drop[Vs|] dead after the game makers pressed a button.',
       '{victim} die[Vs|] when the game makers wished it so.',

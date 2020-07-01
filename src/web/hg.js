@@ -637,14 +637,13 @@ function HGWeb() {
    *
    * @private
    * @param {Socket} socket The socket.io socket to reply on.
-   * @param {string} cmd THe command the client attempted.
+   * @param {string} cmd The command the client attempted.
+   * @param {string} [gId] The guild ID for locale info.
    */
-  function replyNoPerm(socket, cmd) {
-    self.common.logDebug(
-        'Attempted ' + cmd + ' without permission.', socket.id);
-    socket.emit(
-        'message', 'Failed to run command "' + cmd +
-            '" because you don\'t have permission for this.');
+  function replyNoPerm(socket, cmd, gId) {
+    const output = hg().getString('genericNoPerm', gId, cmd);
+    self.common.logDebug(`Attempted ${cmd} without permission.`, socket.id);
+    socket.emit('message', output);
   }
 
   /**
@@ -1110,7 +1109,7 @@ function HGWeb() {
         !checkPerm(userData, gId, null, 'events') ||
         !checkPerm(userData, gId, null, 'players')) {
       if (!checkMyGuild(gId)) return;
-      replyNoPerm(socket, 'fetchGames');
+      replyNoPerm(socket, 'fetchGames', gId);
       return;
     }
 
@@ -1169,7 +1168,7 @@ function HGWeb() {
     if (!g.channels.resolve(game.outputChannel)
         .permissionsFor(m)
         .has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
-      replyNoPerm(socket, 'fetchDay');
+      replyNoPerm(socket, 'fetchDay', gId);
       return;
     }
 
@@ -1197,14 +1196,14 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'kill')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'fetchNextDay');
+      replyNoPerm(socket, 'fetchNextDay', gId);
       return;
     }
     const g = self.client && self.client.guilds.resolve(gId);
     const m = g.members.resolve(userData.id);
     if (!m) {
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'fetchNextDay');
+      replyNoPerm(socket, 'fetchNextDay', gId);
       return;
     }
     const game = hg().getHG().getGame(gId);
@@ -1222,7 +1221,7 @@ function HGWeb() {
     if (!g.channels.resolve(game.outputChannel)
         .permissionsFor(m)
         .has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
-      replyNoPerm(socket, 'fetchNextDay');
+      replyNoPerm(socket, 'fetchNextDay', gId);
       return;
     }
 
@@ -1247,7 +1246,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'options')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'fetchActions');
+      replyNoPerm(socket, 'fetchActions', gId);
       return;
     }
     const game = hg().getHG().getGame(gId);
@@ -1281,7 +1280,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'options')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'insertAction');
+      replyNoPerm(socket, 'insertAction', gId);
       return;
     }
     hg().getHG().insertAction(gId, trigger, action, args, cb);
@@ -1304,7 +1303,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'options')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'removeAction');
+      replyNoPerm(socket, 'removeAction', gId);
       return;
     }
     hg().getHG().removeAction(gId, trigger, id, cb);
@@ -1329,7 +1328,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'options')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'updateAction');
+      replyNoPerm(socket, 'updateAction', gId);
       return;
     }
     hg().getHG().updateAction(gId, trigger, id, key, value, cb);
@@ -1352,7 +1351,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'exclude')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'excludeMember');
+      replyNoPerm(socket, 'excludeMember', gId);
       return;
     }
     if (mId === 'everyone' || mId === 'online' || mId == 'offline' ||
@@ -1384,7 +1383,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'include')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'includeMember');
+      replyNoPerm(socket, 'includeMember', gId);
       return;
     }
     if (mId === 'everyone' || mId === 'online' || mId == 'offline' ||
@@ -1419,7 +1418,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'option')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'toggleOption');
+      replyNoPerm(socket, 'toggleOption', gId);
       return;
     }
     hg().getHG().fetchGame(gId, (game) => {
@@ -1448,7 +1447,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'create')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'createGame');
+      replyNoPerm(socket, 'createGame', gId);
       return;
     }
     hg().createGame(gId, (game) => {
@@ -1473,7 +1472,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'reset')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'resetGame');
+      replyNoPerm(socket, 'resetGame', gId);
       return;
     }
     hg().getHG().fetchGame(gId, () => {
@@ -1499,7 +1498,7 @@ function HGWeb() {
     if (!checkChannelPerm(userData, gId, cId, 'start')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'startGame');
+      replyNoPerm(socket, 'startGame', gId);
       return;
     }
     hg().startGame(userData.id, gId, cId);
@@ -1523,7 +1522,7 @@ function HGWeb() {
     if (!checkChannelPerm(userData, gId, cId, 'autoplay')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'startAutoplay');
+      replyNoPerm(socket, 'startAutoplay', gId);
       return;
     }
     hg().startAutoplay(userData.id, gId, cId);
@@ -1547,7 +1546,7 @@ function HGWeb() {
     if (!checkChannelPerm(userData, gId, cId, 'next')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'nextDay');
+      replyNoPerm(socket, 'nextDay', gId);
       return;
     }
     hg().nextDay(userData.id, gId, cId);
@@ -1571,7 +1570,7 @@ function HGWeb() {
     if (!checkChannelPerm(userData, gId, cId, 'step')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'gameStep');
+      replyNoPerm(socket, 'gameStep', gId);
       return;
     }
     hg().gameStep(userData.id, gId, cId);
@@ -1594,7 +1593,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'end')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'endGame');
+      replyNoPerm(socket, 'endGame', gId);
       return;
     }
     hg().endGame(userData.id, gId);
@@ -1622,7 +1621,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'autoplay')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'pauseAutoplay');
+      replyNoPerm(socket, 'pauseAutoplay', gId);
       return;
     }
     hg().pauseAutoplay(userData.id, gId);
@@ -1650,7 +1649,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'pause')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'pauseGame');
+      replyNoPerm(socket, 'pauseGame', gId);
       return;
     }
     const error = hg().pauseGame(gId);
@@ -1688,7 +1687,7 @@ function HGWeb() {
   this.editTeam = function editTeam(userData, socket, gId, cmd, one, two, cb) {
     if (!checkPerm(userData, gId, null, 'team')) {
       if (!checkMyGuild(gId)) return;
-      replyNoPerm(socket, 'editTeam');
+      replyNoPerm(socket, 'editTeam', gId);
       return;
     }
     const message = hg().editTeam(userData.id, gId, cmd, one, two);
@@ -1788,7 +1787,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'event')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, this.name);
+      replyNoPerm(socket, this.name, gId);
       return;
     }
     if (typeof cb !== 'function') cb = function() {};
@@ -1832,7 +1831,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'event')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, this.name);
+      replyNoPerm(socket, this.name, gId);
       return;
     }
     if (typeof cb !== 'function') cb = function() {};
@@ -1896,7 +1895,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'event')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'removeEvent');
+      replyNoPerm(socket, 'removeEvent', gId);
       return;
     }
     if (typeof cb !== 'function') cb = function() {};
@@ -2022,7 +2021,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'claimlegacy')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, this.name);
+      replyNoPerm(socket, this.name, gId);
       return;
     }
     hg().getHG().fetchGame(gId, (game) => {
@@ -2071,7 +2070,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, cmdToCheck)) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'forcePlayerState');
+      replyNoPerm(socket, 'forcePlayerState', gId);
       return;
     }
     const game = hg().getHG().getGame(gId);
@@ -2079,12 +2078,14 @@ function HGWeb() {
     if (typeof text != 'string') {
       text = hg().getHG()._defaultEventStore.getArray('player');
     }
+    const locale = self.bot.getLocale && self.bot.getLocale(gId);
     HungryGames.GuildGame.forcePlayerState(
-        game, list, state, hg().getHG().messages, text, (res) => {
+        game, list, state, hg().getHG().messages, text, locale, (res) => {
+          const output = hg().getString(res, gId);
           if (typeof cb === 'function') {
-            cb(null, res, game.serializable);
+            cb(null, output, game.serializable);
           } else {
-            socket.emit('message', res);
+            socket.emit('message', output);
           }
         });
   };
@@ -2107,7 +2108,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'rename')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'renameGame');
+      replyNoPerm(socket, 'renameGame', gId);
       return;
     }
     hg().renameGame(gId, name);
@@ -2140,7 +2141,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'ai create')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'renameNPC');
+      replyNoPerm(socket, 'renameNPC', gId);
       return;
     }
     const error = hg().renameNPC(gId, npcId, username);
@@ -2167,7 +2168,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'ai remove')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'removeNPC');
+      replyNoPerm(socket, 'removeNPC', gId);
       return;
     }
     const error = hg().removeNPC(gId, npcId);
@@ -2192,7 +2193,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'groups')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'fetchStatGroupList');
+      replyNoPerm(socket, 'fetchStatGroupList', gId);
       return;
     }
     const game = hg().getHG().getGame(gId);
@@ -2236,7 +2237,7 @@ function HGWeb() {
     if (!checkPerm(userData, guildId, null, 'groups')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'fetchStatGroupMetadata');
+      replyNoPerm(socket, 'fetchStatGroupMetadata', guildId);
       return;
     }
     const game = hg().getHG().getGame(guildId);
@@ -2285,7 +2286,7 @@ function HGWeb() {
     if (!checkPerm(userData, guildId, null, 'stats')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'fetchStats');
+      replyNoPerm(socket, 'fetchStats', guildId);
       return;
     }
     const game = hg().getHG().getGame(guildId);
@@ -2334,7 +2335,7 @@ function HGWeb() {
     if (!checkPerm(userData, guildId, null, 'stats')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'fetchLeaderboard');
+      replyNoPerm(socket, 'fetchLeaderboard', guildId);
       return;
     }
     const game = hg().getHG().getGame(guildId);
@@ -2389,7 +2390,7 @@ function HGWeb() {
         !checkPerm(userData, gId, null, 'take')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'modifyInventory');
+      replyNoPerm(socket, 'modifyInventory', gId);
       return;
     }
     const game = hg().getHG().getGame(gId);
@@ -2422,7 +2423,7 @@ function HGWeb() {
     if (!checkPerm(userData, guildId, null, 'group select')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'selectStatGroup');
+      replyNoPerm(socket, 'selectStatGroup', guildId);
       return;
     }
     const game = hg().getHG().getGame(guildId);
@@ -2465,7 +2466,7 @@ function HGWeb() {
     if (!checkPerm(userData, guildId, null, 'group create')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'createStatGroup');
+      replyNoPerm(socket, 'createStatGroup', guildId);
       return;
     }
     const game = hg().getHG().getGame(guildId);
@@ -2510,7 +2511,7 @@ function HGWeb() {
     if (!checkPerm(userData, guildId, null, 'group delete')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'deleteStatGroup');
+      replyNoPerm(socket, 'deleteStatGroup', guildId);
       return;
     }
     const game = hg().getHG().getGame(guildId);
@@ -2552,20 +2553,20 @@ function HGWeb() {
     if (!meta) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'imageChunk');
+      replyNoPerm(socket, 'imageChunk', gId);
       return;
     }
     if (meta.uId != userData.id) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'imageChunk');
+      replyNoPerm(socket, 'imageChunk', gId);
       return;
     }
     if (meta.type == 'NPC') {
       if (!checkPerm(userData, gId, null, 'ai create')) {
         if (!checkMyGuild(gId)) return;
         if (typeof cb === 'function') cb('NO_PERM');
-        replyNoPerm(socket, 'imageChunk');
+        replyNoPerm(socket, 'imageChunk', gId);
         cancelImageUpload(iId);
         return;
       }
@@ -2662,7 +2663,7 @@ function HGWeb() {
       if (!checkPerm(userData, gId, null, 'ai create')) {
         if (!checkMyGuild(gId)) return;
         if (typeof cb === 'function') cb('NO_PERM');
-        replyNoPerm(socket, 'imageInfo');
+        replyNoPerm(socket, 'imageInfo', gId);
         return;
       }
 

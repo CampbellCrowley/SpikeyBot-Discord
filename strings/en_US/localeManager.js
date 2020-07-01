@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const Locale = require('../../src/locale/Locale.js');
 
@@ -17,6 +17,7 @@ class EnUsLocaleManager extends Locale {
         'Unknown language. I don\'t know what language you have requested.';
     this.confirmLocale = 'Are you sure you wish to change your language?';
     this.confirmLocaleReact = '{}\nReact with {} to confirm.';
+    this.currentLocale = 'Current language: `{}`';
   }
 }
 

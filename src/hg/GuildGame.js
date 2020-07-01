@@ -604,13 +604,14 @@ class GuildGame {
    * or "thriving").
    * @param {HungryGames~Messages} messages Reference to current Messages
    * instance.
-   * @param {string|HungryGames~NormalEvent[]} [text] Message to show when the
+   * @param {string|HungryGames~NormalEvent[]} text Message to show when the
    * user is affected, or array of default events if not specifying a specific
    * message.
-   * @param {Function} [cb] Callback once complete. Single parameter is the
+   * @param {?string} locale Language locale to use for string lookup.
+   * @param {Function} cb Callback once complete. Single parameter is the
    * output message to tell the user of the outcome of the operation.
    */
-  static forcePlayerState(game, list, state, messages, text, cb) {
+  static forcePlayerState(game, list, state, messages, text, locale, cb) {
     if (!Array.isArray(list)) {
       messages = state;
       text = list.text;
@@ -618,11 +619,11 @@ class GuildGame {
       list = list.list;
     }
     if (!Array.isArray(list) || list.length == 0) {
-      cb('No players given.');
+      cb('effectPlayerNoPlayer');
       return;
     }
     if (typeof state !== 'string') {
-      cb('No outcome given.');
+      cb('effectPlayerNoOutcome');
       return;
     }
     const players = [];
@@ -715,13 +716,13 @@ class GuildGame {
       if (typeof text !== 'string') {
         switch (state) {
           case 'dead':
-            text = messages.get('forcedDeath');
+            text = messages.get('forcedDeath', locale);
             break;
           case 'thriving':
-            text = messages.get('forcedHeal');
+            text = messages.get('forcedHeal', locale);
             break;
           case 'wounded':
-            text = messages.get('forcedWound');
+            text = messages.get('forcedWound', locale);
             break;
         }
       }
@@ -755,13 +756,13 @@ class GuildGame {
         }
       }
       if (players.length == 0) {
-        cb('No players found.');
+        cb('effectPlayerNoPlayerFound');
       } else if (players.length < 5) {
         const names = players.map((el) => `\`${el}\``).join(', ');
-        cb(`${names} will be ${state} by the end of the day.`);
+        cb(messages.get('forceStateSuccessFew', locale, names, state));
       } else {
-        cb(`${players.length} players will be ${state} ` +
-           'by the end of the day.');
+        cb(messages.get(
+            'forceStateSuccessMany', locale, players.length, state));
       }
     });
   }
