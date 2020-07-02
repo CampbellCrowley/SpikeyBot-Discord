@@ -499,6 +499,8 @@ class Moderation extends SubModule {
     if (!modLog) return;
     if (!modLog.getSettings(member.guild.id).check('memberJoin')) return;
     let num = -1;
+    const age = member.user.createdTimestamp &&
+        this._formatDelay(Date.now() - member.user.createdTimestamp);
     if (this.client.shard) {
       const toEval =
       `this.guilds.cache.filter((g) => g.members.resolve('${member.id}')).size`;
@@ -509,14 +511,17 @@ class Moderation extends SubModule {
                 `${num} other mutual server${num > 1 ? 's' : ''}.` :
                 null;
             modLog.output(
-                member.guild, 'memberJoin', member.user, null, additional);
+                member.guild, 'memberJoin', member.user, null, additional, null,
+                'Account Age', age);
           })
           .catch((err) => {
             this.error(
                 'Failed to get mutual guild count: ' + member.guild.id + '@' +
                 member.user.id);
             console.error(err);
-            modLog.output(member.guild, 'memberJoin', member.user);
+            modLog.output(
+                member.guild, 'memberJoin', member.user, null, 'Account Age',
+                age);
           });
     } else {
       this.client.guilds.cache.forEach((g) => {
@@ -524,7 +529,9 @@ class Moderation extends SubModule {
       });
       const additional =
           num > 0 ? `${num} other mutual server${num > 1 ? 's' : ''}.` : null;
-      modLog.output(member.guild, 'memberJoin', member.user, null, additional);
+      modLog.output(
+          member.guild, 'memberJoin', member.user, null, additional, null,
+          'Account Age', age);
     }
   }
 
@@ -872,7 +879,13 @@ class Moderation extends SubModule {
    */
   _formatDelay(msecs) {
     let output = '';
-    let unit = 7 * 24 * 60 * 60 * 1000;
+    let unit = 365 * 24 * 60 * 60 * 1000;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' year' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 365 / 7;
     if (msecs >= unit) {
       const num = Math.floor(msecs / unit);
       output += num + ' week' + (num == 1 ? '' : 's') + ', ';

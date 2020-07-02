@@ -52,16 +52,13 @@
     "./moderation.js",
     "./modLog.js",
     "./raidBlock.js",
-    "./web/proxy.js",
     "./pets.js",
     "./botCommands.js",
     "./cmdScheduling.js",
     "./hungryGames.js",
     "./web/hg.js",
-    "./twitch.js",
     "./images.js",
     "./memWatcher.js",
-    "./web/fileServer.js",
     "./localeManager.js"
   ],
   "release": [
