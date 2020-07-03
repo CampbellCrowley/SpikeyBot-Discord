@@ -3131,10 +3131,11 @@ function HG() {
    * @private
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
-   * @param {string} id The id of the guild this was triggered from.
    */
-  function useWebsiteForCustom(msg, id) {
-    reply(msg, 'legacyEventCommandResponseTitle', 'legacyEventNoticeBody', id);
+  function useWebsiteForCustom(msg) {
+    reply(
+        msg, 'legacyEventCommandResponseTitle', 'legacyEventNoticeBody',
+        `${msg.prefix}${self.postPrefix}`);
   }
 
   /**
