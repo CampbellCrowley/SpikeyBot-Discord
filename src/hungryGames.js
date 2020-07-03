@@ -4563,7 +4563,7 @@ function HG() {
     }
     if (self.renameGame(id, msg.text.trim())) {
       reply(
-          msg, 'Renamed game to', 'fillOne',
+          msg, 'renameGameSuccess', 'fillOne',
           msg.text.trim() || self.client.guilds.resolve(id).name);
     } else {
       reply(msg, 'renameGameFail');
@@ -4614,18 +4614,18 @@ function HG() {
     const game = hg.getGame(id);
     if (!game || !game.currentGame || !game.currentGame.includedUsers ||
         !game.currentGame.inProgress) {
-      self.common.reply(msg, 'Please start a game first.');
+      reply(msg, 'needStartGameTitle');
       return;
     }
     let users = msg.softMentions.users;
     if (users.size === 0) {
-      self.common.reply(msg, 'Please specify a player to modify.');
+      reply(msg, 'modifyPlayerNoPlayer');
       return;
     }
     users = users.filter(
         (el) => game.currentGame.includedUsers.find((u) => u.id == el.id));
     if (users.size === 0) {
-      self.common.reply(msg, 'Please specify a player that is in the game.');
+      reply(msg, 'modifyPlayerNoPlayerInGame');
       return;
     }
     let num = 0;
@@ -4648,11 +4648,10 @@ function HG() {
       }
     });
     if (num == 0) {
-      self.common.reply(msg, 'Please specify a valid weapon name.');
+      reply(msg, 'modifyPlayerNoWeapon');
       return;
     } else if (num > 1) {
-      self.common.reply(
-          msg, 'I\'m not sure which weapon you wanted, I found more than one.');
+      reply(msg, 'modifyPlayerMultipleWeapon');
       return;
     }
     let count = text.match(/\b(-?\d+)\b/);
@@ -4664,7 +4663,7 @@ function HG() {
 
     game.modifyPlayerWeapon(
         users.first().id, final, hg, count, false,
-        (res) => self.common.reply(msg, res));
+        (res, ...args) => reply(msg, 'modifyPlayerTitle', res, ...args));
   }
   /**
    * @description Start or stop allowing users to enter in to a game by clicking
@@ -4681,7 +4680,7 @@ function HG() {
     if (!game || !game.currentGame) {
       createGame(msg, id, false, (game) => {
         if (!game) {
-          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          reply(msg, 'createFailedUnknown');
           return;
         }
         commandReactJoin(msg, id, game);
@@ -4692,9 +4691,9 @@ function HG() {
       self.endReactJoinMessage(id, (err, info) => {
         if (err) {
           self.error(err);
-          self.common.reply(msg, 'Reaction Join Failed', err);
+          reply(msg, 'reactFailedTitle', err);
         } else {
-          self.common.reply(msg, 'Reaction Join', info);
+          reply(msg, 'reactSuccessTitle', info);
         }
       });
     } else {

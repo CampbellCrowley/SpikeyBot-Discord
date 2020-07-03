@@ -779,19 +779,19 @@ class GuildGame {
    * take away.
    * @param {boolean} [set=false] Set the amount to `count` instead of
    * incrementing.
-   * @param {Function} [cb] Callback once complete. Only parameter is the output
-   * message to tell the user of the outcome of the operation.
+   * @param {Function} [cb] Callback once complete. First parameter is string
+   *     key, following are optional values to fill template.
    */
   modifyPlayerWeapon(player, weapon, text = null, count = 1, set = false, cb) {
     if (typeof cb !== 'function') cb = function() {};
     const game = this;
     if (!game.currentGame || !game.currentGame.includedUsers) {
-      cb('No game in progress.');
+      cb('noGameInProgress');
       return;
     }
     player = game.currentGame.includedUsers.find((el) => el.id == player);
     if (!player) {
-      cb('Unable to find player.');
+      cb('unableToFindPlayer');
       return;
     }
 
@@ -818,7 +818,7 @@ class GuildGame {
 
     const diff = (set ? count - current : count) || 0;
     if (!diff) {
-      cb('Count must be non-zero number.');
+      cb('modifyPlayerCountNonZero');
       return;
     }
     count = Math.max(0, current + diff);
@@ -869,7 +869,7 @@ class GuildGame {
           } else if (custom) {
             eventPool = custom.outcomes;
           } else {
-            cb('Unable to find weapon');
+            cb('modifyPlayerUnableToFindWeapon');
             return;
           }
           weapons[weapon].outcomes = eventPool.slice(0);
@@ -968,11 +968,11 @@ class GuildGame {
         } else { */
         game.currentGame.day.events.push(evt);
         // }
-        cb(`${player.name} now has ${count} ${name}`);
+        cb('modifyPlayerNowHas', player.name, count, name);
         return;
       } else {
         game.currentGame.nextDay.events.push(evt);
-        cb(`${player.name} will have ${count} ${name}`);
+        cb('modifyPlayerWillHave', player.name, count, name);
         return;
       }
     });

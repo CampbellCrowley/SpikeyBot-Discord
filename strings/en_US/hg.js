@@ -96,6 +96,8 @@ class EnUsHG extends Locale {
         'the "Embed Links" permission in this channel.';
     this.noPermStart =
         'Sorry, but you don\'t have permission to start the games.';
+    this.reactFailedTitle = 'Reaction Join Failed';
+    this.reactSuccessTitle = 'Reaction Join';
     this.reactToJoinTitle = 'React with any emoji to join!';
     this.reactToJoinBody =
         'If you have reacted, you will be included in the next `{}`';
@@ -203,6 +205,25 @@ class EnUsHG extends Locale {
     this.effectPlayerNoPlayer = 'No players given.';
     this.effectPlayerNoPlayerFound = 'No players found.';
     this.effectPlayerNoOutcome = 'No outcome given.';
+
+    this.modifyPlayerTitle = 'Modify Player';
+    this.modifyPlayerNoPlayer = 'Please specify a player to modify.';
+    this.modifyPlayerNoPlayerInGame =
+        'Please specify a player that is in the game.';
+    this.modifyPlayerNoWeapon = 'Please specify a valid weapon name.';
+    this.modifyPlayerMultipleWeapon =
+        'I\'m not sure which weapon you wanted, I found more than one.';
+    this.modifyPlayerCountNonZero = 'Count must be non-zero number.';
+    this.modifyPlayerUnableToFindWeapon = 'Unable to find weapon.';
+    // {0} is name of player modified, {1} is number of weapons player now has,
+    // {2} is name of the weapon the player has.
+    this.modifyPlayerNowHas = '{0} now has {1} {2}';
+    // {0} is name of player modified, {1} is number of weapons player will
+    // have, {2} is name of the weapon the player will have.
+    this.modifyPlayerWillHave = '{0} will have {1} {2}';
+
+    this.noGameInProgress = 'No game in progress.';
+    this.unableToFindPlayer = 'Unable to find player.';
 
     this.playerRefreshInfo = 'To refresh: `{}create`';
 

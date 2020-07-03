@@ -2398,12 +2398,15 @@ function HGWeb() {
       if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
       return;
     }
-    const response = game.modifyPlayerWeapon(uId, weapon, hg().getHG(), count);
-    if (typeof cb === 'function') {
-      cb(null, response, game.serializable);
-    } else {
-      socket.emit('message', response);
-    }
+    game.modifyPlayerWeapon(
+        uId, weapon, hg().getHG(), count, false, (err, ...params) => {
+          const res = hg().getString(res, gId, ...params);
+          if (typeof cb === 'function') {
+            cb(null, res, game.serializable);
+          } else {
+            socket.emit('message', res);
+          }
+        });
   };
   /**
    * Set the currently selected stat group.
