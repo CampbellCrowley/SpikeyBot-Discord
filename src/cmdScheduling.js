@@ -80,7 +80,7 @@ function CmdScheduling() {
     if (longInterval) self.client.clearInterval(longInterval);
     for (const i in schedules) {
       if (!schedules[i] || !schedules[i].length) continue;
-      schedules[i].forEach((el) => el.cancel());
+      schedules[i] = schedules[i].filter((el) => el.cancel(false) && false);
     }
     fireEvent('shutdown');
     listeners = {};
@@ -306,6 +306,9 @@ function CmdScheduling() {
     this.bot = self.client.user.id;
     this.complete = false;
 
+    let runAfterRefs = false;
+    let isFetching = false;
+
     /**
      * Update channel and message with their associated IDs.
      *
@@ -325,13 +328,15 @@ function CmdScheduling() {
       }
       if (!myself.message || typeof myself.message !== 'object') {
         myself.message = myself.channel.messages.resolve(myself.messageId);
-        if (!myself.message) {
+        if (!myself.message && !isFetching) {
+          isFetching = true;
           myself.channel.messages.fetch(myself.messageId)
               .then((msg) => {
                 if (!msg) throw new Error();
                 myself.message = msg;
                 myself.member = msg.member;
                 myself.memberId = msg.member.id;
+                if (runAfterRefs) myself.go();
               })
               .catch(() => {
                 self.debug(
@@ -343,15 +348,18 @@ function CmdScheduling() {
                     myself.cmd);
                 myself.member = myself.message.member;
                 myself.memberId = myself.member.id;
+                if (runAfterRefs) myself.go();
               });
-        } else {
+        } else if (!isFetching) {
           myself.member = myself.message.member;
           myself.memberId = myself.message.member.id;
+          if (runAfterRefs) myself.go();
         }
       }
       if (!myself.member || typeof myself.member !== 'object') {
-        myself.member = myself.channel.members.resolve(myself.memberId);
-        if (!myself.member) {
+        myself.member = myself.channel.members.get(myself.memberId);
+        if (!myself.member && !isFetching) {
+          isFetching = true;
           myself.channel.guild.members.fetch(myself.memberId)
               .then((m) => myself.member = m)
               .catch((err) => {
@@ -378,6 +386,7 @@ function CmdScheduling() {
         return;
       }
       const now = Date.now();
+      runAfterRefs = false;
       getReferences();
       if (!myself.channel || !myself.channel.send) {
         self.error(
@@ -388,8 +397,9 @@ function CmdScheduling() {
         return;
       } else if (!myself.message) {
         self.error(
-            'ScheduledCmdFailed No Message: ' + myself.channel.guild.id + '#' +
+            'ScheduledCmdWarning No Message: ' + myself.channel.guild.id + '#' +
             myself.channel.id + '@' + myself.memberId + ' ' + myself.cmd);
+        runAfterRefs = true;
         return;
       } else if (!myself.message.channel || !myself.message.channel.send) {
         self.warn(
@@ -453,10 +463,12 @@ function CmdScheduling() {
      * Cancel this command and remove Timeout.
      *
      * @public
+     * @param {boolean} [markComplete=true] Should we mark this command as
+     *     completed after cancelling.
      */
-    this.cancel = function() {
+    this.cancel = function(markComplete = true) {
       self.client.clearTimeout(myself.timeout);
-      myself.complete = true;
+      if (markComplete) myself.complete = true;
     };
 
     /**
@@ -820,7 +832,9 @@ function CmdScheduling() {
         const removed = list.splice(i, 1)[0];
         removed.cancel();
         schedulesUpdated[gId] = true;
-        fireEvent('commandCancelled', removed.id, removed.message.guild.id);
+        fireEvent(
+            'commandCancelled', removed.id,
+            removed.channel && removed.channel.guild.id);
         return removed;
       }
     }
