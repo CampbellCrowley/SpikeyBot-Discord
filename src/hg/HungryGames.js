@@ -956,6 +956,7 @@ class HungryGames {
 
     const self = this;
     const parse = function(game) {
+      if (!game) game = {};
       if (!game.bot) game.bot = self._parent.client.user.id;
       try {
         game = HungryGames.GuildGame.from(game, self._parent.client);
