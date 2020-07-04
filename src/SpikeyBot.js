@@ -512,7 +512,9 @@ function SpikeyBot() {
   let defaultPresence = {
     status: 'online',
     activity: {
-      name: 'SpikeyBot.com',
+      name: '10k celebration hype! Join my server for chance to win prizes! ' +
+          'SpikeyBot.com',
+      // name: 'SpikeyBot.com',
       type: 'WATCHING',
     },
   };
