@@ -13,6 +13,7 @@ class SendStatusListAction extends ChannelAction {
   /**
    * @description Create an action that will send a message to the game channel
    * saying the status of the players in the game.
+   * @todo Get locale properly.
    */
   constructor() {
     super((hg, game, channel) => {
@@ -171,7 +172,7 @@ class SendStatusListAction extends ChannelAction {
       if (numWholeTeams == 1) {
         const teamName = lastWholeTeam.name;
         finalMessage.setFooter(
-            hg.messages.get('teamRemaining').replace(/\{\}/g, teamName));
+            hg.messages.get('teamRemaining', null, teamName));
       }
       if (game.options.disableOutput) return;
       channel.send(finalMessage).catch((err) => {
