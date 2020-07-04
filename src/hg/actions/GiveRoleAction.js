@@ -12,7 +12,7 @@ const MemberAction = require('./MemberAction.js');
 class GiveRoleAction extends MemberAction {
   /**
    * @description Create an action that will give a member a Discord role.
-   * @param {external:Discord~Role} role The role to give.
+   * @param {Discord~Role} role The role to give.
    */
   constructor(role) {
     super((hg, game, member) => {
@@ -46,7 +46,7 @@ class GiveRoleAction extends MemberAction {
    * @public
    * @static
    * @override
-   * @param {external:Discord~Client} client Bot client context to get object
+   * @param {Discord~Client} client Bot client context to get object
    * references.
    * @param {string} id Guild ID this action is for.
    * @param {object} obj The parsed data from file.

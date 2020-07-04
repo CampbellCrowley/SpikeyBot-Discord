@@ -5,7 +5,7 @@ const SubModule = require('./subModule.js');
 /**
  * @description Manages echo-related commands.
  * @augments SubModule
- * @listens external:Discord~Client#message
+ * @listens Discord~Client#message
  * @listens Command#say
  * @listens Command#echo
  * @listens Command#become

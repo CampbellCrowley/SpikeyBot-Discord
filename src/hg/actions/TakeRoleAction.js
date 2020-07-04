@@ -13,7 +13,7 @@ class TakeRoleAction extends MemberAction {
   /**
    * @description Create an action that will remove a Discord role from a
    * member.
-   * @param {external:Discord~Role} role The role to take.
+   * @param {Discord~Role} role The role to take.
    */
   constructor(role) {
     super((hg, game, member) => {
@@ -49,7 +49,7 @@ class TakeRoleAction extends MemberAction {
    * @public
    * @static
    * @override
-   * @param {external:Discord~Client} client Bot client context to get object
+   * @param {Discord~Client} client Bot client context to get object
    * references.
    * @param {string} id Guild ID this action is for.
    * @param {object} obj The parsed data from file.

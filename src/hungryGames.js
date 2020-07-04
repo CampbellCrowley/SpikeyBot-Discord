@@ -724,12 +724,12 @@ function HG() {
    * @description Reply to msg with locale strings.
    * @private
    *
-   * @param {external:Discord~Message} msg Message to reply to.
+   * @param {Discord~Message} msg Message to reply to.
    * @param {?string} titleKey String key for the title, or null for default.
    * @param {string} bodyKey String key for the body message.
    * @param {string} [rep] Placeholder replacements for the body only.
-   * @returns {Promise<external:Discord~Message>} Message send promise from
-   * {@link external:Discord}.
+   * @returns {Promise<Discord~Message>} Message send promise from
+   * {@link Discord}.
    */
   function reply(msg, titleKey, bodyKey, ...rep) {
     return strings.reply(self.common, msg, titleKey, bodyKey, ...rep);
@@ -2276,14 +2276,14 @@ function HG() {
   }
 
   /**
-   * @description Create a {@link external:Discord~MessageEmbed} that lists all
+   * @description Create a {@link Discord~MessageEmbed} that lists all
    * included and excluded players in the game.
    * @private
    * @param {HungryGames~GuildGame} game The game to format.
-   * @param {external:Discord~MessageEmbed} [finalMessage] Optional existing
+   * @param {Discord~MessageEmbed} [finalMessage] Optional existing
    * embed to modify instead of creating a new one.
    * @param {?string} [locale=null] Language locale to format titles.
-   * @returns {external:Discord~MessageEmbed} The created message embed.
+   * @returns {Discord~MessageEmbed} The created message embed.
    */
   function makePlayerListEmbed(game, finalMessage, locale = null) {
     if (!finalMessage) {

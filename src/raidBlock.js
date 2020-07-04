@@ -5,7 +5,7 @@ const SubModule = require('./subModule.js');
 /**
  * @description Manages raid blocking commands and configuration.
  * @augments SubModule
- * @listens external:Discord~Client#guildMemberAdd
+ * @listens Discord~Client#guildMemberAdd
  * @listens Command#raid
  * @listens Command#lockdown
  * @fires RaidBlock#shutdown
@@ -107,7 +107,7 @@ class RaidBlock extends SubModule {
    * @see {@link Moderation~muteMember}
    *
    * @private
-   * @param {external:Discord~GuildMember} member Member to mute.
+   * @param {Discord~GuildMember} member Member to mute.
    * @param {Function} cb Callback function.
    */
   _muteMember(member, cb) {
@@ -120,7 +120,7 @@ class RaidBlock extends SubModule {
    * @description Handle a member being added to a guild.
    *
    * @private
-   * @param {external:Discord~GuildMember} member The guild member that was
+   * @param {Discord~GuildMember} member The guild member that was
    * added to a guild.
    */
   _onGuildMemberAdd(member) {
@@ -165,7 +165,7 @@ class RaidBlock extends SubModule {
   /**
    * @description Perform lockdown action on a member with given settings.
    * @private
-   * @param {external:Discord~GuildMember} member Member to perform action on.
+   * @param {Discord~GuildMember} member Member to perform action on.
    * @param {RaidBlock~RaidSettings} s Guild settings for raids.
    */
   _doAction(member, s) {

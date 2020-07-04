@@ -158,7 +158,7 @@ class ModLog extends SubModule {
    * @description Fetch the color for the given action.
    * @private
    * @param {string} action The action to lookup.
-   * @returns {external:Discord~ColorResolvable} The color for the given action.
+   * @returns {Discord~ColorResolvable} The color for the given action.
    */
   _actionColor(action) {
     switch (action) {
@@ -196,11 +196,11 @@ class ModLog extends SubModule {
   /**
    * @description Log a message in a guild.
    * @public
-   * @param {external:Discord~Guild} guild The guild the action took place in.
+   * @param {Discord~Guild} guild The guild the action took place in.
    * @param {string} action The action that was performed.
-   * @param {?external:Discord~User} [user=null] User that was affected, or null
+   * @param {?Discord~User} [user=null] User that was affected, or null
    * of no user was affected.
-   * @param {?external:Discord~User} [owner=null] User that performed the
+   * @param {?Discord~User} [owner=null] User that performed the
    * action. Null is for ourself.
    * @param {string} [message=null] Additional information to attach to the log
    * message.

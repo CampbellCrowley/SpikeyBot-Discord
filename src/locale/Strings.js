@@ -180,12 +180,12 @@ class Strings {
    * @public
    *
    * @param {Common} common Reference to Common for reply helper.
-   * @param {external:Discord~Message} msg Message to reply to.
+   * @param {Discord~Message} msg Message to reply to.
    * @param {?string} titleKey String key for the title, or null for default.
    * @param {string} bodyKey String key for the body message.
    * @param {string} [rep] Placeholder replacements for the body only.
-   * @returns {Promise<external:Discord~Message>} Message send promise from
-   * {@link external:Discord}.
+   * @returns {Promise<Discord~Message>} Message send promise from
+   * {@link Discord}.
    */
   reply(common, msg, titleKey, bodyKey, ...rep) {
     return common.reply(

@@ -176,7 +176,7 @@ function Music() {
    *
    * @private
    * @constant
-   * @type {external:Discord~StreamOptions}
+   * @type {Discord~StreamOptions}
    * @default
    */
   const secondaryStreamOptions = {

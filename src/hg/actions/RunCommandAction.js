@@ -16,8 +16,8 @@ class RunCommandAction extends ChannelAction {
    * @param {string} msg The command string.
    * @param {
    *   string|
-   *   external:Discord~User|
-   *   external:Discord~GuildMember
+   *   Discord~User|
+   *   Discord~GuildMember
    * } author The Discord user ID to run this command as.
    */
   constructor(msg, author) {
@@ -76,8 +76,8 @@ class RunCommandAction extends ChannelAction {
    * @public
    * @param {
    *   string|
-   *   external:Discord~User|
-   *   external:Discord~GuildMember
+   *   Discord~User|
+   *   Discord~GuildMember
    * } author The new author or ID.
    */
   set author(author) {
@@ -98,7 +98,7 @@ class RunCommandAction extends ChannelAction {
    * @public
    * @static
    * @override
-   * @param {external:Discord~Client} client Bot client context to get object
+   * @param {Discord~Client} client Bot client context to get object
    * references.
    * @param {string} id Guild ID this action is for.
    * @param {object} obj The parsed data from file.

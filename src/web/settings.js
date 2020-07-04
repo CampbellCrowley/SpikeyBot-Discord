@@ -259,7 +259,7 @@ function WebSettings() {
    * @private
    * @listens RaidBlock#action
    *
-   * @param {{action: string, user: external:Discord~User}} event Event
+   * @param {{action: string, user: Discord~User}} event Event
    * information.
    */
   function handleRaidAction(event) {

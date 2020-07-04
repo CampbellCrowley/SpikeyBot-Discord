@@ -46,7 +46,7 @@ class SendVictorAction extends ChannelAction {
    * @private
    * @param {HungryGames} hg HungryGames context.
    * @param {HungryGames~GuildGame} game Game context.
-   * @param {external:Discord~TextChannel} channel Channel to send the message.
+   * @param {Discord~TextChannel} channel Channel to send the message.
    * @param {HungryGames~Team} team The last team surviving.
    */
   _sendTeamVictor(hg, game, channel, team) {
@@ -153,7 +153,7 @@ class SendVictorAction extends ChannelAction {
    * @private
    * @param {HungryGames} hg HungryGames context.
    * @param {HungryGames~GuildGame} game Game context.
-   * @param {external:Discord~TextChannel} channel Channel to send the message.
+   * @param {Discord~TextChannel} channel Channel to send the message.
    * @param {HungryGames~Player} p The last player surviving.
    * @param {?HungryGames~Team} team The last team surviving, if one.
    */
@@ -180,7 +180,7 @@ class SendVictorAction extends ChannelAction {
    * @private
    * @param {HungryGames} hg HungryGames context.
    * @param {HungryGames~GuildGame} game Game context.
-   * @param {external:Discord~TextChannel} channel Channel to send the message.
+   * @param {Discord~TextChannel} channel Channel to send the message.
    */
   _sendNoVictor(hg, game, channel) {
     const finalMessage = new hg._parent.Discord.MessageEmbed();

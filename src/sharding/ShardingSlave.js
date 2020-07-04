@@ -122,7 +122,7 @@ class ShardingSlave {
 
     /**
      * @description Ongoing promises for calls to
-     * {@link external:Discord}'s Shard#eval, mapped by the script they were
+     * {@link Discord}'s Shard#eval, mapped by the script they were
      * called with.
      * @type {Map<string, Promise>}
      * @private

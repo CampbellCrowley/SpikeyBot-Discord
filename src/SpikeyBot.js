@@ -304,7 +304,7 @@ function SpikeyBot() {
    * Enable inspecting/profiling for a shard to launch. Set via cli flags, -1 to
    * disable. Currently only supports enabling. The `--inspect` flag will be
    * sent to all shards that are started. This is due to limitations of
-   * {@link external:Discord~ShardingManager}.
+   * {@link Discord~ShardingManager}.
    *
    * @private
    * @default

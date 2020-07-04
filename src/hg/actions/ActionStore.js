@@ -260,7 +260,7 @@ class ActionStore {
    * @description Convert a serialized action store back into the object.
    * @public
    * @static
-   * @param {external:Discord~Client} client Client reference for obtaining
+   * @param {Discord~Client} client Client reference for obtaining
    * discord object references.
    * @param {string} id The Guild ID this action store is for.
    * @param {object} obj Parsed data from save file.

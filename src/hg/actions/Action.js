@@ -101,7 +101,7 @@ class Action {
    * @public
    * @static
    * @abstract
-   * @param {external:Discord~Client} client Bot client context to get object
+   * @param {Discord~Client} client Bot client context to get object
    * references.
    * @param {string} id Guild ID this action is for.
    * @param {object} obj The parsed data from file.
@@ -129,7 +129,7 @@ class Action {
    * {@link HungryGames~Action~actionList}.
    * @public
    * @static
-   * @param {external:Discord~Client} client Client reference for obtaining
+   * @param {Discord~Client} client Client reference for obtaining
    * discord object references.
    * @param {string} id The Guild ID this action is for.
    * @param {object} obj The object data from save file.

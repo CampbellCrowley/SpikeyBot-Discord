@@ -12,7 +12,7 @@ class SubModule {
      * The help message to show the user in the main help message.
      *
      * @abstract
-     * @type {undefined|string|external:Discord~MessageEmbed}
+     * @type {undefined|string|Discord~MessageEmbed}
      * @default
      */
     this.helpMessage = undefined;
@@ -31,7 +31,7 @@ class SubModule {
      * value for editor autocompletion, updates to current reference at init.
      *
      * @public
-     * @type {external:Discord}
+     * @type {Discord}
      */
     this.Discord = require('discord.js');
     /**
@@ -39,7 +39,7 @@ class SubModule {
      * autocompletion, updates to current reference at init.
      *
      * @public
-     * @type {external:Discord~Client}
+     * @type {Discord~Client}
      */
     this.client = this.Discord.Client;
     /**

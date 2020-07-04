@@ -695,7 +695,7 @@ function Main() {
    *
    * @private
    * @param {string} info The information.
-   * @listens external:Discord~Client#debug
+   * @listens Discord~Client#debug
    */
   function onDebug(info) {
     const hbRegex = new RegExp(
@@ -725,7 +725,7 @@ function Main() {
    *
    * @private
    * @param {object} info The information.
-   * @listens external:Discord~Client#rateLimit
+   * @listens Discord~Client#rateLimit
    */
   function onRateLimit(info) {
     // info;
@@ -2488,7 +2488,7 @@ function Main() {
    * @description Reply to the given message with the permission information of
    * the given guild, channel, and user.
    * @private
-   * @param {external:Discord~Message} msg Message to reply to.
+   * @param {Discord~Message} msg Message to reply to.
    * @param {string} gId Guild ID for displaying.
    * @param {number} gM Bitfield for self in the guild.
    * @param {number} [gY] Bitfield for user in guild.
@@ -2497,7 +2497,7 @@ function Main() {
    * @param {number} [cY] Bitfield for user in channel.
    * @param {string} [uId] User id to show.
    * @param {boolean} [owner] Is the user the guild owner.
-   * @param {external:Discord~MessageEmbed} [embed] Embed object to modify
+   * @param {Discord~MessageEmbed} [embed] Embed object to modify
    * instead of creating a new one.
    */
   function replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, owner, embed) {
@@ -2546,7 +2546,7 @@ function Main() {
    * @description Fetch the bitfield of permissions for our self or a given user
    * id in the guild or channel with the given id.
    *
-   * @this external:Discord~Client
+   * @this Discord~Client
    * @private
    * @param {string} id The channel or guild id or user id to lookup permissions
    * for.
@@ -2910,7 +2910,7 @@ function Main() {
   /**
    * @description Lookup an ID for any data associated with it. This checks
    * guilds, channels, and users.
-   * @this external:Discord~Client
+   * @this Discord~Client
    * @private
    * @param {string} id The ID to lookup.
    * @param {boolean} [trusted=false] Include possibly sensitive information in
@@ -3041,7 +3041,7 @@ function Main() {
   /**
    * @description Send a message to a certain channel id.
    * @private
-   * @this external:Discord~ClientUser
+   * @this Discord~ClientUser
    * @param {string} id The channel ID to send the message to.
    * @param {string} message The message to send. Will have decodeURIComponent
    * run on before processing.

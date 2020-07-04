@@ -9,7 +9,7 @@ const Action = require('./Action.js');
  *
  * @param {HungryGames} hg HG context.
  * @param {HungryGames~GuildGame} game Game context.
- * @param {external:Discord~GuildMember} member Guild member the player
+ * @param {Discord~GuildMember} member Guild member the player
  * represents.
  */
 

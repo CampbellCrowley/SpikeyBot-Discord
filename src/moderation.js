@@ -72,7 +72,7 @@ class Moderation extends SubModule {
     this._saveDir = `${this.common.guildSaveDir}/smited/`;
 
     /**
-     * @description From {@link external:Discord~AuditLogAction}.
+     * @description From {@link Discord~AuditLogAction}.
      * @see https://discord.js.org/#/docs/main/master/typedef/AuditLogAction
      * @public
      * @constant
@@ -257,7 +257,7 @@ class Moderation extends SubModule {
   /**
    * @description Handle logging when a message is deleted.
    * @private
-   * @param {external:Discord~Message} msg The deleted message.
+   * @param {Discord~Message} msg The deleted message.
    */
   _onMessageDelete(msg) {
     if (!msg.guild) return;
@@ -299,7 +299,7 @@ class Moderation extends SubModule {
   /**
    * @description Sends message delete to ModLog.
    * @private
-   * @param {external:Discord~Guild} guild Guild context.
+   * @param {Discord~Guild} guild Guild context.
    * @param {boolean} bot Is the message sent by a bot.
    * @param {string} tag User tag of deleted message.
    * @param {string} id User ID of deleted message.
@@ -307,7 +307,7 @@ class Moderation extends SubModule {
    * @param {string} channel Name of channel of deleted message.
    * @param {string[]} files Array of URLs to deleted files.
    * @param {string} content Message content of deleted message.
-   * @param {?external:Discord~GuildAuditLogs} logs Audit logs for more info.
+   * @param {?Discord~GuildAuditLogs} logs Audit logs for more info.
    */
   _finalMessageDeleteSend(
       guild, bot, tag, id, mId, channel, files, content, logs) {
@@ -340,8 +340,8 @@ class Moderation extends SubModule {
   /**
    * @description Handle logging when a message is edited.
    * @private
-   * @param {external:Discord~Message} prev The previous message.
-   * @param {external:Discord~Message} msg The new message.
+   * @param {Discord~Message} prev The previous message.
+   * @param {Discord~Message} msg The new message.
    */
   _onMessageUpdate(prev, msg) {
     if (!msg.guild) return;
@@ -423,7 +423,7 @@ class Moderation extends SubModule {
   /**
    * @description Handle logging when multiple messages are deleted.
    * @private
-   * @param {external:Discord~Collection<external:Discord~Message>} msgs The
+   * @param {Discord~Collection<Discord~Message>} msgs The
    * deleted messages.
    */
   _onMessageDeleteBulk(msgs) {
@@ -473,7 +473,7 @@ class Moderation extends SubModule {
   /**
    * @description Handle a guild member leaving the guild.
    * @private
-   * @param {external:Discord~GuildMember} member The member that left or was
+   * @param {Discord~GuildMember} member The member that left or was
    * kicked.
    */
   _onGuildMemberRemove(member) {
@@ -492,7 +492,7 @@ class Moderation extends SubModule {
   /**
    * @description Handle someone joining the guild.
    * @private
-   * @param {external:Discord~GuildMember} member The member that joined.
+   * @param {Discord~GuildMember} member The member that joined.
    */
   _onGuildMemberAdd(member) {
     const modLog = this.bot.getSubmodule('./modLog.js');
@@ -539,7 +539,7 @@ class Moderation extends SubModule {
    * @description Give a guild member a muted role that prevents them from
    * talking in any channel in the guild.
    * @public
-   * @param {external:Discord~GuildMember} member The member of the guild to
+   * @param {Discord~GuildMember} member The member of the guild to
    * mute.
    * @param {Function} cb Callback function with a single argument which is a
    * string if there was an error, or null if success.

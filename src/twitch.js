@@ -534,7 +534,7 @@ class Twitch extends SubModule {
    * @private
    * @param {object} data Webhook data from Twitch.
    * @param {string} [locale] Locale for formatting strings.
-   * @returns {external:Discord~MessageEmbed} Formatted embed message.
+   * @returns {Discord~MessageEmbed} Formatted embed message.
    */
   _formatMessage(data, locale) {
     const embed = new this.Discord.MessageEmbed();
@@ -625,8 +625,8 @@ class Twitch extends SubModule {
   /**
    * @description Handle a Discord channel being deleted.
    * @private
-   * @param {external:Discord~Channel} channel The deleted Discord channel.
-   * @listens external:Discord~Client#ChannelDelete
+   * @param {Discord~Channel} channel The deleted Discord channel.
+   * @listens Discord~Client#ChannelDelete
    */
   _handleChannelDelete(channel) {
     const toSend = global.sqlCon.format(
@@ -645,8 +645,8 @@ class Twitch extends SubModule {
    * @description Handle a Discord guild being deleted (usually bot being
    * kicked).
    * @private
-   * @param {external:Discord~Guild} guild The deleted Discord guild.
-   * @listens external:Discord~Client#GuildDelete
+   * @param {Discord~Guild} guild The deleted Discord guild.
+   * @listens Discord~Client#GuildDelete
    */
   _handleGuildDelete(guild) {
     const toSend = global.sqlCon.format(

@@ -10,7 +10,7 @@ const Action = require('./Action.js');
  *
  * @param {HungryGames} hg HG context.
  * @param {HungryGames~GuildGame} game Game context.
- * @param {external:Discord~TextChannel} channel Channel context.
+ * @param {Discord~TextChannel} channel Channel context.
  */
 
 /**

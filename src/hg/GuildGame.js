@@ -526,7 +526,7 @@ class GuildGame {
    * @public
    * @static
    * @param {object} data GuildGame like object.
-   * @param {external:Discord~Client} client Discord client reference for
+   * @param {Discord~Client} client Discord client reference for
    * creating {@link HungryGames~ActionStore}.
    * @returns {HungryGames~GuildGame} Created GuildGame.
    */

@@ -225,7 +225,7 @@ class HungryGames {
    * @description Create a new GuildGame.
    * @fires HG#create
    * @public
-   * @param {external:Discord~Guild|string} guild Guild object, or ID to create
+   * @param {Discord~Guild|string} guild Guild object, or ID to create
    * a game for.
    * @param {Function} [cb] Callback once game has been fully created. Passes
    * the created game as the only argument.
@@ -270,7 +270,7 @@ class HungryGames {
    * @description Create a new Game for a guild, and refresh the player lists.
    * @fires HG#refresh
    * @public
-   * @param {external:Discord~Guild|string} guild Guild object, or ID to refresh
+   * @param {Discord~Guild|string} guild Guild object, or ID to refresh
    * a game for.
    * @param {Function} [cb] Callback once game has been fully refreshed. Passes
    * the refreshed game as the only argument, or null if unable to find the
@@ -319,7 +319,7 @@ class HungryGames {
    *
    * @public
    * @param {
-   *   external:Discord~Collection<external:Discord~GuildMember>
+   *   Discord~Collection<Discord~GuildMember>
    * } members All members in guild.
    * @param {string[]} excluded Array of ids of users that should not be
    * included in the games.

@@ -514,8 +514,8 @@ function HGWeb() {
    * Handle a member being added to a guild.
    *
    * @private
-   * @listens external:Discord~Client#guildMemberAdd
-   * @param {external:Discord~GuildMember} member The member added.
+   * @listens Discord~Client#guildMemberAdd
+   * @param {Discord~GuildMember} member The member added.
    */
   function handleGuildMemberAdd(member) {
     handleMemberAdd(hg(), member.guild.id, member.id);
@@ -525,8 +525,8 @@ function HGWeb() {
    * Handle a member being removed from a guild.
    *
    * @private
-   * @listens external:Discord~Client#guildMemberRemove
-   * @param {external:Discord~GuildMember} member The member removed.
+   * @listens Discord~Client#guildMemberRemove
+   * @param {Discord~GuildMember} member The member removed.
    */
   function handleGuildMemberRemove(member) {
     handleMemberRemove(hg(), member.guild.id, member.id);

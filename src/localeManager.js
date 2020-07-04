@@ -234,7 +234,7 @@ class LocaleManager extends SubModule {
    * @description User typed the language command.
    * @private
    * @type {commandHandler}
-   * @param {external:Discord~Message} msg Message that triggered command.
+   * @param {Discord~Message} msg Message that triggered command.
    * @listens Command#language
    * @listens Command#lang
    * @listens Command#locale

@@ -6,7 +6,7 @@ const SubModule = require('./subModule.js');
 /**
  * @description Provides interface to allow other bots to run commands.
  * @augments SubModule
- * @listens external:Discord~Client#message
+ * @listens Discord~Client#message
  * @listens Command#togglebot
  */
 class BotCommands extends SubModule {

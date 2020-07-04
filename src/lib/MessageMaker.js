@@ -2,7 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 
 /**
- * @description Creates a {@link external:Discord~Message}-like object, for a
+ * @description Creates a {@link Discord~Message}-like object, for a
  * message that doesn't actually exist.
  * @class
  */
@@ -31,35 +31,35 @@ class MessageMaker {
     /**
      * @description Message author.
      * @public
-     * @type {external:Discord~User}
+     * @type {Discord~User}
      * @constant
      */
     this.author = self.client && self.client.users.resolve(uId);
     /**
      * @description Discord.JS Client.
      * @public
-     * @type {external:Discord~Client}
+     * @type {Discord~Client}
      * @constant
      */
     this.client = self.client;
     /**
      * @description Message author Member.
      * @public
-     * @type {?external:Discord~GuildMember}
+     * @type {?Discord~GuildMember}
      * @constant
      */
     this.member = g && g.members.resolve(uId);
     /**
      * @description Guild.
      * @public
-     * @type {?external:Discord~Guild}
+     * @type {?Discord~Guild}
      * @constant
      */
     this.guild = g;
     /**
      * @description TextChannel or DMChannel.
      * @public
-     * @type {external:Discord~TextChannel|external:Discord~DMChannel}
+     * @type {Discord~TextChannel|Discord~DMChannel}
      * @constant
      */
     this.channel = (g && g.channels.resolve(cId)) ||
@@ -95,9 +95,9 @@ class MessageMaker {
      * @description Empty soft mention collections for compatibility.
      * @public
      * @type {{
-     *   members: external:Discord~Collection,
-     *   users: external:Discord~Collection,
-     *   roles: external:Discord~Collection
+     *   members: Discord~Collection,
+     *   users: Discord~Collection,
+     *   roles: Discord~Collection
      * }}
      * @constant
      */
@@ -110,10 +110,10 @@ class MessageMaker {
      * @description Empty mention collections for compatibility.
      * @public
      * @type {{
-     *   channels: external:Discord~Collection,
-     *   members: external:Discord~Collection,
-     *   roles: external:Discord~Collection,
-     *   users: external:Discord~Collection
+     *   channels: Discord~Collection,
+     *   members: Discord~Collection,
+     *   roles: Discord~Collection,
+     *   users: Discord~Collection
      * }}
      * @constant
      */

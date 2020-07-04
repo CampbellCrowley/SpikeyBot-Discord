@@ -46,7 +46,7 @@ class SendMessageAction extends ChannelAction {
    * @public
    * @static
    * @override
-   * @param {external:Discord~Client} client Bot client context to get object
+   * @param {Discord~Client} client Bot client context to get object
    * references.
    * @param {string} id Guild ID this action is for.
    * @param {object} obj The parsed data from file.

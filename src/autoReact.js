@@ -27,7 +27,7 @@ class AutoReact extends SubModule {
   /**
    * @description Handle message sent and react to it if applicable.
    * @private
-   * @param {external:Discord~Message} msg Message that was sent.
+   * @param {Discord~Message} msg Message that was sent.
    */
   _messageHandler(msg) {
     if (msg.channel.id !== '728762339666427905') return;
