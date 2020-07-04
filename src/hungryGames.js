@@ -4364,7 +4364,7 @@ function HG() {
 
     let firstWord = msg.text.trim().split(' ')[0];
     if (firstWord) firstWord = firstWord.toLowerCase();
-    const specialWords = strings.getRaw('groupWords');
+    const specialWords = strings.getRaw('groupWords', msg.locale);
     // const specialWords = {
     //   everyone: ['everyone', '@everyone', 'all'],
     //   online: ['online', 'here', '@here'],

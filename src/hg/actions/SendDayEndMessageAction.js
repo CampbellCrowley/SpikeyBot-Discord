@@ -13,6 +13,7 @@ class SendDayEndMessageAction extends ChannelAction {
   /**
    * @description Create an action that will send a message to the game channel
    * saying who won the game.
+   * @todo Get locale properly for each game.
    */
   constructor() {
     super((hg, game, channel) => {

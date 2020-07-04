@@ -13,6 +13,7 @@ class SendDayStartMessageAction extends ChannelAction {
   /**
    * @description Create an action that will send a message to the game channel
    * saying the day has started.
+   * @todo Get locale properly for each game.
    */
   constructor() {
     super((hg, game, channel) => {
@@ -21,8 +22,7 @@ class SendDayStartMessageAction extends ChannelAction {
         embed.setTitle(hg.messages.get('bloodbathStart'));
       } else {
         embed.setTitle(
-            hg.messages.get('dayStart')
-                .replace(/\{\}/g, game.currentGame.day.num));
+            hg.messages.get('dayStart', null, game.currentGame.day.num));
       }
       if (!game.autoPlay && game.currentGame.day.num < 2) {
         const prefix = hg._parent.bot.getPrefix(game.id);

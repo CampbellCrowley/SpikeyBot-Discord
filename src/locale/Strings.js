@@ -158,6 +158,24 @@ class Strings {
   }
 
   /**
+   * @description Get but don't format a specific string.
+   *
+   * @public
+   * @static
+   * @param {string} key String key to find.
+   * @param {string} [locale] Lookup the string in a specific locale.
+   * @returns {?string} Matched string, or null if unable to find.
+   */
+  getRaw(key, locale) {
+    const localeGroup = this.getGroup(locale);
+    if (!localeGroup) {
+      console.error(`Unable to find locale: ${locale}`);
+      return null;
+    }
+    return localeGroup.getRaw(key);
+  }
+
+  /**
    * @description Reply to msg with locale strings.
    * @public
    *
