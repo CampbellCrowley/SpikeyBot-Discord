@@ -456,6 +456,7 @@ function CmdScheduling() {
         } else {
           myself.complete = true;
         }
+        schedulesUpdated[myself.message.guild.id] = true;
       }
     };
 
