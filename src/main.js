@@ -346,7 +346,6 @@ function Main() {
     self.command.on('git', commandGit);
     self.command.on('gettime', commandGetTime);
     self.command.on('update', commandUpdate);
-    self.command.on('sweep', commandSweep);
     self.command.on(['bans', 'listbans'], commandListBans);
 
 
@@ -529,14 +528,6 @@ function Main() {
        */
       self.client.sendTo = sendTo;
       /**
-       * Sweep users from cache to release memory.
-       *
-       * @see {@link Main~sweepUsers}
-       *
-       * @public
-       */
-      self.client.sweepUsers = sweepUsers;
-      /**
        * Request this shard broadcast all guilds where a user has been banned.
        *
        * @see {@link Main~broadcastBanList}
@@ -615,7 +606,6 @@ function Main() {
     self.command.removeListener('git');
     self.command.removeListener('gettime');
     self.command.removeListener('update');
-    self.command.removeListener('sweep');
     self.command.removeListener('bans');
 
     self.client.removeListener('debug', onDebug);
@@ -3291,54 +3281,6 @@ function Main() {
           msg_.edit(self.common.mention(msg), embed);
         }
       }
-    });
-  }
-
-  /**
-   * Trigger sweeping of users from cache.
-   *
-   * @private
-   * @type {commandHandler}
-   * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#sweep
-   */
-  function commandSweep(msg) {
-    if (msg.author.id != self.common.spikeyId) {
-      self.common.reply(msg, 'You can\'t use this command.');
-      return;
-    }
-    const num = self.client.users.size;
-    if (self.client.shard) {
-      self.client.shard.broadcastEval('this.sweepUsers();')
-          .then(() => {
-            self.common.reply(
-                msg, 'Sweeping users.', `${num} --> ${self.client.users.size}`);
-          })
-          .catch((err) => {
-            self.error('Failed to sweep users on shards.');
-            console.error(err);
-          });
-    } else {
-      sweepUsers();
-      self.common.reply(
-          msg, 'Sweeping users.', `${num} --> ${self.client.users.size}`);
-    }
-  }
-  /**
-   * Cause stale users to be purged from cache.
-   *
-   * @private
-   */
-  function sweepUsers() {
-    // const now = Date.now();
-    // const maxMsgAge = 15 * 60 * 1000;
-    self.client.users.sweep((user) => {
-      /* return user.lastMessage ?
-          (now - user.lastMessage.createdTimestamp > maxMsgAge ||
-           now - user.lastMessage.editedTimestamp > maxMsgAge) :
-          user.presence.status === 'offline'; */
-      return user.bot || !user.lastMessage ||
-          user.presence.status === 'offline';
     });
   }
 

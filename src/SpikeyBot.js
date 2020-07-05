@@ -568,6 +568,9 @@ function SpikeyBot() {
   const client = new Discord.Client({
     disabledEvents: disabledEvents,
     presence: defaultPresence,
+    messageCacheLifetime: 24 * 60 * 60,
+    messageSweepInterval: 60 * 60,
+    messageCacheSize: 50,
   });
 
   /**
