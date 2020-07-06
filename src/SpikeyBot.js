@@ -1699,6 +1699,10 @@ function SpikeyBot() {
             guildPrefixes[id] = data.toString().replace(/\s/g, '');
           }
         }
+        if (typeof guildPrefixes[id] != 'string' ||
+            guildPrefixes[id].length < 1) {
+          delete guildPrefixes[id];
+        }
         if (guilds.length > 0) {
           loadGuildPrefixes(guilds);
         } else {
