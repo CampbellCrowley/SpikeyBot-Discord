@@ -738,7 +738,10 @@ function SpikeyBot() {
       } else if (isBackup) {
         // updateGame('OFFLINE', 'PLAYING');
       } else {
-        updateGame('SpikeyBot.com');
+        // updateGame('SpikeyBot.com');
+        updateGame(
+            '10k celebration hype! Join my server for chance to win ' +
+            'prizes! SpikeyBot.com');
       }
     }
     let logChannel = client.channels.resolve(common.logChannel);
