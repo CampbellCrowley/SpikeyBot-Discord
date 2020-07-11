@@ -1953,8 +1953,6 @@ function HGWeb() {
       if (err) {
         if (typeof cb === 'function') {
           cb('ATTEMPT_FAILED', err);
-        } else {
-          socket.emit('message', 'Failed to create event: ' + err);
         }
       } else {
         cb(null);
