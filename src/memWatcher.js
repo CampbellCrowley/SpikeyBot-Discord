@@ -152,7 +152,7 @@ class MemWatcher extends SubModule {
       return;
     }
 
-    this.sweepUsers();
+    // this.sweepUsers();
   }
   /**
    * @description Attempts to force the bot to die because we are probably about
