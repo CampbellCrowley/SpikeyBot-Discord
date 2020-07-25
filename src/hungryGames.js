@@ -2634,7 +2634,8 @@ function HG() {
 
     const embed = new self.Discord.MessageEmbed();
     embed.setTitle(strings.get('optionListTitle', msg.locale));
-    embed.setFooter('pageNumbers', msg.locale, (page + 1), (bodyFields.length));
+    embed.setFooter(
+        strings.get('pageNumbers', msg.locale, page + 1, bodyFields.length));
     embed.setDescription('```js\n' + bodyFields[page].join('\n\n') + '```');
     embed.addField(
         strings.get('optionListSimpleExampleTitle', msg.locale),
