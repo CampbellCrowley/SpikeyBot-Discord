@@ -581,6 +581,7 @@ class ShardingSlave {
         return;
       } else if (message._sEval) {
         this.broadcastEval(message._sEval, (err, res) => {
+          if (!this._child) return;
           if (err) {
             this._child.send({_sEval: message._sEval, _error: err});
           } else {
@@ -594,6 +595,7 @@ class ShardingSlave {
       } else if (message._sSQL) {
         // Shard has requested to send a query to our primary database.
         this.sendSQL(message._sSQL, (err, res) => {
+          if (!this._child) return;
           if (err) {
             this._child.send({_sSQL: message._sSQL, _error: err});
           } else {
@@ -604,6 +606,7 @@ class ShardingSlave {
       } else if (message._sWriteFile) {
         // Shard has requested to send a file to our primary node.
         this._sendMasterFile(message._sWriteFile, (err, res) => {
+          if (!this._child) return;
           if (err) {
             this._child.send({_sWriteFile: message._sWriteFile, _error: err});
           } else {
@@ -614,6 +617,7 @@ class ShardingSlave {
       } else if (message._sGetFile) {
         // Shard has requested to get a file from our primary node.
         this._socket.emit('getFile', message._sGetFile, (err, res) => {
+          if (!this._child) return;
           if (err) {
             this._child.send({_sGetFile: message._sGetFile, _error: err});
           } else {
