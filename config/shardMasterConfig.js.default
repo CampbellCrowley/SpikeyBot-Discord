@@ -256,9 +256,9 @@ class HeartbeatConfig {
      * (milliseconds).
      * @public
      * @type {number}
-     * @default 7 Days
+     * @default 1 Days
      */
-    this.historyLength = 7 * 24 * 60 * 60 * 1000;
+    this.historyLength = 1 * 24 * 60 * 60 * 1000;
   }
 }
 

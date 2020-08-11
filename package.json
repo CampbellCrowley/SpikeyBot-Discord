@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.17.2",
+  "version": "1.17.3",
   "description": "SpikeyBot",
   "homepage": "https://www.spikeybot.com/",
   "bugs": {
@@ -37,6 +37,7 @@
     "utf-8-validate": "^5.0.2",
     "yieldable-json": "^2.0.0",
     "youtube-dl": "^3.0.2",
+    "zlib": "^1.0.5",
     "zlib-sync": "^0.1.7"
   },
   "contributors": [

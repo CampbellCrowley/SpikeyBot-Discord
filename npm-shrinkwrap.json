@@ -4985,6 +4985,11 @@
       "resolved": "https://registry.npmjs.org/zero-fill/-/zero-fill-2.2.3.tgz",
       "integrity": "sha1-o97wa6XjmuZEhQu0yirUEStIVek="
     },
+    "zlib": {
+      "version": "1.0.5",
+      "resolved": "https://registry.npmjs.org/zlib/-/zlib-1.0.5.tgz",
+      "integrity": "sha1-bnyXL8NxxkWmr7A6sUdp3vEU/MA="
+    },
     "zlib-sync": {
       "version": "0.1.7",
       "resolved": "https://registry.npmjs.org/zlib-sync/-/zlib-sync-0.1.7.tgz",

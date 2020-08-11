@@ -1439,7 +1439,7 @@ function Uno() {
         players[index].remove();
         discarded = discarded.concat(players[index].hand.splice(0));
         players.splice(index, 1);
-        const perms = game.groupChannel.permissionOverwrites.resolve(p);
+        const perms = game.groupChannel.permissionOverwrites.get(p);
         if (perms) perms.delete('User removed from game');
         if (turn == index) nextTurn();
       }

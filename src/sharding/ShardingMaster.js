@@ -1,6 +1,7 @@
 // Copyright 2019-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (web@campbellcrowley.com)
 const http = require('http');
+const zlib = require('zlib');
 const socketIo = require('socket.io');
 const Discord = require('discord.js');
 const crypto = require('crypto');
@@ -861,14 +862,61 @@ class ShardingMaster {
    * @param {http.ServerResponse} res Our response to the client.
    */
   _handler(req, res) {
-    const regex =
-        /^\/www\.spikeybot\.com\/(dev\/)?api\/public\/shard-status-history/;
-    if (req.method === 'GET' && req.url.match(regex)) {
-      const stringified = JSON.stringify(this._usersStatsHistory);
-      res.setHeader('content-type', 'application/json');
-      res.setHeader('content-length', stringified.length);
-      res.writeHead(200);
-      res.end(stringified);
+    const regex = '^\\/(?<domain>www\\.spikeybot\\.com)' +
+        '(?<path>\\/(?:dev\\/)?[^#?]*)' +
+        '[^#?]*(?<query>\\?[^#]*)?' +
+        '(?<hash>#.*)?$';
+    const match = req.url.match(regex);
+    const path =
+        match && match.groups && match.groups.path.replace(/^\/dev/, '');
+    const queries = req.headers.queries &&
+            Object.fromEntries(
+                req.headers.queries.split('&').map((el) => el.split('='))) ||
+        {};
+    const now = Date.now();
+    if (req.method === 'GET' && path === '/api/public/shard-status-history') {
+      console.log(queries);
+      const obj = {ids: Object.keys(this._usersStatsHistory)};
+      if (queries.id) {
+        queries.id.split(',').forEach((el) => {
+          if (!this._usersStatsHistory[el]) return;
+          if (queries.since) {
+            obj[el] = this._usersStatsHistory[el].filter(
+                (row) => row.timestamp > queries.since);
+          } else {
+            obj[el] = this._usersStatsHistory[el].filter(
+                (row) => row.timestamp > now - 24 * 60 * 60 * 1000);
+          }
+        });
+      }
+      const stringified = JSON.stringify(obj);
+
+      let comp = '';
+      const finalSend = function(err, buffer) {
+        if (err) {
+          common.error(`Failed to prepare (${encoding}): shard-status-history`);
+          console.error(err);
+          res.statusCode = 500;
+          res.end('500: Internal Server Error.');
+        } else {
+          if (comp) res.setHeader('Content-Encoding', comp);
+          if (!Buffer.isBuffer(buffer)) buffer = Buffer.from(buffer);
+          res.setHeader('Content-Length', buffer.byteLength);
+          res.setHeader('content-type', 'application/json');
+          res.writeHead(200);
+          res.end(buffer);
+        }
+      };
+      const encoding = req.headers['accept-encoding'] || '';
+      if (/\bgzip\b/.test(encoding)) {
+        comp = 'gzip';
+        zlib.gzip(stringified, finalSend);
+      } else if (/\bdeflate\b/.test(encoding)) {
+        comp = 'deflate';
+        zlib.deflate(stringified, finalSend);
+      } else {
+        finalSend(null, stringified);
+      }
     } else {
       res.writeHead(404);
       res.end(req.method === 'GET' ? '404: Not Found' : undefined);

@@ -478,6 +478,13 @@ function Common() {
     };
   }
 
+  if (this.mkAndWrite) this.mkAndWrite = this.mkAndWrite.bind(this);
+  if (this.mkAndWriteSync) this.mkAndWriteSync = this.mkAndWriteSync.bind(this);
+  if (this.unlink) this.unlink = this.unlink.bind(this);
+  if (this.unlinkSync) this.unlinkSync = this.unlinkSync.bind(this);
+  if (this.readFile) this.readFile = this.readFile.bind(this);
+  if (this.readAndParse) this.readAndParse = this.readAndParse.bind(this);
+
   /**
    * Gets the name and line number of the current function stack.
    *
