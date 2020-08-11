@@ -937,7 +937,7 @@ class ShardingMaster {
    * Handler for a new socket connecting.
    *
    * @private
-   * @this bound
+   * @this {ShardingMaster}
    * @param {socketIo~Socket} socket The socket.io socket that connected.
    */
   _socketConnection(socket) {
@@ -1474,8 +1474,8 @@ class ShardingMaster {
    * master or its shards. The settings used cannot differ between any parties
    * involved, otherwise all keys must be changed.
    *
-   * @see {@link
-   * https://nodejs.org/api/crypto.html#crypto_crypto_generatekeypair_type_options_callback}
+   * {@link
+   * https://nodejs.org/api/crypto.html#crypto_crypto_generatekeypair_type_options_callback}.
    *
    * @public
    * @static
@@ -1773,7 +1773,7 @@ class ShardingMaster {
   /**
    * @description Server has encountered an error, and must close.
    * @private
-   * @this bound
+   * @this {ShardingMaster}
    * @param {Error} err The emitted error event.
    */
   _serverError(err) {

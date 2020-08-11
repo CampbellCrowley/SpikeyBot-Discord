@@ -27,7 +27,7 @@ class Locale {
   /**
    * @description Get string with given key and replace placeholders.
    * @public
-   * @this Locale
+   * @this {Locale}
    * @param {string} key Key of string to lookup.
    * @param {...string} [rep] Placeholder replacement strings.
    * @returns {sstring} String with replaced placeholders, or key if unable to
@@ -52,7 +52,7 @@ class Locale {
   /**
    * @description Get get the raw data from the locale file at the given key.
    * @public
-   * @this Locale
+   * @this {Locale}
    * @param {string} key Key of string to lookup.
    * @returns {?string|string[]} Data from locale file, or null if unable to
    * find.

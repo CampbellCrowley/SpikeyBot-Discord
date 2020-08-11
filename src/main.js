@@ -2536,7 +2536,7 @@ function Main() {
    * @description Fetch the bitfield of permissions for our self or a given user
    * id in the guild or channel with the given id.
    *
-   * @this Discord~Client
+   * @this {Discord~Client}
    * @private
    * @param {string} id The channel or guild id or user id to lookup permissions
    * for.
@@ -2900,7 +2900,7 @@ function Main() {
   /**
    * @description Lookup an ID for any data associated with it. This checks
    * guilds, channels, and users.
-   * @this Discord~Client
+   * @this {Discord~Client}
    * @private
    * @param {string} id The ID to lookup.
    * @param {boolean} [trusted=false] Include possibly sensitive information in
@@ -3031,7 +3031,7 @@ function Main() {
   /**
    * @description Send a message to a certain channel id.
    * @private
-   * @this Discord~ClientUser
+   * @this {Discord~ClientUser}
    * @param {string} id The channel ID to send the message to.
    * @param {string} message The message to send. Will have decodeURIComponent
    * run on before processing.

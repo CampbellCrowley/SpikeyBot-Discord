@@ -626,7 +626,7 @@ class Moderation extends SubModule {
    * without the bot's help.
    *
    * @private
-   * @this bound
+   * @this {Moderation}
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
    * @listens Command#smite

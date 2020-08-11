@@ -16,7 +16,7 @@ class WebUserData {
     /**
      * @description The user's ID.
      *
-     * @see {@link WebUserData~id}
+     * @see {WebUserData~id}
      *
      * @private
      * @type {string}
@@ -27,7 +27,7 @@ class WebUserData {
      * @description IP address of requesting client. Used for logging and rate
      * limiting.
      *
-     * @see {@link WebUserData~ip}
+     * @see {WebUserData~ip}
      *
      * @private
      * @type {string}
@@ -41,7 +41,7 @@ class WebUserData {
      * efficiency, to prevent looking up all guilds with the user performing the
      * request.
      *
-     * @see {@link WebUserData~guilds}
+     * @see {WebUserData~guilds}
      *
      * @private
      * @type {null|string[]}
@@ -91,8 +91,8 @@ class WebUserData {
     /**
      * @description User's username.
      *
-     * @see {@link
-     * https://discordapp.com/developers/docs/resources/user#user-object}
+     * {@link
+     * https://discordapp.com/developers/docs/resources/user#user-object}.
      *
      * @public
      * @type {?string}
@@ -102,8 +102,8 @@ class WebUserData {
     /**
      * @description User's account discriminator.
      *
-     * @see {@link
-     * https://discordapp.com/developers/docs/resources/user#user-object}
+     * {@link
+     * https://discordapp.com/developers/docs/resources/user#user-object}.
      *
      * @public
      * @type {?string}
@@ -113,8 +113,8 @@ class WebUserData {
     /**
      * @description User's avatar hash.
      *
-     * @see {@link
-     * https://discordapp.com/developers/docs/resources/user#user-object}
+     * {@link
+     * https://discordapp.com/developers/docs/resources/user#user-object}.
      *
      * @public
      * @type {?string}
@@ -124,8 +124,8 @@ class WebUserData {
     /**
      * @description Is this user a bot.
      *
-     * @see {@link
-     * https://discordapp.com/developers/docs/resources/user#user-object}
+     * {@link
+     * https://discordapp.com/developers/docs/resources/user#user-object}.
      *
      * @public
      * @type {?boolean}
@@ -135,8 +135,8 @@ class WebUserData {
     /**
      * @description Is two factor authentication enabled on this user's account.
      *
-     * @see {@link
-     * https://discordapp.com/developers/docs/resources/user#user-object}
+     * {@link
+     * https://discordapp.com/developers/docs/resources/user#user-object}.
      *
      * @public
      * @type {?boolean}
@@ -146,8 +146,8 @@ class WebUserData {
     /**
      * @description The user's chosen language option.
      *
-     * @see {@link
-     * https://discordapp.com/developers/docs/resources/user#user-object}
+     * {@link
+     * https://discordapp.com/developers/docs/resources/user#user-object}.
      *
      * @public
      * @type {?string}
@@ -157,8 +157,8 @@ class WebUserData {
     /**
      * @description Discord user flags.
      *
-     * @see {@link
-     * https://discordapp.com/developers/docs/resources/user#user-object}
+     * {@link
+     * https://discordapp.com/developers/docs/resources/user#user-object}.
      *
      * @public
      * @type {?number}
@@ -168,8 +168,8 @@ class WebUserData {
     /**
      * @description User's Nitro status.
      *
-     * @see {@link
-     * https://discordapp.com/developers/docs/resources/user#user-object}
+     * {@link
+     * https://discordapp.com/developers/docs/resources/user#user-object}.
      *
      * @public
      * @type {?number}
