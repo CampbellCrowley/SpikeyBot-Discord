@@ -18,7 +18,7 @@ function Command() {
     self.client.guilds.cache.forEach((g) => {
       const dir = self.common.guildSaveDir + g.id;
       const filename = dir + commandSettingsFile;
-      self.common.readFile(filename, (err, data) => {
+      self.common.readAndParse(filename, (err, parsed) => {
         if (err) {
           if (err.code == 'ENOENT') {
             // File does not exist. No custom settings exist yet.
@@ -28,17 +28,11 @@ function Command() {
           console.error(err);
           return;
         }
-        try {
-          const parsed = JSON.parse(data);
-          if (parsed) {
-            if (!userSettings[g.id]) userSettings[g.id] = {};
-            Object.entries(parsed).forEach((el) => {
-              userSettings[g.id][el[0]] = new CommandSetting(el[1]);
-            });
-          }
-        } catch (e) {
-          self.error('Failed to parse command settings: ' + filename);
-          console.error(e);
+        if (parsed) {
+          if (!userSettings[g.id]) userSettings[g.id] = {};
+          Object.entries(parsed).forEach((el) => {
+            userSettings[g.id][el[0]] = new CommandSetting(el[1]);
+          });
         }
       });
     });
@@ -79,13 +73,20 @@ function Command() {
   /** @inheritdoc */
   this.save = function(opt) {
     Object.entries(userSettings).forEach((el) => {
-      if (!el[1]._updated) return;
-      el[1]._updated = false;
+      let updated = el[1]._updated || false;
+      const data = {};
+      Object.entries(el[1]).forEach((cmd) => {
+        if (typeof cmd[1].toJSON === 'function') return;
+        if (cmd[1]._updated) updated = true;
+        cmd[1]._updated = false;
+        data[cmd[0]] = cmd[1].toJSON();
+      });
+      if (!updated) return;
       const dir = self.common.guildSaveDir + el[0];
       const filename = dir + commandSettingsFile;
 
       if (opt == 'async') {
-        self.common.mkAndWrite(filename, dir, JSON.stringify(el[1]), (err) => {
+        self.common.mkAndWrite(filename, dir, data, (err) => {
           if (err) {
             self.error(`Failed to write command settings to file: ${filename}`);
             console.error(err);
@@ -93,14 +94,12 @@ function Command() {
           }
         });
       } else {
-        self.common.mkAndWriteSync(
-            filename, dir, JSON.stringify(el[1]), (err) => {
-              if (err) {
-                self.error(
-                    `Failed to write command settings to file: ${filename}`);
-                console.error(err);
-              }
-            });
+        self.common.mkAndWriteSync(filename, dir, data, (err) => {
+          if (err) {
+            self.error(`Failed to write command settings to file: ${filename}`);
+            console.error(err);
+          }
+        });
       }
     });
   };
@@ -1516,7 +1515,7 @@ function Command() {
                 return;
               }
               msg_.edit('`Confirmed`');
-              userSettings[msg.guild.id] = {};
+              userSettings[msg.guild.id] = {_updated: true};
               self.common.reply(
                   msg, 'All settings for commands have been reset.');
               self.fire('settingsReset', msg.guild.id);
@@ -1549,6 +1548,7 @@ function Command() {
               }
               msg_.edit('`Confirmed`');
               delete userSettings[msg.guild.id][cmd.getFullName()];
+              userSettings[msg.guild.id]._updated = true;
               self.common.reply(
                   msg,
                   'Settings for `' + cmd.getFullName() + '` have been reset.');
@@ -1582,6 +1582,7 @@ function Command() {
               msg_.edit('`Confirmed`');
               cmd.forEach((el) => {
                 delete userSettings[msg.guild.id][el.getFullName()];
+                userSettings[msg.guild.id]._updated = true;
                 self.fire('settingsReset', msg.guild.id, el.getFullName());
               });
               self.common.reply(msg, 'Settings for have been reset.', nameList);
