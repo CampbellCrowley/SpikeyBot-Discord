@@ -11,7 +11,7 @@ done
 # NPC Avatar Cleanup
 NPCS=$(find "$SAVEDIR/users/avatars/" -type d -name "NPC*" -mtime +7 -printf '%f\n')
 for n in $NPCS; do
-  if grep -rq "$n" "$SAVEDIR/guilds/*/hg/game.json"; then
+  if grep -rq "$n" "$SAVEDIR/guilds/"; then
     echo -n
   else
     echo "$SAVEDIR/users/avatars/$n" | xargs rm -rf --
