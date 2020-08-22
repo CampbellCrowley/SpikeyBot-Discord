@@ -1,17 +1,28 @@
-# LIST=$(find ./ -name *.DELETEME | sed 's/.DELETEME$//' | tr '\n' ' ')
-LIST=$(find /home/admin/SpikeyBot-Discord/save/ -size 0 -not -name enableBotCommands | tr '\n' ' ')
+#!/bin/bash
+DIR=$(dirname "$0")
+SAVEDIR="$DIR/save"
+
+# Avatar cleanup
+MULTIPLES=$(find "$SAVEDIR/users/avatars/" -type f -iname '*' -printf '%h\n' | sort | uniq -c | awk '$1 > 1' | awk '{print $2}')
+for d in $MULTIPLES; do
+  find "$d" -type f -printf '%T+ %p\n' | sort -t $'\t' -g | head -n -1 | cut -d $'\t' -f 2- | awk '{print $2}'| xargs rm --
+done
+
+# NPC Avatar Cleanup
+NPCS=$(find "$SAVEDIR/users/avatars/" -type d -name "NPC*" -mtime +7 -printf '%f\n')
+for n in $NPCS; do
+  if grep -rq "$n" "$SAVEDIR/guilds/*/hg/game.json"; then
+    echo -n
+  else
+    echo "$SAVEDIR/users/avatars/$n" | xargs rm -rf --
+  fi
+done
+
+# Empty File Cleanup
+LIST=$(find "$SAVEDIR" -size 0 -not -name enableBotCommands | tr '\n' ' ')
 echo "$LIST"
 for i in $LIST; do
   if [ -f "$i" ]; then
     rm "$i"
   fi
 done
-
-# nice rsync -urptW --rsync-path="nice rsync" --exclude-from="sync-exclude.txt" /home/admin/SpikeyBot-Discord/save/ admin@kamino1:/home/admin/SpikeyBot-Discord/save/ &&\
-# nice rsync -urptW --rsync-path="nice rsync" --exclude-from="sync-exclude.txt" admin@kamino1:/home/admin/SpikeyBot-Discord/save/ /home/admin/SpikeyBot-Discord/save/
-
-# for i in $LIST; do
-#   if [ -f "$i.DELETEME" ]; then
-#     rm "$i" "$i.DELETEME"
-#   fi
-# done
