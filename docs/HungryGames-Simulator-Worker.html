@@ -107,7 +107,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="Worker"><span class="type-signature"></span>new Worker(sim [, retry])</h4>
+    <h4 class="name" id="Worker"><span class="type-signature"></span>new Worker(sim [, retries])</h4>
     
     
 </dt>
@@ -190,13 +190,13 @@
 
         <tr>
             
-                <td class="name"><code>retry</code></td>
+                <td class="name"><code>retries</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type">number</span>
 
 
 
@@ -218,12 +218,13 @@
             
                 <td class="default">
                 
-                    true
+                    2
                 
                 </td>
             
 
-            <td class="description last">Whether to try again if there is an error.</td>
+            <td class="description last">Number of remaining times to retry in the event
+    of an error.</td>
         </tr>
 
     
@@ -268,7 +269,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="src_hg_simulator_worker.js.html">src/hg/simulator/worker.js</a>,
-				 <a href="src_hg_simulator_worker.js.html#sunlight-1-line-21">line 21</a>
+				 <a href="src_hg_simulator_worker.js.html#sunlight-1-line-22">line 22</a>
 			</li>
 		</ul>
 	</dd>
@@ -316,6 +317,169 @@
         <h3 class="subsection-title">Methods</h3>
 
         <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="_simulate"><span class="type-signature">&lt;private> </span>_simulate(sim, retries)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Run the simulation.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>sim</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Simulation data.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>retries</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Number of remaining times to retry in the event of
+    an error.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_hg_simulator_worker.js.html">src/hg/simulator/worker.js</a>,
+				 <a href="src_hg_simulator_worker.js.html#sunlight-1-line-70">line 70</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
             
 <hr>
 <dt>
@@ -436,169 +600,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="src_hg_simulator_worker.js.html">src/hg/simulator/worker.js</a>,
-				 <a href="src_hg_simulator_worker.js.html#sunlight-1-line-514">line 514</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="simulate"><span class="type-signature">&lt;private> </span>simulate(sim, retry)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Run the simulation.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>sim</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Simulation data.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>retry</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Whether to try again if there is an error.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_hg_simulator_worker.js.html">src/hg/simulator/worker.js</a>,
-				 <a href="src_hg_simulator_worker.js.html#sunlight-1-line-68">line 68</a>
+				 <a href="src_hg_simulator_worker.js.html#sunlight-1-line-517">line 517</a>
 			</li>
 		</ul>
 	</dd>
@@ -681,7 +683,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.5</a>
 	
-		on Tuesday, August 25, 2020 6:37 PM (-07:00)
+		on Wednesday, August 26, 2020 1:25 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

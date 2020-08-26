@@ -330,7 +330,7 @@ function Common() {
         embed.setTitle(text);
         if (post) embed.setDescription(post);
       } else {
-        embed.setDescription(text + (post ? '\n' + post : ''));
+        embed.setDescription(text + (post ? `\n${post}` : ''));
       }
       return msg.channel.send(Common.mention(msg), embed).catch((err) => {
         self.error(

@@ -1518,7 +1518,8 @@ function HG() {
     }
     const sim = new HungryGames.Simulator(game, hg, msg);
     const iTime = Date.now();
-    sim.go(() => {
+    sim.go((err) => {
+      if (err) self.warn(`Simulator failed with reason: ${err}`);
       game.outputChannel = msg.channel.id;
 
       // Signal ready to display events.
