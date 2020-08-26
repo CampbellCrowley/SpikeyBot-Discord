@@ -341,6 +341,7 @@ class Worker {
                 (doArenaEvent ? arenaEvent.message : 'player events') +
                 '\' suitable for ' + userPool.length + ' remaining players)',
             reason: 'Bad Configuration',
+            game: sim.game,
           });
           return;
         }
