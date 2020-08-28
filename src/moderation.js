@@ -885,13 +885,14 @@ class Moderation extends SubModule {
       output += num + ' year' + (num == 1 ? '' : 's') + ', ';
       msecs -= num * unit;
     }
-    unit /= 365 / 7;
+    /* unit /= 365 / 7;
     if (msecs >= unit) {
       const num = Math.floor(msecs / unit);
       output += num + ' week' + (num == 1 ? '' : 's') + ', ';
       msecs -= num * unit;
     }
-    unit /= 7;
+    unit /= 7; */
+    unit /= 365;
     if (msecs >= unit) {
       const num = Math.floor(msecs / unit);
       output += num + ' day' + (num == 1 ? '' : 's') + ', ';
