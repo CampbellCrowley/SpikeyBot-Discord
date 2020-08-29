@@ -418,6 +418,7 @@ function CmdScheduling() {
       }
       myself.message.content = myself.cmd;
       myself.message.fabricated = true;
+      myself.message.disableMention = true;
       const cmd = self.command.find(myself.cmd, myself.message);
       if (!cmd) {
         self.error(

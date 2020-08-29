@@ -98,6 +98,15 @@ function SpikeyBot() {
       childProcess.execSync('git rev-parse --short HEAD').toString().trim();
 
   /**
+   * The fully qualified domain name of this host.
+   *
+   * @public
+   * @type {string}
+   * @constant
+   */
+  this.fqdn = childProcess.execSync('hostname -f').toString().trim();
+
+  /**
    * Timestamp at which this process was started.
    *
    * @public
@@ -723,12 +732,6 @@ function SpikeyBot() {
   function onReady() {
     const tag = client.user && client.user.tag || '';
     common.log(`Logged in as ${tag} (${self.version})`);
-    let hostname = null;
-    try {
-      hostname = childProcess.execSync('hostname -f').toString().trim();
-    } catch (err) {
-      // Meh.
-    }
     if (!minimal || isBackup) {
       if (testInstance) {
         updateGame('Running unit test...');
@@ -849,8 +852,8 @@ function SpikeyBot() {
             if (process.env.SHARDING_NAME) {
               additional += '(ID: ' + process.env.SHARDING_NAME + ')';
             }
-            if (hostname) {
-              additional += '[FQDN: ' + hostname + ']';
+            if (self.fqdn) {
+              additional += `[FQDN: ${self.fqdn}]`;
             }
             logChannel.send(
                 'I just rebooted (JS' + self.version + ') ' +
@@ -884,7 +887,7 @@ function SpikeyBot() {
       shard_count: client.shard ? client.shard.count : '0',
       shard_id: client.shard ? client.shard.ids : 'null',
       version: self.version,
-      fqdn: hostname,
+      fqdn: self.fqdn,
     }));
     // Reset save interval
     clearInterval(saveInterval);

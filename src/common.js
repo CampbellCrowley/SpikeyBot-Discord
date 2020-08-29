@@ -737,7 +737,9 @@ Common.userSaveDir = Common.prototype.userSaveDir;
  * @returns {string} Formatted mention string.
  */
 Common.prototype.mention = function(msg) {
-  if (msg.author) {
+  if (msg.disableMention && msg.author) {
+    return `${msg.author.tag}`;
+  } else if (msg.author) {
     return `<@${msg.author.id}>`;
   } else if (msg.id) {
     return `<@${msg.id}>`;

@@ -1581,7 +1581,11 @@ function Main() {
                     (vanity ? `Vanity: discord.gg/${vanity}\n` : '')) ||
               '*None*',
           true);
-      if (guild.shard) embed.setFooter(`Shard #${guild.shard.id}`);
+      if (guild.shard) {
+        embed.setFooter(`Shard #${guild.shard.id} / ${self.bot.fqdn}`);
+      } else {
+        embed.setFooter(`${self.bot.fqdn}`);
+      }
       msg.channel.send(`<@${msg.author.id}>`, embed);
     } else {
       self.common.reply(
