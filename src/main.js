@@ -2834,13 +2834,15 @@ function Main() {
     out.numGuilds = self.client.guilds.cache.size;
 
     let iTime = Date.now();
-    self.client.guilds.cache.forEach((g) => {
-      out.numLargestGuild = Math.max(g.memberCount, out.numLargestGuild);
-      out.numMembers += g.memberCount;
-      out.numEmojis += g.emojis.cache.size;
-      if (g.verified) out.numVerified++;
-      if (g.partnered) out.numPartnered++;
-    });
+    if (self.client.guilds) {
+      self.client.guilds.cache.forEach((g) => {
+        out.numLargestGuild = Math.max(g.memberCount, out.numLargestGuild);
+        out.numMembers += g.memberCount;
+        out.numEmojis += g.emojis.cache.size;
+        if (g.verified) out.numVerified++;
+        if (g.partnered) out.numPartnered++;
+      });
+    }
     const guildDelta = Date.now() - iTime;
 
     iTime = Date.now();

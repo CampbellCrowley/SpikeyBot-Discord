@@ -78,19 +78,20 @@ This tutorial uses the Discord.js sharding system, which may become deprecated i
 1) Have a server/computer
     - SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.
 2) Install [NodeJS](https://nodejs.org/)
-    - The bot is currently running on NodeJS [v12.18.0](https://nodejs.org/dist/v12.18.0/). Other versions may work, but are untested.
+    - The bot is currently running on NodeJS [v12.18.3](https://nodejs.org/dist/v12.18.3/). Other versions may work, but are untested.
 3) Download source code
     - Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.
 4) Install system dependencies
     - `sudo apt install make libtool autoconf g++ ffmpeg` are required for the default installation.
 5) Install dependencies via NPM
-    - Current version of NPM used is `v6.14.5`, but almost any version should be fine.
+    - Current version of NPM used is `v6.14.8`, but almost any version should be fine.
     - In the `SpikeyBot-Discord` directory, run `npm install`.
 6) Get a bot token from Discord
     - A token for the bot that you are trying to run from [Discord](https://discordapp.com/developers/applications/) is required.
     - DO NOT give this token to anybody. Keep it private. The token allows anyone to be your bot.
 7) Configure SpikeyBot
     - Create `auth.js` in the `SpikeyBot-Discord/` directory with a line that says `exports.release = 'BOT_TOKEN';`, where `BOT_TOKEN` is the bot token from Discord.
+        - See `./auth.js.example` for an example of what a complete file will look like.
     - Modify `./subModules.json` `"release"` section to have the subModules you want.
     - If you wish to have access to developer commands that normally only SpikeyRobot has access to, replace the `spikeyId` in `./src/common.js` with your account ID.
 8) Run SpikeyBot

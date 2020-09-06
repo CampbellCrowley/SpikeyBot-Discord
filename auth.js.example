@@ -1,0 +1,37 @@
+// Discord bot tokens
+exports.release = 'RELEASE_BOT_TOKEN';
+exports.dev = 'DEV_BOT_TOKEN';
+exports.test = 'DEV_BOT_TOKEN'; // I use the dev bot for this.
+exports.webSecret = 'DISCORD_SECRET_KEY';
+
+// TODO: Convert sibling verification to use public/private key pairs.
+exports.hgWebSiblingVerification = 'HG_SIBLING_PASSWORD';
+exports.hgWebSiblingVerificationResponse = 'HG_SIBLING_PASSWORD_RESPONSE';
+exports.webSettingsSiblingVerification = 'CONTROL_SIBLING_PASSWORD';
+exports.webSettingsSiblingVerificationResponse =
+    'CONTROL_SIBLING_PASSWORD_RESPONSE';
+
+exports.sqlUsername = 'SQL_DATABASE_USERNAME';
+exports.sqlPassword = 'SQL_DATABASE_PASSWORD';
+exports.sqlHost = 'localhost';
+exports.sqlPort = 3307;
+exports.sqlDatabase = 'SQL_DATABASE';
+
+exports.commandUsername = 'WEB_API_BOT_USERNAME';
+exports.commandPassword = 'WEB_API_BOT_PASSWORD';
+
+// Third-Party APIs
+exports.dialogflowProjectId = 'DIALOGFLOW_PROJECT_ID';
+exports.patreonClientId = 'PATREON_API_CLIENT_ID';
+exports.patreonClientSecret = 'PATREON_API_CLIENT_SECRET';
+exports.spotifyId = 'SPOTIFY_API_CLIENT_ID';
+exports.spotifySecret = 'SPOTIFY_API_CLIENT_SECRET';
+exports.wordsAPIKey = 'DICTIONARY_API_CLIENT_KEY';
+exports.logWebhookId = 'BOT_LOG_WEBHOOK_CHANNEL_ID';
+exports.logWebhookToken = 'BOT_LOG_WEBHOOK_CHANNEL_TOKEN';
+exports.twitchID = 'TWITCH_API_CLIENT_ID';
+exports.twitchSecret = 'TWITCH_API_CLIENT_SECRET';
+exports.twitchSubSecret = 'TWITCH_API_SUB_CLIENT_SECRET';
+exports.giphyKey = 'GIPHY_API_CLIENT_SECRET';
+exports.imgurID = 'IMGUR_API_CLIENT_ID';
+exports.imgurSecret = 'IMGUR_API_CLIENT_SECRET';
