@@ -2839,8 +2839,8 @@ function Main() {
         out.numLargestGuild = Math.max(g.memberCount, out.numLargestGuild);
         out.numMembers += g.memberCount;
         out.numEmojis += g.emojis && g.emojis.cache.size || 0;
-        if (g.verified) out.numVerified++;
-        if (g.partnered) out.numPartnered++;
+        // if (g.verified) out.numVerified++;
+        // if (g.partnered) out.numPartnered++;
       });
     }
     const guildDelta = Date.now() - iTime;
