@@ -9,14 +9,14 @@ for d in $MULTIPLES; do
 done
 
 # NPC Avatar Cleanup
-NPCS=$(find "$SAVEDIR/users/avatars/" -type d -name "NPC*" -mtime +7 -printf '%f\n')
-for n in $NPCS; do
-  if grep -rq "$n" "$SAVEDIR/guilds/"; then
-    echo -n
-  else
-    echo "$SAVEDIR/users/avatars/$n" | xargs rm -rf --
-  fi
-done
+# NPCS=$(find "$SAVEDIR/users/avatars/" -type d -name "NPC*" -mtime +7 -printf '%f\n')
+# for n in $NPCS; do
+#   if grep -rq "$n" "$SAVEDIR/guilds/"; then
+#     echo -n
+#   else
+#     echo "$SAVEDIR/users/avatars/$n" | xargs rm -rf --
+#   fi
+# done
 
 # Empty File Cleanup
 LIST=$(find "$SAVEDIR" -size 0 -not -name enableBotCommands | tr '\n' ' ')
