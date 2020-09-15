@@ -3885,7 +3885,8 @@ function HG() {
     const user = msg.softMentions.users.first() || msg.author;
     let numDone = 0;
     const embed = new self.Discord.MessageEmbed();
-    embed.setTitle(strings.get('statsUserTitle', msg.locale, user.tag));
+    embed.setTitle(
+        strings.get('statsUserTitle', msg.locale, user.tag || user.username));
     embed.setColor([255, 0, 255]);
 
     const checkDone = function() {
