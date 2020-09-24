@@ -1360,7 +1360,7 @@ class ShardingMaster {
     }
     fs.stat(filename, (err, stats) => {
       // Send original filename, as ShardingSlave expects the same format.
-      const res = {filename: filename, mtime: null};
+      const res = {filename: filename, mtime: 1};
       if (err) {
         if (err.code === 'ENOENT') {
           socket.emit('writeFile', res, null, (err) => {

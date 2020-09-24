@@ -471,7 +471,7 @@ function Common() {
           if (cb) cb(err);
           return;
         }
-        const mtime = stats && stats.mtime.getTime();
+        const mtime = stats && stats.mtime.getTime() || 2;
         process.send({_sGetFile: filename, _sGetFileM: mtime}, (err) => {
           if (!err) return;
           process.removeListener('message', listener);
