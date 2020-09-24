@@ -59,8 +59,7 @@
     "./web/hg.js",
     "./images.js",
     "./memWatcher.js",
-    "./localeManager.js",
-    "./autoReact.js"
+    "./localeManager.js"
   ],
   "release": [
     "./moderation.js",

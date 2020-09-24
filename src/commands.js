@@ -76,7 +76,7 @@ function Command() {
       let updated = el[1]._updated || false;
       const data = {};
       Object.entries(el[1]).forEach((cmd) => {
-        if (typeof cmd[1].toJSON === 'function') return;
+        if (typeof cmd[1].toJSON !== 'function') return;
         if (cmd[1]._updated) updated = true;
         cmd[1]._updated = false;
         data[cmd[0]] = cmd[1].toJSON();
