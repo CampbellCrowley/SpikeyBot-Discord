@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: ForcedOutcome</title>
+	<title>SpikeyBot-Discord Interfaces</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -93,15 +93,13 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: ForcedOutcome</h1>
+	<h1 class="page-title">Interfaces</h1>
 <section>
 
 <header>
     
         <h2>
-            <span class="ancestors"><a href="HungryGames.html">HungryGames</a>~</span>
         
-        ForcedOutcome
         </h2>
         
     
@@ -112,245 +110,8 @@
     <div class="container-overview">
     
         
-<hr>
-<dt>
-    <h4 class="name" id="ForcedOutcome"><span class="type-signature"></span>new ForcedOutcome(id, list, state, text [, persists])</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        An outcome for one or more players in a game.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
 
         
-        <th>Argument</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">The guild ID in which the users will be affected.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>list</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;string></span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">The array of player IDs of which to affect.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>state</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">The outcome to force the players to have been
-victims of by the end of the simulated day. ("living", "dead", "wounded",
-or "thriving").</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>text</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Message to show when the user is affected.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>persists</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">Does this outcome persist to the end of
-the game, if false it only exists for the next day.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
 <dl class="details">
     
 
@@ -381,16 +142,6 @@ the game, if false it only exists for the next day.</td>
 
 
 	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_hg_ForcedOutcome.js.html">src/hg/ForcedOutcome.js</a>,
-				 <a href="src_hg_ForcedOutcome.js.html#sunlight-1-line-9">line 9</a>
-			</li>
-		</ul>
-	</dd>
-	
 
 	
 
@@ -400,21 +151,7 @@ the game, if false it only exists for the next day.</td>
 </dl>
 
 
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
+        
     
     </div>
 
@@ -423,429 +160,387 @@ the game, if false it only exists for the next day.</td>
     
 
     
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
+        <h3 class="subsection-title">Classes</h3>
 
         <dl>
-            
-<hr>
-<dt class="name" id="id">
-    <h4 id="id"><span class="type-signature"></span>id<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The guild ID of which the users will be affected.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_hg_ForcedOutcome.js.html">src/hg/ForcedOutcome.js</a>,
-				 <a href="src_hg_ForcedOutcome.js.html#sunlight-1-line-35">line 35</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
+            <dt><a href="ApiEndpoint.html">ApiEndpoint</a></dt>
+            <dd></dd>
         
-            
-<hr>
-<dt class="name" id="list">
-    <h4 id="list"><span class="type-signature"></span>list<span class="type-signature"> :Array.&lt;string></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The array of player IDs of which this concerns.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Array.&lt;string></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_hg_ForcedOutcome.js.html">src/hg/ForcedOutcome.js</a>,
-				 <a href="src_hg_ForcedOutcome.js.html#sunlight-1-line-42">line 42</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
+            <dt><a href="ApiRequestBody.html">ApiRequestBody</a></dt>
+            <dd></dd>
         
-            
-<hr>
-<dt class="name" id="persists">
-    <h4 id="persists"><span class="type-signature"></span>persists<span class="type-signature"> :boolean</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Does this outcome persist to the end of the game. False to only exist for
-a
-single day.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">boolean</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>false</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_hg_ForcedOutcome.js.html">src/hg/ForcedOutcome.js</a>,
-				 <a href="src_hg_ForcedOutcome.js.html#sunlight-1-line-66">line 66</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
+            <dt><a href="AutoReact.html">AutoReact</a></dt>
+            <dd></dd>
         
-            
-<hr>
-<dt class="name" id="state">
-    <h4 id="state"><span class="type-signature"></span>state<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The state to force the players to be in.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_hg_ForcedOutcome.js.html">src/hg/ForcedOutcome.js</a>,
-				 <a href="src_hg_ForcedOutcome.js.html#sunlight-1-line-49">line 49</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
+            <dt><a href="BotCommands.html">BotCommands</a></dt>
+            <dd></dd>
         
-            
-<hr>
-<dt class="name" id="text">
-    <h4 id="text"><span class="type-signature"></span>text<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Message to show when the user is affected.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_hg_ForcedOutcome.js.html">src/hg/ForcedOutcome.js</a>,
-				 <a href="src_hg_ForcedOutcome.js.html#sunlight-1-line-56">line 56</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
+            <dt><a href="ChatBot.html">ChatBot</a></dt>
+            <dd></dd>
+        
+            <dt><a href="CmdScheduling.html">CmdScheduling</a></dt>
+            <dd></dd>
+        
+            <dt><a href="CmdScheduling-ScheduledCommand.html">ScheduledCommand</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Command.html">Command</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Command-CommandSetting.html">CommandSetting</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Command-SingleCommand.html">SingleCommand</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Common.html">Common</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Connect4.html">Connect4</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Connect4_Game.html">Game</a></dt>
+            <dd></dd>
+        
+            <dt><a href="CpuWatcher.html">CpuWatcher</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Define.html">Define</a></dt>
+            <dd></dd>
+        
+            <dt><a href="DevCmds.html">DevCmds</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Echo.html">Echo</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Echo-Character.html">Character</a></dt>
+            <dd></dd>
+        
+            <dt><a href="EE.html">EE</a></dt>
+            <dd></dd>
+        
+            <dt><a href="EventEmitter.html">EventEmitter</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Events.html">Events</a></dt>
+            <dd></dd>
+        
+            <dt><a href="FileServer.html">FileServer</a></dt>
+            <dd></dd>
+        
+            <dt><a href="FunTranslators.html">FunTranslators</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HG.html">HG</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HGWeb.html">HGWeb</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames.html">HungryGames</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-ActionManager.html">ActionManager</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-ActionStore.html">ActionStore</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-GiveRoleAction.html">GiveRoleAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-RunCommandAction.html">RunCommandAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">SendAutoplayingMessageAlertAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-SendDayEndMessageAction.html">SendDayEndMessageAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-SendDayStartMessageAction.html">SendDayStartMessageAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-SendEventMessageAction.html">SendEventMessageAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-SendMessageAction.html">SendMessageAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-SendPlayerRankMessageAction.html">SendPlayerRankMessageAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-SendStatusListAction.html">SendStatusListAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-SendTeamRankMessageAction.html">SendTeamRankMessageAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-SendVictorAction.html">SendVictorAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Action-TakeRoleAction.html">TakeRoleAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-ArenaEvent.html">ArenaEvent</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Battle.html">Battle</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-ChannelAction.html">ChannelAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Day.html">Day</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-DefaultOptions.html">DefaultOptions</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-DefaultOptions-BooleanOption.html">BooleanOption</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-DefaultOptions-NumberOption.html">NumberOption</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-DefaultOptions-ObjectOption.html">ObjectOption</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-DefaultOptions-Option.html">Option</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-DefaultOptions-SelectOption.html">SelectOption</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Event.html">Event</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-EventContainer.html">EventContainer</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-FinalEvent.html">FinalEvent</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-ForcedOutcome.html">ForcedOutcome</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Game.html">Game</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Grammar.html">Grammar</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-GuildGame.html">GuildGame</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-MemberAction.html">MemberAction</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Messages.html">Messages</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-NormalEvent.html">NormalEvent</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-OutcomeProbabilities.html">OutcomeProbabilities</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Player.html">Player</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Simulator.html">Simulator</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Simulator-Worker.html">Worker</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-StatGroup.html">StatGroup</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-StatManager.html">StatManager</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Stats.html">Stats</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-Team.html">Team</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-UserIconUrl.html">UserIconUrl</a></dt>
+            <dd></dd>
+        
+            <dt><a href="HungryGames-WeaponEvent.html">WeaponEvent</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Images.html">Images</a></dt>
+            <dd></dd>
+        
+            <dt><a href="LocaleManager.html">LocaleManager</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Main.html">Main</a></dt>
+            <dd></dd>
+        
+            <dt><a href="MainModule.html">MainModule</a></dt>
+            <dd></dd>
+        
+            <dt><a href="MemWatcher.html">MemWatcher</a></dt>
+            <dd></dd>
+        
+            <dt><a href="MessageMaker.html">MessageMaker</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Messages.html">Messages</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Moderation.html">Moderation</a></dt>
+            <dd></dd>
+        
+            <dt><a href="ModLog.html">ModLog</a></dt>
+            <dd></dd>
+        
+            <dt><a href="ModLog-Settings.html">Settings</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Music.html">Music</a></dt>
+            <dd></dd>
+        
+            <dt><a href="NPC.html">NPC</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Patreon.html">Patreon</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Patreon-toExport.html">toExport</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Pets.html">Pets</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Pets-BaseMoves.html">BaseMoves</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Pets-BasePetClasses.html">BasePetClasses</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Pets-BasePets.html">BasePets</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Pets-Constants.html">Constants</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Pets-NPC.html">NPC</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Pets-Pet.html">Pet</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Polling.html">Polling</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Polling-Poll.html">Poll</a></dt>
+            <dd></dd>
+        
+            <dt><a href="RaidBlock.html">RaidBlock</a></dt>
+            <dd></dd>
+        
+            <dt><a href="RaidBlock-RaidSettings.html">RaidSettings</a></dt>
+            <dd></dd>
+        
+            <dt><a href="RoleColors.html">RoleColors</a></dt>
+            <dd></dd>
+        
+            <dt><a href="RoleManager.html">RoleManager</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Sandbox.html">Sandbox</a></dt>
+            <dd></dd>
+        
+            <dt><a href="ShardingMaster.html">ShardingMaster</a></dt>
+            <dd></dd>
+        
+            <dt><a href="ShardingMaster.ShardInfo.html">ShardInfo</a></dt>
+            <dd></dd>
+        
+            <dt><a href="ShardingMaster.ShardMasterConfig.html">ShardMasterConfig</a></dt>
+            <dd></dd>
+        
+            <dt><a href="ShardingMaster.ShardMasterConfig.HeartbeatConfig.html">HeartbeatConfig</a></dt>
+            <dd></dd>
+        
+            <dt><a href="ShardingMaster.ShardMasterConfig.MailConfig.html">MailConfig</a></dt>
+            <dd></dd>
+        
+            <dt><a href="ShardingMaster.ShardStatus.html">ShardStatus</a></dt>
+            <dd></dd>
+        
+            <dt><a href="ShardingSlave.html">ShardingSlave</a></dt>
+            <dd></dd>
+        
+            <dt><a href="SMLoader.html">SMLoader</a></dt>
+            <dd></dd>
+        
+            <dt><a href="SpikeyBot.html">SpikeyBot</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Spotify.html">Spotify</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Strings.html">Strings</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Strings-Locale.html">Locale</a></dt>
+            <dd></dd>
+        
+            <dt><a href="SubModule.html">SubModule</a></dt>
+            <dd></dd>
+        
+            <dt><a href="TicTacToe.html">TicTacToe</a></dt>
+            <dd></dd>
+        
+            <dt><a href="TicTacToe_Game.html">Game</a></dt>
+            <dd></dd>
+        
+            <dt><a href="TTS.html">TTS</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Twitch.html">Twitch</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Uno.html">Uno</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Uno_Card.html">Card</a></dt>
+            <dd></dd>
+        
+            <dt><a href="Uno_Game.html">Game</a></dt>
+            <dd></dd>
+        
+            <dt><a href="WebAccount.html">WebAccount</a></dt>
+            <dd></dd>
+        
+            <dt><a href="WebApi.html">WebApi</a></dt>
+            <dd></dd>
+        
+            <dt><a href="WebProxy.html">WebProxy</a></dt>
+            <dd></dd>
+        
+            <dt><a href="WebSettings.html">WebSettings</a></dt>
+            <dd></dd>
+        
+            <dt><a href="WebStats.html">WebStats</a></dt>
+            <dd></dd>
+        
+            <dt><a href="WebUserData.html">WebUserData</a></dt>
+            <dd></dd>
         </dl>
+    
+
+    
+
+    
+
     
 
     

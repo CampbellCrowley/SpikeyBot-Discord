@@ -442,21 +442,27 @@ class ShardingSlave {
    * for us to write to disk at the given filename relative to the project root.
    *
    * @private
-   * @param {string} filename Filename relative to project directory.
+   * @param {string|object.<string>} req Filename relative to project directory,
+   *     or object with filename and modified time.
    * @param {?string|Buffer} data The data to write to the file, or null to
-   *     delete the file.
+   *     delete the file, or modified time is older on master.
    * @param {Function} cb Callback once completed with optional error.
    */
-  _receiveMasterFile(filename, data, cb) {
+  _receiveMasterFile(req, data, cb) {
     if (typeof cb !== 'function') cb = () => {};
     this._lastSeen = Date.now();
+    const filename = req.filename || req;
     const file = path.resolve(`${botCWD}/${filename}`);
     if (typeof filename != 'string' || !file.startsWith(botCWD)) {
       this.logWarning('Master sent file outside of project directory: ' + file);
       cb('File path unacceptable');
       return;
     }
-    if (!data) {
+    if (req.mtime && !data) {
+      common.logDebug(
+          `Skipping write for file from master: ${file} (${req.mtime})`);
+      cb(null);
+    } else if (!data) {
       common.unlink(file, (err) => {
         if (err) {
           common.error(`Failed to unlink file from master from disk: ${file}`);
@@ -616,7 +622,8 @@ class ShardingSlave {
         return;
       } else if (message._sGetFile) {
         // Shard has requested to get a file from our primary node.
-        this._socket.emit('getFile', message._sGetFile, (err, res) => {
+        const req = {filename: message._sGetFile, mtime: message._sGetFileM};
+        this._socket.emit('getFile', req, (err, res) => {
           if (!this._child) return;
           if (err) {
             this._child.send({_sGetFile: message._sGetFile, _error: err});

@@ -466,14 +466,21 @@ function Common() {
         if (cb) cb('GetFile IPC Send Timeout');
       }, 30000);
 
-      process.send({_sGetFile: filename}, (err) => {
-        if (!err) return;
-        process.removeListener('message', listener);
-        if (cb) cb(err);
-        clearTimeout(timeout);
-        // Rethrow to force suicide as this is a fatal error and is
-        // unrecoverable.
-        if (err.code === 'ERR_IPC_CHANNEL_CLOSED') throw err;
+      fs.stat(filename, (err, stats) => {
+        if (err && err.code !== 'ENOENT') {
+          if (cb) cb(err);
+          return;
+        }
+        const mtime = stats.mtime.getTime();
+        process.send({_sGetFile: filename, _sGetFileM: mtime}, (err) => {
+          if (!err) return;
+          process.removeListener('message', listener);
+          if (cb) cb(err);
+          clearTimeout(timeout);
+          // Rethrow to force suicide as this is a fatal error and is
+          // unrecoverable.
+          if (err.code === 'ERR_IPC_CHANNEL_CLOSED') throw err;
+        });
       });
     };
   }
@@ -795,15 +802,27 @@ Common.mkAndWrite = function(filename, dir, data, cb) {
         if (typeof data === 'object' && !Buffer.isBuffer(data)) {
           data = JSON.stringify(data);
         }
-        fs.writeFile(filename, data, (err2) => {
-          if (err2) {
-            if (this.error) this.error(`Failed to save file: ${filename}`);
-            console.error(err2);
-            if (typeof cb === 'function') cb(err2);
+        const tmpfile = `${filename}.tmp`;
+        fs.writeFile(tmpfile, data, (err) => {
+          if (err) {
+            if (this.error) this.error(`Failed to save file: ${tmpfile}`);
+            console.error(err);
+            if (typeof cb === 'function') cb(err);
             return;
           }
-          if (this.sendFile) this.sendFile(filename);
-          if (typeof cb === 'function') cb();
+          fs.rename(tmpfile, filename, (err) => {
+            if (err) {
+              if (this.error) {
+                this.error(
+                    `Failed to rename tmp file: ${tmpfile} --> ${filename}`);
+              }
+              console.error(err);
+              if (typeof cb === 'function') cb(err);
+              return;
+            }
+            if (this.sendFile) this.sendFile(filename);
+            if (typeof cb === 'function') cb();
+          });
         });
       })
       .catch((err) => {
