@@ -1274,6 +1274,28 @@ class ShardingMaster {
       done();
       console.log(dbg);
     }
+
+    if (script.startsWith('this.runBotUpdate(')) this._runBotUpdate();
+  }
+
+  /**
+   * @description Fetch the latest bot version from GitHub.
+   * @private
+   */
+  _runBotUpdate() {
+    common.log(
+        `Triggered update: ${__dirname} <-- DIR | CWD -->${process.cwd()}`);
+    require('child_process').exec('npm run update', (err, stdout, stderr) => {
+      if (!err) {
+        if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
+        if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+      } else {
+        common.error('Failed to pull latest update.');
+        console.error(err);
+        if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
+        if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+      }
+    });
   }
 
   /**
