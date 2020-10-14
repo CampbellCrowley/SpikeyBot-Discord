@@ -454,7 +454,8 @@ class ShardingSlave {
     const filename = req.filename || req;
     const file = path.resolve(`${botCWD}/${filename}`);
     if (typeof filename != 'string' || !file.startsWith(botCWD)) {
-      this.logWarning('Master sent file outside of project directory: ' + file);
+      common.logWarning(
+          'Master sent file outside of project directory: ' + file);
       cb('File path unacceptable');
       return;
     }
