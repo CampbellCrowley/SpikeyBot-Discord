@@ -736,15 +736,30 @@ class Moderation extends SubModule {
               modLog.output(msg.guild, 'smite', member.user, msg.author);
             }
           })
-          .catch((err) => {
-            this.common.reply(
-                msg, 'Oops! I wasn\'t able to smite ' + member.user.username +
-                    '! I wasn\'t able to give them the "Smited" ' +
-                    'role!');
-            this.error(
-                'Failed to give smited role: ' + msg.guild.id + '@' +
-                member.id);
-            console.log(err);
+          .catch(() => {
+            member.roles.add(role)
+                .then(() => {
+                  this.common.reply(
+                      msg,
+                      'The gods have struck ' + member.user.username +
+                          ' with lightning!',
+                      'Although it appears to be a tad weak...');
+                  const modLog = this.bot.getSubmodule('./modLog.js');
+                  if (modLog) {
+                    modLog.output(msg.guild, 'smite', member.user, msg.author);
+                  }
+                })
+                .catch((err) => {
+                  this.common.reply(
+                      msg,
+                      'Oops! I wasn\'t able to smite ' + member.user.username +
+                          '! I wasn\'t able to give them the "Smited" ' +
+                          'role!');
+                  this.error(
+                      'Failed to give smited role: ' + msg.guild.id + '@' +
+                      member.id);
+                  console.log(err);
+                });
           });
       member.guild.channels.cache.forEach((channel) => {
         if (channel.permissionsLocked) return;
