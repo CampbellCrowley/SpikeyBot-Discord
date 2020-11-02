@@ -382,7 +382,7 @@ function Main() {
 
     self.common.readFile('./save/rigged-counter.txt', (err, file) => {
       if (err || isNaN(file * 1)) {
-        self.client.riggedCounter = 0;
+        self.client.riggedCounter = 1;
         console.log(err);
         return;
       }
@@ -480,10 +480,10 @@ function Main() {
        */
       self.client.updateRiggedCounter = function(newNum) {
         /* eslint-enable no-unused-vars */
-        if (newNum < this.riggedCounter) {
+        if (newNum < this.riggedCounter && !isNaN(this.riggedCounter * 1)) {
           this.shard.broadcastEval(
               'this.updateRiggedCounter(' + this.riggedCounter + ')');
-        } else {
+        } else if (!isNaN(newNum * 1)) {
           this.riggedCounter = newNum;
         }
       };
@@ -953,7 +953,7 @@ function Main() {
           } else { */
           self.client.riggedCounter++;
           if (!disabledRiggedCounter[msg.guild.id]) {
-            msg.channel.send('#' + self.client.riggedCounter).catch(() => {});
+            msg.channel.send(`#${self.client.riggedCounter}`).catch(() => {});
           }
           // }
           if (self.client.shard) {
