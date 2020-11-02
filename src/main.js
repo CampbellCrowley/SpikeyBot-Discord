@@ -2835,12 +2835,21 @@ function Main() {
 
     let iTime = Date.now();
     if (self.client.guilds) {
+      let verifFailed = false;
       self.client.guilds.cache.forEach((g) => {
         out.numLargestGuild = Math.max(g.memberCount, out.numLargestGuild);
         out.numMembers += g.memberCount;
         out.numEmojis += g.emojis && g.emojis.cache.size || 0;
-        if (g.verified) out.numVerified++;
-        if (g.partnered) out.numPartnered++;
+        try {
+          if (g.verified) out.numVerified++;
+          if (g.partnered) out.numPartnered++;
+        } catch (err) {
+          if (!verifFailed) {
+            self.common.error('Failed to fetch verified/partnered!');
+            console.error(err);
+            verifFailed = true;
+          }
+        }
       });
     }
     const guildDelta = Date.now() - iTime;
