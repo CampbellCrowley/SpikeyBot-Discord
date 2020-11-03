@@ -2398,7 +2398,7 @@ function HGWeb() {
     }
     game.modifyPlayerWeapon(
         uId, weapon, hg().getHG(), count, false, (err, ...params) => {
-          const res = hg().getString(res, gId, ...params);
+          const res = hg().getString(err, gId, ...params);
           if (typeof cb === 'function') {
             cb(null, res, game.serializable);
           } else {
