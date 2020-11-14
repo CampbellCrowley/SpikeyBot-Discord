@@ -246,13 +246,14 @@ class HungryGames {
     }
     const self = this;
     const getAll = function(members) {
-      self.getAllPlayers(members, [], false, [], false, [], (res) => {
-        self._games[guild.id] = new HungryGames.GuildGame(
-            self._parent.client.user.id, guild.id, opts,
-            `${guild.name}'s Hungry Games`, res);
-        cb(self._games[guild.id]);
-        self._parent._fire('create', guild.id);
-      });
+      self.getAllPlayers(
+          members, [], false, [], opts.excludeNewUsers, [], (res) => {
+            self._games[guild.id] = new HungryGames.GuildGame(
+                self._parent.client.user.id, guild.id, opts,
+                `${guild.name}'s Hungry Games`, res);
+            cb(self._games[guild.id]);
+            self._parent._fire('create', guild.id);
+          });
     };
     if (guild.memberCount > 100) {
       opts.excludeNewUsers = true;
@@ -1120,10 +1121,10 @@ class HungryGames {
    * @static
    * @type {number}
    * @constant
-   * @default 20000
+   * @default 10000
    */
   static get largeServerCount() {
-    return 20000;
+    return 10000;
   }
 }
 
