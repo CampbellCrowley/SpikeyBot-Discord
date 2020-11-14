@@ -138,13 +138,10 @@ const hgTests = [
             'delete all teams, and create new ones.\n```',
       ]),
   new Test(
-      'Exclude player nomention', '~hg exclude SpikeyRobot',
-      ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n```']),
-  new Test(
       'Include player nomention', '~hg include SpikeyRobot',
-      ['<@422623712534200321>\n```\nSpikeyRobot added to whitelist.\n```']),
+      ['^<@422623712534200321>\n```\nSpikeyRobot ']),
   new Test(
-      'Exclude player', '~hg exclude <@124733888177111041>',
+      'Exclude player nomention', '~hg exclude SpikeyRobot',
       ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n```']),
   new Test('List teams and check excluded', '~hg players', ['#embed']),
   new Test(
