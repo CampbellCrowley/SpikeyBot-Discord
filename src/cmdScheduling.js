@@ -415,6 +415,20 @@ function CmdScheduling() {
             myself.channel.guild.id + '#' + myself.channel.id + '@' +
             myself.memberId + ' ' + myself.cmd);
         return;
+      } else if (!myself.message.channel.permissionsFor(self.client.user)
+          .has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
+        self.error(
+            'ScheduledCmdWarning No perm SEND_MESSAGES: ' +
+            myself.channel.guild.id + '#' + myself.channel.id + '@' +
+            myself.memberId + ' ' + myself.cmd);
+        return;
+      } else if (!myself.message.channel.permissionsFor(self.client.user)
+          .has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
+        self.error(
+            'ScheduledCmdWarning No perm VIEW_CHANNEL: ' +
+            myself.channel.guild.id + '#' + myself.channel.id + '@' +
+            myself.memberId + ' ' + myself.cmd);
+        return;
       }
       myself.message.content = myself.cmd;
       myself.message.fabricated = true;
