@@ -460,8 +460,8 @@ class ShardingSlave {
       return;
     }
     if (req.mtime && !data) {
-      common.logDebug(
-          `Skipping write for file from master: ${file} (${req.mtime})`);
+      // common.logDebug(
+      //     `Skipping write for file from master: ${file} (${req.mtime})`);
       cb(null);
     } else if (!data) {
       common.unlink(file, (err) => {
