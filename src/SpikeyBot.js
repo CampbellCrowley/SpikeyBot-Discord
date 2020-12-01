@@ -518,10 +518,17 @@ function SpikeyBot() {
   }
 
   let disabledEvents = ['TYPING_START'];
+  // let defaultPresence = {
+  //   status: 'online',
+  //   activity: {
+  //     name: 'SpikeyBot.com',
+  //     type: 'WATCHING',
+  //   },
+  // };
   let defaultPresence = {
     status: 'online',
     activity: {
-      name: 'SpikeyBot.com',
+      name: 'Shutting down 2021',
       type: 'WATCHING',
     },
   };
@@ -742,7 +749,8 @@ function SpikeyBot() {
       } else if (isBackup) {
         // updateGame('OFFLINE', 'PLAYING');
       } else {
-        updateGame('SpikeyBot.com');
+        // updateGame('SpikeyBot.com');
+        updateGame('Shutting down 2021');
       }
     }
     let logChannel = client.channels.resolve(common.logChannel);
