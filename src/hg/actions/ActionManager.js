@@ -188,18 +188,22 @@ class ActionManager {
     const dead = game.actions.gamePlayerDead;
     const wounded = game.actions.gamePlayerWounded;
 
-    const hasPatron =
-        game.currentGame.includedUsers.find((el) => el.settings.isPatron);
-    if (!hasPatron) {
-      let max = 0;
-      list.forEach((el) => max = Math.max(max, el.delay));
-      max += 2000;
-      const patreonAction = new Action.SendMessageAction(
-          'If you enjoy SpikeyBot, please consider supporting it on Patreon: ' +
-          '<https://www.patreon.com/campbellcrowley>');
-      patreonAction.delay = max;
-      list.push(patreonAction);
-    }
+    // const hasPatron =
+    //     game.currentGame.includedUsers.find((el) => el.settings.isPatron);
+    // if (!hasPatron) {
+    let max = 0;
+    list.forEach((el) => max = Math.max(max, el.delay));
+    max += 2000;
+    // const patreonAction = new Action.SendMessageAction(
+    //     'If you enjoy SpikeyBot, please consider supporting it on Patreon: '
+    //     +
+    //     '<https://www.patreon.com/campbellcrowley>');
+    const patreonAction = new Action.SendMessageAction(
+        '⚠️SpikeyBot is shutting down January 1, 2021⚠️\n' +
+        'More info on my Discord server.');
+    patreonAction.delay = max;
+    list.push(patreonAction);
+    // }
 
     ActionManager._endTrigger(hg, game, list, alive, dead, wounded);
 
