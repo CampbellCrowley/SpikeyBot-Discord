@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: WebApi</title>
+	<title>SpikeyBot-Discord Class: Shutdown</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -93,17 +93,14 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: WebApi</h1>
+	<h1 class="page-title">Class: Shutdown</h1>
 <section>
 
 <header>
     
         <h2>
-        WebApi
+        Shutdown
         </h2>
-        
-            <div class="class-description">Handles receiving webhooks and other API requests from external
-services.</div>
         
     
 </header>
@@ -115,7 +112,7 @@ services.</div>
         
 <hr>
 <dt>
-    <h4 class="name" id="WebApi"><span class="type-signature"></span>new WebApi()</h4>
+    <h4 class="name" id="Shutdown"><span class="type-signature"></span>new Shutdown()</h4>
     
     
 </dt>
@@ -123,7 +120,7 @@ services.</div>
 
     
     <div class="description">
-        Creates SubModule instance.
+        The script that shuts down SpikeyBot New Years 2021.
     </div>
     
 
@@ -169,8 +166,8 @@ services.</div>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-28">line 28</a>
+				<a href="src_shutdown.js.html">src/shutdown.js</a>,
+				 <a href="src_shutdown.js.html#sunlight-1-line-9">line 9</a>
 			</li>
 		</ul>
 	</dd>
@@ -229,86 +226,15 @@ services.</div>
         <dl>
             
 <hr>
-<dt class="name" id="._fetchGameHost">
-    <h4 id="._fetchGameHost"><span class="type-signature">&lt;private, static> </span>_fetchGameHost<span class="type-signature"></span></h4>
+<dt class="name" id="_dryRun">
+    <h4 id="_dryRun"><span class="type-signature">&lt;private> </span>_dryRun<span class="type-signature"> :boolean</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Get the host data for requesting game information from Twitch.
-    </div>
-    
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-152">line 152</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="_app">
-    <h4 id="_app"><span class="type-signature">&lt;private, nullable> </span>_app<span class="type-signature"> :http.Server</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Web server listening for requests, fires
-WebCommands._handler on requests.
+        Do everything except actually leave.
     </div>
     
 
@@ -317,89 +243,7 @@ WebCommands._handler on requests.
         <ul>
             <li>
                 
-<span class="param-type">http.Server</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-42">line 42</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="_endpoints">
-    <h4 id="_endpoints"><span class="type-signature">&lt;private, constant> </span>_endpoints<span class="type-signature"> :object.&lt;<a href="ApiEndpoint.html">ApiEndpoint</a>></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Data representing available API endpoints, and where to
-redirect data.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object.&lt;<a href="ApiEndpoint.html">ApiEndpoint</a>></span>
+<span class="param-type">boolean</span>
 
 
 
@@ -437,7 +281,7 @@ redirect data.
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
-			<li>{"undefined":""}</li>
+			<li>true</li>
 		</ul>
 	</dd>
 	
@@ -449,8 +293,8 @@ redirect data.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-60">line 60</a>
+				<a href="src_shutdown.js.html">src/shutdown.js</a>,
+				 <a href="src_shutdown.js.html#sunlight-1-line-67">line 67</a>
 			</li>
 		</ul>
 	</dd>
@@ -470,87 +314,16 @@ redirect data.
         
             
 <hr>
-<dt class="name" id="_proxy">
-    <h4 id="_proxy"><span class="type-signature">&lt;private> </span>_proxy<span class="type-signature"></span></h4>
+<dt class="name" id="_friends">
+    <h4 id="_friends"><span class="type-signature">&lt;private, constant> </span>_friends<span class="type-signature"> :Array.&lt;string></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Internal proxy server for forwarding api requests to other
-endpoints.
-    </div>
-    
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-49">line 49</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="_rateHistory">
-    <h4 id="_rateHistory"><span class="type-signature">&lt;private, constant> </span>_rateHistory<span class="type-signature"> :object</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        History of requests for rate limiting purposes, mapped by
-user token.
+        List of userIds where the bot will not leave if the person
+is in the server.
     </div>
     
 
@@ -559,7 +332,7 @@ user token.
         <ul>
             <li>
                 
-<span class="param-type">object</span>
+<span class="param-type">Array.&lt;string></span>
 
 
 
@@ -597,7 +370,7 @@ user token.
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
-			<li>{}</li>
+			<li>["124733888177111041","126464376059330562","165315069717118979","479294447184773130"]</li>
 		</ul>
 	</dd>
 	
@@ -609,8 +382,8 @@ user token.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-92">line 92</a>
+				<a href="src_shutdown.js.html">src/shutdown.js</a>,
+				 <a href="src_shutdown.js.html#sunlight-1-line-35">line 35</a>
 			</li>
 		</ul>
 	</dd>
@@ -630,15 +403,184 @@ user token.
         
             
 <hr>
-<dt class="name" id="_rateLimitFile">
-    <h4 id="_rateLimitFile"><span class="type-signature">&lt;private, constant> </span>_rateLimitFile<span class="type-signature"> :string</span></h4>
+<dt class="name" id="_guildWhitelist">
+    <h4 id="_guildWhitelist"><span class="type-signature">&lt;private> </span>_guildWhitelist<span class="type-signature"> :object.&lt;boolean></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        File storing website rate limit specifications.
+        Guild IDs of which to not leave.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object.&lt;boolean></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{"undefined":true}</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_shutdown.js.html">src/shutdown.js</a>,
+				 <a href="src_shutdown.js.html#sunlight-1-line-48">line 48</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_shuttingDown">
+    <h4 id="_shuttingDown"><span class="type-signature">&lt;private> </span>_shuttingDown<span class="type-signature"> :boolean</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Is the bot currently shutting itself down.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_shutdown.js.html">src/shutdown.js</a>,
+				 <a href="src_shutdown.js.html#sunlight-1-line-59">line 59</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_statusFile">
+    <h4 id="_statusFile"><span class="type-signature">&lt;private, constant> </span>_statusFile<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Stores whether the bot is currently shutting down.
     </div>
     
 
@@ -685,7 +627,7 @@ user token.
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
-			<li>./save/webRateLimits.json</li>
+			<li>./save/raging.json</li>
 		</ul>
 	</dd>
 	
@@ -697,96 +639,8 @@ user token.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-81">line 81</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="_rateLimits">
-    <h4 id="_rateLimits"><span class="type-signature">&lt;private> </span>_rateLimits<span class="type-signature"> :object</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Object storing parsed rate limit info from WebApi~_rateLimitFile.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>{"commands":"","groups":""}</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-101">line 101</a>
+				<a href="src_shutdown.js.html">src/shutdown.js</a>,
+				 <a href="src_shutdown.js.html#sunlight-1-line-25">line 25</a>
 			</li>
 		</ul>
 	</dd>
@@ -1677,7 +1531,7 @@ loading.
             
 <hr>
 <dt class="name" id="myName">
-    <h4 id="myName"><span class="type-signature">&lt;abstract, protected> </span>myName<span class="type-signature"> :string</span></h4>
+    <h4 id="myName"><span class="type-signature">&lt;protected> </span>myName<span class="type-signature"> :string</span></h4>
 
     
 </dt>
@@ -1875,7 +1729,7 @@ before begin(), otherwise it is ignored.
             
 <hr>
 <dt>
-    <h4 class="name" id="_apiReady"><span class="type-signature">&lt;private> </span>_apiReady(userData, reqData, res, ip)</h4>
+    <h4 class="name" id="_abortRaging"><span class="type-signature">&lt;private> </span>_abortRaging()</h4>
     
     
 </dt>
@@ -1883,8 +1737,7 @@ before begin(), otherwise it is ignored.
 
     
     <div class="description">
-        All necessary request data has been collected for an endpoint.
-Handle finally firing request internally.
+        Abort shutdown procedures.
     </div>
     
 
@@ -1893,129 +1746,6 @@ Handle finally firing request internally.
     
 
     
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>userData</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="WebUserData.html">WebUserData</a></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The user data for the request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>reqData</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="ApiRequestBody.html">ApiRequestBody</a></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Data sent in body of request to send to
-endpoint.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.ServerResponse</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Our response to the api request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ip</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Client IP for logging.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
     
 
     
@@ -2053,8 +1783,8 @@ endpoint.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-437">line 437</a>
+				<a href="src_shutdown.js.html">src/shutdown.js</a>,
+				 <a href="src_shutdown.js.html#sunlight-1-line-177">line 177</a>
 			</li>
 		</ul>
 	</dd>
@@ -2087,7 +1817,7 @@ endpoint.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="_apiRequest"><span class="type-signature">&lt;private> </span>_apiRequest(req, res, url, ip)</h4>
+    <h4 class="name" id="_beginShutdown"><span class="type-signature">&lt;private> </span>_beginShutdown( [dryRun])</h4>
     
     
 </dt>
@@ -2095,406 +1825,7 @@ endpoint.</td>
 
     
     <div class="description">
-        Handles requests to the API endpoint.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.IncomingMessage</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Client request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.ServerResponse</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Server response.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The requested url. Generally a similar or slightly
-modified version of `req.url`.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ip</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">IP for logging purposes.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-345">line 345</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_checkRateLimit"><span class="type-signature">&lt;private> </span>_checkRateLimit(cmd, token)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Check if this current connection or user is being rate limited.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>cmd</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The command being run.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>token</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The user's token used, equivalent of the user ID for
-purposes of rate limiting.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-500">line 500</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    Current rate limiting information for the given request and user data.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Object</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_fetchWebhookMetadata"><span class="type-signature">&lt;private> </span>_fetchWebhookMetadata(userId, gameId, content [, data])</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Fetch the necessary data for the parsed webhook request, then
-continue to sending alerts.
+        Starts the process of shutting down the bot.
     </div>
     
 
@@ -2533,122 +1864,13 @@ continue to sending alerts.
 
         <tr>
             
-                <td class="name"><code>userId</code></td>
+                <td class="name"><code>dryRun</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">The Twitch user ID the request is for.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>gameId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">The Twitch game ID the user is playing.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>content</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Full content string from the webhook to
-re-broadcast to shards.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
+<span class="param-type">boolean</span>
 
 
 
@@ -2670,13 +1892,12 @@ re-broadcast to shards.</td>
             
                 <td class="default">
                 
-                    {}
+                    true
                 
                 </td>
             
 
-            <td class="description last">Parsed content to object. Allows for additional
-metadata to be stored and to prevent duplicate alerts.</td>
+            <td class="description last">Do everything except actually leave.</td>
         </tr>
 
     
@@ -2720,8 +1941,8 @@ metadata to be stored and to prevent duplicate alerts.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-712">line 712</a>
+				<a href="src_shutdown.js.html">src/shutdown.js</a>,
+				 <a href="src_shutdown.js.html#sunlight-1-line-188">line 188</a>
 			</li>
 		</ul>
 	</dd>
@@ -2754,7 +1975,7 @@ metadata to be stored and to prevent duplicate alerts.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="_handler"><span class="type-signature">&lt;private> </span>_handler(req, res)</h4>
+    <h4 class="name" id="_commandAbortRage"><span class="type-signature">&lt;private> </span>_commandAbortRage(msg)</h4>
     
     
 </dt>
@@ -2762,7 +1983,7 @@ metadata to be stored and to prevent duplicate alerts.</td>
 
     
     <div class="description">
-        Handler for all http requests.
+        Abort the shutdown.
     </div>
     
 
@@ -2770,6 +1991,9 @@ metadata to be stored and to prevent duplicate alerts.</td>
 
     
 
+    
+        <h5>This:</h5>
+        <ul><li>{<a href="Shutdown.html">Shutdown</a>}</li></ul>
     
     
         <h5>Parameters:</h5>
@@ -2797,13 +2021,13 @@ metadata to be stored and to prevent duplicate alerts.</td>
 
         <tr>
             
-                <td class="name"><code>req</code></td>
+                <td class="name"><code>msg</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">http.IncomingMessage</span>
+<span class="param-type">Discord~Message</span>
 
 
 
@@ -2814,31 +2038,7 @@ metadata to be stored and to prevent duplicate alerts.</td>
 
             
 
-            <td class="description last">The client's request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.ServerResponse</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Our response to the client.</td>
+            <td class="description last">Message that triggered command.</td>
         </tr>
 
     
@@ -2882,8 +2082,8 @@ metadata to be stored and to prevent duplicate alerts.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-172">line 172</a>
+				<a href="src_shutdown.js.html">src/shutdown.js</a>,
+				 <a href="src_shutdown.js.html#sunlight-1-line-160">line 160</a>
 			</li>
 		</ul>
 	</dd>
@@ -2902,6 +2102,11 @@ metadata to be stored and to prevent duplicate alerts.</td>
     
 
     
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:abortrage</li>
+    </ul>
+    
 
     
 
@@ -2916,7 +2121,7 @@ metadata to be stored and to prevent duplicate alerts.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="_parseTwitchGameResponse"><span class="type-signature">&lt;private> </span>_parseTwitchGameResponse(content, cb)</h4>
+    <h4 class="name" id="_commandRage"><span class="type-signature">&lt;private> </span>_commandRage(msg)</h4>
     
     
 </dt>
@@ -2924,8 +2129,7 @@ metadata to be stored and to prevent duplicate alerts.</td>
 
     
     <div class="description">
-        Parse the response from Twitch containing information about a
-game.
+        Rage, rage against the dying of the light!
     </div>
     
 
@@ -2933,6 +2137,9 @@ game.
 
     
 
+    
+        <h5>This:</h5>
+        <ul><li>{<a href="Shutdown.html">Shutdown</a>}</li></ul>
     
     
         <h5>Parameters:</h5>
@@ -2960,13 +2167,13 @@ game.
 
         <tr>
             
-                <td class="name"><code>content</code></td>
+                <td class="name"><code>msg</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">Discord~Message</span>
 
 
 
@@ -2977,32 +2184,7 @@ game.
 
             
 
-            <td class="description last">Received content from request to Twitch API.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">First parameter is optional error string, otherwise
-the second parameter is the game object.</td>
+            <td class="description last">Message that triggered command.</td>
         </tr>
 
     
@@ -3046,8 +2228,8 @@ the second parameter is the game object.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-846">line 846</a>
+				<a href="src_shutdown.js.html">src/shutdown.js</a>,
+				 <a href="src_shutdown.js.html#sunlight-1-line-114">line 114</a>
 			</li>
 		</ul>
 	</dd>
@@ -3066,216 +2248,10 @@ the second parameter is the game object.</td>
     
 
     
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_patreonCampaignEndpoint"><span class="type-signature">&lt;private> </span>_patreonCampaignEndpoint(req, res, url, ip)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Fetches Patreon campaign information.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.IncomingMessage</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Client request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.ServerResponse</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Server response.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The requested url. Generally a similar or slightly
-modified version of `req.url`.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ip</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">IP for logging purposes.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-291">line 291</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:rage</li>
+    </ul>
     
 
     
@@ -3291,7 +2267,7 @@ modified version of `req.url`.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="_publicApiRequest"><span class="type-signature">&lt;private> </span>_publicApiRequest(req, res, url, ip)</h4>
+    <h4 class="name" id="_step"><span class="type-signature">&lt;private> </span>_step()</h4>
     
     
 </dt>
@@ -3299,1153 +2275,7 @@ modified version of `req.url`.</td>
 
     
     <div class="description">
-        Handles requests to the public (unauthenticated) API endpoint.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.IncomingMessage</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Client request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.ServerResponse</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Server response.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The requested url. Generally a similar or slightly
-modified version of `req.url`.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ip</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">IP for logging purposes.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-243">line 243</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_shardStatusHistoryEndpoint"><span class="type-signature">&lt;private> </span>_shardStatusHistoryEndpoint(req, res, url, ip)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Fetches shard status history information.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.IncomingMessage</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Client request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.ServerResponse</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Server response.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The requested url. Generally a similar or slightly
-modified version of `req.url`.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ip</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">IP for logging purposes.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-321">line 321</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_twitchConfirmation"><span class="type-signature">&lt;private> </span>_twitchConfirmation(req, res, url, ip)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Handle a request from Twitch to confirm adding a webhook to
-this endpoint.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.IncomingMessage</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Client request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.ServerResponse</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Server response.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The requested url. Generally a similar or slightly
-modified version of `req.url`.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ip</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">IP for logging purposes.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-563">line 563</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_twitchFinal"><span class="type-signature">&lt;private> </span>_twitchFinal(ids, content)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        All data has been received for a Twitch webhook request, and
-is ready to be sent to our shards for re-broadcast and alerting.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>ids</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Encoded array of ids to broadcast to shards.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>content</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Encoded content string to broadcast to shards.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-886">line 886</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_twitchStreamEnd"><span class="type-signature">&lt;private> </span>_twitchStreamEnd(userId)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Handle a user's stream ending.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>userId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The user's ID of which the stream has ended.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-783">line 783</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_twitchWebhook"><span class="type-signature">&lt;private> </span>_twitchWebhook(req, res, url, ip)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Handle a webhook event from Twitch.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.IncomingMessage</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Client request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.ServerResponse</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Server response.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>url</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The requested url. Generally a similar or slightly
-modified version of `req.url`.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>ip</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">IP for logging purposes.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-645">line 645</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_updateRateLimits"><span class="type-signature">&lt;private> </span>_updateRateLimits()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Parse rate limits from file.
+        Recursively leave one guild at a time.
     </div>
     
 
@@ -4491,8 +2321,8 @@ modified version of `req.url`.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-537">line 537</a>
+				<a href="src_shutdown.js.html">src/shutdown.js</a>,
+				 <a href="src_shutdown.js.html#sunlight-1-line-198">line 198</a>
 			</li>
 		</ul>
 	</dd>
@@ -5148,169 +2978,6 @@ register command listeners.</td>
 			<li>
 				<a href="src_subModule.js.html">src/subModule.js</a>,
 				 <a href="src_subModule.js.html#sunlight-1-line-241">line 241</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="fetchGameData"><span class="type-signature"></span>fetchGameData(gameId, cb)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Fetch a Twitch game information from its ID.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>gameId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The ID of the game to fetch.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">First parameter is an optional error string, otherwise
-the second parameter is the fetched data object.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_web_webApi.js.html">src/web/webApi.js</a>,
-				 <a href="src_web_webApi.js.html#sunlight-1-line-804">line 804</a>
 			</li>
 		</ul>
 	</dd>
