@@ -706,6 +706,7 @@ function WebProxy() {
       if (!err) {
         const parsed = JSON.parse(data);
         cb(parsed);
+        console.log(parsed.length);
       } else {
         cb(null);
       }

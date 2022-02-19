@@ -526,9 +526,9 @@ function SpikeyBot() {
   //   },
   // };
   let defaultPresence = {
-    status: 'online',
+    status: 'idle',
     activity: {
-      name: 'Shutting down 2021',
+      name: 'Thanks for the memories.',
       type: 'WATCHING',
     },
   };
@@ -750,7 +750,7 @@ function SpikeyBot() {
         // updateGame('OFFLINE', 'PLAYING');
       } else {
         // updateGame('SpikeyBot.com');
-        updateGame('Shutting down 2021');
+        updateGame('Thanks for the memories.');
       }
     }
     let logChannel = client.channels.resolve(common.logChannel);

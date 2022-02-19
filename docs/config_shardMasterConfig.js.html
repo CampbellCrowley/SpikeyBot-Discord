@@ -54,7 +54,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#colors">colors</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#fmtLong">fmtLong</a></li><li><a href="global.html#fmtShort">fmtShort</a></li><li><a href="global.html#formatArgs">formatArgs</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#init">init</a></li><li><a href="global.html#inspectOpts">inspectOpts</a></li><li><a href="global.html#load">load</a></li><li><a href="global.html#localstorage">localstorage</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#parse">parse</a></li><li><a href="global.html#plural">plural</a></li><li><a href="global.html#s">s</a></li><li><a href="global.html#save">save</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#setup">setup</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#tty">tty</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#useColors">useColors</a></li>
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#addListener">addListener</a></li><li><a href="global.html#clearEvent">clearEvent</a></li><li><a href="global.html#createProxyServer">createProxyServer</a></li><li><a href="global.html#createRightProxy">createRightProxy</a></li><li><a href="global.html#hasPort">hasPort</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
 				</ul>
 			</li>
 			
@@ -147,14 +147,14 @@ class ShardMasterConfig {
      * @public
      * @type {string}
      */
-    this.botName = 'dev';
+    this.botName = 'release';
     /**
      * @description CLI args to pass to NodeJS when spawning a shard.
      * @public
      * @type {string[]}
      * @default
      */
-    this.shardNodeLaunchArgs = ['--max-old-space-size=1024'];
+    this.shardNodeLaunchArgs = ['--max-old-space-size=2048'];
     /**
      * @description Arguments to pass to the bot's scripts when the shard is
      * started.
@@ -162,7 +162,7 @@ class ShardMasterConfig {
      * @type {string[]}
      * @default
      */
-    this.shardBotLaunchArgs = ['--dev'];
+    this.shardBotLaunchArgs = [];
     /**
      * @description The largest acceptable difference in timestamp values
      * received from shards in milliseconds.
@@ -180,7 +180,7 @@ class ShardMasterConfig {
      * @default
      * @type {number}
      */
-    this.connCount = 5;
+    this.connCount = 10;
     /**
      * @description The duration in milliseconds to store connection attempt
      * history.
@@ -206,10 +206,10 @@ class ShardMasterConfig {
      * @default
      */
     this.remoteHost = {
-      host: 'www.spikeybot.com',
+      host: 'kamino.spikeybot.com',
       port: 443,
       protocol: 'https:',
-      path: '/socket.io/dev/',
+      path: '/socket.io/',
     };
     /**
      * @description Host information for the master shard to use in order to be
@@ -220,7 +220,7 @@ class ShardMasterConfig {
      */
     this.masterHost = {
       host: 'localhost',
-      port: 8025,
+      port: 8024,
       protocol: 'http:',
       path: '/socket.io/',
     };
@@ -287,8 +287,6 @@ class HeartbeatConfig {
      * "event" would only send updates from either side if one believes a
      * state to have changed.
      *
-     * NOTE: Only "pull" style is fully implemented currently.
-     *
      * @public
      * @type {string}
      * @default
@@ -301,7 +299,9 @@ class HeartbeatConfig {
      * @type {number}
      * @default
      */
-    this.interval = 30000;
+    // this.interval = (15 + 1) * 5 * 1100;
+    // this.interval = (2 + 1) * 5 * 1100;
+    this.interval = (2 + 1) * 30 * 1000;
     /**
      * @description If relevant, should we attempt to disperse the heartbeat
      * requests throughout the interval such that not all requests are made at
@@ -329,7 +329,16 @@ class HeartbeatConfig {
      * @type {number}
      * @default
      */
-    this.requestRebootAfter = 120000;
+    this.requestRebootAfter = this.interval * 2.5;
+    /**
+     * @description The timeout after the master does not receive an update from
+     * the shard to assume the shard has died, and we can begin recovery
+     * procedueres (milliseconds).
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.assumeDeadAfter = this.requestRebootAfter * 2;
     /**
      * @description The timeout after the shard does not receive an update from
      * the master to reboot. This is the threshold that once crossed, the master
@@ -341,22 +350,13 @@ class HeartbeatConfig {
      * @type {number}
      * @default
      */
-    this.expectRebootAfter = 180000;
-    /**
-     * @description The timeout after the master does not receive an update from
-     * the shard to assume the shard has died, and we can begin recovery
-     * procedures (milliseconds).
-     * @public
-     * @type {number}
-     * @default
-     */
-    this.assumeDeadAfter = 300000;
+    this.expectRebootAfter = this.assumeDeadAfter + 60 * 1000;
     /**
      * @description How far back to store shard status data for analysis
      * (milliseconds).
      * @public
      * @type {number}
-     * @default 1 Days
+     * @default 1 Day
      */
     this.historyLength = 1 * 24 * 60 * 60 * 1000;
   }
@@ -421,8 +421,8 @@ class MailConfig {
     /**
      * @description Options to pass to the spawn function when calling the
      * command.
-     * {@link
-     * https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options}.
+     * @see {@link
+     * https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options}
      * @public
      * @type {object}
      * @default
@@ -501,7 +501,7 @@ module.exports = ShardMasterConfig;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a>
 	
-		on Friday, January 1, 2021 7:47 PM (-08:00)
+		on Saturday, February 19, 2022 9:17 PM (+00:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

@@ -81,10 +81,10 @@
     "./roleColors.js",
     "./botCommands.js",
     "./web/hg.js",
-    "./web/stats.js",
     "./web/settings.js",
     "./memWatcher.js",
-    "./images.js"
+    "./images.js",
+    "./dev.js"
   ],
   "FALLBACK": []
 }
