@@ -175,7 +175,7 @@ class SubModule {
 
     if (this.initialized) return;
 
-    this.client.setTimeout(() => {
+    setTimeout(() => {
       if (this.initialized) return;
       this.debug(`${this.myName} Initialize...`);
 

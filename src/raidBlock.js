@@ -225,7 +225,7 @@ class RaidBlock extends SubModule {
       const finalMessage = s.warnMessage.replace(/\{action\}/, verb)
           .replace(/\{server\}/g, member.guild.name)
           .replace(/\{username\}/g, member.user.username);
-      member.send(finalMessage).then(go).catch(go);
+      member.send({content: finalMessage}).then(go).catch(go);
     } else {
       go();
     }

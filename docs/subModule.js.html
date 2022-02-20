@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Source: subModule.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="AutoReact.html">AutoReact</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="LocaleManager.html">LocaleManager</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></li><li><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></li><li><a href="ShardingSlave.html">ShardingSlave</a></li><li><a href="Shutdown.html">Shutdown</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="interfaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Interfaces<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="HungryGames-Action.html">HungryGames~Action</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: subModule.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+/**
+ * @description Base class for all Sub-Modules.
+ */
+class SubModule {
+  /**
+   * @description Create a subModule.
+   */
+  constructor() {
+    /**
+     * The help message to show the user in the main help message.
+     *
+     * @abstract
+     * @type {undefined|string|Discord~MessageEmbed}
+     * @default
+     */
+    this.helpMessage = undefined;
+
+    /**
+     * The postfix for the global prefix for this subModule. Must be defined
+     * before begin(), otherwise it is ignored.
+     *
+     * @abstract
+     * @type {string}
+     * @default
+     */
+    this.postPrefix = '';
+    /**
+     * The current Discord object instance of the bot. Defaults to require cache
+     * value for editor autocompletion, updates to current reference at init.
+     *
+     * @public
+     * @type {Discord}
+     */
+    this.Discord = require('discord.js');
+    /**
+     * The current bot client. Defaults to require cache value for editor
+     * autocompletion, updates to current reference at init.
+     *
+     * @public
+     * @type {Discord~Client}
+     */
+    this.client = this.Discord.Client;
+    /**
+     * The command object for registering command listeners. Defaults to require
+     * cache value for editor autocompletion, updates to current reference at
+     * init.
+     *
+     * @public
+     * @type {Command}
+     */
+    this.command = require('./commands.js');
+    /**
+     * The common object. Defaults to require cache value for editor
+     * autocompletion, updates to current reference at init.
+     *
+     * @public
+     * @type {Common}
+     */
+    this.common = require('./common.js');
+
+    /**
+     * The parent SpikeyBot instance. Defaults to required cache value for
+     * autocompletion, updates to current reference at init.
+     *
+     * @public
+     * @type {?SpikeyBot}
+     */
+    this.bot = require('./SpikeyBot.js');
+
+    /**
+     * The commit at HEAD at the time this module was loaded. Essentially the
+     * version of this submodule.
+     *
+     * @public
+     * @constant
+     * @type {string}
+     */
+    this.commit = '';
+    this.commit = require('child_process')
+        .execSync('git rev-parse --short HEAD').toString().trim();
+
+    /**
+     * The time at which this module was loaded for use in checking if the
+     * module needs to be reloaded because the file has been modified since
+     * loading.
+     *
+     * @public
+     * @constant
+     * @type {number}
+     */
+    this.loadTime = Date.now();
+
+    /**
+     * The name of this submodule. Used for differentiating in the log. Should
+     * be defined before begin().
+     *
+     * @protected
+     * @type {string}
+     * @abstract
+     */
+    this.myName = 'SubModule';
+
+    /**
+     * Has this subModule been initialized yet (Has begin() been called).
+     *
+     * @protected
+     * @type {boolean}
+     * @default
+     * @readonly
+     */
+    this.initialized = false;
+  }
+  /**
+   * The function called at the end of begin() for further initialization
+   * specific to the subModule. Must be defined before begin() is called.
+   *
+   * @protected
+   * @abstract
+   */
+  initialize() {
+  }
+
+  /**
+   * Initialize this submodule.
+   *
+   * @public
+   * @param {Discord} Discord The Discord object for the API library.
+   * @param {Discord~Client} client The client that represents this bot.
+   * @param {Command} command The command instance in which to
+   * register command listeners.
+   * @param {Common} common Class storing common functions.
+   * @param {SpikeyBot} bot The parent SpikeyBot instance.
+   */
+  begin(Discord, client, command, common, bot) {
+    this.Discord = Discord;
+    this.client = client;
+    this.command = command;
+    this.common = common;
+    this.bot = bot;
+
+    this.log = function(msg) {
+      if (this.client.shard) {
+        this.common.log(
+            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
+      } else {
+        this.common.log(msg, this.myName, 1);
+      }
+    };
+    this.debug = function(msg) {
+      if (this.client.shard) {
+        this.common.logDebug(
+            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
+      } else {
+        this.common.logDebug(msg, this.myName, 1);
+      }
+    };
+    this.warn = function(msg) {
+      if (this.client.shard) {
+        this.common.logWarning(
+            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
+      } else {
+        this.common.logWarning(msg, this.myName, 1);
+      }
+    };
+    this.error = function(msg) {
+      if (this.client.shard) {
+        this.common.error(
+            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
+      } else {
+        this.common.error(msg, this.myName, 1);
+      }
+    };
+
+    if (this.initialized) return;
+
+    setTimeout(() => {
+      if (this.initialized) return;
+      this.debug(`${this.myName} Initialize...`);
+
+      this.save = this.save.bind(this);
+      this.initialize = this.initialize.bind(this);
+      this.shutdown = this.shutdown.bind(this);
+      this.log = this.log.bind(this);
+      this.warn = this.warn.bind(this);
+      this.debug = this.debug.bind(this);
+      this.error = this.error.bind(this);
+
+      this.initialize();
+      this.log(`${this.myName} Initialized`);
+      this.initialized = true;
+    });
+  }
+
+  /**
+   * Trigger subModule to shutdown and get ready for process terminating.
+   *
+   * @public
+   */
+  end() {
+    if (!this.initialized) return;
+    this.shutdown();
+    this.initialized = false;
+    this.log(`${this.myName} Shutdown`);
+  }
+
+  /**
+   * Log using common.log, but automatically set name.
+   *
+   * @protected
+   * @param {string} msg The message to log.
+   */
+  log(msg) {
+    console.log(msg);
+  }
+  /**
+   * Log using common.logDebug, but automatically set name.
+   *
+   * @protected
+   * @param {string} msg The message to log.
+   */
+  debug(msg) {
+    console.log(msg);
+  }
+  /**
+   * Log using common.logWarning, but automatically set name.
+   *
+   * @protected
+   * @param {string} msg The message to log.
+   */
+  warn(msg) {
+    console.log(msg);
+  }
+  /**
+   * Log using common.error, but automatically set name.
+   *
+   * @protected
+   * @param {string} msg The message to log.
+   */
+  error(msg) {
+    console.error(msg);
+  }
+
+  /**
+   * Shutdown and disable this submodule. Removes all event listeners.
+   *
+   * @abstract
+   * @protected
+   */
+  shutdown() {
+  }
+
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  /**
+   * Saves all data to files necessary for saving current state.
+   *
+   * @param {string} [opt='sync'] Can be 'async', otherwise defaults to
+   * synchronous.
+   * @abstract
+   */
+  save(opt = 'sync') {
+  }
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+
+  /**
+   * @description Check if this module is in a state that is ready to be
+   * unloaded. If false is returned, this module should not be unloaded and
+   * doing such may risk putting the module into an uncontrollable state.
+   * @see {@link SubModule~reloadable}
+   *
+   * @abstract
+   * @public
+   * @returns {boolean} True if can be unloaded, false if cannot.
+   */
+  unloadable() {
+    return true;
+  }
+
+  /**
+   * @description Check if this module is in a state that is ready to be
+   * reloaded. If false is returned, this module should not be unloaded and
+   * doing such may risk putting the module into an uncontrollable state. This
+   * is different from unloadable, which checks if this module can be stopped
+   * completely, this checks if the module can be stopped and restarted.
+   * @see {@link SubModule~unloadable}
+   *
+   * @abstract
+   * @public
+   * @returns {boolean} True if can be reloaded, false if cannot.
+   */
+  reloadable() {
+    return this.unloadable();
+  }
+}
+
+/**
+ * Extends SubModule as the base class of a child.
+ *
+ * @public
+ * @static
+ * @param {object} child The child class to extend.
+ */
+SubModule.extend = function(child) {
+  child.prototype = new SubModule();
+  child.prototype.constructor = child;
+};
+
+module.exports = SubModule;
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a>
+	
+		on Saturday, February 19, 2022 5:43 PM (-08:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

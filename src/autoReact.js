@@ -17,11 +17,11 @@ class AutoReact extends SubModule {
   }
   /** @inheritdoc */
   initialize() {
-    this.client.on('message', this._messageHandler);
+    this.client.on('messageCreate', this._messageHandler);
   }
   /** @inheritdoc */
   shutdown() {
-    this.client.removeListener('message', this._messageHandler);
+    this.client.removeListener('messageCreate', this._messageHandler);
   }
 
   /**

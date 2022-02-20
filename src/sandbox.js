@@ -178,7 +178,7 @@ function Sandbox() {
       }
       embed.addField('STDERR', stderr.substr(0, 1024), true);
     }
-    msg.channel.send(self.common.mention(msg), embed);
+    msg.channel.send({content: self.common.mention(msg), embeds: [embed]});
   }
 }
 module.exports = new Sandbox();

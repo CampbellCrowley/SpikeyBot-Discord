@@ -89,8 +89,7 @@ class Action {
    */
   trigger(hg, game, ...args) {
     if (this.delay && !game.options.disableOutput) {
-      hg._parent.client.setTimeout(
-          () => this._handler(hg, game, ...args), this.delay);
+      setTimeout(() => this._handler(hg, game, ...args), this.delay);
     } else {
       this._handler(hg, game, ...args);
     }

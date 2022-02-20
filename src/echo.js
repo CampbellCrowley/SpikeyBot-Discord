@@ -1,4 +1,4 @@
-// Copyright 2019-2020 Campbell Crowley. All rights reserved.
+// Copyright 2019-2022 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const SubModule = require('./subModule.js');
 
@@ -87,7 +87,7 @@ class Echo extends SubModule {
                   this.Discord.Permissions.FLAGS.MANAGE_WEBHOOKS |
                   this.Discord.Permissions.FLAGS.MANAGE_GUILD,
             }));
-    this.client.on('message', this._onMessage);
+    this.client.on('messageCreate', this._onMessage);
 
     this.client.guilds.cache.forEach((g) => {
       this.common.readAndParse(
@@ -105,7 +105,7 @@ class Echo extends SubModule {
     this.command.removeListener('whoami');
     this.command.removeListener('whois');
     this.command.removeListener('resetcharacters');
-    this.client.removeListener('message', this._onMessage);
+    this.client.removeListener('messageCreate', this._onMessage);
   }
   /** @inheritdoc */
   save(opt) {
@@ -186,7 +186,7 @@ class Echo extends SubModule {
   _commandSay(msg) {
     if (msg.delete) msg.delete().catch(() => {});
     const content = msg.text.trim();
-    msg.channel.send(content || '\u200B').catch((err) => {
+    msg.channel.send({content: content || '\u200B'}).catch((err) => {
       this.warn(
           'Failed to send message in channel: ' + msg.channel.id + ': ' +
           content);
@@ -198,9 +198,10 @@ class Echo extends SubModule {
     }
     this._prevUserSayCnt++;
     if (this._prevUserSayCnt % 3 === 0) {
-      msg.channel.send(
-          'Help! ' + this.common.mention(msg) +
-          ' is putting words into my mouth!');
+      msg.channel.send({
+        content: 'Help! ' + this.common.mention(msg) +
+            ' is putting words into my mouth!',
+      });
     }
   }
 
@@ -353,9 +354,8 @@ class Echo extends SubModule {
       } else {
         embed.setDescription(name);
       }
-      msg.channel.send(self.common.mention(msg), embed).catch(() => {
-        self.common.reply(msg, tag, name);
-      });
+      msg.channel.send({content: self.common.mention(msg), embeds: [embed]})
+          .catch(() => self.common.reply(msg, tag, name));
     };
 
     if (!member.joinedAt) {
@@ -369,12 +369,15 @@ class Echo extends SubModule {
     }
 
     if (this.client.shard) {
-      const toEval =
-        `this.guilds.cache.filter((g) => g.members.resolve('${user.id}')).size`;
-      this.client.shard.broadcastEval(toEval).then((res) => {
-        res.forEach((el) => num += el);
-        send();
-      });
+      this.client.shard
+          .broadcastEval(((id) => {
+            return (client) =>
+              client.guilds.cache.filter((g) => g.members.resolve(id)).size;
+          })(user.id))
+          .then((res) => {
+            res.forEach((el) => num += el);
+            send();
+          });
     } else {
       this.client.guilds.cache.forEach((g) => {
         if (g.members.resolve(member.id)) num++;

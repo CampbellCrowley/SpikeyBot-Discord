@@ -1,4 +1,4 @@
-// Copyright 2019-2020 Campbell Crowley. All rights reserved.
+// Copyright 2019-2022 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const SubModule = require('./subModule.js');
@@ -240,23 +240,27 @@ class Pets extends SubModule {
               return m.react(confirm).then(() => m.react(cancel));
             })
             .then(() => {
-              return reactMessage.awaitReactions((reaction, user) => {
+              const filter = (reaction, user) => {
                 return user.id == msg.author.id &&
                     (reaction.emoji.name == confirm ||
                      reaction.emoji.name == cancel);
-              }, {max: 1, time: 30000});
+              };
+              return reactMessage.awaitReactions({filter, max: 1, time: 30000});
             })
             .then((reactions) => {
               reactMessage.reactions.removeAll().catch(() => {});
               if (reactions.size == 0) {
-                reactMessage.edit(
-                    this._strings.get('commandTimedOut', msg.locale));
+                reactMessage.edit({
+                  content: this._strings.get('commandTimedOut', msg.locale),
+                });
                 return;
               } else if (reactions.first().emoji.name == cancel) {
-                reactMessage.edit(this._strings.get('cancelled', msg.locale));
+                reactMessage.edit(
+                    {content: this._strings.get('cancelled', msg.locale)});
                 return;
               }
-              reactMessage.edit(this._strings.get('confirmed', msg.locale));
+              reactMessage.edit(
+                  {content: this._strings.get('confirmed', msg.locale)});
               const newPet = new Pet(msg.author.id, match[2], match[1]);
               this._saveSingle(newPet, 'async', () => {
                 this._reply(
@@ -300,22 +304,23 @@ class Pets extends SubModule {
             m.react(confirm).then(() => m.react(cancel));
           })
           .then(() => {
-            return reactMessage.awaitReactions((reaction, user) => {
+            const filter = (reaction, user) => {
               return user.id == msg.author.id &&
                   (reaction.emoji.name == confirm ||
                    reaction.emoji.name == cancel);
-            }, {max: 1, time: 30000});
+            };
+            return reactMessage.awaitReactions({filter, max: 1, time: 30000});
           })
           .then((reactions) => {
             reactMessage.reactions.removeAll().catch(() => {});
             if (reactions.size == 0) {
-              reactMessage.edit('Timed out, enter command again.');
+              reactMessage.edit({content: 'Timed out, enter command again.'});
               return;
             } else if (reactions.first().emoji.name == cancel) {
-              reactMessage.edit('Cancelled');
+              reactMessage.edit({content: 'Cancelled'});
               return;
             }
-            reactMessage.edit('Confirmed');
+            reactMessage.edit({content: 'Confirmed'});
             const uId = msg.author.id;
             const pId = pets[0].id;
 
@@ -416,7 +421,7 @@ class Pets extends SubModule {
             .then((res) => {
               const wait = res.find((el) => !el);
               if (wait) {
-                self.client.setTimeout(release, 100);
+                setTimeout(release, 100);
               } else {
                 read();
               }

@@ -1,6 +1,6 @@
 // Copyright 2018-2020 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const dateFormat = require('dateformat');
+const dateFormat = require('date-format');
 const Discord = require('discord.js');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
@@ -198,7 +198,7 @@ function Common() {
     }
     const formattedIP = self.getIPName(ip.replace('::ffff:', ''));
 
-    const date = dateFormat(new Date(), 'mm-dd HH:MM:ss');
+    const date = dateFormat('mm-dd HH:MM:ss', new Date());
     return `[${title}${date} ${formattedIP}]:`;
   };
 
@@ -308,16 +308,21 @@ function Common() {
           trace);
       if (msg.author) {
         msg.author
-            .send(
-                'I was unable to send a message in #' + msg.channel.name +
-                ' because I do not have permission to send messages there.')
+            .send({
+              content: 'I was unable to send a message in #' +
+                  msg.channel.name +
+                  ' because I do not have permission to send messages there.',
+            })
             .catch(() => {});
       }
       return new Promise((resolve, reject) => reject(new Error('No Perms')));
     }
     if (self.isTest || (perms && !perms.has('EMBED_LINKS'))) {
       return msg.channel
-          .send(Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''))
+          .send({
+            content:
+                Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''),
+          })
           .catch((err) => {
             self.error(
                 'Failed to send reply to channel: ' + msg.channel.id, trace);
@@ -332,11 +337,13 @@ function Common() {
       } else {
         embed.setDescription(text + (post ? `\n${post}` : ''));
       }
-      return msg.channel.send(Common.mention(msg), embed).catch((err) => {
-        self.error(
-            'Failed to send embed reply to channel: ' + msg.channel.id, trace);
-        throw err;
-      });
+      return msg.channel.send({content: Common.mention(msg), embeds: [embed]})
+          .catch((err) => {
+            self.error(
+                'Failed to send embed reply to channel: ' + msg.channel.id,
+                trace);
+            throw err;
+          });
     }
   };
 

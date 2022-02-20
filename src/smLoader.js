@@ -590,7 +590,8 @@ function SMLoader() {
               embed.setTitle('Reload complete.');
               embed.setColor([255, 0, 255]);
               embed.setDescription(out.join('\n') || 'NOTHING reloaded');
-              warnMessage.edit(self.common.mention(msg), embed);
+              warnMessage.edit(
+                  {content: self.common.mention(msg), embeds: [embed]});
             });
           });
     } else {
@@ -735,7 +736,8 @@ function SMLoader() {
           embed.setTitle('Unload complete.');
           embed.setColor([255, 0, 255]);
           embed.setDescription(outs.join(' ') || 'NOTHING unloaded');
-          warnMessage.edit(self.common.mention(msg), embed);
+          warnMessage.edit(
+              {content: self.common.mention(msg), embeds: [embed]});
         }
         if (numTotal == 0) done();
       });
@@ -794,7 +796,8 @@ function SMLoader() {
           embed.setTitle('Load complete.');
           embed.setColor([255, 0, 255]);
           embed.setDescription(outs.join(' ') || 'NOTHING loaded');
-          warnMessage.edit(self.common.mention(msg), embed);
+          warnMessage.edit(
+              {content: self.common.mention(msg), embeds: [embed]});
         }
         if (numTotal == 0) done();
       });
@@ -823,7 +826,9 @@ function SMLoader() {
      * @param {Discord~MessageEmbed} help THe message to send.
      */
     function send(help) {
-      msg.author.send(help).catch((err) => {
+      const message =
+          typeof help === 'string' ? {content: help} : {embeds: [help]};
+      msg.author.send(message).catch((err) => {
         if (msg.guild !== null && !error) {
           error = true;
           self.common

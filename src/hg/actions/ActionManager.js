@@ -198,11 +198,13 @@ class ActionManager {
     //     'If you enjoy SpikeyBot, please consider supporting it on Patreon: '
     //     +
     //     '<https://www.patreon.com/campbellcrowley>');
-    const patreonAction = new Action.SendMessageAction(
-        '⚠️SpikeyBot is shutting down January 1, 2021⚠️\n' +
-        'More info on my Discord server.');
-    patreonAction.delay = max;
-    list.push(patreonAction);
+
+    // const patreonAction = new Action.SendMessageAction(
+    //     '⚠️SpikeyBot is shutting down January 1, 2021⚠️\n' +
+    //     'More info on my Discord server.');
+
+    // patreonAction.delay = max;
+    // list.push(patreonAction);
     // }
 
     ActionManager._endTrigger(hg, game, list, alive, dead, wounded);

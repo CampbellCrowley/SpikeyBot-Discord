@@ -45,13 +45,13 @@ function RoleColors() {
    * @listens Command#color
    */
   function commandColor(msg) {
-    if (!msg.guild.me.hasPermission('MANAGE_ROLES')) {
+    if (!msg.guild.me.permissions.has('MANAGE_ROLES')) {
       self.common.reply(
           msg, 'Unfortunately, I do not have permission to manage roles.');
       return;
     }
     let target = msg.member;
-    if (msg.member.hasPermission('MANAGE_ROLES') &&
+    if (msg.member.permissions.has('MANAGE_ROLES') &&
         msg.mentions.members.size > 0) {
       target = msg.mentions.members.first();
       msg.text =
@@ -115,7 +115,7 @@ function RoleColors() {
       embed.setColor(role.color);
       embed.setTitle('Updated color.');
       embed.setDescription(colorString);
-      msg.channel.send(embed).catch(() => {
+      msg.channel.send({embeds: [embed]}).catch(() => {
         const padded = ('000000' + role.color.toString(16)).slice(-6);
         self.common.reply(msg, 'Updated color.', `#${padded}`);
       });
@@ -127,7 +127,7 @@ function RoleColors() {
     };
     if (!role) {
       const roleData = {name: target.id, color: color, permissions: 0};
-      msg.guild.roles.create({data: roleData})
+      msg.guild.roles.create(roleData)
           .then((r) => {
             role = r;
             return r.setColor(color);

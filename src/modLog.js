@@ -217,7 +217,7 @@ class ModLog extends SubModule {
     const embed = new this.Discord.MessageEmbed();
     embed.setTitle(this._actionString(action));
     embed.setColor(this._actionColor(action));
-    embed.setFooter(new Date().toString());
+    embed.setFooter({text: new Date().toString()});
     if (user) {
       embed.setThumbnail(user.displayAvatarURL({size: 32, dynamic: true}));
       embed.addField(user.tag, `<@${user.id}>\n${user.id}`, true);
@@ -236,7 +236,7 @@ class ModLog extends SubModule {
       embed.addField(msgs[i], msgs[i + 1] || '\u200B', true);
     }
     embed.setTimestamp();
-    channel.send(embed);
+    channel.send({embeds: [embed]});
   }
 }
 

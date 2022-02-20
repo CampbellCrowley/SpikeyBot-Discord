@@ -38,12 +38,13 @@ class SendEventMessageAction extends ChannelAction {
         if (battleIconSize === 0 || attk.icons.length === 0) {
           // Send without image.
           if (!game.options.disableOutput) {
-            channel.send(message[0], embed).catch((err) => {
-              hg._parent.error(
-                  'Failed to send battle event message without image: ' +
-                  channel.id);
-              console.error(err);
-            });
+            channel.send({content: message[0], embeds: [embed]})
+                .catch((err) => {
+                  hg._parent.error(
+                      'Failed to send battle event message without image: ' +
+                      channel.id);
+                  console.error(err);
+                });
           }
         } else {
           const iconGap = avatarSizes.gap;
@@ -89,15 +90,20 @@ class SendEventMessageAction extends ChannelAction {
             if (responses == attk.icons.length) {
               finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
                 // Attach file, then send.
-                embed.attachFiles([new hg._parent.Discord.MessageAttachment(
-                    out, 'hgBattle.png')]);
                 if (!game.options.disableOutput) {
-                  channel.send(message[0], embed).catch((err) => {
-                    hg._parent.error(
-                        'Failed to send battle event message with image: ' +
-                        channel.id);
-                    console.error(err);
-                  });
+                  channel
+                      .send({
+                        content: message[0],
+                        embeds: [embed],
+                        files: [new hg._parent.Discord.MessageAttachment(
+                            out, 'hgBattle.png')],
+                      })
+                      .catch((err) => {
+                        hg._parent.error(
+                            'Failed to send battle event message with image: ' +
+                            channel.id);
+                        console.error(err);
+                      });
                 }
               });
             }
@@ -132,9 +138,10 @@ class SendEventMessageAction extends ChannelAction {
         if (iconSize == 0 || evt.icons.length === 0) {
           if (!game.options.disableOutput) {
             channel
-                .send(
-                    (evt.mentionString || '') + evt.message + '\n' +
-                    (evt.subMessage || ''))
+                .send({
+                  content: (evt.mentionString || '') + evt.message + '\n' +
+                      (evt.subMessage || ''),
+                })
                 .catch((err) => {
                   hg._parent.error(
                       'Failed to send message without image: ' + channel.id);
@@ -197,15 +204,20 @@ class SendEventMessageAction extends ChannelAction {
             }
             responses++;
             if (responses == evt.icons.length) {
-              finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
-                embed.attachFiles([new hg._parent.Discord.MessageAttachment(
-                    out, 'hgEvent.png')]);
+              finalImage.getBuffer(Jimp.MIME_PNG, (err, out) => {
                 if (!game.options.disableOutput) {
-                  channel.send(evt.mentionString, embed).catch((err) => {
-                    hg._parent.error(
-                        'Failed to send message with image: ' + channel.id);
-                    console.error(err);
-                  });
+                  channel
+                      .send({
+                        content: evt.mentionString || '\u200B',
+                        embeds: [embed],
+                        files: [new hg._parent.Discord.MessageAttachment(
+                            out, 'hgEvent.png')],
+                      })
+                      .catch((err) => {
+                        hg._parent.error(
+                            'Failed to send message with image: ' + channel.id);
+                        console.error(err);
+                      });
                 }
               });
             }

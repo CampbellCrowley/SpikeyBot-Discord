@@ -26,13 +26,13 @@ function WebStats() {
     } else {
       app.listen(self.common.isRelease ? 8016 : 8017, '127.0.0.1');
     }
-    postTimeout = self.client.setTimeout(
-        postUpdatedCount, self.common.isRelease ? 30000 : 5000);
+    postTimeout =
+        setTimeout(postUpdatedCount, self.common.isRelease ? 30000 : 5000);
   };
   /** @inheritdoc */
   this.shutdown = function() {
     if (app) app.close();
-    if (postTimeout) self.client.clearTimeout(postTimeout);
+    if (postTimeout) clearTimeout(postTimeout);
   };
 
   app.on('error', (err) => {
@@ -247,7 +247,7 @@ function WebStats() {
    * @private
    */
   function postUpdatedCount() {
-    if (postTimeout) self.client.clearTimeout(postTimeout);
+    if (postTimeout) clearTimeout(postTimeout);
     getStats((values) => {
       if (!values || !values.numGuilds) {
         self.warn('Unable to post guild count due to failure to fetch stats.');
@@ -306,9 +306,8 @@ function WebStats() {
           let content = '';
           res.on('data', (chunk) => content += chunk);
           res.on('end', () => {
-            if (postTimeout) self.client.clearTimeout(postTimeout);
-            postTimeout =
-                self.client.setTimeout(postUpdatedCount, postFrequency);
+            if (postTimeout) clearTimeout(postTimeout);
+            postTimeout = setTimeout(postUpdatedCount, postFrequency);
             if (res.statusCode == 200 || res.statusCode == 204) {
               self.log('Successfully posted guild count to ' + apiHost.host);
             } else {

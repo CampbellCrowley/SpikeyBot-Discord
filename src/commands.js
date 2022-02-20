@@ -1,4 +1,4 @@
-// Copyright 2018-2020 Campbell Crowley. All rights reserved.
+// Copyright 2018-2022 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 require('./mainModule.js')(Command);  // Extends the MainModule class.
 
@@ -592,7 +592,7 @@ function Command() {
           perms = msg.member.permissions.bitfield;
         }
         permOverride = (perms & self.Discord.Permissions.FLAGS.ADMINISTRATOR) ||
-            (msg.guild.ownerID === msg.author.id);
+            (msg.guild.ownerId === msg.author.id);
         hasPerm = (perms & me.permissions) || permOverride;
         hasPerm = (hasPerm && true) || false;
       }
@@ -1483,11 +1483,12 @@ function Command() {
           'Reset values to default with ' + msg.prefix +
           'reset\nChange values with ' + msg.prefix + 'enable or ' +
           msg.prefix + 'disable');
-      embed.setFooter('~ denotes command is muted on error.');
-      msg.channel.send(self.common.mention(msg), embed).catch(() => {
-        self.common.reply(msg, 'Please specify a command to lookup.')
-            .catch(() => {});
-      });
+      embed.setFooter({text: '~ denotes command is muted on error.'});
+      msg.channel.send({content: self.common.mention(msg), embeds: [embed]})
+          .catch(() => {
+            self.common.reply(msg, 'Please specify a command to lookup.')
+                .catch(() => {});
+          });
     }
   }
   /**
@@ -1507,19 +1508,20 @@ function Command() {
                 ' settings for all commands on this server?')
           .then((msg_) => {
             msg_.react('✅');
-            msg_.awaitReactions((reaction, user) => {
-              return reaction.emoji.name === '✅' && user.id === msg.author.id;
-            }, {time: 30000, max: 1}).then((reactions) => {
-              if (reactions.size === 0) {
-                msg_.edit('`Timed out`');
-                return;
-              }
-              msg_.edit('`Confirmed`');
-              userSettings[msg.guild.id] = {_updated: true};
-              self.common.reply(
-                  msg, 'All settings for commands have been reset.');
-              self.fire('settingsReset', msg.guild.id);
-            });
+            const filter = (reaction, user) =>
+              reaction.emoji.name === '✅' && user.id === msg.author.id;
+            msg_.awaitReactions({filter, time: 30000, max: 1})
+                .then((reactions) => {
+                  if (reactions.size === 0) {
+                    msg_.edit({content: '`Timed out`'});
+                    return;
+                  }
+                  msg_.edit({content: '`Confirmed`'});
+                  userSettings[msg.guild.id] = {_updated: true};
+                  self.common.reply(
+                      msg, 'All settings for commands have been reset.');
+                  self.fire('settingsReset', msg.guild.id);
+                });
           });
     } else if (msg.text.indexOf('*') < 0) {
       msg.content = msg.text;
@@ -1538,22 +1540,23 @@ function Command() {
                   cmd.getFullName() + '`?')
           .then((msg_) => {
             msg_.react('✅');
-            msg_.awaitReactions((reaction, user) => {
-              return reaction.emoji.name === '✅' &&
-                      user.id === msg.author.id;
-            }, {time: 30000, max: 1}).then((reactions) => {
-              if (reactions.size === 0) {
-                msg_.edit('`Timed out`');
-                return;
-              }
-              msg_.edit('`Confirmed`');
-              delete userSettings[msg.guild.id][cmd.getFullName()];
-              userSettings[msg.guild.id]._updated = true;
-              self.common.reply(
-                  msg,
-                  'Settings for `' + cmd.getFullName() + '` have been reset.');
-              self.fire('settingsReset', msg.guild.id, cmd.getFullName());
-            });
+            const filter = (reaction, user) =>
+              reaction.emoji.name === '✅' && user.id === msg.author.id;
+            msg_.awaitReactions({filter, time: 30000, max: 1})
+                .then((reactions) => {
+                  if (reactions.size === 0) {
+                    msg_.edit({content: '`Timed out`'});
+                    return;
+                  }
+                  msg_.edit({content: '`Confirmed`'});
+                  delete userSettings[msg.guild.id][cmd.getFullName()];
+                  userSettings[msg.guild.id]._updated = true;
+                  self.common.reply(
+                      msg,
+                      'Settings for `' + cmd.getFullName() +
+                          '` have been reset.');
+                  self.fire('settingsReset', msg.guild.id, cmd.getFullName());
+                });
           });
     } else {
       const cmd = self.findAll(msg.text, msg);
@@ -1571,22 +1574,23 @@ function Command() {
               nameList)
           .then((msg_) => {
             msg_.react('✅');
-            msg_.awaitReactions((reaction, user) => {
-              return reaction.emoji.name === '✅' &&
-                      user.id === msg.author.id;
-            }, {time: 30000, max: 1}).then((reactions) => {
-              if (reactions.size === 0) {
-                msg_.edit('`Timed out`');
-                return;
-              }
-              msg_.edit('`Confirmed`');
-              cmd.forEach((el) => {
-                delete userSettings[msg.guild.id][el.getFullName()];
-                userSettings[msg.guild.id]._updated = true;
-                self.fire('settingsReset', msg.guild.id, el.getFullName());
-              });
-              self.common.reply(msg, 'Settings for have been reset.', nameList);
-            });
+            const filter = (reaction, user) =>
+              reaction.emoji.name === '✅' && user.id === msg.author.id;
+            msg_.awaitReactions({filter, time: 30000, max: 1})
+                .then((reactions) => {
+                  if (reactions.size === 0) {
+                    msg_.edit({content: '`Timed out`'});
+                    return;
+                  }
+                  msg_.edit({content: '`Confirmed`'});
+                  cmd.forEach((el) => {
+                    delete userSettings[msg.guild.id][el.getFullName()];
+                    userSettings[msg.guild.id]._updated = true;
+                    self.fire('settingsReset', msg.guild.id, el.getFullName());
+                  });
+                  self.common.reply(
+                      msg, 'Settings for have been reset.', nameList);
+                });
           });
     }
   }

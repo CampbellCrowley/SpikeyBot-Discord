@@ -1,4 +1,4 @@
-// Copyright 2018-2020 Campbell Crowley. All rights reserved.
+// Copyright 2018-2022 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (web@campbellcrowley.com)
 const http = require('http');
 const auth = require('../../auth.js');
@@ -648,7 +648,7 @@ function WebSettings() {
     }
     return {
       nickname: m.nickname,
-      roles: m.roles.cache.array(),
+      roles: [...m.roles.cache.values()],
       color: m.displayColor,
       guild: {id: m.guild.id},
       user: {
@@ -765,9 +765,9 @@ function WebSettings() {
         });
       } else {
         guilds = self.client &&
-            self.client.guilds.cache
+            [...self.client.guilds.cache
                 .filter((obj) => obj.members.resolve(userData.id))
-                .array();
+                .values()];
       }
       const strippedGuilds = stripGuilds(guilds, userData);
       socket.cachedGuilds = strippedGuilds.map((g) => g.id);
@@ -795,7 +795,7 @@ function WebSettings() {
       newG.iconURL = g.iconURL();
       newG.name = g.name;
       newG.id = g.id;
-      newG.ownerId = g.ownerID;
+      newG.ownerId = g.ownerId;
       newG.members = g.members.cache.map((m) => m.id);
       newG.channels =
           g.channels.cache

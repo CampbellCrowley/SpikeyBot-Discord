@@ -79,7 +79,7 @@ class SendTeamRankMessageAction extends ChannelAction {
         }
         teamRankEmbed.setColor([255, 0, 255]);
         if (!game.options.disableOutput) {
-          channel.send(teamRankEmbed).catch((err) => {
+          channel.send({embeds: [teamRankEmbed]}).catch((err) => {
             hg._parent.error('Failed to send final team ranks: ' + channel.id);
             console.error(err);
           });

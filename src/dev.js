@@ -17,13 +17,13 @@ function DevCmds() {
   /** @inheritdoc */
   this.initialize = function() {
     self.command.on(new self.command.SingleCommand(['run'], commandRun));
-    self.client.on('message', onMessage);
+    self.client.on('messageCreate', onMessage);
   };
 
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.deleteEvent('run');
-    self.client.removeListener('message', onMessage);
+    self.client.removeListener('messageCreate', onMessage);
   };
 
   /**

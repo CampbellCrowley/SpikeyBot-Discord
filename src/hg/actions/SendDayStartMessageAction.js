@@ -1,4 +1,4 @@
-// Copyright 2019 Campbell Crowley. All rights reserved.
+// Copyright 2019-2022 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const ChannelAction = require('./ChannelAction.js');
 
@@ -26,13 +26,14 @@ class SendDayStartMessageAction extends ChannelAction {
       }
       if (!game.autoPlay && game.currentGame.day.num < 2) {
         const prefix = hg._parent.bot.getPrefix(game.id);
-        embed.setFooter(
-            'Tip: Use "' + prefix + hg._parent.postPrefix +
-            'autoplay" to automate the games.');
+        embed.setFooter({
+          text: 'Tip: Use "' + prefix + hg._parent.postPrefix +
+              'autoplay" to automate the games.',
+        });
       }
       embed.setColor([255, 0, 255]);
       if (!game || !game.options.disableOutput) {
-        channel.send(embed).catch((err) => {
+        channel.send({embeds: [embed]}).catch((err) => {
           if (err.message === 'Missing Permissions' ||
               err.message === 'Missing Access' ||
               err.message === 'Unknown Channel') {

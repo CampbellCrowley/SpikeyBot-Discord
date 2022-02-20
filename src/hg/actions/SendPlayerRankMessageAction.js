@@ -59,7 +59,7 @@ class SendPlayerRankMessageAction extends ChannelAction {
         rankEmbed.addField(3, rankList.join('\n').slice(0, 1024), true);
       }
       if (!game.options.disableOutput) {
-        channel.send(rankEmbed).catch((err) => {
+        channel.send({embeds: [rankEmbed]}).catch((err) => {
           hg._parent.error(`Failed to send ranks message: ${channel.id}`);
           console.error(err);
         });

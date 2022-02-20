@@ -242,7 +242,7 @@ function Connect4() {
             names[0] + ' Won! ' + emoji.X,
             names[1] + ', try harder next time.');
       }
-      msg.edit('\u200B', embed);
+      msg.edit({content: '\u200B', embeds: [embed]});
     };
   };
 
@@ -256,7 +256,7 @@ function Connect4() {
    */
   this.createGame = function(players, channel) {
     numGames++;
-    channel.send('`Loading Connect 4...`').then((msg) => {
+    channel.send({content: '`Loading Connect 4...`'}).then((msg) => {
       const game = new self.Game(players, msg);
       game.print();
       addReactions(msg);
@@ -285,7 +285,7 @@ function Connect4() {
    * @param {Connect4~Game} game The game to update when changes are made.
    */
   function addListener(msg, game) {
-    msg.awaitReactions(function(reaction, user) {
+    const filter = (reaction, user) => {
       if (user.id != self.client.user.id) {
         // reaction.users.remove(user).catch(() => {});
       } else {
@@ -304,60 +304,64 @@ function Connect4() {
         if (emoji[i] == reaction.emoji.name) return true;
       }
       return false;
-    }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
-      if (reactions.size == 0) {
-        msg.reactions.removeAll().catch(() => {});
-        msg.edit(
-            'Game timed out!\nThe game has ended because nobody made a ' +
-               'move in too long!');
-        game.print(game.turn == 1 ? 2 : 1);
-        return;
-      }
-      if (!game.players.p1 && game.turn == 1) {
-        const reactUsers = reactions.first().users.cache.first(2);
-        game.players.p1 = reactUsers[1] || reactUsers[0];
-      }
-      if (!game.players.p2 && game.turn == 2) {
-        const reactUsers = reactions.first().users.cache.first(2);
-        game.players.p2 = reactUsers[1] || reactUsers[0];
-      }
+    };
+    msg.awaitReactions({filter, max: 1, time: maxReactAwaitTime})
+        .then((reactions) => {
+          if (reactions.size == 0) {
+            msg.reactions.removeAll().catch(() => {});
+            msg.edit({
+              content:
+                  'Game timed out!\nThe game has ended because nobody made a ' +
+                  'move in too long!',
+            });
+            game.print(game.turn == 1 ? 2 : 1);
+            return;
+          }
+          if (!game.players.p1 && game.turn == 1) {
+            const reactUsers = reactions.first().users.cache.first(2);
+            game.players.p1 = reactUsers[1] || reactUsers[0];
+          }
+          if (!game.players.p2 && game.turn == 2) {
+            const reactUsers = reactions.first().users.cache.first(2);
+            game.players.p2 = reactUsers[1] || reactUsers[0];
+          }
 
-      let move = -1;
-      const choice = reactions.first().emoji;
-      for (let i = 0; i < numCols; i++) {
-        if (emoji[i] == choice.name) {
-          move = i;
-          break;
-        }
-      }
-      if (move == -1) {
-        addListener(msg, game);
-        return;
-      }
-      if (game.board[0][move] != 0) {
-        addListener(msg, game);
-        return;
-      }
-      /* if (game.board[1][move] != 0) {
-           reactions.first().users.remove(self.client.user);
-         } */
-      let row;
-      for (row = 1; row < numRows; row++) {
-        if (game.board[row][move] != 0) {
-          break;
-        }
-      }
-      row--;
-      game.board[row][move] = game.turn;
-      const winner = checkWin(game.board, row, move);
-      if (winner != 0) {
-        msg.reactions.removeAll().catch(() => {});
-      } else {
-        game.turn = game.turn === 1 ? 2 : 1;
-        addListener(msg, game);
-      }
-      game.print(winner);
-    });
+          let move = -1;
+          const choice = reactions.first().emoji;
+          for (let i = 0; i < numCols; i++) {
+            if (emoji[i] == choice.name) {
+              move = i;
+              break;
+            }
+          }
+          if (move == -1) {
+            addListener(msg, game);
+            return;
+          }
+          if (game.board[0][move] != 0) {
+            addListener(msg, game);
+            return;
+          }
+          /* if (game.board[1][move] != 0) {
+               reactions.first().users.remove(self.client.user);
+             } */
+          let row;
+          for (row = 1; row < numRows; row++) {
+            if (game.board[row][move] != 0) {
+              break;
+            }
+          }
+          row--;
+          game.board[row][move] = game.turn;
+          const winner = checkWin(game.board, row, move);
+          if (winner != 0) {
+            msg.reactions.removeAll().catch(() => {});
+          } else {
+            game.turn = game.turn === 1 ? 2 : 1;
+            addListener(msg, game);
+          }
+          game.print(winner);
+        });
   }
   /**
    * Checks if the given board has a winner, or if the game is over.

@@ -199,7 +199,7 @@ class Shutdown extends SubModule {
     if (!this._shuttingDown) return;
 
     let guild = null;
-    const list = this.client.guilds.cache.keyArray();
+    const list = [...this.client.guilds.cache.keys()];
     let i = -1;
     while (!guild && i < list.length - 1) {
       i++;
@@ -219,7 +219,7 @@ class Shutdown extends SubModule {
         if (this._dryRun) {
           console.log(guild.id);
           this._guildWhitelist[guild.id] = true;
-          this.client.setTimeout(this._step, 100);
+          setTimeout(this._step, 100);
         } else {
           guild.leave().then(() => this._step()).catch(() => {
             this.error(`Failed to leave guild: ${guild.id}`);

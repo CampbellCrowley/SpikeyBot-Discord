@@ -27,7 +27,7 @@ class SendDayEndMessageAction extends ChannelAction {
                 .replace(/\{alive\}/g, game.currentGame.numAlive));
       }
       embed.setColor([255, 0, 255]);
-      if (!game.options.disableOutput) channel.send(embed);
+      if (!game.options.disableOutput) channel.send({embeds: [embed]});
     });
   }
   /**

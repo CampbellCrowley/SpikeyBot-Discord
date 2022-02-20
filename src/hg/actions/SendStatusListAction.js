@@ -172,10 +172,10 @@ class SendStatusListAction extends ChannelAction {
       if (numWholeTeams == 1) {
         const teamName = lastWholeTeam.name;
         finalMessage.setFooter(
-            hg.messages.get('teamRemaining', null, teamName));
+            {text: hg.messages.get('teamRemaining', null, teamName)});
       }
       if (game.options.disableOutput) return;
-      channel.send(finalMessage).catch((err) => {
+      channel.send({embeds: [finalMessage]}).catch((err) => {
         hg._parent.error('Failed to send status list: ' + channel.id);
         console.error(err);
       });

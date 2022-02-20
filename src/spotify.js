@@ -222,10 +222,8 @@ function Spotify() {
             if (!following[msg.guild.id]) {
               following[msg.guild.id] = {};
             }
-            following[msg.guild.id].timeout =
-                self.client.setTimeout(function() {
-                  updateFollowingState(msg, userId, null, true);
-                }, 3000);
+            following[msg.guild.id].timeout = setTimeout(
+                () => updateFollowingState(msg, userId, null, true), 3000);
           } else {
             self.error(err);
           }
@@ -257,7 +255,7 @@ function Spotify() {
         startMusic(msg, songInfo);
       }
       if (following[msg.guild.id] && following[msg.guild.id].timeout) {
-        self.client.clearTimeout(following[msg.guild.id].timeout);
+        clearTimeout(following[msg.guild.id].timeout);
       }
       following[msg.guild.id] = {
         user: userId,
@@ -267,13 +265,11 @@ function Spotify() {
 
       if (!songInfo || songInfo.duration) {
         const delay = songInfo ? (songInfo.duration - songInfo.progress) : 3000;
-        following[msg.guild.id].timeout = self.client.setTimeout(function() {
-          updateFollowingState(msg, userId);
-        }, delay);
+        following[msg.guild.id].timeout =
+            setTimeout(() => updateFollowingState(msg, userId), delay);
       } else {
-        following[msg.guild.id].timeout = self.client.setTimeout(function() {
-          updateDuration(msg, userId);
-        }, 1000);
+        following[msg.guild.id].timeout =
+            setTimeout(() => updateDuration(msg, userId), 1000);
       }
     }
   }
@@ -290,7 +286,7 @@ function Spotify() {
   function updateDuration(msg, userId) {
     checkMusic();
     if (following[msg.guild.id] && following[msg.guild.id].timeout) {
-      self.client.clearTimeout(following[msg.guild.id].timeout);
+      clearTimeout(following[msg.guild.id].timeout);
     }
     if (!music.isSubjugated(msg)) {
       endFollow(msg);
@@ -303,13 +299,11 @@ function Spotify() {
       const f = following[msg.guild.id];
 
       const delay = f.song.duration - f.song.progress;
-      following[msg.guild.id].timeout = self.client.setTimeout(function() {
-        updateFollowingState(msg, userId);
-      }, delay);
+      following[msg.guild.id].timeout =
+          setTimeout(() => updateFollowingState(msg, userId), delay);
     } else {
-      following[msg.guild.id].timeout = self.client.setTimeout(function() {
-        updateDuration(msg, userId);
-      }, 1000);
+      following[msg.guild.id].timeout =
+          setTimeout(() => updateDuration(msg, userId), 1000);
     }
   }
 
@@ -348,7 +342,7 @@ function Spotify() {
    */
   function endFollow(msg) {
     if (following[msg.guild.id]) {
-      self.client.clearTimeout(following[msg.guild.id].timeout);
+      clearTimeout(following[msg.guild.id].timeout);
     }
     delete following[msg.guild.id];
     checkMusic();

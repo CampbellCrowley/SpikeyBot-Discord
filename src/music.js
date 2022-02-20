@@ -1,4 +1,4 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Copyright 2018-2022 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const ytdl = require('youtube-dl'); // Music thread uses separate require.
 const fs = require('fs'); // Music thread uses separate require.
@@ -270,11 +270,12 @@ function Music() {
               '\n```',
           true);
     });
-    tmpHelp.setFooter(
-        'Note: If a custom prefix is being used, replace `' +
-        self.bot.getPrefix() +
-        '` with the custom prefix.\nNote 2: Custom prefixes will not have a ' +
-        'space after them.');
+    tmpHelp.setFooter({
+      text: 'Note: If a custom prefix is being used, replace `' +
+          self.bot.getPrefix() +
+          '` with the custom prefix.\nNote 2: Custom prefixes will not have ' +
+          'a space after them.',
+    });
     self.helpMessage = tmpHelp;
   };
 
@@ -394,7 +395,7 @@ function Music() {
    */
   function handleVoiceStateUpdate(oldState, newState) {
     // User set to follow has changed channel.
-    if (follows[oldState.guild.id] == oldState.id && newState.channelID) {
+    if (follows[oldState.guild.id] == oldState.id && newState.channelId) {
       newState.channel.join().catch(() => {});
       return;
     }
@@ -403,12 +404,13 @@ function Music() {
       if (oldState.id === self.client.user.id && !newState.channel) {
         self.error(
             'Forcibly ejected from voice channel: ' + oldState.guild.id + ' ' +
-            oldState.channelID);
+            oldState.channelId);
         delete broadcasts[oldState.guild.id];
         if (broadcast.request && broadcast.request.channel) {
-          broadcast.request.channel.send(
-              '`I was forcibly ejected from the voice channel for an unknown ' +
-              'reason!`');
+          broadcast.request.channel.send({
+            content: '`I was forcibly ejected from the voice channel for an ' +
+                'unknown reason!`',
+          });
         }
         return;
       }
@@ -429,7 +431,7 @@ function Music() {
                 broadcast.current.request.channel) {
               const prefix = self.bot.getPrefix(oldState.guild.id);
               let followInst = '';
-              if (oldState.channelID && newState.channelID) {
+              if (oldState.channelId && newState.channelId) {
                 followInst = '\n`' + prefix + 'join` to join your channel.';
               }
 
@@ -443,9 +445,9 @@ function Music() {
       }
       // If the bot changed channel, continue playing previous music.
       if (oldState.id === self.client.user.id && broadcast.voice &&
-          broadcast.voice.channel.id != newState.channelID &&
-          oldState.channelID != newState.channelID && oldState.channelID &&
-          newState.channelID && newState.channel &&
+          broadcast.voice.channel.id != newState.channelId &&
+          oldState.channelId != newState.channelId && oldState.channelId &&
+          newState.channelId && newState.channel &&
           newState.channel.connection) {
         if (broadcast.voice) broadcast.voice.removeAllListeners();
         broadcast.voice = newState.channel.connection;
@@ -631,14 +633,14 @@ function Music() {
     }
     if (broadcast.queue.length === 0) {
       if (!broadcast.subjugated) {
-        self.client.setTimeout(function() {
+        setTimeout(() => {
           if (broadcast.voice) {
             broadcast.voice.disconnect();
             if (broadcast.voice) broadcast.voice.removeAllListeners();
           }
           delete broadcasts[broadcast.current.request.guild.id];
         }, 500);
-        broadcast.current.request.channel.send('`Queue is empty!`');
+        broadcast.current.request.channel.send({content: '`Queue is empty!`'});
       }
       return;
     }
@@ -663,7 +665,7 @@ function Music() {
         const embed = formatSongInfo(broadcast.current.info);
         embed.setTitle(
             'Now playing [' + broadcast.queue.length + ' left in queue]');
-        broadcast.current.request.channel.send(embed);
+        broadcast.current.request.channel.send({embeds: [embed]});
       }
       broadcast.current.oninfo = function() {
         broadcast.isLoading = false;
@@ -678,7 +680,7 @@ function Music() {
                 'Now playing [' + broadcast.queue.length + ' left in queue]');
             embed.setColor([50, 200, 255]);
             embed.setDescription(broadcast.current.song);
-            broadcast.current.request.channel.send(embed);
+            broadcast.current.request.channel.send({embeds: [embed]});
           }
         } else {
           ytdl.getInfo(
@@ -687,9 +689,11 @@ function Music() {
                 if (err) {
                   self.error(err.message.split('\n')[1]);
                   if (broadcast.current.request) {
-                    broadcast.current.request.channel.send(
-                        '```Oops, something went wrong while getting info ' +
-                        'for this song!```\n' + err.message.split('\n')[1]);
+                    broadcast.current.request.channel.send({
+                      content:
+                          '```Oops, something went wrong while getting info ' +
+                          'for this song!```\n' + err.message.split('\n')[1],
+                    });
                   }
                 } else {
                   broadcast.current.info = info;
@@ -698,7 +702,7 @@ function Music() {
                     embed.setTitle(
                         'Now playing [' + broadcast.queue.length +
                         ' left in queue]');
-                    broadcast.current.request.channel.send(embed);
+                    broadcast.current.request.channel.send({embeds: [embed]});
                   }
                 }
               });
@@ -711,7 +715,7 @@ function Music() {
             const embed = formatSongInfo(broadcast.current.info);
             embed.setTitle(
                 'Now playing [' + broadcast.queue.length + ' left in queue]');
-            broadcast.current.request.channel.send(embed);
+            broadcast.current.request.channel.send({embeds: [embed]});
           }
         };
       }
@@ -1064,7 +1068,7 @@ function Music() {
     if (!broadcasts[msg.guild.id]) {
       if (!subjugate) {
         self.common.reply(msg, 'Loading ' + song + '\nPlease wait...')
-            .then((msg) => msg.delete({timeout: 10000}));
+            .then((msg) => setTimeout(() => msg.delete(), 10000));
       }
       broadcasts[msg.guild.id] = {
         queue: [],
@@ -1084,7 +1088,7 @@ function Music() {
               'Enqueuing ' + song + ' [' +
               (broadcasts[msg.guild.id].queue.length + 1) + ' in queue]');
           embed.setColor([50, 200, 255]);
-          msg.channel.send(mention(msg), embed);
+          msg.channel.send({content: mention(msg), embeds: [embed]});
         }
         enqueueSong(broadcasts[msg.guild.id], song, msg, null, seek);
       } else {
@@ -1111,7 +1115,7 @@ function Music() {
                 embed.setTitle(
                     'Enqueuing ' + song + ' [' +
                     (broadcasts[msg.guild.id].queue.length + 1) + ' in queue]');
-                msg.channel.send(mention(msg), embed);
+                msg.channel.send({content: mention(msg), embeds: [embed]});
               }
               enqueueSong(broadcasts[msg.guild.id], song, msg, info, seek);
             }
@@ -1260,7 +1264,7 @@ function Music() {
                 formatPlaytime(queueDuration) + ']',
             queueString.substr(0, 1024));
       }
-      msg.channel.send(embed);
+      msg.channel.send({embeds: [embed]});
     }
   }
 
@@ -1373,10 +1377,11 @@ function Music() {
             reqLyricsURL(msg, parsed.response.hits[0].result.id);
           }
         } else {
-          msg.channel.send(
-              response.statusCode + '```json\n' +
-              JSON.stringify(response.headers, null, 2) + '```\n```html\n' +
-              content + '\n```');
+          msg.channel.send({
+            content: response.statusCode + '```json\n' +
+                JSON.stringify(response.headers, null, 2) + '```\n```html\n' +
+                content + '\n```',
+          });
         }
       });
       response.on('close', function() {
@@ -1390,7 +1395,7 @@ function Music() {
     req.on('error', function(e) {
       self.error(e);
     });
-    msg.channel.send('`Loading...`').then((msg) => {
+    msg.channel.send({content: '`Loading...`'}).then((msg) => {
       msg.delete(30000);
     });
   }
@@ -1417,10 +1422,11 @@ function Music() {
               msg, parsed.response.song.url, parsed.response.song.full_title,
               parsed.response.song.song_art_image_thumbnail_url);
         } else {
-          msg.channel.send(
-              response.statusCode + '```json\n' +
-              JSON.stringify(response.headers, null, 2) + '```\n```html\n' +
-              content + '\n```');
+          msg.channel.send({
+            content: response.statusCode + '```json\n' +
+                JSON.stringify(response.headers, null, 2) + '```\n```html\n' +
+                content + '\n```',
+          });
         }
       });
       response.on('close', function() {
@@ -1524,17 +1530,19 @@ function Music() {
         }
       }
       embed.setColor([0, 255, 255]);
-      msg.channel.send(embed).catch((err) => {
+      msg.channel.send({embeds: [embed]}).catch((err) => {
         console.log(err);
-        msg.channel.send(
-            '`Something went wrong while formatting the lyrics.' +
-            '\nHere is the link to the page I found:`\n' + url);
+        msg.channel.send({
+          content: '`Something went wrong while formatting the lyrics.' +
+              '\nHere is the link to the page I found:`\n' + url,
+        });
       });
     } catch (err) {
       console.log(err);
-      msg.channel.send(
-          '`Something went wrong while formatting the lyrics.' +
-          '\nHere is the link to the page I found:`\n' + url);
+      msg.channel.send({
+        content: '`Something went wrong while formatting the lyrics.' +
+            '\nHere is the link to the page I found:`\n' + url,
+      });
     }
   }
 
@@ -1573,7 +1581,7 @@ function Music() {
     const streams = {};
     const file = fs.createWriteStream(filename);
     file.on('close', () => {
-      msg.channel.send('Saved to ' + url);
+      msg.channel.send({content: 'Saved to ' + url});
     });
     const listen = function(user, receiver /* , conn*/) {
       if (streams[user.id] || (msg.mentions.users.size > 0 &&
@@ -1594,7 +1602,7 @@ function Music() {
           // Timeout and sound are due to current Discord bug requiring bot to
           // play sound for 0.1s before being able to receive audio.
           conn.play('./sounds/plink.ogg');
-          self.client.setTimeout(() => {
+          setTimeout(() => {
             const receiver = conn.receiver;
             msg.member.voice.channel.members.forEach(
                 (member) => listen(member.user, receiver, conn));

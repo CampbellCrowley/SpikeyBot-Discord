@@ -1,4 +1,4 @@
-// Copyright 2019-2020 Campbell Crowley. All rights reserved.
+// Copyright 2019-2022 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (web@campbellcrowley.com)
 const http = require('http');
 const socketIo = require('socket.io');
@@ -901,9 +901,9 @@ function HGWeb() {
         });
       } else {
         guilds = self.client &&
-            self.client.guilds.cache
+            [...self.client.guilds.cache
                 .filter((obj) => obj.members.resolve(userData.id))
-                .array();
+                .values()];
       }
       const strippedGuilds = stripGuilds(guilds, userData);
       done(strippedGuilds);
@@ -950,7 +950,7 @@ function HGWeb() {
       newG.name = g.name;
       newG.id = g.id;
       newG.bot = self.client.user.id;
-      newG.ownerId = g.ownerID;
+      newG.ownerId = g.ownerId;
       newG.members = g.members.cache.map((m) => m.id);
       newG.defaultSettings = dOpts;
       newG.userSettings = uOpts;
@@ -1048,7 +1048,7 @@ function HGWeb() {
     const g = self.client && self.client.guilds.resolve(gId);
     if (!g) return;
 
-    const roles = g.roles.cache.array();
+    const roles = [...g.roles.cache.values()];
 
     if (typeof cb === 'function') {
       cb(null, roles);

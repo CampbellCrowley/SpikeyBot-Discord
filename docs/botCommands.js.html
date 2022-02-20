@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Source: botCommands.js</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ApiEndpoint.html">ApiEndpoint</a></li><li><a href="ApiRequestBody.html">ApiRequestBody</a></li><li><a href="AutoReact.html">AutoReact</a></li><li><a href="BotCommands.html">BotCommands</a></li><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="CpuWatcher.html">CpuWatcher</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FileServer.html">FileServer</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ActionManager.html">HungryGames~ActionManager</a></li><li><a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a></li><li><a href="HungryGames-Action-GiveRoleAction.html">HungryGames~Action~GiveRoleAction</a></li><li><a href="HungryGames-Action-RunCommandAction.html">HungryGames~Action~RunCommandAction</a></li><li><a href="HungryGames-Action-SendAutoplayingMessageAlertAction.html">HungryGames~Action~SendAutoplayingMessageAlertAction</a></li><li><a href="HungryGames-Action-SendDayEndMessageAction.html">HungryGames~Action~SendDayEndMessageAction</a></li><li><a href="HungryGames-Action-SendDayStartMessageAction.html">HungryGames~Action~SendDayStartMessageAction</a></li><li><a href="HungryGames-Action-SendEventMessageAction.html">HungryGames~Action~SendEventMessageAction</a></li><li><a href="HungryGames-Action-SendMessageAction.html">HungryGames~Action~SendMessageAction</a></li><li><a href="HungryGames-Action-SendPlayerRankMessageAction.html">HungryGames~Action~SendPlayerRankMessageAction</a></li><li><a href="HungryGames-Action-SendStatusListAction.html">HungryGames~Action~SendStatusListAction</a></li><li><a href="HungryGames-Action-SendTeamRankMessageAction.html">HungryGames~Action~SendTeamRankMessageAction</a></li><li><a href="HungryGames-Action-SendVictorAction.html">HungryGames~Action~SendVictorAction</a></li><li><a href="HungryGames-Action-TakeRoleAction.html">HungryGames~Action~TakeRoleAction</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-ChannelAction.html">HungryGames~ChannelAction</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-EventContainer.html">HungryGames~EventContainer</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-MemberAction.html">HungryGames~MemberAction</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NormalEvent.html">HungryGames~NormalEvent</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-StatGroup.html">HungryGames~StatGroup</a></li><li><a href="HungryGames-StatManager.html">HungryGames~StatManager</a></li><li><a href="HungryGames-Stats.html">HungryGames~Stats</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Images.html">Images</a></li><li><a href="LocaleManager.html">LocaleManager</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="MemWatcher.html">MemWatcher</a></li><li><a href="MessageMaker.html">MessageMaker</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Pets.html">Pets</a></li><li><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></li><li><a href="Pets-BasePetClasses.html">Pets~BasePetClasses</a></li><li><a href="Pets-BasePets.html">Pets~BasePets</a></li><li><a href="Pets-Constants.html">Pets~Constants</a></li><li><a href="Pets-NPC.html">Pets~NPC</a></li><li><a href="Pets-Pet.html">Pets~Pet</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="ShardingMaster.html">ShardingMaster</a></li><li><a href="ShardingMaster.ShardInfo.html">ShardingMaster.ShardInfo</a></li><li><a href="ShardingMaster.ShardStatus.html">ShardingMaster.ShardStatus</a></li><li><a href="ShardingSlave.html">ShardingSlave</a></li><li><a href="Shutdown.html">Shutdown</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="Strings.html">Strings</a></li><li><a href="Strings-Locale.html">Strings~Locale</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Twitch.html">Twitch</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebApi.html">WebApi</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li><li><a href="WebUserData.html">WebUserData</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="interfaces.list.html" class="dropdown-toggle" data-toggle="dropdown">Interfaces<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="HungryGames-Action.html">HungryGames~Action</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-12">
+	
+		<div id="main">
+			
+
+		<h1 class="page-title">Source: botCommands.js</h1>
+    
+<section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// Copyright 2019-2022 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+const fs = require('fs');
+const SubModule = require('./subModule.js');
+
+/**
+ * @description Provides interface to allow other bots to run commands.
+ * @augments SubModule
+ * @listens Discord~Client#message
+ * @listens Command#togglebot
+ */
+class BotCommands extends SubModule {
+  /**
+   * @description SubModule providing external bot command interface.
+   */
+  constructor() {
+    super();
+    /** @inheritdoc */
+    this.myName = 'BotCommands';
+
+    /**
+     * @description The name of the file to check for if bot commands are
+     * enabled.
+     * @private
+     * @constant
+     * @default
+     * @type {string}
+     */
+    this._filename = '/enableBotCommands';
+
+    /**
+     * @description Maximum number of commands that can be triggered this way
+     * per {@link BotCommands~_maxDelta}.
+     * @private
+     * @type {number}
+     * @constant
+     * @default
+     */
+    this._maxNum = 5;
+    /**
+     * @description Amount of time in milliseconds where a maximum of
+     * {@link BotCommands~_maxNum} commands may be triggered before cooldown is
+     * started.
+     * @private
+     * @type {number}
+     * @constant
+     * @default
+     */
+    this._maxDelta = 15 * 1000;
+    /**
+     * @description Amount of time in milliseconds to ignore all bot commands
+     * after exceeding the rate limit.
+     * @private
+     * @type {number}
+     * @constant
+     * @default
+     */
+    this._cooldownLength = 10 * 1000;
+
+    /**
+     * @description History of last few commands triggered per-guild. Used to
+     * put command triggering on cooldown if rate limits are exceeded.
+     * @private
+     * @type {object.&lt;{
+     *   history: Array.&lt;{author: string, time: number}>,
+     *   cooldownStart: number
+     * }>}
+     * @default
+     */
+    this._recentCommands = {};
+
+    this._onMessage = this._onMessage.bind(this);
+    this._commandToggleBotCmds = this._commandToggleBotCmds.bind(this);
+  }
+  /** @inheritdoc */
+  initialize() {
+    this.command.on(
+        new this.command.SingleCommand(
+            [
+              'allowbot',
+              'allowbots',
+              'enablebot',
+              'enablebots',
+              'togglebot',
+              'togglebots',
+              'denybot',
+              'denybots',
+              'disablebot',
+              'disablebots',
+            ],
+            this._commandToggleBotCmds, new this.command.CommandSetting({
+              validOnlyInGuild: true,
+              defaultDisabled: true,
+              permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES |
+                  this.Discord.Permissions.FLAGS.MANAGE_GUILD,
+            })));
+    this.client.guilds.cache.forEach((g) => {
+      this.common.readFile(
+          `${this.common.guildSaveDir}${g.id}${this._filename}`, () => {});
+    });
+    this.client.on('messageCreate', this._onMessage);
+  }
+  /** @inheritdoc */
+  shutdown() {
+    this.command.deleteEvent('allowbot');
+    this.client.removeListener('messageCreate', this._onMessage);
+  }
+
+  /**
+   * Handle messages sent by bots.
+   *
+   * @private
+   * @param {Discord~Message} msg Message was sent.
+   * @listens Discord#message
+   */
+  _onMessage(msg) {
+    if (!msg.guild || !msg.author.bot ||
+        msg.author.id === this.client.user.id) {
+      return;
+    }
+
+    const prefixRegex = new RegExp(`^&lt;@!?${this.client.user.id}>`);
+
+    if (!msg.content.match(prefixRegex)) return;
+
+    let recent = this._recentCommands[msg.guild.id];
+    const now = Date.now();
+    if (recent &amp;&amp; now - recent.cooldownStart &lt; this._cooldownLength) return;
+
+    if (!fs.existsSync(
+        `${this.common.guildSaveDir}${msg.guild.id}${this._filename}`)) {
+      return;
+    }
+
+    msg.content = msg.content.replace(prefixRegex, '').trim();
+    msg.prefix = this.bot.getPrefix(msg.guild);
+    msg.botCmd = true;
+
+    const commandSuccess =
+        this.command.validate(msg.content.split(/ |\n/)[0], msg);
+    if (commandSuccess !== 'No Handler') {
+      if (!recent) {
+        recent = this._recentCommands[msg.guild.id] = {
+          history: [],
+          cooldownStart: 0,
+        };
+      }
+      const hist = recent.history;
+
+      hist.push({author: msg.author.id, time: now});
+
+      let num = 0;
+      const oldest = now - this._maxDelta;
+      while (num &lt; hist.length &amp;&amp; hist[num].time &lt; oldest) num++;
+      if (num > 0) hist.splice(0, num);
+
+      if (hist.length > this._maxNum) {
+        this.common.reply(
+            msg, 'Bot Command Rate Limit',
+            'Rate limit exceeded. All bot commands will be ignored for ' +
+                '10 seconds.');
+        this._recentCommands[msg.guild.id].cooldownStart = now;
+        return;
+      }
+    }
+    const content = msg.content.replace(/\n/g, '\\n');
+    let author;
+    let logged;
+    if (msg.guild !== null) {
+      author = `Bot:${msg.guild.id}#${msg.channel.id}@${msg.author.id}`;
+    } else {
+      author = `Bot:PM:${msg.author.id}@${msg.author.tag}`;
+    }
+    if (!commandSuccess) {
+      logged = `${author} ${content}`;
+      this.log(logged);
+    } else {
+      logged = `${author} ${commandSuccess} ${content}`;
+      this.debug(logged);
+    }
+    const start = Date.now();
+    this.command.trigger(msg);
+    const delta = Date.now() - start;
+    if (delta > 20) {
+      this.debug(`${logged} took an excessive ${delta}ms`);
+    }
+  }
+
+  /**
+   * @description Toggle whether bots are able to run commands on this guild.
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#togglebot
+   */
+  _commandToggleBotCmds(msg) {
+    const enableList = ['enable', 'on', 'allow', 'true'];
+    const disableList = ['disable', 'off', 'deny', 'false', 'disallow'];
+    const file = `${this.common.guildSaveDir}${msg.guild.id}${this._filename}`;
+    const exists = fs.existsSync(file);
+    let setTo = true;
+    const content = msg.content.toLocaleLowerCase();
+    if (enableList.find((el) => content.indexOf(el) > -1)) {
+      setTo = true;
+    } else if (disableList.find((el) => content.indexOf(el) > -1)) {
+      setTo = false;
+    } else {
+      setTo = !exists;
+    }
+
+    if (!exists &amp;&amp; setTo) {
+      const emoji = '✅';
+      this.common
+          .reply(
+              msg, 'Are you sure?',
+              'Allowing bots to run commands could potentially cause a ' +
+                  'feedback loop. Only enable this if you know what you are' +
+                  ' doing. Use at your own risk.\nReact with ' + emoji +
+                  ' to confirm')
+          .then((msg_) => {
+            msg_.react(emoji).catch(() => {});
+            const filter = (reaction, user) =>
+              reaction.emoji.name == emoji &amp;&amp; user.id === msg.author.id;
+            msg_.awaitReactions({filter, max: 1, time: 30 * 1000})
+                .then((reactions) => {
+                  msg_.reactions.removeAll().catch(() => {});
+                  if (reactions.size == 0) {
+                    msg_.edit({content: 'Timed Out'}).catch(() => {});
+                    return;
+                  }
+                  try {
+                    this.common.mkAndWriteSync(file, null, 'true');
+                    this.common.reply(msg, 'Bot Commands', 'Now Allowed');
+                  } catch (err) {
+                    this.error(
+                        'Failed to enable bot commands: ' + msg.guild.id);
+                    console.error(err);
+                    this.common.reply(
+                        msg, 'Bot Commands',
+                        'Failed to toggle due to internal error.');
+                  }
+                });
+          });
+    } else if (exists &amp;&amp; !setTo) {
+      this.common.unlink(file, (err) => {
+        if (err) {
+          this.error(`Failed to disable bot commands: ${msg.guild.id}`);
+          console.error(err);
+          this.common.reply(
+              msg, 'Bot Commands', 'Failed to toggle due to internal error.');
+        } else {
+          this.common.reply(msg, 'Bot Commands', 'Now Disallowed');
+        }
+      });
+    } else {
+      this.common.reply(
+          msg, 'Bot Commands',
+          setTo ? 'Already allowed' : 'Already disallowed');
+    }
+  }
+}
+
+module.exports = new BotCommands();
+</pre>
+    </article>
+</section>
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019-2020, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a>
+	
+		on Saturday, February 19, 2022 5:43 PM (-08:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>

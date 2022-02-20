@@ -338,7 +338,7 @@ class HungryGames {
     const iTime = Date.now();
     const finalMembers = [];
     const self = this;
-    const memList = Array.isArray(members) ? members : members.array();
+    const memList = Array.isArray(members) ? members : [...members.values()];
     const large = memList.length >= HungryGames.largeServerCount;
     if (large || !Array.isArray(excluded)) excluded = [];
 

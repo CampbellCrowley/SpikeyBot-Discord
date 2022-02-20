@@ -273,7 +273,7 @@ class Moderation extends SubModule {
       return;
     }
     const files = msg.attachments.map((el) => el.url);
-    const havePerm = msg.guild.me.hasPermission(
+    const havePerm = msg.guild.me.permissions.has(
         this.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG);
     if (!havePerm) {
       this._finalMessageDeleteSend(
@@ -444,8 +444,8 @@ class Moderation extends SubModule {
       channels = channels.join(', ');
     }
     const guild = msgs.first().guild;
-    const havePerm = guild.me.hasPermission(
-        this.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG);
+    const havePerm =
+        guild.me.permissions.has(this.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG);
     if (!havePerm) {
       modLog.output(
           guild, 'messagePurge', null, null,
@@ -570,26 +570,27 @@ class Moderation extends SubModule {
             });
         member.guild.channels.cache.forEach((channel) => {
           if (channel.permissionsLocked) return;
-          const overwrites = channel.permissionOverwrites.get(role.id);
+          const overwrites = channel.permissionOverwrites.resolve(role.id);
           if (overwrites) {
-            if (channel.type == 'category') {
+            if (channel.type == 'GUILD_CATEGORY') {
               if (overwrites.deny.has(
                   self.Discord.Permissions.FLAGS.SEND_MESSAGES) &&
                   overwrites.deny.has(self.Discord.Permissions.FLAGS.SPEAK)) {
                 return;
               }
-            } else if (channel.type == 'text') {
+            } else if (channel.type == 'GUILD_TEXT') {
               if (overwrites.deny.has(
                   self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
                 return;
               }
-            } else if (channel.type == 'voice') {
+            } else if (channel.type == 'GUILD_VOICE') {
               if (overwrites.deny.has(self.Discord.Permissions.FLAGS.SPEAK)) {
                 return;
               }
             }
           }
-          channel.updateOverwrite(role, {SEND_MESSAGES: false, SPEAK: false})
+          channel.permissionOverwrites
+              .edit(role, {SEND_MESSAGES: false, SPEAK: false})
               .catch(console.error);
         });
       } catch (err) {
@@ -637,7 +638,7 @@ class Moderation extends SubModule {
           msg, 'You must mention someone to smite after the command.');
     } else {
       const toSmite = msg.mentions.members.first();
-      if (msg.guild.ownerID !== msg.author.id &&
+      if (msg.guild.ownerId !== msg.author.id &&
           msg.member.roles.highest.comparePositionTo(toSmite.roles.highest) <=
               0) {
         this.common.reply(
@@ -718,7 +719,7 @@ class Moderation extends SubModule {
   _smite(role, member, msg) {
     const pFlags = this.Discord.Permissions.FLAGS;
     try {
-      const list = JSON.stringify(member.roles.cache.keyArray());
+      const list = JSON.stringify([...member.roles.cache.keys()]);
       const dir = `${this.common.guildSaveDir}${member.guild.id}/smited`;
       const file = `${dir}/${member.id}.json`;
       this.common.mkAndWrite(file, dir, list, (err) => {
@@ -763,24 +764,25 @@ class Moderation extends SubModule {
           });
       member.guild.channels.cache.forEach((channel) => {
         if (channel.permissionsLocked) return;
-        const overwrites = channel.permissionOverwrites.get(role.id);
+        const overwrites = channel.permissionOverwrites.resolve(role.id);
         if (overwrites) {
-          if (channel.type == 'category') {
+          if (channel.type == 'GUILD_CATEGORY') {
             if (overwrites.deny.has(pFlags.SPEAK) &&
                 overwrites.deny.has(pFlags.SEND_MESSAGES)) {
               return;
             }
-          } else if (channel.type == 'voice') {
+          } else if (channel.type == 'GUILD_VOICE') {
             if (overwrites.deny.has(pFlags.SPEAK)) {
               return;
             }
-          } else if (channel.type == 'text') {
+          } else if (channel.type == 'GUILD_TEXT') {
             if (overwrites.deny.has(pFlags.SEND_MESSAGES)) {
               return;
             }
           }
         }
-        channel.updateOverwrite(role, {SEND_MESSAGES: false, SPEAK: false})
+        channel.permissionOverwrites
+            .edit(role, {SEND_MESSAGES: false, SPEAK: false})
             .catch(console.error);
       });
       if (member.voice.channel) member.voice.setMute(true, 'Smited');
@@ -838,7 +840,7 @@ class Moderation extends SubModule {
             .trim();
     if (reason == 'undefined') reason = null;
     banList.forEach((toBan) => {
-      if (msg.guild.ownerID !== msg.author.id &&
+      if (msg.guild.ownerId !== msg.author.id &&
           msg.member.roles.highest.comparePositionTo(toBan.roles.highest) <=
               0) {
         this.common

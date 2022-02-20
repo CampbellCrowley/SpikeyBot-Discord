@@ -66,7 +66,7 @@ class SendVictorAction extends ChannelAction {
     }
     finalMessage.setDescription(teamPlayerList);
 
-    let winnerTag = '';
+    let winnerTag = '\u200B';
     if (game.options.mentionVictor) {
       winnerTag = team.players.filter((p) => !p.startsWith('NPC'))
           .map((p) => `<@${p}>`)
@@ -76,7 +76,7 @@ class SendVictorAction extends ChannelAction {
     const avatarSizes = game.options.victorAvatarSizes;
     const victorIconSize = avatarSizes.avatar;
     if (victorIconSize === 0) {
-      channel.send(winnerTag, finalMessage);
+      channel.send({content: winnerTag, embeds: [finalMessage]});
     } else {
       const iconGap = avatarSizes.gap;
       const underlineSize = avatarSizes.underline;
@@ -122,16 +122,19 @@ class SendVictorAction extends ChannelAction {
         }
         responses++;
         if (responses == team.players.length) {
-          finalImage.getBuffer(
-              Jimp.MIME_PNG, (err, out) => {
-                finalMessage.attachFiles(
-                    [new hg._parent.Discord.MessageAttachment(
-                        out, 'hgTeamVictor.png')]);
-                channel.send(winnerTag, finalMessage).catch((err) => {
+          finalImage.getBuffer(Jimp.MIME_PNG, (err, out) => {
+            channel
+                .send({
+                  content: winnerTag,
+                  embeds: [finalMessage],
+                  files: [new hg._parent.Discord.MessageAttachment(
+                      out, 'hgTeamVictor.png')],
+                })
+                .catch((err) => {
                   hg._parent.error('Failed to send team victor image message.');
                   console.error(err);
                 });
-              });
+          });
         }
       };
       team.players.forEach((player) => {
@@ -170,7 +173,7 @@ class SendVictorAction extends ChannelAction {
     let winnerTag = '';
     if (game.options.mentionVictor && !p.isNPC) winnerTag = `<@${p.id}>`;
     if (game.options.disableOutput) return;
-    channel.send(winnerTag, finalMessage).catch((err) => {
+    channel.send({content: winnerTag, embeds: [finalMessage]}).catch((err) => {
       hg._parent.error('Failed to send solo winner message: ' + channel.id);
       console.error(err);
     });
@@ -189,7 +192,7 @@ class SendVictorAction extends ChannelAction {
     finalMessage.setTitle(
         `Everyone has died in ${current.name}!\nThere are no winners!`);
     if (game.options.disableOutput) return;
-    channel.send('', finalMessage).catch((err) => {
+    channel.send({embeds: [finalMessage]}).catch((err) => {
       hg._parent.error('Failed to send no winner message: ' + channel.id);
       console.error(err);
     });

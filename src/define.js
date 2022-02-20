@@ -76,9 +76,10 @@ function Define() {
           replyDef(msg, parsed);
         }
         if (msg.text.indexOf('--raw') > -1) {
-          msg.channel.send(
-              '```' + JSON.stringify(parsed, null, 1).substring(0, 1994) +
-              '```');
+          msg.channel.send({
+            content: '```' +
+                JSON.stringify(parsed, null, 1).substring(0, 1994) + '```',
+          });
         }
       });
     });
@@ -123,7 +124,7 @@ function Define() {
               .join('\n');
       embed.addField('Pronunciation', p, true);
     }
-    msg.channel.send(self.common.mention(msg), embed);
+    msg.channel.send({content: self.common.mention(msg), embeds: [embed]});
   }
 
   /**

@@ -59,7 +59,7 @@ function Polling() {
     self.command.deleteEvent('endpoll');
 
     Object.entries(currentPolls).forEach((p) => {
-      if (p[1].timeout) self.client.clearTimeout(p[1].timeout);
+      if (p[1].timeout) clearTimeout(p[1].timeout);
     });
   };
   /** @inheritdoc */
@@ -363,7 +363,7 @@ function Polling() {
       choices: choicesMatch,
     };
 
-    msg.channel.send(embed).then((msg_) => {
+    msg.channel.send({embeds: [embed]}).then((msg_) => {
       const poll = new Poll(msg.author.id, msg_, options);
       currentPolls[msg_.id] = poll;
 
@@ -386,9 +386,9 @@ function Polling() {
     if (poll.endTime) {
       const duration = poll.endTime - Date.now();
       if (duration > 0) {
-        poll.timeout = self.client.setTimeout(
-            (function(poll, key) {
-              return function() {
+        poll.timeout = setTimeout(
+            ((poll, key) => {
+              return () => {
                 endPoll(poll);
                 delete currentPolls[key];
               };
@@ -453,7 +453,7 @@ function Polling() {
       return false;
     }
     if (poll.timeout) {
-      self.client.clearTimeout(poll.timeout);
+      clearTimeout(poll.timeout);
       poll.timeout = null;
     }
     const reactions = poll.message.reactions.cache.filter(
@@ -464,11 +464,11 @@ function Polling() {
     embed.setDescription(`<@${poll.author}>'s poll results`);
 
     if (!poll.endTime) {
-      embed.setFooter('Poll ended manually');
+      embed.setFooter({text: 'Poll ended manually'});
     } else if (Date.now() < poll.endTime) {
-      embed.setFooter('Poll ended early');
+      embed.setFooter({text: 'Poll ended early'});
     } else {
-      embed.setFooter('Poll ended at time limit');
+      embed.setFooter({text: 'Poll ended at time limit'});
     }
 
     let index = -1;
@@ -489,7 +489,7 @@ function Polling() {
                 ' with ' + max + ' votes.');
     }
 
-    poll.message.channel.send(embed).catch((err) => {
+    poll.message.channel.send({embeds: [embed]}).catch((err) => {
       self.error(
           'Failed to send poll results to channel: ' + poll.message.channel.id);
       console.error(err);

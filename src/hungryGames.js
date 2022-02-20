@@ -1,4 +1,4 @@
-// Copyright 2018-2020 Campbell Crowley. All rights reserved.
+// Copyright 2018-2022 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const Jimp = require('jimp');
@@ -462,7 +462,7 @@ function HG() {
           (msg) => {
             if (self.common.trustedIds.includes(msg.author.id)) {
               self.save('async');
-              msg.channel.send('`Saving all data.`');
+              msg.channel.send({content: '`Saving all data.`'});
             }
           },
           cmdOpts),
@@ -983,7 +983,7 @@ function HG() {
       g.includedUsers = g.includedUsers.filter((u) => {
         const m = msg.guild.members.resolve(u);
         if (m && m.partial) m.fetch();
-        return m && !m.deleted;
+        return !!m;
       });
       if (msg.guild.memberCount >= HungryGames.largeServerCount) {
         g.excludedUsers = [];
@@ -1167,7 +1167,8 @@ function HG() {
       const file = new self.Discord.MessageAttachment();
       file.setFile(Buffer.from(JSON.stringify(game.serializable, null, 2)));
       file.setName(`HG-${finalId}.json`);
-      msg.channel.send(`HG Data for guild ${finalId}`, file);
+      msg.channel.send(
+          {content: `HG Data for guild ${finalId}`, files: [file]});
     } else {
       reply(msg, 'noGame', 'fillOne', finalId);
     }
@@ -1221,7 +1222,7 @@ function HG() {
      * @private
      */
     function loadingComplete() {
-      self.client.setTimeout(() => {
+      setTimeout(() => {
         self._fire('gameStarted', id);
         const game = hg.getGame(id);
         HungryGames.ActionManager.gameStart(hg, game);
@@ -1246,9 +1247,11 @@ function HG() {
       finalMessage.setTitle(hg.messages.get('gameStart', msg.locale));
 
       if (!g.autoPlay) {
-        finalMessage.setFooter(strings.get(
-            'gameStartNextDayInfo', msg.locale,
-            `${msg.prefix}${self.postPrefix}`));
+        finalMessage.setFooter({
+          text: strings.get(
+              'gameStartNextDayInfo', msg.locale,
+              `${msg.prefix}${self.postPrefix}`),
+        });
       }
 
       let mentions = self.common.mention(msg);
@@ -1256,13 +1259,14 @@ function HG() {
         mentions += '@everyone';
       }
 
-      msg.channel.send(mentions, finalMessage).catch((err) => {
-        reply(msg, 'startedTitle', 'startMessageRejected');
-        self.error(
-            'Failed to send start game message: ' + msg.channel.id + ' (Num: ' +
-            g.currentGame.includedUsers.length + ')');
-        console.error(err);
-      });
+      msg.channel.send({content: mentions, embeds: [finalMessage]})
+          .catch((err) => {
+            reply(msg, 'startedTitle', 'startMessageRejected');
+            self.error(
+                'Failed to send start game message: ' + msg.channel.id +
+                ' (Num: ' + g.currentGame.includedUsers.length + ')');
+            console.error(err);
+          });
       loadingComplete();
     });
     if (game && game.currentGame) game.currentGame.inProgress = true;
@@ -1347,7 +1351,8 @@ function HG() {
     }
     hg.getGame(id).autoPlay = false;
     if (msg && msg.channel) {
-      msg.channel.send(strings.get('pauseAuto', msg.locale, msg.author.id))
+      msg.channel
+          .send({content: strings.get('pauseAuto', msg.locale, msg.author.id)})
           .catch(() => {});
     }
   }
@@ -1388,7 +1393,10 @@ function HG() {
           return;
         }
         nextDay(msg, id);
-        msg.channel.send(strings.get('startAutoDay', msg.locale, msg.author.id))
+        msg.channel
+            .send({
+              content: strings.get('startAutoDay', msg.locale, msg.author.id),
+            })
             .catch(() => {});
       } else if (!game.currentGame.inProgress) {
         if (self.command.validate(`${msg.prefix}hg start`, msg)) {
@@ -1396,7 +1404,9 @@ function HG() {
           return;
         }
         msg.channel
-            .send(strings.get('startAutoGame', msg.locale, msg.author.id))
+            .send({
+              content: strings.get('startAutoGame', msg.locale, msg.author.id),
+            })
             .catch(() => {});
         startGame(msg, id);
       } else if (game.currentGame.isPaused) {
@@ -1404,7 +1414,9 @@ function HG() {
             msg, 'enableAutoTitle', 'resumeAutoInstructions',
             `${msg.prefix}${self.postPrefix}`);
       } else {
-        msg.channel.send(strings.get('enableAuto', msg.locale, msg.author.id))
+        msg.channel
+            .send(
+                {content: strings.get('enableAuto', msg.locale, msg.author.id)})
             .catch(() => {});
       }
     }
@@ -1785,7 +1797,7 @@ function HG() {
         break;
     }
     if (!Array.isArray(users)) {
-      users = users.array();
+      users = [...users.values()];
     }
     const num = users.length + npcs.length;
     const numUsers = users.length;
@@ -2084,7 +2096,7 @@ function HG() {
         break;
     }
     if (!Array.isArray(users)) {
-      users = users.array();
+      users = [...users.values()];
     }
     const num = users.length + npcs.length;
     const numUsers = users.length;
@@ -2269,11 +2281,14 @@ function HG() {
         strings.get(
             'playerRefreshInfo', msg.locale,
             `${msg.prefix}${self.postPrefix}`));
-    msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
-      reply(msg, 'messageRejected');
-      self.error('Failed to send list of players message: ' + msg.channel.id);
-      console.error(err);
-    });
+    msg.channel
+        .send({content: self.common.mention(msg), embeds: [finalMessage]})
+        .catch((err) => {
+          reply(msg, 'messageRejected');
+          self.error(
+              'Failed to send list of players message: ' + msg.channel.id);
+          console.error(err);
+        });
   }
 
   /**
@@ -2635,8 +2650,9 @@ function HG() {
 
     const embed = new self.Discord.MessageEmbed();
     embed.setTitle(strings.get('optionListTitle', msg.locale));
-    embed.setFooter(
-        strings.get('pageNumbers', msg.locale, page + 1, bodyFields.length));
+    embed.setFooter({
+      text: strings.get('pageNumbers', msg.locale, page + 1, bodyFields.length),
+    });
     embed.setDescription('```js\n' + bodyFields[page].join('\n\n') + '```');
     embed.addField(
         strings.get('optionListSimpleExampleTitle', msg.locale),
@@ -2652,11 +2668,11 @@ function HG() {
         true);
 
     if (optionMessages[msg.id]) {
-      msg.edit(embed).then(() => {
+      msg.edit({embeds: [embed]}).then(() => {
         optChangeListener(msg, options, page);
       });
     } else {
-      msg.channel.send(embed).then((msg_) => {
+      msg.channel.send({embeds: [embed]}).then((msg_) => {
         msg_.origAuth = msg.author.id;
         msg_.prefix = self.bot.getPrefix(msg.guild);
         optChangeListener(msg_, options, page);
@@ -2677,27 +2693,29 @@ function HG() {
     optionMessages[msg_.id] = msg_;
     msg_.react(emoji.arrowLeft).then(() => msg_.react(emoji.arrowRight));
     newReact(maxReactAwaitTime);
-    msg_.awaitReactions((reaction, user) => {
+    const filter = (reaction, user) => {
       if (user.id != self.client.user.id) {
         reaction.users.remove(user).catch(() => {});
       }
       return (reaction.emoji.name == emoji.arrowRight ||
                   reaction.emoji.name == emoji.arrowLeft) &&
               user.id != self.client.user.id;
-    }, {max: 1, time: maxReactAwaitTime}).then((reactions) => {
-      if (reactions.size == 0) {
-        msg_.reactions.removeAll().catch(() => {});
-        delete optionMessages[msg_.id];
-        return;
-      }
-      const name = reactions.first().emoji.name;
-      if (name == emoji.arrowRight) {
-        msg_.optId++;
-      } else if (name == emoji.arrowLeft) {
-        msg_.optId--;
-      }
-      showOpts(msg_, options);
-    });
+    };
+    msg_.awaitReactions({filter, max: 1, time: maxReactAwaitTime})
+        .then((reactions) => {
+          if (reactions.size == 0) {
+            msg_.reactions.removeAll().catch(() => {});
+            delete optionMessages[msg_.id];
+            return;
+          }
+          const name = reactions.first().emoji.name;
+          if (name == emoji.arrowRight) {
+            msg_.optId++;
+          } else if (name == emoji.arrowLeft) {
+            msg_.optId--;
+          }
+          showOpts(msg_, options);
+        });
   }
 
   // Team Management //
@@ -2717,7 +2735,8 @@ function HG() {
     if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       const message = strings.get('teamEditNoGame', msg.locale);
       if (!silent) {
-        msg.channel.send(self.common.mention(msg) + ' `' + message + '`')
+        msg.channel
+            .send({content: self.common.mention(msg) + ' `' + message + '`'})
             .catch(console.error);
       }
       return message;
@@ -2729,7 +2748,8 @@ function HG() {
         default: {
           const message = strings.get('teamEditInProgress', msg.locale);
           if (!silent) {
-            msg.channel.send(self.common.mention(msg) + ' `' + message + '`');
+            msg.channel.send(
+                {content: self.common.mention(msg) + ' `' + message + '`'});
           }
           return message;
         }
@@ -3163,10 +3183,11 @@ function HG() {
         const perms = msg.channel.permissionsFor(self.client.user);
         if (perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES) &&
             perms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES)) {
-          msg.channel.send(
-              strings.get('legacyBackup', msg.locale),
-              new self.Discord.MessageAttachment(
-                  Buffer.from(stringified), 'HGLegacyEventBackup.json'));
+          msg.channel.send({
+            content: strings.get('legacyBackup', msg.locale),
+            files: [new self.Discord.MessageAttachment(
+                Buffer.from(stringified), 'HGLegacyEventBackup.json')],
+          });
         }
       }
     });
@@ -3320,12 +3341,13 @@ function HG() {
       const embed = new self.Discord.MessageEmbed();
       embed.setTitle('NPC Info');
       embed.setDescription(specific.name);
-      embed.setFooter(specific.id);
+      embed.setFooter({text: specific.id});
       embed.setThumbnail(specific.avatarURL);
-      msg.channel.send(self.common.mention(msg), embed).catch((err) => {
-        self.error('Failed to send NPC info message: ' + msg.channel.id);
-        console.error(err);
-      });
+      msg.channel.send({content: self.common.mention(msg), embeds: [embed]})
+          .catch((err) => {
+            self.error('Failed to send NPC info message: ' + msg.channel.id);
+            console.error(err);
+          });
     } else if (msg.text && !['show', 'list'].includes(msg.text.trim())) {
       reply(
           msg, 'npcUnknownTitle', 'npcUnknownBody', msg.text,
@@ -3387,11 +3409,14 @@ function HG() {
             strings.get('listPlayerExcludedNum', msg.locale, numENPCs),
             eList.join('\n') || 'None', false);
       }
-      msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
-        reply(msg, 'messageRejected', 'npcTooMany');
-        self.error('Failed to send list of NPCs message: ' + msg.channel.id);
-        console.error(err);
-      });
+      msg.channel
+          .send({content: self.common.mention(msg), embeds: [finalMessage]})
+          .catch((err) => {
+            reply(msg, 'messageRejected', 'npcTooMany');
+            self.error(
+                'Failed to send list of NPCs message: ' + msg.channel.id);
+            console.error(err);
+          });
     }
   }
 
@@ -3564,34 +3589,40 @@ function HG() {
           strings.get(
               'npcConfirmDescription', msg.locale, emoji.whiteCheckMark,
               emoji.x));
-      embed.attachFiles(
-          [new self.Discord.MessageAttachment(buffer, `${username}.png`)]);
-      msg.channel.send(embed)
+      msg.channel
+          .send({
+            embeds: [embed],
+            files:
+                [new self.Discord.MessageAttachment(buffer, `${username}.png`)],
+          })
           .then((msg_) => {
             msg_.react(emoji.whiteCheckMark).then(() => msg_.react(emoji.x));
             newReact(maxReactAwaitTime);
-            msg_.awaitReactions((reaction, user) => {
-              return user.id == msg.author.id &&
-                      (reaction.emoji.name == emoji.whiteCheckMark ||
-                       reaction.emoji.name == emoji.x);
-            }, {max: 1, time: maxReactAwaitTime}).then((reactions) => {
-              embed.setDescription('');
-              if (reactions.size == 0) {
-                msg_.reactions.removeAll().catch(() => {});
-                embed.setFooter(strings.get('timedOut', msg.locale));
-                msg_.edit(embed);
-              } else if (
-                reactions.first().emoji.name == emoji.whiteCheckMark) {
-                msg_.reactions.removeAll().catch(() => {});
-                embed.setFooter(strings.get('confirmed', msg.locale));
-                msg_.edit(embed);
-                onConfirm(image);
-              } else {
-                msg_.reactions.removeAll().catch(() => {});
-                embed.setFooter(strings.get('cancelled', msg.locale));
-                msg_.edit(embed);
-              }
-            });
+            const filter = (reaction, user) => user.id == msg.author.id &&
+                (reaction.emoji.name == emoji.whiteCheckMark ||
+                 reaction.emoji.name == emoji.x);
+            msg_.awaitReactions({filter, max: 1, time: maxReactAwaitTime})
+                .then((reactions) => {
+                  embed.setDescription('');
+                  if (reactions.size == 0) {
+                    msg_.reactions.removeAll().catch(() => {});
+                    embed.setFooter(
+                        {text: strings.get('timedOut', msg.locale)});
+                    msg_.edit({embeds: [embed]});
+                  } else if (
+                    reactions.first().emoji.name == emoji.whiteCheckMark) {
+                    msg_.reactions.removeAll().catch(() => {});
+                    embed.setFooter(
+                        {text: strings.get('confirmed', msg.locale)});
+                    msg_.edit({embeds: [embed]});
+                    onConfirm(image);
+                  } else {
+                    msg_.reactions.removeAll().catch(() => {});
+                    embed.setFooter(
+                        {text: strings.get('cancelled', msg.locale)});
+                    msg_.edit({embeds: [embed]});
+                  }
+                });
           })
           .catch((err) => {
             self.error('Failed to send NPC confirmation: ' + msg.channel.id);
@@ -3782,8 +3813,8 @@ function HG() {
     if (typeof success === 'string') {
       reply(msg, 'npcDeleteFailed', success);
     } else {
-      msg.channel.send(success).catch(
-          () => reply(msg, 'npcDeleteSuccess', 'fillOne', toDelete.id));
+      msg.channel.send({embeds: [success]})
+          .catch(() => reply(msg, 'npcDeleteSuccess', 'fillOne', toDelete.id));
     }
   }
   /**
@@ -3820,7 +3851,7 @@ function HG() {
     const embed = new self.Discord.MessageEmbed();
     embed.setTitle(strings.get('npcDeleteSuccess', locale));
     embed.setDescription(toDelete.name);
-    embed.setFooter(toDelete.id);
+    embed.setFooter({text: toDelete.id});
     embed.setThumbnail(toDelete.avatarURL);
     return embed;
   };
@@ -3857,7 +3888,10 @@ function HG() {
    * @param {Discord~Message} msg The message that lead to this being called.
    */
   function help(msg) {
-    msg.author.send(self.helpMessage)
+    const message = typeof self.helpMessage === 'string' ?
+        {content: self.helpMessage} :
+        {embeds: [self.helpMessage]};
+    msg.author.send(message)
         .then(() => {
           if (msg.guild != null) {
             reply(msg, 'helpMessageSuccess', 'fillOne', ':wink:')
@@ -3892,7 +3926,7 @@ function HG() {
     const checkDone = function() {
       numDone++;
       if (numDone === numTotal) {
-        msg.channel.send(self.common.mention(msg), embed);
+        msg.channel.send({content: self.common.mention(msg), embeds: [embed]});
       }
     };
 
@@ -4267,12 +4301,13 @@ function HG() {
             `${(numCols - 1) * quarterLength + 1}-${numTotal}`,
             list.join('\n').slice(0, 1024) || '.', true);
 
-        msg.channel.send(self.common.mention(msg), embed).catch((err) => {
-          self.error(
-              'Failed to send leaderboard in channel: ' + msg.channel.id);
-          console.error(err);
-          reply(msg, 'lbSendFailed', 'fillOne', err.code);
-        });
+        msg.channel.send({content: self.common.mention(msg), embeds: [embed]})
+            .catch((err) => {
+              self.error(
+                  'Failed to send leaderboard in channel: ' + msg.channel.id);
+              console.error(err);
+              reply(msg, 'lbSendFailed', 'fillOne', err.code);
+            });
       });
     });
   }
@@ -4287,15 +4322,17 @@ function HG() {
    */
   function commandNums(msg) {
     if (self.client.shard) {
-      self.client.shard.broadcastEval('this.getHGStats(true)').then((res) => {
-        const embed = new self.Discord.MessageEmbed();
-        embed.setTitle(strings.get('numsTitle', msg.locale));
-        res.forEach((el, i) => embed.addField(`#${i}`, el, true));
-        msg.channel.send(embed);
-      }).catch((err) => {
-        reply(msg, 'numsFailure');
-        self.error(err);
-      });
+      self.client.shard.broadcastEval('this.getHGStats(true)')
+          .then((res) => {
+            const embed = new self.Discord.MessageEmbed();
+            embed.setTitle(strings.get('numsTitle', msg.locale));
+            res.forEach((el, i) => embed.addField(`#${i}`, el, true));
+            msg.channel.send({embeds: [embed]});
+          })
+          .catch((err) => {
+            reply(msg, 'numsFailure');
+            self.error(err);
+          });
     } else {
       self.common.reply(msg, getStatsString(false, msg.locale));
     }
@@ -4350,7 +4387,7 @@ function HG() {
     const embed = new self.Discord.MessageEmbed();
     embed.setThumbnail('https://discordemoji.com/assets/emoji/rigged.png');
     embed.setColor([187, 26, 52]);
-    msg.channel.send(self.common.mention(msg), embed);
+    msg.channel.send({content: self.common.mention(msg), embeds: [embed]});
   }
 
   /**
@@ -4729,7 +4766,7 @@ function HG() {
     embed.setDescription(strings.get(
         'reactToJoinBody', locale,
         hg.getGame(channel.guild.id).currentGame.name));
-    channel.send(embed).then((msg) => {
+    channel.send({embeds: [embed]}).then((msg) => {
       hg.getGame(channel.guild.id).reactMessage = {
         id: msg.id,
         channel: msg.channel.id,
@@ -4810,7 +4847,7 @@ function HG() {
         hg.getGame(id).reactMessage = null;
         const locale = self.bot.getLocale && self.bot.getLocale(id);
         const ended = strings.get('ended', locale);
-        msg.edit(`\`${ended}\``).catch(() => {});
+        msg.edit({content: `\`${ended}\``}).catch(() => {});
         if (list.size == 0) {
           cb(null, 'reactNoUsers');
         } else {

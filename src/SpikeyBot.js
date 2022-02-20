@@ -1,4 +1,4 @@
-// Copyright 2018-2020 Campbell Crowley. All rights reserved.
+// Copyright 2018-2022 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 
 // Increase maximum listener count because we often burst many listeners for a
@@ -517,18 +517,22 @@ function SpikeyBot() {
     return;
   }
 
-  let disabledEvents = ['TYPING_START'];
-  // let defaultPresence = {
-  //   status: 'online',
-  //   activity: {
-  //     name: 'SpikeyBot.com',
-  //     type: 'WATCHING',
-  //   },
-  // };
+  let intents = [
+    Discord.Intents.FLAGS.GUILDS,
+    Discord.Intents.FLAGS.GUILD_MEMBERS,
+    Discord.Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+    Discord.Intents.FLAGS.GUILD_WEBHOOKS,
+    Discord.Intents.FLAGS.GUILD_VOICE_STATES,
+    Discord.Intents.FLAGS.GUILD_PRESENCES,
+    Discord.Intents.FLAGS.GUILD_MESSAGES,
+    Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    Discord.Intents.FLAGS.DIRECT_MESSAGES,
+    Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
+  ];
   let defaultPresence = {
     status: 'idle',
     activity: {
-      name: 'Thanks for the memories.',
+      name: 'Somehow still kicking!',
       type: 'WATCHING',
     },
   };
@@ -543,50 +547,14 @@ function SpikeyBot() {
         type: 'PLAYING',
       }, */
     };
-    disabledEvents = [
-      // 'GUILD_CREATE',
-      // 'GUILD_DELETE',
-      'GUILD_UPDATE',
-      'GUILD_MEMBER_ADD',
-      'GUILD_MEMBER_REMOVE',
-      'GUILD_MEMBER_UPDATE',
-      'GUILD_MEMBERS_CHUNK',
-      'GUILD_INTEGRATIONS_UPDATE',
-      'GUILD_ROLE_CREATE',
-      'GUILD_ROLE_DELETE',
-      'GUILD_ROLE_UPDATE',
-      'GUILD_BAN_ADD',
-      'GUILD_BAN_REMOVE',
-      // 'CHANNEL_CREATE',
-      // 'CHANNEL_DELETE',
-      // 'CHANNEL_UPDATE',
-      'CHANNEL_PINS_UPDATE',
-      'MESSAGE_CREATE',
-      'MESSAGE_DELETE',
-      'MESSAGE_UPDATE',
-      'MESSAGE_DELETE_BULK',
-      'MESSAGE_REACTION_ADD',
-      'MESSAGE_REACTION_REMOVE',
-      'MESSAGE_REACTION_REMOVE_ALL',
-      // 'USER_UPDATE',
-      'USER_NOTE_UPDATE',
-      'USER_SETTINGS_UPDATE',
-      /* 'PRESENCE_UPDATE', */
-      'VOICE_STATE_UPDATE',
-      'TYPING_START',
-      'VOICE_SERVER_UPDATE',
-      'WEBHOOKS_UPDATE',
-    ];
+    intents = [];
   }
 
 
   // If we are not managing shards, just start normally.
   const client = new Discord.Client({
-    disabledEvents: disabledEvents,
+    intents: intents,
     presence: defaultPresence,
-    messageCacheLifetime: 24 * 60 * 60,
-    messageSweepInterval: 60 * 60,
-    messageCacheSize: 50,
   });
 
   /**
@@ -719,11 +687,11 @@ function SpikeyBot() {
   function updateGame(game, type) {
     if (!client.user) return;
     client.user.setPresence({
-      activity: {
+      activities: [{
         name: game,
         type: type || 'WATCHING',
         url: 'https://www.spikeybot.com',
-      },
+      }],
       status: ((testInstance || isBackup) ? 'dnd' : 'online'),
     });
   }
@@ -756,20 +724,22 @@ function SpikeyBot() {
     let logChannel = client.channels.resolve(common.logChannel);
     if (client.user && !logChannel && auth.logWebhookId &&
         auth.logWebhookToken) {
-      logChannel =
-          new Discord.WebhookClient(auth.logWebhookId, auth.logWebhookToken);
+      logChannel = new Discord.WebhookClient(
+          {id: auth.logWebhookId, token: auth.logWebhookToken});
     }
     if (testInstance) {
       client.users.fetch(common.spikeyId)
           .then((u) => {
-            u.send(`Beginning in unit test mode (JS${self.version})`);
+            u.send(
+                {content: `Beginning in unit test mode (JS${self.version})`});
           })
           .catch((err) => {
             common.error('Failed to find SpikeyRobot\'s DMs');
             console.error(err);
-            logChannel.send(
-                'Beginning in unit test mode (JS' + self.version +
-                ') (FAILED TO FIND SpikeyRobot\'s DMs!)');
+            logChannel.send({
+              content: 'Beginning in unit test mode (JS' + self.version +
+                  ') (FAILED TO FIND SpikeyRobot\'s DMs!)',
+            });
           });
     }
     if (!isBackup) {
@@ -832,7 +802,7 @@ function SpikeyBot() {
                   const embed = new Discord.MessageEmbed();
                   embed.setTitle('Reboot complete.');
                   embed.setColor([255, 0, 255]);
-                  return msg_.edit(embed);
+                  return msg_.edit({embeds: [embed]});
                 })
                 .catch((err) => {
                   common.error('Failed to edit reboot message.');
@@ -863,14 +833,15 @@ function SpikeyBot() {
             if (self.fqdn) {
               additional += `[FQDN: ${self.fqdn}]`;
             }
-            logChannel.send(
-                'I just rebooted (JS' + self.version + ') ' +
-                (minimal ? 'MINIMAL' : 'FULL') + additional);
+            logChannel.send({
+              content: 'I just rebooted (JS' + self.version + ') ' +
+                  (minimal ? 'MINIMAL' : 'FULL') + additional,
+            });
           }
         });
       }
       if (!initialized) {
-        loadGuildPrefixes(Array.from(client.guilds.cache.array()));
+        loadGuildPrefixes(Array.from([...client.guilds.cache.values()]));
       }
     }
     const req = require('https').request(
@@ -952,7 +923,7 @@ function SpikeyBot() {
   }
 
   if (!isBackup) {
-    client.on('message', onMessage);
+    client.on('messageCreate', onMessage);
   }
   /**
    * Handle a message sent.
@@ -976,7 +947,7 @@ function SpikeyBot() {
           msg.channel.id == common.testChannel) {
         if (isDev && msg.content === '~`RUN UNIT TESTS`~') {
           testMode = true;
-          msg.channel.send('~`UNIT TEST MODE ENABLED`~');
+          msg.channel.send({content: '~`UNIT TEST MODE ENABLED`~'});
         }
         return;
       } else if (testMode && msg.author.id !== client.user.id) {
@@ -986,7 +957,7 @@ function SpikeyBot() {
           msg.content === '~`END UNIT TESTS`~' &&
           msg.channel.id == common.testChannel) {
         testMode = false;
-        msg.channel.send('~`UNIT TEST MODE DISABLED`~');
+        msg.channel.send({content: '~`UNIT TEST MODE DISABLED`~'});
         return;
       }
     }
@@ -1070,9 +1041,10 @@ function SpikeyBot() {
           'I\'m too tired.',
         ];
         msg.channel
-            .send(
-                aprilFoolsList[Math.floor(
-                    Math.random() * aprilFoolsList.length)])
+            .send({
+              content: aprilFoolsList[Math.floor(
+                  Math.random() * aprilFoolsList.length)],
+            })
             .catch(() => {});
         commandSuccess = true;
       } else {
@@ -1087,9 +1059,11 @@ function SpikeyBot() {
       if (!commandSuccess && msg.guild === null && !minimal && !testMode) {
         if (msg.content.split(/ |\n/)[0].indexOf('chat') < 0 &&
             !command.trigger('chat', msg)) {
-          msg.channel.send(
-              'Oops! I\'m not sure how to help with that! Type **help** for ' +
-              'a list of commands I know how to respond to.');
+          msg.channel.send({
+            content:
+                'Oops! I\'m not sure how to help with that! Type **help** ' +
+                'for a list of commands I know how to respond to.',
+          });
         }
       } /* else if (isBackup && msg.content.length > 3) {
         common.reply(
@@ -1230,22 +1204,28 @@ function SpikeyBot() {
               canReact ? null : `React with ${confirmEmoji} to confirm.`)
           .then((msg_) => {
             if (canReact) msg_.react(confirmEmoji);
-            msg_.awaitReactions((reaction, user) => {
+            const filter = (reaction, user) => {
               if (user.id !== msg.author.id) return false;
               return reaction.emoji.name == confirmEmoji;
-            }, {max: 1, time: 60000}).then((reactions) => {
-              msg_.reactions.removeAll().catch(() => {});
-              if (reactions.size == 0) {
-                msg_.edit(
-                    'Changing custom prefix timed out. Enter command again ' +
-                    'if you still wish to change the command prefix.');
-                return;
-              }
-              msg_.edit(
-                  common.mention(msg) + ' Prefix changed to `' + newPrefix +
-                  '`!');
-              self.changePrefix(msg.guild.id, newPrefix);
-            });
+            };
+            msg_.awaitReactions({filter, max: 1, time: 60000})
+                .then((reactions) => {
+                  msg_.reactions.removeAll().catch(() => {});
+                  if (reactions.size == 0) {
+                    msg_.edit({
+                      content:
+                          'Changing custom prefix timed out. Enter command ' +
+                          'again if you still wish to change the command ' +
+                          'prefix.',
+                    });
+                    return;
+                  }
+                  msg_.edit({
+                    content: common.mention(msg) + ' Prefix changed to `' +
+                        newPrefix + '`!',
+                  });
+                  self.changePrefix(msg.guild.id, newPrefix);
+                });
           });
     }
   }
@@ -1406,9 +1386,9 @@ function SpikeyBot() {
   function commandReload(msg) {
     if (common.trustedIds.includes(msg.author.id)) {
       if (client.shard) {
-        const message = encodeURIComponent(msg.text);
-        client.shard.broadcastEval(
-            `this.commandMainReload("${message}",${client.shard.ids[0]})`);
+        client.shard.broadcastEval(((text, ids) => {
+          return (client) => client.commandMainReload(text, ids);
+        })(msg.text, client.shard.ids[0]));
       }
       const toReload = msg.text.split(' ').splice(1);
       const reloaded = [];
@@ -1418,7 +1398,7 @@ function SpikeyBot() {
           embed.setTitle('Reload completed with errors.');
           embed.setDescription(reloaded.join(' ') || 'NOTHING reloaded');
           embed.setColor([255, 0, 255]);
-          warnMessage.edit(common.mention(msg), embed);
+          warnMessage.edit({content: common.mention(msg), embeds: [embed]});
         } else if (minimal) {
           warnMessage.delete();
         } else {
@@ -1426,7 +1406,7 @@ function SpikeyBot() {
           embed.setTitle('Reload complete.');
           embed.setDescription(reloaded.join(' ') || 'NOTHING reloaded');
           embed.setColor([255, 0, 255]);
-          warnMessage.edit(common.mention(msg), embed);
+          warnMessage.edit({content: common.mention(msg), embeds: [embed]});
         }
       });
     } else {
@@ -1444,7 +1424,7 @@ function SpikeyBot() {
      * @param {string} message Message relevant to reloading.
      */
     client.commandMainReload = function(message) {
-      const toReload = decodeURIComponent(message).split(' ').splice(1);
+      const toReload = message.split(' ').splice(1);
       const reloaded = [];
       reloadMainModules(toReload, reloaded);
     };
@@ -1629,7 +1609,7 @@ function SpikeyBot() {
       return;
     }
     saveAll();
-    msg.channel.send(common.mention(msg) + ' `Triggered data save`');
+    msg.channel.send({content: common.mention(msg) + ' `Triggered data save`'});
   }
 
   /**
