@@ -164,19 +164,19 @@ function Sandbox() {
       self.debug('STDOUT: ' + stdout);
       return;
     }
-    const embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.EmbedBuilder();
     embed.setColor([0, 255, 255]);
     if (stdout.length > 0) {
       if (stdout.indexOf('\\n') != stdout.lastIndexOf('\\n')) {
         stdout = stdout.replace(/\\n/g, '\n');
       }
-      embed.addField('STDOUT', stdout.substr(0, 1024), true);
+      embed.addFields([{name: 'STDOUT', value: stdout.substr(0, 1024)}]);
     }
     if (stderr.length > 0) {
       if (stderr.indexOf('\\n') != stderr.lastIndexOf('\\n')) {
         stderr = stderr.replace(/\\n/g, '\n');
       }
-      embed.addField('STDERR', stderr.substr(0, 1024), true);
+      embed.addFields([{name: 'STDERR', value: stderr.substr(0, 1024)}]);
     }
     msg.channel.send({content: self.common.mention(msg), embeds: [embed]});
   }

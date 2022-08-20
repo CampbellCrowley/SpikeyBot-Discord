@@ -40,7 +40,7 @@ function Command() {
     const cmdSettings = new CommandSetting({
       validOnlyInGuild: true,
       defaultDisabled: true,
-      permissions: self.Discord.Permissions.FLAGS.MANAGE_GUILD,
+      permissions: self.Discord.PermissionsBitField.Flags.ManageGuild,
     });
     self.on(new SingleCommand(['disable'], commandDisable, cmdSettings));
     self.on(new SingleCommand(['enable'], commandEnable, cmdSettings));
@@ -591,7 +591,8 @@ function Command() {
         } else if (msg.member) {
           perms = msg.member.permissions.bitfield;
         }
-        permOverride = (perms & self.Discord.Permissions.FLAGS.ADMINISTRATOR) ||
+        permOverride =
+            (perms & self.Discord.PermissionsBitField.Flags.Administrator) ||
             (msg.guild.ownerId === msg.author.id);
         hasPerm = (perms & me.permissions) || permOverride;
         hasPerm = (hasPerm && true) || false;
@@ -1046,9 +1047,9 @@ function Command() {
       return;
     }
     const trimmedText =
-        msg.text.replace(self.Discord.MessageMentions.CHANNELS_PATTERN, '')
-            .replace(self.Discord.MessageMentions.USERS_PATTERN, '')
-            .replace(self.Discord.MessageMentions.ROLES_PATTERN, '')
+        msg.text.replace(self.Discord.MessageMentions.ChannelsPattern, '')
+            .replace(self.Discord.MessageMentions.UsersPattern, '')
+            .replace(self.Discord.MessageMentions.RolesPattern, '')
             .trim();
     const list = self.findAll(trimmedText, msg);
     if (!list.length) {
@@ -1101,9 +1102,10 @@ function Command() {
         disabledList.push('Default is now DISABLED');
         return;
       }
-      if (self.Discord.Permissions.FLAGS[el]) {
+      if (self.Discord.PermissionsBitField.Flags[el]) {
         settings.forEach((s) => {
-          s.permissions = s.permissions & (~self.Discord.Permissions.FLAGS[el]);
+          s.permissions =
+              s.permissions & (~self.Discord.PermissionsBitField.Flags[el]);
         });
         disabledList.push('Permission: ' + el);
         return;
@@ -1151,9 +1153,9 @@ function Command() {
       return;
     }
     const trimmedText =
-        msg.text.replace(self.Discord.MessageMentions.CHANNELS_PATTERN, '')
-            .replace(self.Discord.MessageMentions.USERS_PATTERN, '')
-            .replace(self.Discord.MessageMentions.ROLES_PATTERN, '')
+        msg.text.replace(self.Discord.MessageMentions.ChannelsPattern, '')
+            .replace(self.Discord.MessageMentions.UsersPattern, '')
+            .replace(self.Discord.MessageMentions.RolesPattern, '')
             .trim();
     const list = self.findAll(trimmedText, msg);
     if (!list.length) {
@@ -1205,9 +1207,9 @@ function Command() {
         enabledList.push('Default is now ENABLED');
         return;
       }
-      if (self.Discord.Permissions.FLAGS[el]) {
+      if (self.Discord.Permissions.Flags[el]) {
         settings.forEach((s) => {
-          s.permissions = s.permissions | self.Discord.Permissions.FLAGS[el];
+          s.permissions = s.permissions | self.Discord.Permissions.Flags[el];
         });
         enabledList.push('Permission: ' + el);
         return;
@@ -1473,11 +1475,11 @@ function Command() {
             msg, 'I wasn\'t able to fit all settings into a message.');
         return;
       }
-      const embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.EmbedBuilder();
       embed.setColor([255, 0, 255]);
       embed.setTitle('Command Permissions');
       for (let i = 0; i < finalSplits.length; i++) {
-        embed.addField('\u200B', finalSplits[i], true);
+        embed.addFields([{name: '\u200B', values: finalSplits[i]}]);
       }
       embed.setDescription(
           'Reset values to default with ' + msg.prefix +
@@ -1613,7 +1615,7 @@ function Command() {
    * @public
    *
    * @param {string} name The name of the event to listen for.
-   * @param {Function} handler THe handler that is currently registered to
+   * @param {Function} handler The handler that is currently registered to
    * listen on this event.
    */
   this.removeEventListener = function(name, handler) {

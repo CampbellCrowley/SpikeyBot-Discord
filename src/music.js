@@ -241,7 +241,7 @@ function Music() {
     self.client.on('voiceStateUpdate', handleVoiceStateUpdate);
 
     // Format help message into rich embed.
-    const tmpHelp = new self.Discord.MessageEmbed();
+    const tmpHelp = new self.Discord.EmbedBuilder();
     tmpHelp.setTitle(
         helpObject.title.replaceAll('{prefix}', self.bot.getPrefix()));
     tmpHelp.setURL(self.common.webURL);
@@ -250,8 +250,10 @@ function Music() {
     helpObject.sections.forEach((obj) => {
       const titleID = encodeURIComponent(obj.title.replace(/\s/g, '_'));
       const titleURL = `${self.common.webHelp}#${titleID} `;
-      tmpHelp.addField(
-          obj.title, titleURL + '```js\n' +
+      tmpHelp.addFields([
+        {
+          name: obj.title,
+          value: titleURL + '```js\n' +
               obj.rows
                   .map((row) => {
                     if (typeof row === 'string') {
@@ -268,7 +270,8 @@ function Music() {
                   })
                   .join('\n') +
               '\n```',
-          true);
+        },
+      ]);
     });
     tmpHelp.setFooter({
       text: 'Note: If a custom prefix is being used, replace `' +
@@ -467,7 +470,7 @@ function Music() {
    * determine remaining play time.
    * @param {number} [seek=0] The offset to add to totalStreamTime to correct
    * for starting playback somewhere other than the beginning.
-   * @returns {Discord~MessageEmbed} The formatted song info.
+   * @returns {Discord~EmbedBuilder} The formatted song info.
    */
   function formatSongInfo(info, dispatcher, seek) {
     if (!seek) seek = 0;
@@ -484,7 +487,7 @@ function Music() {
           formatPlaytime(getRemainingSeconds(info, dispatcher) - seek) +
           ' left)';
     }
-    const output = new self.Discord.MessageEmbed();
+    const output = new self.Discord.EmbedBuilder();
     const title = info.track || info.title;
     const author = info.uploader ? `Uploaded by ${info.uploader}\n` : '';
     const likes = (info.like_count || info.dislike_count) ?
@@ -675,7 +678,7 @@ function Music() {
         if (!special[broadcast.current.song].url) {
           broadcast.isLoading = false;
           if (!broadcast.subjugated && broadcast.current.request) {
-            const embed = new self.Discord.MessageEmbed();
+            const embed = new self.Discord.EmbedBuilder();
             embed.setTitle(
                 'Now playing [' + broadcast.queue.length + ' left in queue]');
             embed.setColor([50, 200, 255]);
@@ -1083,7 +1086,7 @@ function Music() {
       }
       if (special[song]) {
         if (!broadcasts[msg.guild.id].subjugated) {
-          const embed = new self.Discord.MessageEmbed();
+          const embed = new self.Discord.EmbedBuilder();
           embed.setTitle(
               'Enqueuing ' + song + ' [' +
               (broadcasts[msg.guild.id].queue.length + 1) + ' in queue]');
@@ -1236,13 +1239,13 @@ function Music() {
               broadcasts[msg.guild.id].broadcast.dispatcher,
               broadcasts[msg.guild.id].current.seek);
         } else {
-          embed = new self.Discord.MessageEmbed();
+          embed = new self.Discord.EmbedBuilder();
           embed.setColor([50, 200, 255]);
           embed.setDescription(broadcasts[msg.guild.id].current.song);
         }
         embed.setTitle('Current Song Queue');
       } else {
-        embed = new self.Discord.MessageEmbed();
+        embed = new self.Discord.EmbedBuilder();
       }
       if (broadcasts[msg.guild.id].queue.length > 0) {
         let queueDuration = 0;
@@ -1259,10 +1262,11 @@ function Music() {
               }
             })
             .join('\n');
-        embed.addField(
-            'Queue [' + (queueExact ? '' : '>') +
-                formatPlaytime(queueDuration) + ']',
-            queueString.substr(0, 1024));
+        embed.addFields([{
+          name: 'Queue [' + (queueExact ? '' : '>') +
+              formatPlaytime(queueDuration) + ']',
+          value: queueString.substr(0, 1024),
+        }]);
       }
       msg.channel.send({embeds: [embed]});
     }
@@ -1512,7 +1516,7 @@ function Music() {
       }
       const splitLyrics =
           lyrics.join('\n').match(/(\[[^\]]*\][^[]*)/gm).slice(1);
-      const embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.EmbedBuilder();
       if (title) embed.setTitle(title);
       if (url) embed.setURL(url);
       if (thumb) embed.setThumbnail(thumb);
@@ -1523,9 +1527,11 @@ function Music() {
         const secTitle = splitLine[1].substr(0, 256);
         const secBody = splitLine[2];
         for (let j = 0; numFields < 25 && j * 1024 < secBody.length; j++) {
-          embed.addField(
-              j === 0 ? secTitle : (secTitle + ' continued...').substr(0, 256),
-              secBody.substr(j * 1024, 1024) || '\u200B', true);
+          embed.addFields([{
+            name: j === 0 ? secTitle :
+                            (secTitle + ' continued...').substr(0, 256),
+            value: secBody.substr(j * 1024, 1024) || '\u200B',
+          }]);
           numFields++;
         }
       }

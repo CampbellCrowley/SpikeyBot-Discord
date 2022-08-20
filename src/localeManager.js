@@ -76,7 +76,7 @@ class LocaleManager extends SubModule {
             this._commandLanguage, {
               validOnlyInGuild: true,
               defaultDisabled: true,
-              permissions: this.Discord.Permissions.FLAGS.MANAGE_GUILD,
+              permissions: this.Discord.PermissionsBitField.Flags.ManageGuild,
             }));
 
     this.client.guilds.cache.forEach((g) => {
@@ -259,7 +259,7 @@ class LocaleManager extends SubModule {
       return;
     }
     const desc = msg.channel.permissionsFor(msg.guild.me)
-        .has(this.Discord.Permissions.FLAGS.ADD_REACTIONS) ?
+        .has(this.Discord.PermissionsBitField.Flags.AddReactions) ?
         'fillOne' :
         'confirmLocaleReact';
     const emoji = '✅';

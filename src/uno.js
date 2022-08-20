@@ -15,17 +15,16 @@ function Uno() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    pFlags = self.Discord.Permissions.FLAGS;
-    self.command.on(
-        new self.command.SingleCommand(
-            ['uno', 'one'], commandUno, {validOnlyInGuild: true}, [
-              new self.command.SingleCommand('endall', commandEndAll, {
-                validOnlyInGuild: true,
-                permissions: pFlags.MANAGE_CHANNELS,
-                defaultDisabled: true,
-              }),
-              new self.command.SingleCommand('stats', commandStats),
-            ]));
+    pFlags = self.Discord.PermissionsBitField.Flags;
+    self.command.on(new self.command.SingleCommand(
+        ['uno', 'one'], commandUno, {validOnlyInGuild: true}, [
+          new self.command.SingleCommand('endall', commandEndAll, {
+            validOnlyInGuild: true,
+            permissions: pFlags.ManageChannels,
+            defaultDisabled: true,
+          }),
+          new self.command.SingleCommand('stats', commandStats),
+        ]));
   };
 
   /** @inheritdoc */
@@ -74,7 +73,7 @@ function Uno() {
   let numGames = 0;
 
   /**
-   * Self.Discord.Permissions.FLAGS.
+   * Self.Discord.Permissions.Flags.
    *
    * @private
    */
@@ -138,7 +137,7 @@ function Uno() {
    * @listens Command#uno
    */
   function commandUno(msg) {
-    if (!msg.guild.me.permissions.has(pFlags.MANAGE_CHANNELS)) {
+    if (!msg.guild.me.permissions.has(pFlags.ManageChannels)) {
       self.common.reply(
           msg,
           'I need permission to manage channels in order to start a game of ' +
@@ -176,7 +175,7 @@ function Uno() {
    * @listens Command#uno_endall
    */
   function commandEndAll(msg) {
-    if (!msg.guild.me.permissions.has(pFlags.MANAGE_CHANNELS)) {
+    if (!msg.guild.me.permissions.has(pFlags.ManageChannels)) {
       self.common.reply(msg, 'I don\'t have permission to manage channels.');
       return;
     }
@@ -602,12 +601,12 @@ function Uno() {
         {
           id: maker.guild.roles.everyone,
           allow: 0,
-          deny: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
+          deny: pFlags.ViewChannel | pFlags.SendMessages,
           type: 'role',
         },
         {
           id: self.client.user.id,
-          allow: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
+          allow: pFlags.ViewChannel | pFlags.SendMessages,
           deny: 0,
           type: 'member',
         },
@@ -616,7 +615,7 @@ function Uno() {
         members[memberList[i].id] = memberList[i];
         groupPerms.push({
           id: memberList[i].id,
-          allow: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
+          allow: pFlags.ViewChannel | pFlags.SendMessages,
           deny: 0,
           type: 'member',
         });
@@ -664,7 +663,7 @@ function Uno() {
         // random notifications.
         /* game.groupChannel.permissionOverwrites
             .resolve(maker.guild.roles.everyone)
-            .update({VIEW_CHANNEL: true}); */
+            .update({ViewChannel: true}); */
       });
       if (currentCollector) {
         currentCollector.stop(
@@ -795,7 +794,7 @@ function Uno() {
      * Send the list of current players in this game to the group channel.
      */
     function listPlayers() {
-      const embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.EmbedBuilder();
       embed.setTitle('Current Players');
       embed.setDescription(players.map((p) => p.name).join(', '));
       embed.setColor('WHITE');
@@ -810,7 +809,7 @@ function Uno() {
     function startGame() {
       game.groupChannel.permissionOverwrites.edit(
           maker.guild.roles.everyone, {
-            VIEW_CHANNEL: false,
+            ViewChannel: false,
           },
           'UNO game has starte.');
 
@@ -932,7 +931,7 @@ function Uno() {
      * to the channel.
      */
     function sendHelp() {
-      const embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.EmbedBuilder();
       embed.setTitle('Welcome to UNO! (Beta)');
       embed.setAuthor(maker.user.tag);
       embed.setColor([237, 21, 31]);
@@ -942,36 +941,40 @@ function Uno() {
           'something like that.\nIf you play a wild card, you must say what ' +
           'color it is when you play it (eg: `play wild red` or `play yellow ' +
           'draw four`).\n`draw` to draw a card.');
-      embed.addField(
-          'Current Rules',
-          'Original rules (non-point based) as described here: ' +
-              'https://www.unorules.com/\nWith the following exceptions:\n' +
-              '1) Challenging a plus four card is not in this version,\n' +
-              '2) If you draw a card, you do not get to play it until your ' +
-              'next turn.');
-      embed.addField(
-          'Player Commands',
-          'If you do not wish to be in this game anymore, just type ' +
-              '`uno leave` in this channel, and you will be removed.');
+      embed.addFields([{
+        name: 'Current Rules',
+        value: 'Original rules (non-point based) as described here: ' +
+            'https://www.unorules.com/\nWith the following exceptions:\n' +
+            '1) Challenging a plus four card is not in this version,\n' +
+            '2) If you draw a card, you do not get to play it until your ' +
+            'next turn.',
+      }]);
+      embed.addFields([{
+        name: 'Player Commands',
+        value: 'If you do not wish to be in this game anymore, just type ' +
+            '`uno leave` in this channel, and you will be removed.',
+      }]);
       if (!game.started) {
-        embed.addField(
-            'Lobby Settings',
-            'The creator of this game can use the following commands in this ' +
-                'channel.\n\nUse `invite @SpikeyRobot#0001` to add new people' +
-                ' to this game.\nUse `uno npc add 2` to add 2 NPCs or `uno ' +
-                'npc remove 3` to remove 3 NPCs.\nType `uno kick ' +
-                '@SpikeyRobot#0001` to remove them from the game (Note: ' +
-                'don\'t use the command prefix).\nType `uno start` to start ' +
-                'the game once you\'re ready!\n`uno end` to end this game at ' +
-                'any time.');
+        embed.addFields([{
+          name: 'Lobby Settings',
+          value: 'The creator of this game can use the following commands in ' +
+              'this channel.\n\nUse `invite @SpikeyRobot#0001` to add new ' +
+              'people to this game.\nUse `uno npc add 2` to add 2 NPCs or ' +
+              '`uno npc remove 3` to remove 3 NPCs.\nType `uno kick ' +
+              '@SpikeyRobot#0001` to remove them from the game (Note: ' +
+              'don\'t use the command prefix).\nType `uno start` to start ' +
+              'the game once you\'re ready!\n`uno end` to end this game at ' +
+              'any time.',
+        }]);
       } else {
-        embed.addField(
-            'Lobby Settings',
-            'The creator of this game can use the following commands in this ' +
-                'channel.\n\n`uno end` to end this game at any time (this ' +
-                'deletes all Uno text channels).\n`uno kick @SpikeyRobot#0001' +
-                '` to kick players (Careful! They cannot be added back during' +
-                ' the game!).');
+        embed.addFields([{
+          name: 'Lobby Settings',
+          value: 'The creator of this game can use the following commands in ' +
+              'this channel.\n\n`uno end` to end this game at any time (this ' +
+              'deletes all Uno text channels).\n`uno kick @SpikeyRobot#0001' +
+              '` to kick players (Careful! They cannot be added back during' +
+              ' the game!).',
+        }]);
       }
       return game.groupChannel.send({embeds: [embed]});
     }
@@ -1390,8 +1393,8 @@ function Uno() {
       }
       game.groupChannel.permissionOverwrites.edit(
           p.user.id, {
-            VIEW_CHANNEL: true,
-            SEND_MESSAGES: true,
+            ViewChannel: true,
+            SendMessages: true,
           },
           'Player added to game.');
       return true;
@@ -1495,18 +1498,18 @@ function Uno() {
       {
         id: member.guild.roles.everyone,
         allow: 0,
-        deny: pFlags.VIEW_CHANNEL,
+        deny: pFlags.ViewChannel,
         type: 'role',
       },
       {
         id: member.id,
-        allow: pFlags.VIEW_CHANNEL,
-        deny: pFlags.SEND_MESSAGES,
+        allow: pFlags.ViewChannel,
+        deny: pFlags.SendMessages,
         type: 'member',
       },
       {
         id: self.client.user.id,
-        allow: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
+        allow: pFlags.ViewChannel | pFlags.SendMessages,
         deny: 0,
         type: 'member',
       },
@@ -1717,14 +1720,14 @@ function Uno() {
   };
 
   /**
-   * Format a hand of cards or a single card into Discord~MessageEmbed.
+   * Format a hand of cards or a single card into Discord~EmbedBuilder.
    *
    * @private
    * @param {Uno~Card|Uno~Card[]} hand The card or hand of cards to format.
-   * @returns {Discord~MessageEmbed} The MessageEmbed to send to the user.
+   * @returns {Discord~EmbedBuilder} The EmbedBuilder to send to the user.
    */
   function getCardEmbed(hand) {
-    const embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.EmbedBuilder();
     const colors = {};
     if (hand instanceof self.Card) hand = [hand];
     hand.forEach((card) => {
@@ -1741,7 +1744,7 @@ function Uno() {
       if (noTitle) {
         embed.setTitle(str);
       } else {
-        embed.addField(c[0], str, true);
+        embed.addFields([{name: c[0], value: str}]);
       }
     });
     if (colors[0]) {
@@ -1750,7 +1753,7 @@ function Uno() {
       if (noTitle) {
         embed.setTitle(str);
       } else {
-        embed.addField('WILD', str, true);
+        embed.addFields([{name: 'WILD', value: str}]);
       }
     } else if (hand.length == 1) {
       if (hand[0].color == self.Color.YELLOW) {

@@ -1,7 +1,7 @@
 node_modules/
 recordings/
-save/reboot.json
-save/reboot-*.json
+save/reboot.json.crypt
+save/reboot-*.json.crypt
 *.log
 auth.js
 
@@ -17,6 +17,13 @@ save/pingHistory.json
 save/knownShards.json
 save/patreonCreatorTokens.json
 save/shardStatsHistory.json
+save/hgWebClients.json.crypt
+save/webClients.json.crypt
+save/rigged-counter.txt.crypt
+save/pingHistory.json.crypt
+save/knownShards.json.crypt
+save/patreonCreatorTokens.json.crypt
+save/shardStatsHistory.json.crypt
 
 config/shardMasterConfig.js
 config/shard_*_config.json

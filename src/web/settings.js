@@ -617,8 +617,12 @@ function WebSettings() {
     if (!channel) return false;
 
     const perms = channel.permissionsFor(m);
-    if (!perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return false;
-    if (!perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) return false;
+    if (!perms.has(self.Discord.PermissionsBitField.Flags.ViewChannel)) {
+      return false;
+    }
+    if (!perms.has(self.Discord.PermissionsBitField.Flags.SendMessages)) {
+      return false;
+    }
     return true;
   }
 
@@ -803,7 +807,8 @@ function WebSettings() {
                 const perms = c.permissionsFor(member);
                 return userData.id == self.common.spikeyId ||
                     (perms &&
-                     perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL));
+                     perms.has(
+                         self.Discord.PermissionsBitField.Flags.ViewChannel));
               })
               .map((c) => c.id);
       newG.myself = makeMember(member || userData.id);

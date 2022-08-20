@@ -45,15 +45,14 @@ class RaidBlock extends SubModule {
 
   /** @inheritdoc */
   initialize() {
-    this.command.on(
-        new this.command.SingleCommand(
-            ['lockdown', 'raid'], this._commandLockdown, {
-              validOnlyInGuild: true,
-              defaultDisabled: true,
-              permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES |
-                  this.Discord.Permissions.FLAGS.MANAGE_GUILD |
-                  this.Discord.Permissions.FLAGS.BAN_MEMBERS,
-            }));
+    this.command.on(new this.command.SingleCommand(
+        ['lockdown', 'raid'], this._commandLockdown, {
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: this.Discord.PermissionsBitField.Flags.ManageRoles |
+              this.Discord.PermissionsBitField.Flags.ManageGuild |
+              this.Discord.PermissionsBitField.Flags.BanMembers,
+        }));
     this.client.on('guildMemberAdd', this._onGuildMemberAdd);
 
     this.client.guilds.cache.forEach((g) => {

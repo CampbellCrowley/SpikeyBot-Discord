@@ -12,7 +12,7 @@ class SubModule {
      * The help message to show the user in the main help message.
      *
      * @abstract
-     * @type {undefined|string|Discord~MessageEmbed}
+     * @type {undefined|string|Discord~EmbedBuilder}
      * @default
      */
     this.helpMessage = undefined;

@@ -100,19 +100,22 @@ function Define() {
    * @param {object} data Parsed reply from words api.
    */
   function replyDef(msg, data) {
-    const embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.EmbedBuilder();
     embed.setTitle(fUp(data.word));
     embed.setColor([255, 0, 255]);
     if (data.results) {
       const list = data.results.slice(0, 5).map(formatSingle);
-      embed.addField(
-          'Definition' + (data.results.length > 1 ? 's' : ''), list.join('\n'));
+      embed.addFields([{
+        name: 'Definition' + (data.results.length > 1 ? 's' : ''),
+        value: list.join('\n'),
+      }]);
     }
     if (data.syllables) {
-      embed.addField(
-          'Syllable' + (data.syllables.count > 1 ? 's (' : ' (') +
-              data.syllables.count + ')',
-          data.syllables.list.join(' '), true);
+      embed.addFields([{
+        name: 'Syllable' + (data.syllables.count > 1 ? 's (' : ' (') +
+            data.syllables.count + ')',
+        value: data.syllables.list.join(' '),
+      }]);
     }
     if (data.pronunciation) {
       const p = typeof data.pronunciation === 'string' ?
@@ -122,7 +125,7 @@ function Define() {
                 return el[0] + ': ' + el[1];
               })
               .join('\n');
-      embed.addField('Pronunciation', p, true);
+      embed.addFields([{name: 'Pronunciation', value: p}]);
     }
     msg.channel.send({content: self.common.mention(msg), embeds: [embed]});
   }

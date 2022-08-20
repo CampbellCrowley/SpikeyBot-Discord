@@ -63,30 +63,27 @@ class Echo extends SubModule {
   /** @inheritdoc */
   initialize() {
     this.command.on(['say', 'echo'], this._commandSay);
-    this.command.on(
-        new this.command.SingleCommand(
-            ['become', 'self', 'be', 'character', 'impersonate'],
-            this._commandBecome, {
-              validOnlyInGuild: true,
-              defaultDisabled: true,
-              permissions: this.Discord.Permissions.FLAGS.MANAGE_MESSAGES |
-                  this.Discord.Permissions.FLAGS.MANAGE_WEBHOOKS |
-                  this.Discord.Permissions.FLAGS.MANAGE_GUILD,
-            }));
+    this.command.on(new this.command.SingleCommand(
+        ['become', 'self', 'be', 'character', 'impersonate'],
+        this._commandBecome, {
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: this.Discord.PermissionsBitField.Flags.ManageMessages |
+              this.Discord.PermissionsBitField.Flags.ManageWebhooks |
+              this.Discord.PermissionsBitField.Flags.ManageGuild,
+        }));
     this.command.on(
         new this.command.SingleCommand(
             ['who', 'whois'], this._commandWhoIs, {validOnlyInGuild: true}));
     this.command.on('whoami', this._commandWhoAmI);
-    this.command.on(
-        new this.command.SingleCommand(
-            ['resetcharacters', 'deletecharacters'],
-            this._commandResetCharacters, {
-              validOnlyInGuild: true,
-              defaultDisabled: true,
-              permissions: this.Discord.Permissions.FLAGS.MANAGE_MESSAGES |
-                  this.Discord.Permissions.FLAGS.MANAGE_WEBHOOKS |
-                  this.Discord.Permissions.FLAGS.MANAGE_GUILD,
-            }));
+    this.command.on(new this.command.SingleCommand(
+        ['resetcharacters', 'deletecharacters'], this._commandResetCharacters, {
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: this.Discord.PermissionsBitField.Flags.ManageMessages |
+              this.Discord.PermissionsBitField.Flags.ManageWebhooks |
+              this.Discord.PermissionsBitField.Flags.ManageGuild,
+        }));
     this.client.on('messageCreate', this._onMessage);
 
     this.client.guilds.cache.forEach((g) => {
@@ -142,7 +139,7 @@ class Echo extends SubModule {
       return;
     }
     if (!msg.channel.permissionsFor(msg.guild.me)
-        .has(this.Discord.Permissions.FLAGS.MANAGE_WEBHOOKS)) {
+        .has(this.Discord.PermissionsBitField.Flags.ManageWebhooks)) {
       return;
     }
     msg.channel.fetchWebhooks()
@@ -159,7 +156,7 @@ class Echo extends SubModule {
             console.error(err);
           });
           if (msg.channel.permissionsFor(msg.guild.me)
-              .has(this.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
+              .has(this.Discord.PermissionsBitField.Flags.ManageMessages)) {
             msg.delete().catch((err) => {
               this.error('Failed to delete message: ' + msg.channel.id);
               console.error(err);
@@ -262,7 +259,7 @@ class Echo extends SubModule {
             const hook = hooks.find((h) => h.owner.id == this.client.user.id);
             if (!hook) {
               if (!channel.permissionsFor(msg.guild.me)
-                  .has(this.Discord.Permissions.FLAGS.MANAGE_WEBHOOKS)) {
+                  .has(this.Discord.PermissionsBitField.Flags.ManageWebhooks)) {
                 this.common.reply(
                     msg, 'Failed to create webhook',
                     'I need permission to manage webhooks.');
@@ -328,7 +325,7 @@ class Echo extends SubModule {
     let numDone = 0;
     const tag = `${user.tag} (${user.id})`;
     let num = 0;
-    const embed = new this.Discord.MessageEmbed();
+    const embed = new this.Discord.EmbedBuilder();
     const self = this;
 
     const send = function() {

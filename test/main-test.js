@@ -1,9 +1,23 @@
 const expect = require('chai').expect;
 const Discord = require('discord.js');
-const client = new Discord.Client();
 let spawn = require('child_process').spawn;
 const fs = require('fs');
 const auth = require('../auth.js');
+
+const intents = [
+  Discord.IntentsBitField.Flags.Guilds,
+  Discord.IntentsBitField.Flags.GuildMembers,
+  Discord.IntentsBitField.Flags.GuildEmojisAndStickers,
+  Discord.IntentsBitField.Flags.GuildWebhooks,
+  Discord.IntentsBitField.Flags.GuildVoiceStates,
+  Discord.IntentsBitField.Flags.GuildPresences,
+  Discord.IntentsBitField.Flags.GuildMessages,
+  Discord.IntentsBitField.Flags.GuildMessageReactions,
+  Discord.IntentsBitField.Flags.DirectMessages,
+  Discord.IntentsBitField.Flags.DirectMessageReactions,
+  Discord.IntentsBitField.Flags.MessageContent,
+];
+const client = new Discord.Client({intents: intents});
 
 /* eslint-disable */
 var oldSpawn = spawn;

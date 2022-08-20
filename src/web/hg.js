@@ -702,8 +702,12 @@ function HGWeb() {
     const m = g.members.resolve(userData.id);
 
     const perms = channel.permissionsFor(m);
-    if (!perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return false;
-    if (!perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) return false;
+    if (!perms.has(self.Discord.PermissionsBitField.Flags.ViewChannel)) {
+      return false;
+    }
+    if (!perms.has(self.Discord.PermissionsBitField.Flags.SendMessages)) {
+      return false;
+    }
     return true;
   }
 
@@ -960,12 +964,12 @@ function HGWeb() {
                   (c) => member &&
                       (userData.id == self.common.spikeyId ||
                        c.permissionsFor(member).has(
-                           self.Discord.Permissions.FLAGS.VIEW_CHANNEL)))
+                           self.Discord.PermissionsBitField.Flags.ViewChannel)))
               .map((c) => {
                 return {
                   id: c.id,
                   permissions: userData.id == self.common.spikeyId ?
-                      self.Discord.Permissions.ALL :
+                      self.Discord.PermissionsBitField.ALL :
                       c.permissionsFor(member).bitfield,
                 };
               });
@@ -1167,7 +1171,7 @@ function HGWeb() {
 
     if (!g.channels.resolve(game.outputChannel)
         .permissionsFor(m)
-        .has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
+        .has(self.Discord.PermissionsBitField.Flags.ViewChannel)) {
       replyNoPerm(socket, 'fetchDay', gId);
       return;
     }
@@ -1220,7 +1224,7 @@ function HGWeb() {
 
     if (!g.channels.resolve(game.outputChannel)
         .permissionsFor(m)
-        .has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
+        .has(self.Discord.PermissionsBitField.Flags.ViewChannel)) {
       replyNoPerm(socket, 'fetchNextDay', gId);
       return;
     }

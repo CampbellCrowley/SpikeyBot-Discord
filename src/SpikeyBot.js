@@ -518,26 +518,27 @@ function SpikeyBot() {
   }
 
   let intents = [
-    Discord.Intents.FLAGS.GUILDS,
-    Discord.Intents.FLAGS.GUILD_MEMBERS,
-    Discord.Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-    Discord.Intents.FLAGS.GUILD_WEBHOOKS,
-    Discord.Intents.FLAGS.GUILD_VOICE_STATES,
-    Discord.Intents.FLAGS.GUILD_PRESENCES,
-    Discord.Intents.FLAGS.GUILD_MESSAGES,
-    Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-    Discord.Intents.FLAGS.DIRECT_MESSAGES,
-    Discord.Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
+    Discord.IntentsBitField.Flags.Guilds,
+    Discord.IntentsBitField.Flags.GuildMembers,
+    Discord.IntentsBitField.Flags.GuildEmojisAndStickers,
+    Discord.IntentsBitField.Flags.GuildWebhooks,
+    Discord.IntentsBitField.Flags.GuildVoiceStates,
+    Discord.IntentsBitField.Flags.GuildPresences,
+    Discord.IntentsBitField.Flags.GuildMessages,
+    Discord.IntentsBitField.Flags.GuildMessageReactions,
+    Discord.IntentsBitField.Flags.DirectMessages,
+    Discord.IntentsBitField.Flags.DirectMessageReactions,
+    Discord.IntentsBitField.Flags.MessageContent,
   ];
   let defaultPresence = {
     status: 'idle',
-    activity: {
+    activities: [{
       name: 'Somehow still kicking!',
-      type: 'WATCHING',
-    },
+      type: Discord.ActivityType.Watching,
+    }],
   };
   if (isDev) {
-    defaultPresence.activity.name = `Version: ${self.version}`;
+    defaultPresence.activities[0].name = `Version: ${self.version}`;
   }
   if (isBackup) {
     defaultPresence = {
@@ -779,6 +780,7 @@ function SpikeyBot() {
             }
             return;
           }
+          console.log(file.toString());
           const parsed = JSON.parse(file);
           const crashed = parsed.running;
           if (crashed) {
@@ -799,7 +801,7 @@ function SpikeyBot() {
           if (channel) {
             channel.messages.fetch(parsed.id)
                 .then((msg_) => {
-                  const embed = new Discord.MessageEmbed();
+                  const embed = new Discord.EmbedBuilder();
                   embed.setTitle('Reboot complete.');
                   embed.setColor([255, 0, 255]);
                   return msg_.edit({embeds: [embed]});
@@ -1084,7 +1086,7 @@ function SpikeyBot() {
         new command.SingleCommand(['changeprefix'], commandChangePrefix, {
           validOnlyInGuild: true,
           defaultDisabled: true,
-          permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
+          permissions: Discord.PermissionsBitField.Flags.ManageGuild,
         }));
     /**
      * Change the command prefix for the given guild.
@@ -1184,7 +1186,7 @@ function SpikeyBot() {
    */
   function commandChangePrefix(msg) {
     const canReact = msg.channel.permissionsFor(client.user)
-        .has(Discord.Permissions.FLAGS.ADD_REACTIONS);
+        .has(Discord.PermissionsBitField.Flags.AddReactions);
     const confirmEmoji = '✅';
     const newPrefix = msg.text.slice(1);
     if (newPrefix.length < 1) {
@@ -1394,7 +1396,7 @@ function SpikeyBot() {
       const reloaded = [];
       common.reply(msg, 'Reloading main modules...').then((warnMessage) => {
         if (reloadMainModules(toReload, reloaded)) {
-          const embed = new Discord.MessageEmbed();
+          const embed = new Discord.EmbedBuilder();
           embed.setTitle('Reload completed with errors.');
           embed.setDescription(reloaded.join(' ') || 'NOTHING reloaded');
           embed.setColor([255, 0, 255]);
@@ -1402,7 +1404,7 @@ function SpikeyBot() {
         } else if (minimal) {
           warnMessage.delete();
         } else {
-          const embed = new Discord.MessageEmbed();
+          const embed = new Discord.EmbedBuilder();
           embed.setTitle('Reload complete.');
           embed.setDescription(reloaded.join(' ') || 'NOTHING reloaded');
           embed.setColor([255, 0, 255]);

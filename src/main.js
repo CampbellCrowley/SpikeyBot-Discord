@@ -285,9 +285,9 @@ function Main() {
     const adminOnlyOpts = new self.command.CommandSetting({
       validOnlyInGuild: true,
       defaultDisabled: true,
-      permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
-          self.Discord.Permissions.FLAGS.MANAGE_GUILD |
-          self.Discord.Permissions.FLAGS.BAN_MEMBERS,
+      permissions: self.Discord.PermissionsBitField.Flags.ManageRoles |
+          self.Discord.PermissionsBitField.Flags.ManageGuild |
+          self.Discord.PermissionsBitField.Flags.BanMembers,
     });
 
     self.command.on(['addme', 'invite'], commandAddMe);
@@ -310,13 +310,13 @@ function Main() {
         new self.command.SingleCommand(['purge', 'prune'], commandPurge, {
           validOnlyInGuild: true,
           defaultDisabled: true,
-          permissions: self.Discord.Permissions.FLAGS.MANAGE_MESSAGES,
+          permissions: self.Discord.PermissionsBitField.Flags.ManageMessages,
         }));
     self.command.on(
         new self.command.SingleCommand(['ban', 'fuckyou'], commandBan, {
           validOnlyInGuild: true,
           defaultDisabled: true,
-          permissions: self.Discord.Permissions.FLAGS.BAN_MEMBERS,
+          permissions: self.Discord.PermissionsBitField.Flags.BanMembers,
         }));
     self.command.on(['profile', 'avatar'], commandAvatar);
     self.command.on('ping', commandPing);
@@ -395,7 +395,7 @@ function Main() {
     });
 
     // Format help message into rich embed.
-    const tmpHelp = new self.Discord.MessageEmbed();
+    const tmpHelp = new self.Discord.EmbedBuilder();
     tmpHelp.setTitle(
         helpObject.title.replaceAll('{prefix}', self.bot.getPrefix()));
     tmpHelp.setURL(self.common.webURL);
@@ -404,8 +404,10 @@ function Main() {
     helpObject.sections.forEach(function(obj) {
       const titleID = encodeURIComponent(obj.title.replace(/\s/g, '_'));
       const titleURL = `${self.common.webHelp}#${titleID} `;
-      tmpHelp.addField(
-          obj.title, titleURL + '```js\n' +
+      tmpHelp.addFields([
+        {
+          name: obj.title,
+          value: titleURL + '```js\n' +
               obj.rows
                   .map((row) => {
                     if (typeof row === 'string') {
@@ -422,7 +424,8 @@ function Main() {
                   })
                   .join('\n') +
               '\n```',
-          true);
+        },
+      ]);
     });
     tmpHelp.setFooter({
       text: 'Note: If a custom prefix is being used, replace `' +
@@ -433,7 +436,7 @@ function Main() {
     self.helpMessage = tmpHelp;
 
     // Format admin help message into rich embed.
-    const tmpAdminHelp = new self.Discord.MessageEmbed();
+    const tmpAdminHelp = new self.Discord.EmbedBuilder();
     tmpAdminHelp.setTitle(
         adminHelpObject.title.replaceAll('{prefix}', self.bot.getPrefix()));
     tmpAdminHelp.setURL(self.common.webURL);
@@ -443,8 +446,10 @@ function Main() {
     adminHelpObject.sections.forEach(function(obj) {
       const titleID = encodeURIComponent(obj.title.replace(/\s/g, '_'));
       const titleURL = `${self.common.webHelp}#${titleID} `;
-      tmpAdminHelp.addField(
-          obj.title, titleURL + '```js\n' +
+      tmpAdminHelp.addFields([
+        {
+          name: obj.title,
+          value: titleURL + '```js\n' +
               obj.rows
                   .map((row) => {
                     if (typeof row === 'string') {
@@ -461,7 +466,8 @@ function Main() {
                   })
                   .join('\n') +
               '\n```',
-          true);
+        },
+      ]);
     });
     tmpAdminHelp.setFooter({
       text: 'Note: If a custom prefix is being used, replace `' +
@@ -768,7 +774,7 @@ function Main() {
         if (val.type == 'text') {
           const perms = val.permissionsFor(self.client.user);
           if ((pos == -1 || val.position < pos) && perms &&
-              perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
+              perms.has(self.Discord.PermissionsBitField.Flags.SendMessages)) {
             pos = val.position;
             channel = val;
           }
@@ -812,7 +818,7 @@ function Main() {
     if (user.id == self.client.user.id) return;
     if (disabledBanMessage[guild.id]) return;
     if (!guild.me.permissions.has(
-        self.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG)) {
+        self.Discord.PermissionsBitField.Flags.ViewAuditLog)) {
       return;
     }
     const modLog = self.bot.getSubmodule('./modLog.js');
@@ -1020,13 +1026,13 @@ function Main() {
                     channel.permissionOverwrites.resolve(role.id);
                 if (overwrites) {
                   if (channel.type == 'GUILD_CATEGORY') {
-                    if (overwrites.deny.has(
-                        self.Discord.Permissions.FLAGS.MENTION_EVERYONE)) {
+                    if (overwrites.deny.has(self.Discord.PermissionsBitField
+                        .Flags.MentionEveryone)) {
                       return;
                     }
                   } else if (channel.type == 'GUILD_TEXT') {
-                    if (overwrites.deny.has(
-                        self.Discord.Permissions.FLAGS.MENTION_EVERYONE)) {
+                    if (overwrites.deny.has(self.Discord.PermissionsBitField
+                        .Flags.MentionEveryone)) {
                       return;
                     }
                   }
@@ -1409,21 +1415,21 @@ function Main() {
       expression = 'y = ' + simplify(expMatch[1]);
     }
     finalImage.getBuffer(Jimp.MIME_PNG, (err, out) => {
-      const embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.EmbedBuilder();
       embed.setTitle('Graph of ' + expression);
       embed.setDescription(
           'Plot Domain: [' + domainMin + ', ' + domainMax + ']\nPlot Range: [' +
           minY + ', ' + maxY + ']');
       embed.setColor([255, 255, 255]);
       if (turningPoints.length > 0) {
-        embed.addField(
-            'Approximate Turning Points',
-            turningPoints.map((obj) => `(${obj.x}, ${obj.y})`).join('\n'),
-            false);
+        embed.addFields([{
+          name: 'Approximate Turning Points',
+          value: turningPoints.map((obj) => `(${obj.x}, ${obj.y})`).join('\n'),
+        }]);
       }
       msg.channel.send({
         embeds: [embed],
-        files: [new self.Discord.MessageAttachment(out, 'graph.png')],
+        files: [new self.Discord.AttachmentBuilder(out, {name: 'graph.png'})],
       });
     });
   }
@@ -1465,7 +1471,7 @@ function Main() {
         msg.channel.permissionsFor(self.client.user);
     const time = mention.createdAt;
     if (!perms || perms.has('EMBED_LINKS')) {
-      const embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.EmbedBuilder();
       embed.setTitle('Account create date');
       embed.setColor([255, 0, 255]);
       embed.setDescription(`<@${mention.id}>: ${time.toUTCString()}`);
@@ -1494,7 +1500,7 @@ function Main() {
           msg.channel.permissionsFor(self.client.user);
       const time = member.joinedAt;
       if (!perms || perms.has('EMBED_LINKS')) {
-        const embed = new self.Discord.MessageEmbed();
+        const embed = new self.Discord.EmbedBuilder();
         embed.setTitle('Server join date');
         embed.setColor([255, 0, 255]);
         embed.setDescription(`<@${member.id}>: ${time.toUTCString()}`);
@@ -1543,7 +1549,7 @@ function Main() {
     const splash = guild.splash && guild.splashURL();
     const vanity = guild.vanityURLCode;
     if (!perms || perms.has('EMBED_LINKS')) {
-      const embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.EmbedBuilder();
       embed.setColor([255, 0, 255]);
       embed.setTitle(guild.name);
       if (splash) {
@@ -1553,35 +1559,38 @@ function Main() {
       }
       if (icon) embed.setThumbnail(icon);
       if (guild.description) embed.setDescription(guild.description);
-      embed.addField(
-          'Numbers', 'Members: ' + guild.memberCount + '\nChannels: ' +
-              guild.channels.cache.size + '+\nRoles: ' +
-              guild.roles.cache.size + '+\nEmojis: ' + guild.emojis.cache.size +
-              '+',
-          true);
+      embed.addFields([{
+        name: 'Numbers',
+        value: 'Members: ' + guild.memberCount + '\nChannels: ' +
+            guild.channels.cache.size + '+\nRoles: ' + guild.roles.cache.size +
+            '+\nEmojis: ' + guild.emojis.cache.size + '+',
+      }]);
       if (!guild.ownerId) {
-        embed.addField(
-            'Server',
-            'ID: ' + guild.id + '\nCreated: ' + guild.createdAt.toUTCString() +
-                '\nOwner: _Unknown_\nVerification: ' + guild.verificationLevel +
-                ' (' + guild.verified + ')\nPartnered: ' + guild.partnered,
-            true);
+        embed.addFields([{
+          name: 'Server',
+          value: 'ID: ' + guild.id +
+              '\nCreated: ' + guild.createdAt.toUTCString() +
+              '\nOwner: _Unknown_\nVerification: ' + guild.verificationLevel +
+              ' (' + guild.verified + ')\nPartnered: ' + guild.partnered,
+        }]);
       } else {
-        embed.addField(
-            'Server',
-            'ID: ' + guild.id + '\nCreated: ' + guild.createdAt.toUTCString() +
-                '\nOwner: <@' + guild.ownerId + '>' +
-                '\nVerification: ' + guild.verificationLevel + ' (' +
-                guild.verified + ')\nPartnered: ' + guild.partnered,
-            true);
+        embed.addFields([{
+          name: 'Server',
+          value: 'ID: ' + guild.id +
+              '\nCreated: ' + guild.createdAt.toUTCString() + '\nOwner: <@' +
+              guild.ownerId + '>' +
+              '\nVerification: ' + guild.verificationLevel + ' (' +
+              guild.verified + ')\nPartnered: ' + guild.partnered,
+        }]);
       }
-      embed.addField(
-          'Links', ((icon ? `Icon: ${icon}\n` : '') +
-                    (banner ? `Banner: ${banner}\n` : '') +
-                    (splash ? `Splash: ${splash}\n` : '') +
-                    (vanity ? `Vanity: discord.gg/${vanity}\n` : '')) ||
-              '*None*',
-          true);
+      embed.addFields([{
+        name: 'Links',
+        value: ((icon ? `Icon: ${icon}\n` : '') +
+                (banner ? `Banner: ${banner}\n` : '') +
+                (splash ? `Splash: ${splash}\n` : '') +
+                (vanity ? `Vanity: discord.gg/${vanity}\n` : '')) ||
+            '*None*',
+      }]);
       if (guild.shard) {
         embed.setFooter({text: `Shard #${guild.shard.id} / ${self.bot.fqdn}`});
       } else {
@@ -1608,7 +1617,7 @@ function Main() {
   function commandEmoji(msg) {
     const embeddable = (!msg.channel.permissionsFor) ||
         msg.channel.permissionsFor(self.client.user)
-            .has(self.Discord.Permissions.FLAGS.EMBED_LINKS);
+            .has(self.Discord.PermissionsBitField.Flags.EmbedLinks);
 
     const unicode = emojiChecker.match(msg.content);
     const unicodeList = unicode && unicode.map((el) => {
@@ -1630,7 +1639,7 @@ function Main() {
             msg, 'No emojis specified',
             'Please type an emoji after the command.');
       } else if (embeddable) {
-        const embed = new self.Discord.MessageEmbed();
+        const embed = new self.Discord.EmbedBuilder();
         embed.setColor([255, 0, 255]);
         if (total == 1) {
           embed.setTitle('Emoji');
@@ -1661,7 +1670,7 @@ function Main() {
               infoRows.push(`Managed: ${emoji.managed}`);
               infoRows.push(`Requires Colons: ${emoji.requiresColons}`);
               infoRows.push(`URL: ${emoji.url}`);
-              embed.addField('Info', infoRows.join('\n'), true);
+              embed.addFields([{name: 'Info', value: infoRows.join('\n')}]);
             }
           } else {
             const emoji = unicodeList[0];
@@ -1677,12 +1686,13 @@ function Main() {
         } else {
           embed.setTitle('Emojis');
           if (unicodeList.length > 0) {
-            embed.addField('Unicode Emojis', unicodeList.join('\n'), true);
+            embed.addFields(
+                [{name: 'Unicode Emojis', value: unicodeList.join('\n')}]);
           }
           if (emojis.length > 0) {
             const list = emojiText.map(
                 (el, i) => `${el}: ${emojis[i] && emojis[i].url || 'Unknown'}`);
-            embed.addField('Discord Emojis', list, true);
+            embed.addFields([{name: 'Discord Emojis', value: list}]);
           }
         }
         msg.channel.send({content: self.common.mention(msg), embeds: [embed]})
@@ -1900,7 +1910,7 @@ function Main() {
         url = 'https://www.spikeybot.com/tails.png';
         text = 'Tails!';
       }
-      const embed = new self.Discord.MessageEmbed({title: text});
+      const embed = new self.Discord.EmbedBuilder({title: text});
       embed.setImage(url);
       msg.channel.send({embeds: [embed]}).catch(() => {
         self.common.reply(
@@ -1920,7 +1930,7 @@ function Main() {
       }
       const p = numH / num;
       const percent = Math.round(p * 10000) / 100;
-      const embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.EmbedBuilder();
       embed.setTitle(`Flipped ${num} coins`);
       embed.setColor([p * 255, 0, (1 - p) * 255]);
       embed.setDescription(outList.join(''));
@@ -1945,7 +1955,7 @@ function Main() {
    */
   function commandPurge(msg) {
     if (!msg.channel.permissionsFor(self.client.user)
-        .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
+        .has(self.Discord.PermissionsBitField.Flags.ManageMessages)) {
       self.common
           .reply(
               msg,
@@ -2018,7 +2028,7 @@ function Main() {
    */
   function commandBan(msg) {
     if (!msg.guild.me.permissoins.has(
-        self.Discord.Permissions.FLAGS.BAN_MEMBERS)) {
+        self.Discord.PermissionsBitField.Flags.BanMembers)) {
       self.common.reply(
           msg, 'Failed', 'I do not have permission to ban members.');
       return;
@@ -2112,7 +2122,7 @@ function Main() {
    * @listens Command#avatar
    */
   function commandAvatar(msg) {
-    const embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.EmbedBuilder();
     if (msg.mentions.users.size > 0) {
       embed.setDescription(
           msg.mentions.users.first().username + '\'s profile picture');
@@ -2284,7 +2294,7 @@ function Main() {
    * @listens Command#d
    */
   function commandRollDie(msg) {
-    const embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.EmbedBuilder();
 
     let numbers = msg.text.split(/\s+/).splice(1);
     let allSame = true;
@@ -2476,7 +2486,7 @@ function Main() {
                 const gM = match.gM;
                 const uId = match.uId;
                 const owner = match.oId === match.uId;
-                const embed = new self.Discord.MessageEmbed();
+                const embed = new self.Discord.EmbedBuilder();
                 embed.setTitle(`Permissions (Shard #${index})`);
                 replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, owner, embed);
               });
@@ -2510,32 +2520,35 @@ function Main() {
    * @param {number} [cY] Bitfield for user in channel.
    * @param {string} [uId] User id to show.
    * @param {boolean} [owner] Is the user the guild owner.
-   * @param {Discord~MessageEmbed} [embed] Embed object to modify
+   * @param {Discord~EmbedBuilder} [embed] Embed object to modify
    * instead of creating a new one.
    */
   function replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, owner, embed) {
     if (!embed) {
-      embed = new self.Discord.MessageEmbed();
+      embed = new self.Discord.EmbedBuilder();
       embed.setTitle('Permissions');
     }
     const you = uId || 'You';
     if ((cY != null && !isNaN(cY)) || (cM != null && !isNaN(cM))) {
-      embed.addField(
-          `Channel ${cId}`, '```css\n' +
-              (cY == null || isNaN(cY) ?
-                   '' :
-                   `${prePad(cY.toString(2), 31)} ${you}\n`) +
-              prePad(cM.toString(2), 31) + ' Me```');
+      embed.addFields([{
+        name: `Channel ${cId}`,
+        value: '```css\n' +
+            (cY == null || isNaN(cY) ?
+                 '' :
+                 `${prePad(cY.toString(2), 31)} ${you}\n`) +
+            prePad(cM.toString(2), 31) + ' Me```',
+      }]);
     }
 
-    embed.addField(
-        `Guild ${gId}`, '```css\n' +
-            (gY == null || isNaN(gY) ?
-                 '' :
-                 `${prePad(gY.toString(2), 31)} ${you}\n`) +
-            prePad(gM.toString(2), 31) + ' Me```');
+    embed.addFields([{
+      name: `Guild ${gId}`,
+      value: '```css\n' +
+          (gY == null || isNaN(gY) ? '' :
+                                     `${prePad(gY.toString(2), 31)} ${you}\n`) +
+          prePad(gM.toString(2), 31) + ' Me```',
+    }]);
 
-    const allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
+    const allPermPairs = Object.entries(self.Discord.PermissionsBitField.Flags);
     const formatted = allPermPairs
         .map((el) => {
           const cYou = (cY & el[1]) ? 'Y' : ' ';
@@ -2653,7 +2666,7 @@ function Main() {
             ',' + out.reverse().map((el) => ('000' + el).slice(-3)).join(',');
         return `${num}${joined}`;
       };
-      const embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.EmbedBuilder();
       embed.setTitle('SpikeyBot Stats');
       embed.setDescription(
           'These statistics are collected from the entire bot, ' +
@@ -2665,11 +2678,11 @@ function Main() {
           fmtNum(values.numEmojis) + '\nVerified: ' +
           fmtNum(values.numVerified) + '\nPartnered: ' +
           fmtNum(values.numPartnered);
-      embed.addField('Guilds', guildString, true);
+      embed.addFields([{name: 'Guilds', value: guildString}]);
 
       const userString = 'Users: ' + fmtNum(values.numMembers) +
           '\nCached users: ' + fmtNum(values.numUsers);
-      embed.addField('Users', userString, true);
+      embed.addFields([{name: 'Users', value: userString}]);
 
       const shardUptimes = values.uptimes.map((el, i) => {
         // const mem = values.memory[i];
@@ -2680,13 +2693,13 @@ function Main() {
       const shardString = 'Number of shards: ' + fmtNum(values.numShards) +
           '\nThis guild/channel is in shard #' + values.reqShard + '\n' +
           shardUptimes.join('\n');
-      embed.addField('Shards', shardString, true);
+      embed.addFields([{name: 'Shards', value: shardString}]);
 
       if (values.saveData) {
         const systemString = 'Storage used: ' +
             values.saveData.match(/^\S+/)[0] + '\nPing: ' +
             Math.round(self.client.ws.ping) + 'ms';
-        embed.addField('System', systemString, true);
+        embed.addFields([{name: 'System', value: systemString}]);
       }
 
       embed.setColor([0, 100, 255]);
@@ -2903,10 +2916,10 @@ function Main() {
               return;
             }
 
-            const embed = new self.Discord.MessageEmbed();
+            const embed = new self.Discord.EmbedBuilder();
             embed.setTitle(id);
             res.forEach((el, i) => {
-              if (el) embed.addField(`Shard #${i}`, el, true);
+              if (el) embed.addFields([{name: `Shard #${i}`, value: el}]);
             });
             msg.channel.send({embeds: [embed]});
           })
@@ -3271,7 +3284,7 @@ function Main() {
               (self.bot.version.split('#')[1] || commit) +
               ' -- ./src/SpikeyBot.js');
           if (msg_) {
-            const embed = new self.Discord.MessageEmbed();
+            const embed = new self.Discord.EmbedBuilder();
             embed.setTitle('Bot update complete!');
             embed.setColor([255, 0, 255]);
             if (noReload) embed.setDescription('Modules not reloaded.');
@@ -3280,7 +3293,7 @@ function Main() {
         } catch (err) {
           if (err.status === 1) {
             if (msg_) {
-              const embed = new self.Discord.MessageEmbed();
+              const embed = new self.Discord.EmbedBuilder();
               embed.setTitle(
                   'Bot update complete, but requires manual reboot.');
               embed.setDescription(err.message);
@@ -3293,7 +3306,7 @@ function Main() {
             console.error('STDOUT:', err.stdout.toString());
             console.error('STDERR:', err.stderr.toString());
             if (msg_) {
-              const embed = new self.Discord.MessageEmbed();
+              const embed = new self.Discord.EmbedBuilder();
               embed.setTitle(
                   'Bot update complete, but failed to check if ' +
                   'reboot is necessary.');
@@ -3308,7 +3321,7 @@ function Main() {
         if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
         if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
         if (msg_) {
-          const embed = new self.Discord.MessageEmbed();
+          const embed = new self.Discord.EmbedBuilder();
           embed.setTitle('Bot update FAILED!');
           embed.setColor([255, 0, 255]);
           msg_.edit({content: self.common.mention(msg), embeds: [embed]});

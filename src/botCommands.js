@@ -74,26 +74,25 @@ class BotCommands extends SubModule {
   }
   /** @inheritdoc */
   initialize() {
-    this.command.on(
-        new this.command.SingleCommand(
-            [
-              'allowbot',
-              'allowbots',
-              'enablebot',
-              'enablebots',
-              'togglebot',
-              'togglebots',
-              'denybot',
-              'denybots',
-              'disablebot',
-              'disablebots',
-            ],
-            this._commandToggleBotCmds, new this.command.CommandSetting({
-              validOnlyInGuild: true,
-              defaultDisabled: true,
-              permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES |
-                  this.Discord.Permissions.FLAGS.MANAGE_GUILD,
-            })));
+    this.command.on(new this.command.SingleCommand(
+        [
+          'allowbot',
+          'allowbots',
+          'enablebot',
+          'enablebots',
+          'togglebot',
+          'togglebots',
+          'denybot',
+          'denybots',
+          'disablebot',
+          'disablebots',
+        ],
+        this._commandToggleBotCmds, new this.command.CommandSetting({
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: this.Discord.PermissionsBitField.Flags.ManageRoles |
+              this.Discord.PermissionsBitField.Flags.ManageGuild,
+        })));
     this.client.guilds.cache.forEach((g) => {
       this.common.readFile(
           `${this.common.guildSaveDir}${g.id}${this._filename}`, () => {});

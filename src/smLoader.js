@@ -586,7 +586,7 @@ function SMLoader() {
                   'won\'t notice interruption)')
           .then((warnMessage) => {
             self.reload(toReload, opts, (out) => {
-              const embed = new self.Discord.MessageEmbed();
+              const embed = new self.Discord.EmbedBuilder();
               embed.setTitle('Reload complete.');
               embed.setColor([255, 0, 255]);
               embed.setDescription(out.join('\n') || 'NOTHING reloaded');
@@ -732,7 +732,7 @@ function SMLoader() {
         function done() {
           numComplete++;
           if (numComplete < numTotal) return;
-          const embed = new self.Discord.MessageEmbed();
+          const embed = new self.Discord.EmbedBuilder();
           embed.setTitle('Unload complete.');
           embed.setColor([255, 0, 255]);
           embed.setDescription(outs.join(' ') || 'NOTHING unloaded');
@@ -792,7 +792,7 @@ function SMLoader() {
         function done() {
           numComplete++;
           if (numComplete < numTotal) return;
-          const embed = new self.Discord.MessageEmbed();
+          const embed = new self.Discord.EmbedBuilder();
           embed.setTitle('Load complete.');
           embed.setColor([255, 0, 255]);
           embed.setDescription(outs.join(' ') || 'NOTHING loaded');
@@ -823,7 +823,7 @@ function SMLoader() {
      * Send the help message.
      *
      * @private
-     * @param {Discord~MessageEmbed} help THe message to send.
+     * @param {Discord~EmbedBuilder} help THe message to send.
      */
     function send(help) {
       const message =

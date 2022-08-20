@@ -78,12 +78,12 @@ class Shutdown extends SubModule {
     this.command.on(
         new this.command.SingleCommand(['rage'], this._commandRage, {
           defaultDisabled: true,
-          permissions: this.Discord.Permissions.FLAGS.ADMINISTRATOR,
+          permissions: this.Discord.PermissionsBitField.Flags.Administrator,
         }));
     this.command.on(
         new this.command.SingleCommand(['abortrage'], this._commandAbortRage, {
           defaultDisabled: true,
-          permissions: this.Discord.Permissions.FLAGS.ADMINISTRATOR,
+          permissions: this.Discord.PermissionsBitField.Flags.Administrator,
         }));
 
     this.common.readAndParse(this._statusFile, (err, data) => {

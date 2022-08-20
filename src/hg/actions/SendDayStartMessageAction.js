@@ -17,7 +17,7 @@ class SendDayStartMessageAction extends ChannelAction {
    */
   constructor() {
     super((hg, game, channel) => {
-      const embed = new hg._parent.Discord.MessageEmbed();
+      const embed = new hg._parent.Discord.EmbedBuilder();
       if (game.currentGame.day.num === 0) {
         embed.setTitle(hg.messages.get('bloodbathStart'));
       } else {

@@ -1,4 +1,4 @@
-// Copyright 2018-2020 Campbell Crowley. All rights reserved.
+// Copyright 2018-2022 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const dateFormat = require('date-format');
 const Discord = require('discord.js');
@@ -8,6 +8,11 @@ const sql = require('mysql');
 const auth = require('../auth.js');
 const path = require('path');
 const yj = require('yieldable-json');
+const crypto = require('crypto');
+
+const encencoding = 'base64';
+const hashCypher = 'md5';
+const filePass = Buffer.from(auth.filePass, 'base64');
 
 /**
  * Commonly required things. Helper functions and constants.
@@ -198,7 +203,7 @@ function Common() {
     }
     const formattedIP = self.getIPName(ip.replace('::ffff:', ''));
 
-    const date = dateFormat('mm-dd HH:MM:ss', new Date());
+    const date = dateFormat('mm-dd hh:MM:ss', new Date());
     return `[${title}${date} ${formattedIP}]:`;
   };
 
@@ -329,7 +334,7 @@ function Common() {
             throw err;
           });
     } else {
-      const embed = new Discord.MessageEmbed();
+      const embed = new Discord.EmbedBuilder();
       embed.setColor([255, 0, 255]);
       if (text.length <= 256) {
         embed.setTitle(text);
@@ -810,24 +815,29 @@ Common.mkAndWrite = function(filename, dir, data, cb) {
           data = JSON.stringify(data);
         }
         const tmpfile = `${filename}.tmp`;
-        fs.writeFile(tmpfile, data, (err) => {
+        const encfile = `${filename}.crypt`;
+        const iv = crypto.createHash(hashCypher).update(filename).digest();
+        const cipher = crypto.createCipheriv(auth.fileAlgo, filePass, iv);
+        let encdata = cipher.update(data, 'utf-8', encencoding);
+        encdata += cipher.final(encencoding);
+        fs.writeFile(tmpfile, encdata, (err) => {
           if (err) {
             if (this.error) this.error(`Failed to save file: ${tmpfile}`);
             console.error(err);
             if (typeof cb === 'function') cb(err);
             return;
           }
-          fs.rename(tmpfile, filename, (err) => {
+          fs.rename(tmpfile, encfile, (err) => {
             if (err) {
               if (this.error) {
                 this.error(
-                    `Failed to rename tmp file: ${tmpfile} --> ${filename}`);
+                    `Failed to rename tmp file: ${tmpfile} --> ${encfile}`);
               }
               console.error(err);
               if (typeof cb === 'function') cb(err);
               return;
             }
-            if (this.sendFile) this.sendFile(filename);
+            if (this.sendFile) this.sendFile(encfile);
             if (typeof cb === 'function') cb();
           });
         });
@@ -864,14 +874,19 @@ Common.mkAndWriteSync = function(filename, dir, data) {
   if (typeof data === 'object' && !Buffer.isBuffer(data)) {
     data = JSON.stringify(data);
   }
+  const encfile = `${filename}.crypt`;
+  const iv = crypto.createHash(hashCypher).update(filename).digest();
+  const cipher = crypto.createCipheriv(auth.fileAlgo, filePass, iv);
+  let encdata = cipher.update(data, 'utf-8', 'base64');
+  encdata += cipher.final('base64');
   try {
-    fs.writeFileSync(filename, data);
+    fs.writeFileSync(encfile, encdata);
   } catch (err) {
-    if (this.error) this.error(`Failed to save file: ${filename}`);
+    if (this.error) this.error(`Failed to save file: ${encfile}`);
     console.error(err);
     return;
   }
-  if (this.sendFile) this.sendFile(filename);
+  if (this.sendFile) this.sendFile(encfile);
 };
 Common.prototype.mkAndWriteSync = Common.mkAndWriteSync;
 
@@ -946,24 +961,49 @@ Common.fileFetchDelay = 30000;
  * @param {string} filename The name of the file to read.
  * @param {Function} [cb] Callback once completed, with optional error
  *     parameter, and parameter of file contents from `fs.readFile`.
+ * @param {boolean} [encrypt=true] Enable encryption.
  */
-Common.readFile = function(filename, cb) {
+Common.readFile = function(filename, cb, encrypt = true) {
   if (!cb) throw new TypeError('readFile must have a callback function');
+  const encfile = encrypt ? `${filename}.crypt` : filename;
   const lastFetch = Common.fileFetchHist[filename] || 0;
+  const onread = (err, data) => {
+    if (err || !encrypt) {
+      if (encrypt) {
+        this.readFile(filename, cb, false);
+        return;
+      }
+      cb(err, data);
+      return;
+    }
+    let decdata = null;
+    try {
+      const iv = crypto.createHash(hashCypher).update(filename).digest();
+      const decipher = crypto.createDecipheriv(auth.fileAlgo, filePass, iv);
+      decdata = decipher.update(data.toString(), encencoding, 'utf-8');
+      decdata += decipher.final('utf-8');
+    } catch (err) {
+      if (this.error) this.error(`Failed to decrypt file ${encfile}`);
+      console.error(err);
+      cb(err, null);
+      return;
+    }
+    cb(err, decdata);
+  };
   if (this.getFile && Date.now() - lastFetch > Common.fileFetchDelay) {
-    this.getFile(filename, (err, res) => {
+    this.getFile(encfile, (err, res) => {
       if (err) {
-        if (this.error) this.error(`Failed to getFile ${filename}`);
+        if (this.error) this.error(`Failed to getFile ${encfile}`);
         console.error(err);
       } else if (res) {
         if (this.logDebug) this.logDebug(`getFile: ${res}`);
         else console.log(res);
       }
 
-      fs.readFile(filename, cb);
+      fs.readFile(encfile, onread);
     });
   } else {
-    fs.readFile(filename, cb);
+    fs.readFile(encfile, onread);
   }
 };
 Common.prototype.readFile = Common.readFile;

@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.21.0",
+  "version": "1.21.1",
   "description": "SpikeyBot",
   "homepage": "https://www.spikeybot.com/",
   "bugs": {
@@ -13,7 +13,7 @@
     "url": "https://github.com/CampbellCrowley/SpikeyBot-Discord"
   },
   "dependencies": {
-    "@discordjs/voice": "^0.8.0",
+    "@discordjs/voice": "^0.11.0",
     "@google-cloud/text-to-speech": "^3.1.2",
     "algebra.js": "^0.2.6",
     "async": "^3.2.0",
@@ -21,13 +21,14 @@
     "date-format": "^4.0.3",
     "dialogflow": "^1.2.0",
     "diff": "^5.0.0",
-    "discord.js": "^13.6.0",
+    "discord.js": "^14.2.0",
     "fuzzy-search": "^3.2.1",
     "http-proxy": "^1.18.1",
     "jimp": "^0.16.1",
     "mathjs": "^10.1.1",
     "mkdirp": "^1.0.4",
     "mysql": "^2.18.1",
+    "node-file-encrypt": "^0.0.6",
     "patreon": "^0.4.1",
     "rimraf": "^3.0.2",
     "socket.io": "^4.4.1",

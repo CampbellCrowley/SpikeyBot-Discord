@@ -47,9 +47,9 @@ class Twitch extends SubModule {
     const perms = {
       validOnlyInGuild: true,
       defaultDisabled: true,
-      permissions: this.Discord.Permissions.FLAGS.MANAGE_CHANNELS |
-          this.Discord.Permissions.FLAGS.MANAGE_MESSAGES |
-          this.Discord.Permissions.FLAGS.MANAGE_GUILD,
+      permissions: this.Discord.PermissionsBitField.Flags.ManageChannels |
+          this.Discord.PermissionsBitField.Flags.ManageMessages |
+          this.Discord.PermissionsBitField.Flags.ManageGuild,
     };
     this.command.on(
         new this.command.SingleCommand(['twitch'], this._commandTwitch, perms, [
@@ -472,18 +472,18 @@ class Twitch extends SubModule {
     if (typeof data === 'string') data = JSON.parse(data);
     data = data.data[0];
     this._injectWebhookMetadata(data, (data) => {
-      const pF = this.Discord.Permissions.FLAGS;
+      const pF = this.Discord.PermissionsBitField.Flags;
       channels.forEach((cId) => {
         const chan = this.client.channels.resolve(cId);
         if (!chan) return;
         const perms = chan.guild && !chan.permissionsFor(chan.guild.me);
-        if (perms && !perms.has(pF.SEND_MESSAGES)) {
+        if (perms && !perms.has(pF.SendMessages)) {
           return;
         }
         const locale = this.bot.getLocale &&
             this.bot.getLocale(chan.guild && chan.guild.id);
         const message = this._formatMessage(data, locale);
-        if (perms && !perms.has(pF.EMBED_LINKS)) {
+        if (perms && !perms.has(pF.EmbedLinks)) {
           const needEmbed = this._strings.get('noPermEmbed', locale);
           chan.send({content: '```' + message.title + '```\n' + needEmbed});
         } else {
@@ -532,10 +532,10 @@ class Twitch extends SubModule {
    * @private
    * @param {object} data Webhook data from Twitch.
    * @param {string} [locale] Locale for formatting strings.
-   * @returns {Discord~MessageEmbed} Formatted embed message.
+   * @returns {Discord~EmbedBuilder} Formatted embed message.
    */
   _formatMessage(data, locale) {
-    const embed = new this.Discord.MessageEmbed();
+    const embed = new this.Discord.EmbedBuilder();
     embed.setTitle(
         this._strings.get('streamLiveTitle', locale, data.user_name));
     if (data.started_at) {

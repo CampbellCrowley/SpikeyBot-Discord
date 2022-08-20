@@ -309,7 +309,7 @@ function Polling() {
       textString = durationMatch[3];
     }
 
-    const embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.EmbedBuilder();
     if (textString) {
       embed.setTitle(textString);
     }
@@ -345,7 +345,7 @@ function Polling() {
           matchedEmoji = [matchedEmoji];
         }
         emojis.push(matchedEmoji[0]);
-        embed.addField(el, '\u200B', true);
+        embed.addFields([{name: el, value: '\u200B'}]);
       });
       if (error) {
         self.common.reply(
@@ -459,7 +459,7 @@ function Polling() {
     const reactions = poll.message.reactions.cache.filter(
         (reaction) => poll.emojis.concat(reaction.emoji.name));
 
-    const embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.EmbedBuilder();
     if (poll.title) embed.setTitle(poll.title);
     embed.setDescription(`<@${poll.author}>'s poll results`);
 
@@ -481,12 +481,14 @@ function Polling() {
         index = i;
         max = r.count - 1;
       }
-      embed.addField(poll.choices[i], r.count - 1, true);
+      embed.addFields([{name: poll.choices[i], value: r.count - 1}]);
     });
     if (index > -1) {
-      embed.addField(
-          'Top Choice', (poll.choices[index] || poll.emojis[index]) +
-                ' with ' + max + ' votes.');
+      embed.addFields([{
+        name: 'Top Choice',
+        value: (poll.choices[index] || poll.emojis[index]) + ' with ' + max +
+            ' votes.',
+      }]);
     }
 
     poll.message.channel.send({embeds: [embed]}).catch((err) => {

@@ -71,52 +71,6 @@ class Moderation extends SubModule {
     ];
     this._saveDir = `${this.common.guildSaveDir}/smited/`;
 
-    /**
-     * @description From {@link Discord~AuditLogAction}.
-     * @see https://discord.js.org/#/docs/main/master/typedef/AuditLogAction
-     * @public
-     * @constant
-     * @default
-     */
-    this.AuditLogActions = {
-      ALL: null,
-      GUILD_UPDATE: 1,
-      CHANNEL_CREATE: 10,
-      CHANNEL_UPDATE: 11,
-      CHANNEL_DELETE: 12,
-      CHANNEL_OVERWRITE_CREATE: 13,
-      CHANNEL_OVERWRITE_UPDATE: 14,
-      CHANNEL_OVERWRITE_DELETE: 15,
-      MEMBER_KICK: 20,
-      MEMBER_PRUNE: 21,
-      MEMBER_BAN_ADD: 22,
-      MEMBER_BAN_REMOVE: 23,
-      MEMBER_UPDATE: 24,
-      MEMBER_ROLE_UPDATE: 25,
-      MEMBER_MOVE: 26,
-      MEMBER_DISCONNECT: 27,
-      BOT_ADD: 28,
-      ROLE_CREATE: 30,
-      ROLE_UPDATE: 31,
-      ROLE_DELETE: 32,
-      INVITE_CREATE: 40,
-      INVITE_UPDATE: 41,
-      INVITE_DELETE: 42,
-      WEBHOOK_CREATE: 50,
-      WEBHOOK_UPDATE: 51,
-      WEBHOOK_DELETE: 52,
-      EMOJI_CREATE: 60,
-      EMOJI_UPDATE: 61,
-      EMOJI_DELETE: 62,
-      MESSAGE_DELETE: 72,
-      MESSAGE_BULK_DELETE: 73,
-      MESSAGE_PIN: 74,
-      MESSAGE_UNPIN: 75,
-      INTEGRATION_CREATE: 80,
-      INTEGRATION_UPDATE: 81,
-      INTEGRATION_DELETE: 82,
-    };
-
     this.save = this.save.bind(this);
     this.muteMember = this.muteMember.bind(this);
     this._onMessageDelete = this._onMessageDelete.bind(this);
@@ -131,34 +85,34 @@ class Moderation extends SubModule {
   /** @inheritdoc */
   initialize() {
     /**
-     * Permissions for the new Smited role. Bitfield.
+     * PermissionsBitField for the new Smited role. Bitfield.
      *
      * @private
      * @type {number}
      * @constant
      */
-    this._smitePerms = this.Discord.Permissions.FLAGS.CONNECT |
-        this.Discord.Permissions.FLAGS.VIEW_CHANNEL;
+    this._smitePerms = this.Discord.PermissionsBitField.Flags.Connect |
+        this.Discord.PermissionsBitField.Flags.ViewChannel;
 
     /* const adminOnlyOpts = new this.command.CommandSetting({
       validOnlyInGuild: true,
       defaultDisabled: true,
-      permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES |
-          this.Discord.Permissions.FLAGS.MANAGE_GUILD |
-          this.Discord.Permissions.FLAGS.BAN_MEMBERS,
+      permissions: this.Discord.PermissionsBitField.Flags.ManageRoles |
+          this.Discord.PermissionsBitField.Flags.ManageGuild |
+          this.Discord.PermissionsBitField.Flags.BanMembers,
     });
 
     this.command.on(
         new this.command.SingleCommand(['purge', 'prune'], commandPurge, {
           validOnlyInGuild: true,
           defaultDisabled: true,
-          permissions: this.Discord.Permissions.FLAGS.MANAGE_MESSAGES,
+          permissions: this.Discord.PermissionsBitField.Flags.ManageMessages,
         }));
     this.command.on(
         new this.command.SingleCommand(['ban', 'fuckyou'], commandBan, {
           validOnlyInGuild: true,
           defaultDisabled: true,
-          permissions: this.Discord.Permissions.FLAGS.BAN_MEMBERS,
+          permissions: this.Discord.PermissionsBitField.Flags.BanMembers,
         }));
     this.command.on(
         new this.command.SingleCommand(
@@ -170,13 +124,13 @@ class Moderation extends SubModule {
         new this.command.SingleCommand(['smite'], this._commandSmite, {
           validOnlyInGuild: true,
           defaultDisabled: true,
-          permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES,
+          permissions: this.Discord.PermissionsBitField.Flags.ManageRoles,
         }));
     this.command.on(
         new this.command.SingleCommand(['kick'], this._commandKick, {
           validOnlyInGuild: true,
           defaultDisabled: true,
-          permissions: this.Discord.Permissions.FLAGS.KICK_MEMBERS,
+          permissions: this.Discord.PermissionsBitField.Flags.KickMembers,
         }));
 
     this.client.guilds.cache.forEach((g) => {
@@ -274,7 +228,7 @@ class Moderation extends SubModule {
     }
     const files = msg.attachments.map((el) => el.url);
     const havePerm = msg.guild.me.permissions.has(
-        this.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG);
+        this.Discord.PermissionsBitField.Flags.ViewAuditLog);
     if (!havePerm) {
       this._finalMessageDeleteSend(
           msg.guild, msg.author.bot, tag, id, mId, channel, files, msg.content,
@@ -314,7 +268,8 @@ class Moderation extends SubModule {
     const modLog = this.bot.getSubmodule('./modLog.js');
     if (!modLog) return;
     const entry = logs && logs.entries && logs.entries.first();
-    const executor = entry && entry.action == 'MESSAGE_DELETE' &&
+    const executor = entry &&
+        entry.action == this.Discord.AuditLogEvent.MessageDelete &&
         entry.target.id == id && entry.executor;
     // It's possible that if a moderator deletes a user's message, then the user
     // delete's their own message, this will show that the moderator deleted it,
@@ -444,8 +399,8 @@ class Moderation extends SubModule {
       channels = channels.join(', ');
     }
     const guild = msgs.first().guild;
-    const havePerm =
-        guild.me.permissions.has(this.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG);
+    const havePerm = guild.me.permissions.has(
+        this.Discord.PermissionsBitField.Flags.ViewAuditLog);
     if (!havePerm) {
       modLog.output(
           guild, 'messagePurge', null, null,
@@ -454,7 +409,8 @@ class Moderation extends SubModule {
       guild.fetchAuditLogs({limit: 1})
           .then((logs) => {
             const entry = logs && logs.entries && logs.entries.first();
-            const deletedBy = entry && entry.action == 'MESSAGE_BULK_DELETE' &&
+            const deletedBy = entry &&
+                entry.action == this.Discord.AuditLogEvent.MessageBulkDelete &&
                 entry.executor && entry.executor.tag;
             modLog.output(
                 guild, 'messagePurge', null, null,
@@ -572,25 +528,27 @@ class Moderation extends SubModule {
           if (channel.permissionsLocked) return;
           const overwrites = channel.permissionOverwrites.resolve(role.id);
           if (overwrites) {
-            if (channel.type == 'GUILD_CATEGORY') {
+            if (channel.type == self.Discord.ChannelType.GuildCategory) {
               if (overwrites.deny.has(
-                  self.Discord.Permissions.FLAGS.SEND_MESSAGES) &&
-                  overwrites.deny.has(self.Discord.Permissions.FLAGS.SPEAK)) {
+                  self.Discord.PermissionsBitField.Flags.SendMessages) &&
+                  overwrites.deny.has(
+                      self.Discord.PermissionsBitField.Flags.Speak)) {
                 return;
               }
-            } else if (channel.type == 'GUILD_TEXT') {
+            } else if (channel.type == self.Discord.ChannelType.GuildText) {
               if (overwrites.deny.has(
-                  self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
+                  self.Discord.PermissionsBitField.Flags.SendMessages)) {
                 return;
               }
-            } else if (channel.type == 'GUILD_VOICE') {
-              if (overwrites.deny.has(self.Discord.Permissions.FLAGS.SPEAK)) {
+            } else if (channel.type == self.Discord.ChannelType.GuildVoice) {
+              if (overwrites.deny.has(
+                  self.Discord.PermissionsBitField.Flags.Speak)) {
                 return;
               }
             }
           }
           channel.permissionOverwrites
-              .edit(role, {SEND_MESSAGES: false, SPEAK: false})
+              .edit(role, {SendMessages: false, Speak: false})
               .catch(console.error);
         });
       } catch (err) {
@@ -717,7 +675,7 @@ class Moderation extends SubModule {
    * @param {Discord~Message} msg The message that triggered the smiting.
    */
   _smite(role, member, msg) {
-    const pFlags = this.Discord.Permissions.FLAGS;
+    const pFlags = this.Discord.PermissionsBitField.Flags;
     try {
       const list = JSON.stringify([...member.roles.cache.keys()]);
       const dir = `${this.common.guildSaveDir}${member.guild.id}/smited`;
@@ -766,23 +724,23 @@ class Moderation extends SubModule {
         if (channel.permissionsLocked) return;
         const overwrites = channel.permissionOverwrites.resolve(role.id);
         if (overwrites) {
-          if (channel.type == 'GUILD_CATEGORY') {
-            if (overwrites.deny.has(pFlags.SPEAK) &&
-                overwrites.deny.has(pFlags.SEND_MESSAGES)) {
+          if (channel.type == this.Discord.ChannelType.GuildCategory) {
+            if (overwrites.deny.has(pFlags.Speak) &&
+                overwrites.deny.has(pFlags.SendMessages)) {
               return;
             }
-          } else if (channel.type == 'GUILD_VOICE') {
-            if (overwrites.deny.has(pFlags.SPEAK)) {
+          } else if (channel.type == this.Discord.ChannelType.GuildVoice) {
+            if (overwrites.deny.has(pFlags.Speak)) {
               return;
             }
-          } else if (channel.type == 'GUILD_TEXT') {
-            if (overwrites.deny.has(pFlags.SEND_MESSAGES)) {
+          } else if (channel.type == this.Discord.ChannelType.GuildText) {
+            if (overwrites.deny.has(pFlags.SendMessages)) {
               return;
             }
           }
         }
         channel.permissionOverwrites
-            .edit(role, {SEND_MESSAGES: false, SPEAK: false})
+            .edit(role, {SendMessages: false, Speak: false})
             .catch(console.error);
       });
       if (member.voice.channel) member.voice.setMute(true, 'Smited');
@@ -833,8 +791,8 @@ class Moderation extends SubModule {
       return;
     }
     let reason =
-        msg.text.replace(this.Discord.MessageMentions.USERS_PATTERN, '')
-            .replace(this.Discord.MessageMentions.ROLES_PATTERN, '')
+        msg.text.replace(this.Discord.MessageMentions.UsersPattern, '')
+            .replace(this.Discord.MessageMentions.RolesPattern, '')
             .replace(/\d{17,19}/g)
             .replace(/\s{2,}/g, ' ')
             .trim();

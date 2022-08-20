@@ -148,7 +148,7 @@ function TicTacToe() {
      * done, 1 is player 1, 2 is player 2, 3 is draw.
      */
     this.print = function(winner = 0) {
-      const embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.EmbedBuilder();
       const names = ['Nobody', 'Nobody'];
       let gameFull = true;
       if (this.players.p1) {
@@ -180,29 +180,33 @@ function TicTacToe() {
         }
       });
 
-      embed.addField('\u200B', finalBoard, true);
+      embed.addFields([{name: '\u200B', value: finalBoard}]);
       if (winner == 0) {
-        embed.addField(
-            names[this.turn - 1] + '\'s turn (' + (this.turn == 1 ? 'X' : 'O') +
-                ')',
-            '`' + names[0] + '` is X\n`' + names[1] + '` is O', true);
+        embed.addFields([{
+          name: names[this.turn - 1] + '\'s turn (' +
+              (this.turn == 1 ? 'X' : 'O') + ')',
+          value: '`' + names[0] + '` is X\n`' + names[1] + '` is O',
+        }]);
       } else {
         numGames--;
-        embed.addField(
-            '\u200B', '`' + names[0] + '` was X\n`' + names[1] + '` was O',
-            true);
+        embed.addFields([{
+          name: '\u200B',
+          value: '`' + names[0] + '` was X\n`' + names[1] + '` was O',
+        }]);
       }
 
       if (winner == 3) {
-        embed.addField('Draw game!', 'Nobody wins');
+        embed.addFields([{name: 'Draw game!', value: 'Nobody wins'}]);
       } else if (winner == 2) {
-        embed.addField(
-            names[1] + ' Won! ' + emoji.O,
-            names[0] + ', try harder next time.');
+        embed.addFields([{
+          name: names[1] + ' Won! ' + emoji.O,
+          value: names[0] + ', try harder next time.',
+        }]);
       } else if (winner == 1) {
-        embed.addField(
-            names[0] + ' Won! ' + emoji.X,
-            names[1] + ', try harder next time.');
+        embed.addFields([{
+          name: names[0] + ' Won! ' + emoji.X,
+          value: names[1] + ', try harder next time.',
+        }]);
       }
       msg.edit({content: '\u200B', embeds: [embed]});
     };

@@ -17,14 +17,11 @@ function RoleColors() {
   /** @inheritdoc */
   this.initialize = function() {
     const cmdColor = new self.command.SingleCommand(
-        [
-          'color',
-        ],
-        commandColor, new self.command.CommandSetting({
+        ['color'], commandColor, new self.command.CommandSetting({
           validOnlyInGuild: true,
           defaultDisabled: true,
-          permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
-              self.Discord.Permissions.FLAGS.MANAGE_GUILD,
+          permissions: self.Discord.PermissionsBitField.Flags.ManageRoles |
+              self.Discord.PermissionsBitField.Flags.ManageGuild,
         }));
     self.command.on(cmdColor);
   };
@@ -111,7 +108,7 @@ function RoleColors() {
       }
     }
     const finished = function() {
-      const embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.EmbedBuilder();
       embed.setColor(role.color);
       embed.setTitle('Updated color.');
       embed.setDescription(colorString);

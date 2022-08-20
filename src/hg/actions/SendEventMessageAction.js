@@ -28,9 +28,9 @@ class SendEventMessageAction extends ChannelAction {
         game.currentGame.isPaused = true;
       } else if (evt.battle && evt.state < evt.attacks.length) {
         const attk = evt.attacks[evt.state];
-        const embed = new hg._parent.Discord.MessageEmbed();
+        const embed = new hg._parent.Discord.EmbedBuilder();
         const message = attk.message.split('\n');
-        embed.addField(message[1], message[2]);
+        embed.addFields([{name: message[1], value: message[2]}]);
         embed.setColor([50, 0, 0]);
 
         const avatarSizes = game.options.battleAvatarSizes;
@@ -95,8 +95,8 @@ class SendEventMessageAction extends ChannelAction {
                       .send({
                         content: message[0],
                         embeds: [embed],
-                        files: [new hg._parent.Discord.MessageAttachment(
-                            out, 'hgBattle.png')],
+                        files: [new hg._parent.Discord.AttachmentBuilder(
+                            out, {name: 'hgBattle.png'})],
                       })
                       .catch((err) => {
                         hg._parent.error(
@@ -151,7 +151,7 @@ class SendEventMessageAction extends ChannelAction {
         } else {
           const iconGap = avatarSizes.gap;
           const underlineSize = avatarSizes.underline;
-          const embed = new hg._parent.Discord.MessageEmbed();
+          const embed = new hg._parent.Discord.EmbedBuilder();
           if (evt.subMessage) {
             embed.setDescription(`${evt.message}\n${evt.subMessage}`);
           } else {
@@ -210,8 +210,8 @@ class SendEventMessageAction extends ChannelAction {
                       .send({
                         content: evt.mentionString || '\u200B',
                         embeds: [embed],
-                        files: [new hg._parent.Discord.MessageAttachment(
-                            out, 'hgEvent.png')],
+                        files: [new hg._parent.Discord.AttachmentBuilder(
+                            out, {name: 'hgEvent.png'})],
                       })
                       .catch((err) => {
                         hg._parent.error(

@@ -18,7 +18,7 @@ class SendTeamRankMessageAction extends ChannelAction {
     super((hg, game, channel) => {
       if (game.options.teamSize > 0) {
         const current = game.currentGame;
-        const teamRankEmbed = new hg._parent.Discord.MessageEmbed();
+        const teamRankEmbed = new hg._parent.Discord.EmbedBuilder();
         teamRankEmbed.setTitle('Final Team Ranks');
         this._sortTeams(game);
         const splitEmbeds =
@@ -54,12 +54,12 @@ class SendTeamRankMessageAction extends ChannelAction {
         });
         if (splitEmbeds) {
           game.currentGame.teams.forEach((el) => {
-            teamRankEmbed.addField(
-                `${el.rank}) ${el.name}`,
-                statusList.splice(0, el.players.length)
-                    .join('\n')
-                    .slice(0, 1023),
-                true);
+            teamRankEmbed.addFields([{
+              name: `${el.rank}) ${el.name}`,
+              value: statusList.splice(0, el.players.length)
+                  .join('\n')
+                  .slice(0, 1023),
+            }]);
           });
         } else {
           if (statusList.length >= 5) {
@@ -70,9 +70,10 @@ class SendTeamRankMessageAction extends ChannelAction {
             for (let i = 0; i < numCols - 1; i++) {
               const thisMessage =
                   statusList.splice(0, quarterLength).join('\n');
-              teamRankEmbed.addField(i + 1, thisMessage, true);
+              teamRankEmbed.addFields([{name: i + 1, value: thisMessage}]);
             }
-            teamRankEmbed.addField(numCols, statusList.join('\n'), true);
+            teamRankEmbed.addFields(
+                [{name: numCols, value: statusList.join('\n')}]);
           } else {
             teamRankEmbed.setDescription(statusList.join('\n'));
           }

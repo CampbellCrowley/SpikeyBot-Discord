@@ -43,16 +43,14 @@ function ChatBot() {
   /** @inheritdoc */
   this.initialize = function() {
     self.command.on('chat', onChatMessage);
-    self.command.on(
-        new self.command.SingleCommand(
-            'togglechatbot', commandToggleChatBot,
-            new self.command.CommandSetting({
-              validOnlyInGuild: true,
-              defaultDisabled: true,
-              permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
-                  self.Discord.Permissions.FLAGS.MANAGE_GUILD |
-                  self.Discord.Permissions.FLAGS.BAN_MEMBERS,
-            })));
+    self.command.on(new self.command.SingleCommand(
+        'togglechatbot', commandToggleChatBot, new self.command.CommandSetting({
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: self.Discord.PermissionsBitField.Flags.ManageRoles |
+              self.Discord.PermissionsBitField.Flags.ManageGuild |
+              self.Discord.PermissionsBitField.Flags.BanMembers,
+        })));
 
     self.client.on('messageCreate', onMessage);
 
@@ -180,7 +178,8 @@ function ChatBot() {
     const perms =
         (msg.channel.permissionsFor &&
          msg.channel.permissionsFor(self.client.user));
-    if (perms && !perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
+    if (perms &&
+        !perms.has(self.Discord.PermissionsBitField.Flags.SendMessages)) {
       return;
     }
     if (!msg.text || msg.text.length < 2) return;

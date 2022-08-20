@@ -17,7 +17,7 @@ class SendPlayerRankMessageAction extends ChannelAction {
   constructor() {
     super((hg, game, channel) => {
       const current = game.currentGame;
-      const rankEmbed = new hg._parent.Discord.MessageEmbed();
+      const rankEmbed = new hg._parent.Discord.EmbedBuilder();
       rankEmbed.setColor([255, 0, 255]);
       rankEmbed.setTitle('Final Ranks (kills)');
       const rankList =
@@ -46,17 +46,19 @@ class SendPlayerRankMessageAction extends ChannelAction {
         for (let i = 0; i < 2; i++) {
           const thisMessage =
               rankList.splice(0, thirdLength).join('\n').slice(0, 1024);
-          rankEmbed.addField(i + 1, thisMessage, true);
+          rankEmbed.addFields([{name: i + 1, value: thisMessage}]);
         }
-        rankEmbed.addField(3, rankList.join('\n').slice(0, 1024), true);
+        rankEmbed.addFields(
+            [{name: 3, value: rankList.join('\n').slice(0, 1024)}]);
       } else {
         const thirdLength = Math.floor(rankList.length / 3);
         for (let i = 0; i < 2; i++) {
           const thisMessage =
               rankList.splice(0, thirdLength).join('\n').slice(0, 1024);
-          rankEmbed.addField(i + 1, thisMessage, true);
+          rankEmbed.addFields([{name: i + 1, value: thisMessage}]);
         }
-        rankEmbed.addField(3, rankList.join('\n').slice(0, 1024), true);
+        rankEmbed.addFields(
+            [{name: 3, value: rankList.join('\n').slice(0, 1024)}]);
       }
       if (!game.options.disableOutput) {
         channel.send({embeds: [rankEmbed]}).catch((err) => {

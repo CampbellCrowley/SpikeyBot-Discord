@@ -76,16 +76,16 @@ The bot is not designed to be easily hosted by others, but still may be done.
 The below steps outline the minimum required to get the SpikeyBot to run.  
 This tutorial uses the Discord.js sharding system, which may become deprecated in the future.  
 1) Have a server/computer
-    - SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.
+    - SB is developed and tested solely on Debian Bullseye (amd64), but other OS's may work.
 2) Install [NodeJS](https://nodejs.org/)
-    - The bot is currently running on NodeJS [v16.14.0](https://nodejs.org/dist/v16.14.0/). Newer versions may work, but are untested.
+    - The bot is currently running on NodeJS [v16.16.0](https://nodejs.org/dist/v16.16.0/). Newer versions may work, but are untested.
 3) Download source code
     - Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.
 4) Install system dependencies
     - `sudo apt install make libtool autoconf g++ ffmpeg` are required for the default installation.
 5) Install dependencies via NPM (or Yarn)
-    - Current version of NPM used is `v8.5.1`, but almost any version should be fine.
-    - Current version of Yarn used is `v1.22.17` but almost any version should be fine.
+    - Current version of NPM used is `v8.18.0`, but almost any version should be fine.
+    - Current version of Yarn used is `v1.22.19` but almost any version should be fine.
     - In the `SpikeyBot-Discord` directory, run `npm install` or `yarn`.
 6) Get a bot token from Discord
     - A token for the bot that you are trying to run from [Discord](https://discordapp.com/developers/applications/) is required.
@@ -98,6 +98,7 @@ This tutorial uses the Discord.js sharding system, which may become deprecated i
 8) Run SpikeyBot
     - Run `node src/SpikeyBot.js` in `SpikeyBot-Discord/` (working directory must be the project root).
     - Errors about `gApiCredentials.json` missing can be suppressed by removing `./tts.js` and `./chatbot.js` from `./subModules.json` since these require special authentication from Google's API. (https://console.cloud.google.com/)
+      - NOTE: `./subModules.json.crypt` must be deleted now each time an edit is made to `./subModules.json`.
     - All website related subModules will not work, and related errors can be suppressed by removing all subModules that start with `./web/` from `./subModules.json`.
     - If you are **not** running with `--shards` and wish to use the Hungry Games submodule, you must run node with `--experimental-worker`.
 

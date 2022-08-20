@@ -20,35 +20,27 @@ function RoleManager() {
   /** @inheritdoc */
   this.initialize = function() {
     cmdRoleAdd = new self.command.SingleCommand(
-        [
-          'add',
-          'give',
-        ],
-        commandRoleAdd, new self.command.CommandSetting({
+        ['add', 'give'], commandRoleAdd, new self.command.CommandSetting({
           validOnlyInGuild: true,
           defaultDisabled: true,
-          permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
-              self.Discord.Permissions.FLAGS.MANAGE_GUILD,
+          permissions: self.Discord.PermissionsBitField.Flags.ManageRoles |
+              self.Discord.PermissionsBitField.Flags.ManageGuild,
         }));
     cmdRoleRemove = new self.command.SingleCommand(
-        [
-          'remove',
-          'delete',
-          'take',
-        ],
-        commandRoleRemove, new self.command.CommandSetting({
+        ['remove', 'delete', 'take'], commandRoleRemove,
+        new self.command.CommandSetting({
           validOnlyInGuild: true,
           defaultDisabled: true,
-          permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
-              self.Discord.Permissions.FLAGS.MANAGE_GUILD,
+          permissions: self.Discord.PermissionsBitField.Flags.ManageRoles |
+              self.Discord.PermissionsBitField.Flags.ManageGuild,
         }));
     self.command.on(
         new self.command.SingleCommand(
             ['role', 'roles'], commandRole, new self.command.CommandSetting({
               validOnlyInGuild: true,
               defaultDisabled: true,
-              permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
-                  self.Discord.Permissions.FLAGS.MANAGE_GUILD,
+              permissions: self.Discord.PermissionsBitField.Flags.ManageRoles |
+                  self.Discord.PermissionsBitField.Flags.ManageGuild,
             })),
         [
           new self.command.SingleCommand(
@@ -68,8 +60,9 @@ function RoleManager() {
               commandRoleManage, new self.command.CommandSetting({
                 validOnlyInGuild: true,
                 defaultDisabled: true,
-                permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
-                    self.Discord.Permissions.FLAGS.MANAGE_GUILD,
+                permissions:
+                    self.Discord.PermissionsBitField.Flags.ManageRoles |
+                    self.Discord.PermissionsBitField.Flags.ManageGuild,
               })),
           cmdRoleAdd,
           cmdRoleRemove,

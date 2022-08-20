@@ -27,9 +27,9 @@ function CmdScheduling() {
     const adminOnlyOpts = new self.command.CommandSetting({
       validOnlyInGuild: true,
       defaultDisabled: true,
-      permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
-          self.Discord.Permissions.FLAGS.MANAGE_GUILD |
-          self.Discord.Permissions.FLAGS.BAN_MEMBERS,
+      permissions: self.Discord.PermissionsBitField.Flags.ManageRoles |
+          self.Discord.PermissionsBitField.Flags.ManageGuild |
+          self.Discord.PermissionsBitField.Flags.BanMembers,
     });
     self.command.on(
         new self.command.SingleCommand(
@@ -416,14 +416,14 @@ function CmdScheduling() {
             myself.memberId + ' ' + myself.cmd);
         return;
       } else if (!myself.message.channel.permissionsFor(self.client.user)
-          .has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
+          .has(self.Discord.PermissionsBitField.Flags.SendMessages)) {
         self.error(
             'ScheduledCmdWarning No perm SEND_MESSAGES: ' +
             myself.channel.guild.id + '#' + myself.channel.id + '@' +
             myself.memberId + ' ' + myself.cmd);
         return;
       } else if (!myself.message.channel.permissionsFor(self.client.user)
-          .has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
+          .has(self.Discord.PermissionsBitField.Flags.ViewChannel)) {
         self.error(
             'ScheduledCmdWarning No perm VIEW_CHANNEL: ' +
             myself.channel.guild.id + '#' + myself.channel.id + '@' +
@@ -655,7 +655,7 @@ function CmdScheduling() {
       return;
     }
 
-    const embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.EmbedBuilder();
     embed.setTitle('Created Scheduled Command (' + newCmd.id + ')');
     embed.setColor(embedColor);
     let desc = 'Runs in ' + formatDelay(delay);
@@ -663,8 +663,9 @@ function CmdScheduling() {
       desc += '\nRepeats every ' + formatDelay(repeat);
     }
     embed.setDescription(desc);
-    embed.addField(
-        'To cancel:', `\`${msg.prefix}sch cancel ${newCmd.id}\``, true);
+    embed.addFields([
+      {name: 'To cancel:', value: `\`${msg.prefix}sch cancel ${newCmd.id}\``},
+    ]);
     embed.setFooter({text: cmd});
 
     msg.channel.send({content: self.common.mention(msg), embeds: [embed]});
@@ -794,7 +795,7 @@ function CmdScheduling() {
    * @param {Discord~Message} msg The message to reply to.
    */
   function replyWithSchedule(msg) {
-    const embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.EmbedBuilder();
     embed.setTitle('Scheduled Commands');
     embed.setColor(embedColor);
     let list = getScheduledCommandsInGuild(msg.guild.id);
@@ -872,7 +873,7 @@ function CmdScheduling() {
    * @param {Discord~Message} msg The message to reply to.
    */
   function cancelAndReply(msg) {
-    const embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.EmbedBuilder();
     embed.setColor(embedColor);
     const list = schedules[msg.guild.id];
     if (!list || list.length == 0) {

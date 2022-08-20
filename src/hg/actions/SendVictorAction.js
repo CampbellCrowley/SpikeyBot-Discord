@@ -50,7 +50,7 @@ class SendVictorAction extends ChannelAction {
    * @param {HungryGames~Team} team The last team surviving.
    */
   _sendTeamVictor(hg, game, channel, team) {
-    const finalMessage = new hg._parent.Discord.MessageEmbed();
+    const finalMessage = new hg._parent.Discord.EmbedBuilder();
     finalMessage.setColor([255, 0, 255]);
     const teamName = team.name;
     const current = game.currentGame;
@@ -127,8 +127,8 @@ class SendVictorAction extends ChannelAction {
                 .send({
                   content: winnerTag,
                   embeds: [finalMessage],
-                  files: [new hg._parent.Discord.MessageAttachment(
-                      out, 'hgTeamVictor.png')],
+                  files: [new hg._parent.Discord.AttachmentBuilder(
+                      out, {name: 'hgTeamVictor.png'})],
                 })
                 .catch((err) => {
                   hg._parent.error('Failed to send team victor image message.');
@@ -161,7 +161,7 @@ class SendVictorAction extends ChannelAction {
    * @param {?HungryGames~Team} team The last team surviving, if one.
    */
   _sendSoloVictor(hg, game, channel, p, team) {
-    const finalMessage = new hg._parent.Discord.MessageEmbed();
+    const finalMessage = new hg._parent.Discord.EmbedBuilder();
     finalMessage.setColor([255, 0, 255]);
     const current = game.currentGame;
     const name =
@@ -186,7 +186,7 @@ class SendVictorAction extends ChannelAction {
    * @param {Discord~TextChannel} channel Channel to send the message.
    */
   _sendNoVictor(hg, game, channel) {
-    const finalMessage = new hg._parent.Discord.MessageEmbed();
+    const finalMessage = new hg._parent.Discord.EmbedBuilder();
     finalMessage.setColor([255, 0, 255]);
     const current = game.currentGame;
     finalMessage.setTitle(

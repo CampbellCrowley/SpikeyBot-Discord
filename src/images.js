@@ -233,7 +233,7 @@ class Images extends SubModule {
         }
         const image = list[Math.floor(Math.random() * list.length)];
         const url = image.images ? image.images[0].link : image.link;
-        const embed = new this.Discord.MessageEmbed({title: image.title});
+        const embed = new this.Discord.EmbedBuilder({title: image.title});
         embed.setFooter({text: image.link});
         if (image.description) {
           embed.setDescription(image.description);
@@ -277,7 +277,7 @@ class Images extends SubModule {
         }
         const image = list[Math.floor(Math.random() * list.length)];
         const url = image.images.original.url;
-        const embed = new this.Discord.MessageEmbed({title: image.title});
+        const embed = new this.Discord.EmbedBuilder({title: image.title});
         embed.setFooter({text: image.url});
         embed.setURL(image.url);
         embed.setImage(url);
