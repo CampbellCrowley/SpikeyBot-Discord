@@ -138,7 +138,7 @@ class Echo extends SubModule {
     if (!char) {
       return;
     }
-    if (!msg.channel.permissionsFor(msg.guild.me)
+    if (!msg.channel.permissionsFor(msg.guild.members.me)
         .has(this.Discord.PermissionsBitField.Flags.ManageWebhooks)) {
       return;
     }
@@ -155,7 +155,7 @@ class Echo extends SubModule {
             this.error('Failed to send webhook: ' + msg.channel.id);
             console.error(err);
           });
-          if (msg.channel.permissionsFor(msg.guild.me)
+          if (msg.channel.permissionsFor(msg.guild.members.me)
               .has(this.Discord.PermissionsBitField.Flags.ManageMessages)) {
             msg.delete().catch((err) => {
               this.error('Failed to delete message: ' + msg.channel.id);
@@ -258,7 +258,7 @@ class Echo extends SubModule {
           .then((hooks) => {
             const hook = hooks.find((h) => h.owner.id == this.client.user.id);
             if (!hook) {
-              if (!channel.permissionsFor(msg.guild.me)
+              if (!channel.permissionsFor(msg.guild.members.me)
                   .has(this.Discord.PermissionsBitField.Flags.ManageWebhooks)) {
                 this.common.reply(
                     msg, 'Failed to create webhook',

@@ -258,7 +258,7 @@ class LocaleManager extends SubModule {
       this._strings.reply(this.common, msg, 'title', 'invalidLocale');
       return;
     }
-    const desc = msg.channel.permissionsFor(msg.guild.me)
+    const desc = msg.channel.permissionsFor(msg.guild.members.me)
         .has(this.Discord.PermissionsBitField.Flags.AddReactions) ?
         'fillOne' :
         'confirmLocaleReact';

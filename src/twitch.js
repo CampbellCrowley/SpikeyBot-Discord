@@ -476,7 +476,7 @@ class Twitch extends SubModule {
       channels.forEach((cId) => {
         const chan = this.client.channels.resolve(cId);
         if (!chan) return;
-        const perms = chan.guild && !chan.permissionsFor(chan.guild.me);
+        const perms = chan.guild && !chan.permissionsFor(chan.guild.members.me);
         if (perms && !perms.has(pF.SendMessages)) {
           return;
         }

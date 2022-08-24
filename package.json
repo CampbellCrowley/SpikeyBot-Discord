@@ -21,7 +21,7 @@
     "date-format": "^4.0.3",
     "dialogflow": "^1.2.0",
     "diff": "^5.0.0",
-    "discord.js": "^14.2.0",
+    "discord.js": "^14.3.0",
     "fuzzy-search": "^3.2.1",
     "http-proxy": "^1.18.1",
     "jimp": "^0.16.1",

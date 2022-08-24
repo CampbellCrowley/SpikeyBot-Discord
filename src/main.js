@@ -817,7 +817,7 @@ function Main() {
   function onGuildBanAdd(guild, user) {
     if (user.id == self.client.user.id) return;
     if (disabledBanMessage[guild.id]) return;
-    if (!guild.me.permissions.has(
+    if (!guild.members.me.permissions.has(
         self.Discord.PermissionsBitField.Flags.ViewAuditLog)) {
       return;
     }
@@ -2027,7 +2027,7 @@ function Main() {
    * @listens Command#fuckyou
    */
   function commandBan(msg) {
-    if (!msg.guild.me.permissoins.has(
+    if (!msg.guild.members.me.permissoins.has(
         self.Discord.PermissionsBitField.Flags.BanMembers)) {
       self.common.reply(
           msg, 'Failed', 'I do not have permission to ban members.');
@@ -2077,7 +2077,7 @@ function Main() {
                     '! You are not stronger than them!')
             .catch(() => {});
       } else {
-        const me = msg.guild.me;
+        const me = msg.guild.members.me;
         const myRole = me.roles.highest;
         const highest = toBan.roles.highest;
 
@@ -3475,7 +3475,7 @@ function Main() {
       }
     };
     self.client.guilds.cache.forEach((g) => {
-      if (!g.me.permissions.has('BAN_MEMBERS')) return;
+      if (!g.members.me.permissions.has('BAN_MEMBERS')) return;
       total++;
       const now = Date.now();
       if (banListCache[g.id] && banListCache[g.id].timestamp &&

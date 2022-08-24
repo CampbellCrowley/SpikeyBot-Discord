@@ -1197,7 +1197,8 @@ function HG() {
       reply(msg, 'startNoAttachFiles');
       if (!myPerms) {
         self.error(
-            'Failed to fetch perms for myself. ' + (msg.guild.me && true));
+            'Failed to fetch perms for myself. ' +
+            (msg.guild.members.me && true));
       }
       return;
     } else if (!myPerms.has(
@@ -1523,7 +1524,8 @@ function HG() {
       reply(msg, 'nextDayPermImagesTitle', 'nextDayPermImagesBody');
       if (!myPerms) {
         self.error(
-            'Failed to fetch perms for myself. ' + (msg.guild.me && true));
+            'Failed to fetch perms for myself. ' +
+            (msg.guild.members.me && true));
       }
       return;
     } else if (

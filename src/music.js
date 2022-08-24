@@ -1182,12 +1182,12 @@ function Music() {
    * @listens Command#stfu
    */
   function commandLeave(msg) {
-    if (msg.guild.me.voice.channel) {
+    if (msg.guild.members.me.voice.channel) {
       const followMsg = follows[msg.guild.id] ?
           'No longer following <@' + follows[msg.guild.id] + '>' :
           null;
       delete follows[msg.guild.id];
-      msg.guild.me.voice.channel.leave();
+      msg.guild.members.me.voice.channel.leave();
       reply(msg, 'Goodbye!', followMsg);
     } else {
       reply(msg, 'I\'m not playing anything.');

@@ -42,7 +42,7 @@ function RoleColors() {
    * @listens Command#color
    */
   function commandColor(msg) {
-    if (!msg.guild.me.permissions.has('MANAGE_ROLES')) {
+    if (!msg.guild.members.me.permissions.has('MANAGE_ROLES')) {
       self.common.reply(
           msg, 'Unfortunately, I do not have permission to manage roles.');
       return;

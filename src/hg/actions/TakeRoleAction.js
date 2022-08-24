@@ -17,7 +17,7 @@ class TakeRoleAction extends MemberAction {
    */
   constructor(role) {
     super((hg, game, member) => {
-      if (!member.guild.me.permissions.has('MANAGE_ROLES')) return;
+      if (!member.guild.members.me.permissions.has('MANAGE_ROLES')) return;
       member.roles.remove(this._role, 'HG Automation').catch(console.error);
     });
     this._role = role;

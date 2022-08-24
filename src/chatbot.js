@@ -155,7 +155,7 @@ function ChatBot() {
               .replace(
                   new RegExp(
                       '\\s*@' + escapeRegExp(
-                          msg.guild.me.nickname ||
+                          msg.guild.members.me.nickname ||
                                     self.client.user.username) +
                           '\\s*',
                       'g'),

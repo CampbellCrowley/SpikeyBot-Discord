@@ -227,7 +227,7 @@ class Moderation extends SubModule {
       return;
     }
     const files = msg.attachments.map((el) => el.url);
-    const havePerm = msg.guild.me.permissions.has(
+    const havePerm = msg.guild.members.me.permissions.has(
         this.Discord.PermissionsBitField.Flags.ViewAuditLog);
     if (!havePerm) {
       this._finalMessageDeleteSend(
@@ -399,7 +399,7 @@ class Moderation extends SubModule {
       channels = channels.join(', ');
     }
     const guild = msgs.first().guild;
-    const havePerm = guild.me.permissions.has(
+    const havePerm = guild.members.me.permissions.has(
         this.Discord.PermissionsBitField.Flags.ViewAuditLog);
     if (!havePerm) {
       modLog.output(
@@ -561,7 +561,7 @@ class Moderation extends SubModule {
           .create({
             data: {
               name: 'Muted',
-              position: member.guild.me.roles.highest.position - 1,
+              position: member.guild.members.me.roles.highest.position - 1,
               permissions: 0,
             },
           })
@@ -807,7 +807,7 @@ class Moderation extends SubModule {
                     '! You are not stronger than them!')
             .catch(() => {});
       } else {
-        const me = msg.guild.me;
+        const me = msg.guild.members.me;
         const myRole = me.roles.highest;
         const highest = toBan.roles.highest;
 

@@ -137,7 +137,7 @@ function Uno() {
    * @listens Command#uno
    */
   function commandUno(msg) {
-    if (!msg.guild.me.permissions.has(pFlags.ManageChannels)) {
+    if (!msg.guild.members.me.permissions.has(pFlags.ManageChannels)) {
       self.common.reply(
           msg,
           'I need permission to manage channels in order to start a game of ' +
@@ -175,7 +175,7 @@ function Uno() {
    * @listens Command#uno_endall
    */
   function commandEndAll(msg) {
-    if (!msg.guild.me.permissions.has(pFlags.ManageChannels)) {
+    if (!msg.guild.members.me.permissions.has(pFlags.ManageChannels)) {
       self.common.reply(msg, 'I don\'t have permission to manage channels.');
       return;
     }
