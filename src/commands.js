@@ -467,12 +467,12 @@ function Command() {
      * run this command. Same bitfield used by Discord~Permissions.
      *
      * @public
-     * @type {number}
+     * @type {bigint}
      * @default 0
      */
     this.permissions = opts.permissions;
-    if (typeof this.permissions !== 'number') {
-      this.permissions = 0;
+    if (typeof this.permissions !== 'bigint') {
+      this.permissions = BigInt(0);
     }
 
     /**
@@ -584,7 +584,7 @@ function Command() {
         // The command is disabled by default, but the GuildMember has a
         // required permission to run this command, or is Admin, or is guild
         // owner.
-        let perms = 0;
+        let perms = BigInt(0);
         if (msg.channel) {
           const permObj = msg.channel.permissionsFor(msg.member);
           if (permObj) perms = permObj.bitfield;

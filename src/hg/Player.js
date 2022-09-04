@@ -142,7 +142,7 @@ Player.from = function(member) {
         (member instanceof Discord.User);
     const user = isDiscord ? member.user || member : member;
     const avatar =
-        isDiscord ? user.displayAvatarURL({format: 'png'}) : user.avatarURL;
+        isDiscord ? user.displayAvatarURL({extension: 'png'}) : user.avatarURL;
     const name = isDiscord ? user.username : member.name;
     player = new Player(user.id, name, avatar, member.nickname);
     if (!isDiscord) {

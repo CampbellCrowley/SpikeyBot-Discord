@@ -561,7 +561,8 @@ function SMLoader() {
       if (self.client.shard) {
         const message = encodeURIComponent(msg.text);
         self.client.shard.broadcastEval(
-            `this.commandReload("${message}",${self.client.shard.ids[0]})`);
+            eval(`((client) => client.commandReload("${message}",${
+              self.client.shard.ids[0]}))`));
       }
       let toReload = msg.text.split(' ').splice(1);
       const opts = {};
@@ -685,7 +686,8 @@ function SMLoader() {
       if (self.client.shard) {
         const message = encodeURIComponent(msg.text);
         self.client.shard.broadcastEval(
-            `this.commandUnload("${message}",${self.client.shard.ids[0]})`);
+            eval(`((client) => client.commandUnload("${message}",${
+              self.client.shard.ids[0]}))`));
       }
       let toUnload = msg.text.split(' ').splice(1);
       const opts = {};
@@ -762,7 +764,8 @@ function SMLoader() {
       if (self.client.shard) {
         const message = encodeURIComponent(msg.text);
         self.client.shard.broadcastEval(
-            `this.commandLoad("${message}",${self.client.shard.ids[0]})`);
+            eval(`((client) => client.commandLoad("${message}",${
+              self.client.shard.ids[0]}))`));
       }
       const toLoad = msg.text.split(' ').splice(1);
       self.common.reply(msg, 'Loading modules...').then((warnMessage) => {

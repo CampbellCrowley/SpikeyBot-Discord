@@ -9,7 +9,7 @@ const sIOClient = require('socket.io-client');
 const querystring = require('querystring');
 const auth = require('../../auth.js');
 const crypto = require('crypto');
-const dateFormat = require('dateformat');
+const dateFormat = require('date-format');
 
 const clientId = '444293534720458753';
 const clientSecret = auth.webSecret;

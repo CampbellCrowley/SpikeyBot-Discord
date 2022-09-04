@@ -933,7 +933,7 @@ function Uno() {
     function sendHelp() {
       const embed = new self.Discord.EmbedBuilder();
       embed.setTitle('Welcome to UNO! (Beta)');
-      embed.setAuthor(maker.user.tag);
+      embed.setAuthor({name: maker.user.tag});
       embed.setColor([237, 21, 31]);
       embed.setDescription(
           'Just type `UNO!` into this channel to call uno.\nTo play a card, ' +

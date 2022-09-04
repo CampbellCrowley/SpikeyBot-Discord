@@ -342,7 +342,7 @@ class Echo extends SubModule {
       const name = `${user.username}${nick}${dates}${mutual}`;
       embed.setColor([255, 0, 255]);
       embed.setTitle(tag);
-      embed.setThumbnail(user.displayAvatarURL({size: 32, dynamic: true}));
+      embed.setThumbnail(user.displayAvatarURL({size: 32}));
       if (charList.length == 1) {
         embed.setDescription(`${name}\n**Character**: ${charList[0]}`);
       } else if (charList.length > 0) {
@@ -367,10 +367,9 @@ class Echo extends SubModule {
 
     if (this.client.shard) {
       this.client.shard
-          .broadcastEval(((id) => {
-            return (client) =>
-              client.guilds.cache.filter((g) => g.members.resolve(id)).size;
-          })(user.id))
+          .broadcastEval(eval(
+              '((client) => client.guilds.cache.filter((g) => ' +
+              `g.members.resolve('${user.id}').size))`))
           .then((res) => {
             res.forEach((el) => num += el);
             send();

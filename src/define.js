@@ -52,7 +52,7 @@ function Define() {
       return;
     }
     const word = match[1];
-    msg.channel.startTyping();
+    msg.channel.sendTyping();
     const opt = {headers: {'User-Agent': self.common.ua}};
 
     const req = https.request(reqURL + word, opt, (res) => {
@@ -61,7 +61,6 @@ function Define() {
         data += chunk;
       });
       res.on('end', () => {
-        msg.channel.stopTyping();
         let parsed;
         try {
           parsed = JSON.parse(data);
@@ -86,7 +85,6 @@ function Define() {
     req.on('error', (err) => {
       self.error('Error while fetching definition: ' + err.message);
       console.error(err);
-      msg.channel.stopTyping();
     });
     req.setHeader('X-RapidAPI-Key', auth.wordsAPIKey);
     req.end();

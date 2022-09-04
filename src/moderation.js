@@ -458,8 +458,9 @@ class Moderation extends SubModule {
     const age = member.user.createdTimestamp &&
         this._formatDelay(Date.now() - member.user.createdTimestamp);
     if (this.client.shard) {
-      const toEval =
-      `this.guilds.cache.filter((g) => g.members.resolve('${member.id}')).size`;
+      const toEval = eval(
+          `((client) => client.guilds.cache.filter((g) => g.members.resolve('${
+            member.id}')).size)`);
       this.client.shard.broadcastEval(toEval)
           .then((res) => {
             res.forEach((el) => num += el);

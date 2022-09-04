@@ -84,7 +84,7 @@ This tutorial uses the Discord.js sharding system, which may become deprecated i
 4) Install system dependencies
     - `sudo apt install make libtool autoconf g++ ffmpeg` are required for the default installation.
 5) Install dependencies via NPM (or Yarn)
-    - Current version of NPM used is `v8.18.0`, but almost any version should be fine.
+    - Current version of NPM used is `v8.19.1`, but almost any version should be fine.
     - Current version of Yarn used is `v1.22.19` but almost any version should be fine.
     - In the `SpikeyBot-Discord` directory, run `npm install` or `yarn`.
 6) Get a bot token from Discord

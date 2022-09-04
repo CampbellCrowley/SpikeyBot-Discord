@@ -659,7 +659,7 @@ function WebSettings() {
         username: m.user.username,
         tag: m.user.tag,
         discriminator: m.user.discriminator,
-        avatarURL: m.user.displayAvatarURL({dynamic: true}),
+        avatarURL: m.user.displayAvatarURL(),
         id: m.user.id,
         bot: m.user.bot,
       },

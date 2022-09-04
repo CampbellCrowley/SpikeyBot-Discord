@@ -350,13 +350,14 @@ function Main() {
 
 
     self.client.on('debug', onDebug);
-    self.client.on('rateLimit', onRateLimit);
     self.client.on('warn', onWarn);
     self.client.on('error', onError);
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
     self.client.on('guildBanAdd', onGuildBanAdd);
     self.client.on('messageCreate', onMessage);
+
+    self.client.rest.on('rateLimited', onRateLimit);
 
     // Catch reasons for exiting in order to save first.
     if (self.client.shard) {
@@ -489,9 +490,9 @@ function Main() {
       self.client.updateRiggedCounter = function(newNum) {
         /* eslint-enable no-unused-vars */
         if (newNum < this.riggedCounter && !isNaN(this.riggedCounter * 1)) {
-          this.shard.broadcastEval(((count) => {
-            return (client) => client.updateRiggedCounter(count);
-          })(this.riggedCounter));
+          this.shard.broadcastEval(
+              eval(`((client) => client.updateRiggedCounter(${
+                this.riggedCounter}))`));
         } else if (!isNaN(newNum * 1)) {
           this.riggedCounter = newNum;
         }
@@ -567,7 +568,7 @@ function Main() {
        * @returns {number} This shard's ID.
        */
       self.client.runBotUpdate = (cmd) => {
-        runBotUpdate({content: cmd});
+        runBotUpdate({content: decodeURIComponent(cmd)});
         return self.client.shard.ids[0];
       };
       /* eslint-enable no-unused-vars */
@@ -960,9 +961,9 @@ function Main() {
           }
           // }
           if (self.client.shard) {
-            self.client.shard.broadcastEval(((count, match) => {
-              return (client) => client.updateRiggedCounter(count, match);
-            })(self.client.riggedCounter, matchCount));
+            self.client.shard.broadcastEval(
+                eval(`((client) => client.updateRiggedCounter(${
+                  self.client.riggedCounter}, ${matchCount}))`));
           }
         }
       }
@@ -1470,7 +1471,8 @@ function Main() {
     const perms = msg.channel.permissionsFor &&
         msg.channel.permissionsFor(self.client.user);
     const time = mention.createdAt;
-    if (!perms || perms.has('EMBED_LINKS')) {
+    if (!perms ||
+        perms.has(self.Discord.PermissionsBitField.Flags.EmbedLinks)) {
       const embed = new self.Discord.EmbedBuilder();
       embed.setTitle('Account create date');
       embed.setColor([255, 0, 255]);
@@ -1499,7 +1501,8 @@ function Main() {
       const perms = msg.channel.permissionsFor &&
           msg.channel.permissionsFor(self.client.user);
       const time = member.joinedAt;
-      if (!perms || perms.has('EMBED_LINKS')) {
+      if (!perms ||
+          perms.has(self.Discord.PermissionsBitField.Flags.EmbedLinks)) {
         const embed = new self.Discord.EmbedBuilder();
         embed.setTitle('Server join date');
         embed.setColor([255, 0, 255]);
@@ -1548,7 +1551,8 @@ function Main() {
     const banner = guild.banner && guild.bannerURL();
     const splash = guild.splash && guild.splashURL();
     const vanity = guild.vanityURLCode;
-    if (!perms || perms.has('EMBED_LINKS')) {
+    if (!perms ||
+        perms.has(self.Discord.PermissionsBitField.Flags.EmbedLinks)) {
       const embed = new self.Discord.EmbedBuilder();
       embed.setColor([255, 0, 255]);
       embed.setTitle(guild.name);
@@ -1707,20 +1711,17 @@ function Main() {
 
     if (self.client.shard && emojiIds.length > 0) {
       self.client.shard
-          .broadcastEval(
-              ((emojis) => {
-                return (client) =>
-                  emojis.map((el) => client.emojis.resolve(el))
+          .broadcastEval(eval(`((client) => ${
+            JSON.stringify(emojiIds)}.map((el) => client.emojis.resolve(el))
                       .filter((el) => el)
                       .map((el) => {
                         el.guildName = el.guild.name;
                         return el;
-                      });
-              })(emojiIds))
+                      }))`))
           .then((res) => {
             res.forEach((el) => {
-              if (!el) return;
-              el.forEach((emoji) => emojis.push(JSON.parse(emoji)));
+              if (!el || !el.length) return;
+              el.forEach((emoji) => emojis.push(emoji));
             });
             finalSend();
           })
@@ -2126,11 +2127,10 @@ function Main() {
     if (msg.mentions.users.size > 0) {
       embed.setDescription(
           msg.mentions.users.first().username + '\'s profile picture');
-      embed.setImage(msg.mentions.users.first().displayAvatarURL(
-          {size: 2048, dynamic: true}));
+      embed.setImage(msg.mentions.users.first().displayAvatarURL({size: 2048}));
     } else {
       embed.setDescription(msg.author.username + '\'s profile picture');
-      embed.setImage(msg.author.displayAvatarURL({size: 2048, dynamic: true}));
+      embed.setImage(msg.author.displayAvatarURL({size: 2048}));
     }
     msg.channel.send({embeds: [embed]});
   }
@@ -2466,9 +2466,8 @@ function Main() {
       if (!guild) {
         if (self.client.shard) {
           self.client.shard
-              .broadcastEval(((id, id2) => {
-                return (client) => client.fetchPerms(id, id2);
-              })(id, id2))
+              .broadcastEval(
+                  eval(`((client) => client.fetchPerms('${id}', '${id2}'))`))
               .then((res) => {
                 const index = res.findIndex((el) => el);
                 const match = res[index];
@@ -2489,6 +2488,12 @@ function Main() {
                 const embed = new self.Discord.EmbedBuilder();
                 embed.setTitle(`Permissions (Shard #${index})`);
                 replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, owner, embed);
+              })
+              .catch((err) => {
+                self.error('fetchPerms failed');
+                console.error(err);
+                self.common.reply(
+                    msg, 'Failed to fetch perms!', 'Something broke!');
               });
         } else {
           self.common.reply(
@@ -2501,9 +2506,9 @@ function Main() {
     const cY = chan && author && chan.permissionsFor(author).bitfield;
     const cM = chan && chan.permissionsFor(self.client.user).bitfield;
     const gY = author && mem.permissions.bitfield;
-    const gM = guild.members.resolve(self.client.user.id).permissions.bitfield;
+    const gM = guild.members.me.permissions.bitfield;
     const uId = author && author.id;
-    const owner = guild.ownerId === author.id;
+    const owner = guild.ownerId === (author && author.id);
     replyPerms(msg, guild.id, gM, gY, chan && chan.id, cM, cY, uId, owner);
   }
 
@@ -2524,38 +2529,36 @@ function Main() {
    * instead of creating a new one.
    */
   function replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, owner, embed) {
+    const padN = 41;
     if (!embed) {
       embed = new self.Discord.EmbedBuilder();
       embed.setTitle('Permissions');
     }
     const you = uId || 'You';
-    if ((cY != null && !isNaN(cY)) || (cM != null && !isNaN(cM))) {
+    if (cY != null || cM != null) {
       embed.addFields([{
         name: `Channel ${cId}`,
         value: '```css\n' +
-            (cY == null || isNaN(cY) ?
-                 '' :
-                 `${prePad(cY.toString(2), 31)} ${you}\n`) +
-            prePad(cM.toString(2), 31) + ' Me```',
+            (cY == null ? '' : `${prePad(cY.toString(2), padN)} ${you}\n`) +
+            prePad(cM.toString(2), padN) + ' Me```',
       }]);
     }
 
     embed.addFields([{
       name: `Guild ${gId}`,
       value: '```css\n' +
-          (gY == null || isNaN(gY) ? '' :
-                                     `${prePad(gY.toString(2), 31)} ${you}\n`) +
-          prePad(gM.toString(2), 31) + ' Me```',
+          (gY == null ? '' : `${prePad(gY.toString(2), padN)} ${you}\n`) +
+          prePad(gM.toString(2), padN) + ' Me```',
     }]);
 
     const allPermPairs = Object.entries(self.Discord.PermissionsBitField.Flags);
     const formatted = allPermPairs
         .map((el) => {
-          const cYou = (cY & el[1]) ? 'Y' : ' ';
-          const cMe = (cM & el[1]) ? 'M' : ' ';
-          const gYou = (gY & el[1]) ? 'Y' : ' ';
-          const gMe = (gM & el[1]) ? 'M' : ' ';
-          const bits = prePad(el[1].toString(2), 31);
+          const cYou = (cY != null && cY & el[1]) ? 'Y' : ' ';
+          const cMe = (cM != null && cM & el[1]) ? 'M' : ' ';
+          const gYou = (gY != null && gY & el[1]) ? 'Y' : ' ';
+          const gMe = (gM != null && gM & el[1]) ? 'M' : ' ';
+          const bits = prePad(el[1].toString(2), padN);
           const flags = `${cYou}${cMe}/${gYou}${gMe}`;
           return `${bits} ${flags} ${el[0]}`;
         })
@@ -2648,7 +2651,7 @@ function Main() {
    * @listens Command#stats
    */
   function commandStats(msg) {
-    msg.channel.startTyping();
+    msg.channel.sendTyping();
     self.bot.getStats((values) => {
       if (!values) {
         self.common.reply(msg, 'Failed to fetch stats.');
@@ -2704,7 +2707,6 @@ function Main() {
 
       embed.setColor([0, 100, 255]);
 
-      msg.channel.stopTyping();
       msg.channel.send({content: self.common.mention(msg), embeds: [embed]});
     });
   }
@@ -2906,9 +2908,8 @@ function Main() {
 
     if (self.client.shard) {
       self.client.shard
-          .broadcastEval(((id, trusted) => {
-            return (client) => client.lookupId(id, trusted);
-          })(id, trusted))
+          .broadcastEval(
+              eval(`((client)=>client.lookupId('${id}',${trusted}))`))
           .then((res) => {
             if (!res.find((el) => el)) {
               self.error(`Failed to lookup id: ${id}`);
@@ -3051,9 +3052,8 @@ function Main() {
       if (self.client.shard) {
         const toSend = encodeURIComponent(message);
         self.client.shard
-            .broadcastEval(((idString, toSend) => {
-              return (client) => client.sendTo(idString, toSend);
-            })(idString, toSend))
+            .broadcastEval(
+                eval(`((client) => client.sendTo('${idString}', '${toSend}'))`))
             .then((res) => {
               const success = res.find((el) => el);
               if (success) {
@@ -3086,7 +3086,10 @@ function Main() {
     const user = this.users.resolve(id);
     if (channel) {
       const perms = channel.permissionsFor(this.user);
-      if (perms && !perms.has('SEND_MESSAGES')) return false;
+      if (perms &&
+          !perms.has(self.Discord.PermissionsBitField.Flags.SendMessages)) {
+        return false;
+      }
       channel.send({content: message}).catch(console.error);
       return true;
     } else if (user) {
@@ -3228,10 +3231,10 @@ function Main() {
     }
     self.common.reply(msg, 'Updating from git...').then((msg_) => {
       if (self.common.isSlave || self.comomn.isMaster) {
+        const sendable = encodeURIComponent(msg.content);
         self.client.shard
-            .broadcastEval(((content) => {
-              return (client) => client.runBotUpdate(content);
-            })(msg.content))
+            .broadcastEval(
+                eval(`((client) => client.runBotUpdate('${sendable}'))`))
             .then(
                 () => msg_.edit({content: 'Updating has begun on all shards.'}))
             .catch((err) => {
@@ -3386,9 +3389,8 @@ function Main() {
       }
       banListRequests[userId].callbacks.push(cb);
       self.client.shard
-          .broadcastEval(((userId, num) => {
-            return (client) => client.broadcastBanList(userId, num);
-          })(userId, num))
+          .broadcastEval(eval(
+              `((client) => client.broadcastBanList('${userId}', ${num}))`))
           .catch((err) => {
             self.error('Failed to broadcast for ban list.');
             console.error(err);
@@ -3469,13 +3471,16 @@ function Main() {
     const checkDone = function() {
       done++;
       if (done >= total) {
-        self.client.shard.broadcastEval(((userId, res) => {
-          return (client) => client.banListResponse(userId, res);
-        })(userId, res));
+        self.client.shard.broadcastEval(
+            eval(`((client) => client.banListResponse('${userId}', ${
+              JSON.stringify(res)}))`));
       }
     };
     self.client.guilds.cache.forEach((g) => {
-      if (!g.members.me.permissions.has('BAN_MEMBERS')) return;
+      if (!g.members.me.permissions.has(
+          self.Discord.PermissionsBitField.Flags.BanMembers)) {
+        return;
+      }
       total++;
       const now = Date.now();
       if (banListCache[g.id] && banListCache[g.id].timestamp &&

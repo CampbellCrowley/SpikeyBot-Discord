@@ -306,7 +306,7 @@ function Common() {
     const trace = getTrace(0);
     const perms = msg.channel.permissionsFor && msg.client &&
         msg.channel.permissionsFor(msg.client.user);
-    if (perms && !perms.has('SEND_MESSAGES')) {
+    if (perms && !perms.has(Discord.PermissionsBitField.Flags.SendMessages)) {
       self.logDebug(
           'Failed to send reply to channel ' + msg.channel.id +
               ' due to lack of perms.',
@@ -322,7 +322,8 @@ function Common() {
       }
       return new Promise((resolve, reject) => reject(new Error('No Perms')));
     }
-    if (self.isTest || (perms && !perms.has('EMBED_LINKS'))) {
+    if (self.isTest ||
+        (perms && !perms.has(Discord.PermissionsBitField.Flags.EmbedLinks))) {
       return msg.channel
           .send({
             content:

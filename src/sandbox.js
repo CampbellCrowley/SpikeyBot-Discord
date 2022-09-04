@@ -89,7 +89,7 @@ function Sandbox() {
    */
   function commandJS(msg) {
     const cmd = `${sandboxCommand}${jsCommand}`;
-    msg.channel.startTyping();
+    msg.channel.sendTyping();
     const p = childProcess.exec(cmd, execArgs, (...args) => {
       scriptEnd(msg, ...args);
     });
@@ -107,7 +107,7 @@ function Sandbox() {
    */
   function commandPython(msg) {
     const cmd = `${sandboxCommand}${pyCommand}`;
-    msg.channel.startTyping();
+    msg.channel.sendTyping();
     const p = childProcess.exec(cmd, execArgs, (...args) => {
       scriptEnd(msg, ...args);
     });
@@ -125,7 +125,7 @@ function Sandbox() {
    */
   function commandPython3(msg) {
     const cmd = `${sandboxCommand}${py3Command}`;
-    msg.channel.startTyping();
+    msg.channel.sendTyping();
     const p = childProcess.exec(cmd, execArgs, (...args) => {
       scriptEnd(msg, ...args);
     });
@@ -144,7 +144,6 @@ function Sandbox() {
    * @param {string|Buffer} stderr All data paseed through stderr.
    */
   function scriptEnd(msg, err, stdout, stderr) {
-    msg.channel.stopTyping();
     if (err) {
       if (err.message === 'stderr maxBuffer exceeded' ||
           err.message === 'stdout maxBuffer exceeded') {

@@ -38,7 +38,10 @@ class SendPlayerRankMessageAction extends ChannelAction {
             const kills = obj.kills > 0 ? ` (${obj.kills})` : '';
             return `${obj.rank}) ${shortName}${kills}`;
           });
-      if (rankList.length <= 20) {
+      if (rankList.length == 0) {
+        // Can't send ranks if there are no players.
+        return;
+      } else if (rankList.length <= 20) {
         rankEmbed.setDescription(rankList.join('\n'));
       } else if (rankList.length > 100) {
         rankList.splice(100);
@@ -46,7 +49,7 @@ class SendPlayerRankMessageAction extends ChannelAction {
         for (let i = 0; i < 2; i++) {
           const thisMessage =
               rankList.splice(0, thirdLength).join('\n').slice(0, 1024);
-          rankEmbed.addFields([{name: i + 1, value: thisMessage}]);
+          rankEmbed.addFields([{name: `${i + 1}`, value: thisMessage}]);
         }
         rankEmbed.addFields(
             [{name: 3, value: rankList.join('\n').slice(0, 1024)}]);
@@ -55,7 +58,7 @@ class SendPlayerRankMessageAction extends ChannelAction {
         for (let i = 0; i < 2; i++) {
           const thisMessage =
               rankList.splice(0, thirdLength).join('\n').slice(0, 1024);
-          rankEmbed.addFields([{name: i + 1, value: thisMessage}]);
+          rankEmbed.addFields([{name: `${i + 1}`, value: thisMessage}]);
         }
         rankEmbed.addFields(
             [{name: 3, value: rankList.join('\n').slice(0, 1024)}]);

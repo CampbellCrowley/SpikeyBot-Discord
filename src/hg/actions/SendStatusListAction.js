@@ -69,7 +69,7 @@ class SendStatusListAction extends ChannelAction {
       if (showWounded) keys.push(`${emoji.yellowHeart}Wounded`);
       if (showRevived) keys.push(`${emoji.blueHeart}Revived`);
       if (showDead) keys.push(`${emoji.skull}Dead`);
-      if (keys.length > 0) finalMessage.setAuthor(keys.join(', '));
+      if (keys.length > 0) finalMessage.setAuthor({name: keys.join(', ')});
       let showKills = false;
       const statusList = playersToShow.map((obj) => {
         let myTeam = -1;

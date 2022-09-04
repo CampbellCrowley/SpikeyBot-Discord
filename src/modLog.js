@@ -162,33 +162,33 @@ class ModLog extends SubModule {
   _actionColor(action) {
     switch (action) {
       case 'kick':
-        return 'ORANGE';
+        return 'Orange';
       case 'ban':
-        return 'RED';
+        return 'Red';
       case 'mute':
-        return 'YELLOW';
+        return 'Yellow';
       case 'warnAndMute':
-        return 'GOLD';
+        return 'Gold';
       case 'smite':
-        return 'DARK_GOLD';
+        return 'DarkGold';
       case 'mentionAbuse':
-        return 'DARK_PURPLE';
+        return 'DarkPurple';
       case 'messagePurge':
-        return 'BLUE';
+        return 'Blue';
       case 'messageDelete':
       case 'messageBotDelete':
-        return 'DARK_BLUE';
+        return 'DarkBlue';
       case 'messageUpdate':
       case 'messageBotUpdate':
-        return 'DARK_AQUA';
+        return 'DarkAqua';
       case 'memberJoin':
-        return 'GREEN';
+        return 'Green';
       case 'memberLeave':
-        return 'GREY';
+        return 'Grey';
       case 'lockdown':
-        return 'DARK_NAVY';
+        return 'DarkNavy';
       default:
-        return 'DEFAULT';
+        return 'Default';
     }
   }
 
@@ -218,7 +218,7 @@ class ModLog extends SubModule {
     embed.setColor(this._actionColor(action));
     embed.setFooter({text: new Date().toString()});
     if (user) {
-      embed.setThumbnail(user.displayAvatarURL({size: 32, dynamic: true}));
+      embed.setThumbnail(user.displayAvatarURL({size: 32}));
       embed.addFields([{name: user.tag, value: `<@${user.id}>\n${user.id}`}]);
     }
     if (owner) embed.addFields([{name: 'Moderator', value: owner.tag}]);

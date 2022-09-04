@@ -368,10 +368,9 @@ class HungryGames {
           (excluded && excluded.includes(obj.user.id) ||
            (excludeByDefault && included && !included.includes(obj.user.id))));
       if (toInclude) {
-        finalMembers.push(
-            new HungryGames.Player(
-                obj.id, obj.user.username,
-                obj.user.displayAvatarURL({format: 'png'}), obj.nickname));
+        finalMembers.push(new HungryGames.Player(
+            obj.id, obj.user.username,
+            obj.user.displayAvatarURL({extension: 'png'}), obj.nickname));
       }
     };
     let iTime2 = 0;

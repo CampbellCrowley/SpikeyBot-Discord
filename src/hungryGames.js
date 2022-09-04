@@ -2249,8 +2249,8 @@ function HG() {
         game.currentGame.includedUsers.push(
             new NPC(obj.name, obj.avatarURL, obj.id));
       } else {
-        const avatar =
-            (obj.displayAvatarURL && obj.displayAvatarURL({format: 'png'})) ||
+        const avatar = (obj.displayAvatarURL &&
+                        obj.displayAvatarURL({extension: 'png'})) ||
             obj.avatarURL;
         game.currentGame.includedUsers.push(
             new HungryGames.Player(obj.id, obj.username, avatar, obj.nickname));
@@ -3493,7 +3493,7 @@ function HG() {
         });
         req.end();
 
-        msg.channel.startTyping();
+        msg.channel.sendTyping();
       }
     }
     /**
@@ -3511,7 +3511,6 @@ function HG() {
         } else {
           reply(msg, 'npcBadURL', 'statusCode', incoming.statusCode);
         }
-        msg.channel.stopTyping();
         return;
       }
       const cl = incoming.headers['content-length'];
@@ -3522,7 +3521,6 @@ function HG() {
       if (!supported.includes(type)) {
         incoming.destroy();
         reply(msg, 'invalidFileType', 'fillOne', type || 'unknown filetype');
-        msg.channel.stopTyping();
         return;
       } else if (!cl) {
         incoming.destroy();
@@ -3531,7 +3529,6 @@ function HG() {
             strings.get(
                 'invalidFileSize', msg.locale, self.maxBytes / 1000 / 1000),
             strings.get('unknownFileSize', msg.locale));
-        msg.channel.stopTyping();
         return;
       } else if (cl > self.maxBytes) {
         incoming.destroy();
@@ -3540,7 +3537,6 @@ function HG() {
             strings.get(
                 'invalidFileSize', msg.locale, self.maxBytes / 1000 / 1000),
             Math.round(cl / 1000 / 100) / 10 + 'MB');
-        msg.channel.stopTyping();
         return;
       }
       const data = [];
@@ -3555,7 +3551,6 @@ function HG() {
               strings.get(
                   'invalidFileSize', msg.locale, self.maxBytes / 1000 / 1000),
               `>${Math.round(reqBytes / 1000 / 100) / 10}MB`);
-          msg.channel.stopTyping();
         }
       });
       incoming.on('end', () => onGetAvatar(Buffer.concat(data)));
@@ -3585,7 +3580,6 @@ function HG() {
           })
           .catch((err) => {
             reply(msg, 'invalidImage', 'fillOne', err.message);
-            msg.channel.stopTyping();
             self.error('Failed to convert buffer to image.');
             console.error(err);
           });
@@ -3599,10 +3593,9 @@ function HG() {
      * @param {Buffer} buffer The Buffer the image buffer for showing.
      */
     function sendConfirmation(image, buffer) {
-      msg.channel.stopTyping();
       const embed = new self.Discord.EmbedBuilder();
       embed.setTitle(strings.get('npcConfirmTitle', msg.locale));
-      embed.setAuthor(username);
+      embed.setAuthor({name: username});
       embed.setDescription(
           strings.get(
               'npcConfirmDescription', msg.locale, emoji.whiteCheckMark,
