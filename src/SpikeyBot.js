@@ -20,6 +20,12 @@ const childProcess = require('child_process');
 let auth = require('../auth.js');
 // common.js is also required, but is managed within the SpikeyBot class.
 
+// Hijack the BigInt object to support converting to JSON.
+// eslint-disable-next-line no-extend-native
+BigInt.prototype['toJSON'] = function() {
+  return this.toString();
+};
+
 /**
  * Handler for an unhandledRejection or uncaughtException, to prevent the bot
  * from silently crashing without an error.
