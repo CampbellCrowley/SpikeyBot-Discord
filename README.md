@@ -1,3 +1,5 @@
+### SpikeyBot is no longer in active development, and cannot be added to your server.
+
 [![SpikeyBot.com Status](https://img.shields.io/uptimerobot/status/m781846555-8613c83984f05f6c963656da.svg?label=SpikeyBot.com)](https://status.spikeybot.com)
 [![Server Count](https://img.shields.io/badge/endpoint.svg?url=https://www.spikeybot.com/stats/shield)](https://www.spikeybot.com)
 [![Discord Support Server](https://discordapp.com/api/guilds/420045052690169856/embed.png)](https://discord.gg/ZbKfYSQ)
@@ -9,65 +11,9 @@
 [![PayPal](https://img.shields.io/badge/donate-paypal-0070BA.svg)](https://www.paypal.me/SpikeyBot)
   
 ### Bot's website: [SpikeyBot.com](https://www.spikeybot.com/)
-### Support my development: [Patreon](https://www.patreon.com/campbellcrowley/) [PayPal](https://www.paypal.me/spikeybot)
-
 
 # Commands
 ###### [Web Page with most commands available on the bot's website](https://www.spikeybot.com/help/)
-
-## Hidden Commands
-### These commands are not included in the normal help page or `help` command because they are either easter-eggs, developer commands, or just not useful for most users.
-- git (Get the git commit log, or run a git command)
-- js (Run sandboxed javascript code, currently disabled)
-- py (Run sandboxed python code, currently disabled)
-- py3 (Run sandboxed python3 code, currently disabled)
-- run (If dev.js is loaded, this will run unsafe scripts on the bot using eval)
-- thotpm (Semi-anonymously have the bot DM someone. Only a couple people can use this command)
-- pmuser (Sends the specified user a pm from the bot, but tells the recipient who the sender was)
-- uptime (Amount of time the bot has been running)
-- version (Current bot version)
-- game (Information about a user's current visible status)
-- hg save (Causes hungry games to save all data manually)
-- hg debug (Dumps current guild's hungry games data into a file)
-- hg debugevents (Dumps all currently loaded events for the guild into a JSON files for download)
-- hg makemewin (Replies with a message telling the user their chances of winning have not increased)
-- hg makemelose (Replies with a message telling the user their chances of losing have not increased)
-- hg rigged (Replies with an image of the emoji that says "rigged")
-- hg nums (Replies with number of currently simulating games, loaded games, and connected web clients across all shards)
-- vi (Alias for `play nice try vi`)
-- airhorn (Plays airhorn sound)
-- rickroll (Plays Rick Astley in voice channel)
-- kokomo (Alias for `play kokomo`)
-- felix (Alias for `play felix`, which plays a sound clip of Felix saying "Don't touch me, I'm violent")
-- updategame (Changes bot's status)
-- reboot (Triggers a graceful shutdown of the entire bot. Assumes the parent process will restart automatically)
-- reload (Gracefully unloads all sub-modules, and re-loads and initializes them)
-- mainreload (Gracefully unloads all main-modules, and re-loads and initializes them)
-- unload (Gracefully unloads specified sub-modules, and will not load them again until `load` is used)
-- load (Attempts to load the specified sub-modules)
-- record (Record audio in a voice channel. Mention people to only record specific people.)
-- perms (Sends a message with the bitfields of all permissions, as well as the sender's and the bot's permissions for the guild and channel)
-- lookup (Finds information about a given ID)
-- sendto (Given a user or channel ID, the bot will send the message anonymously. Only trusted people can do this)
-- saveall (Trigger all submodules to save their data)
-- thanks (Thanks the person that was mentioned, or says "You're welcome")
-- musicstats (Shows information about currently playing broadcasts)
-- uno stats (Shows information about current uno games)
-- chat (Forces the sent message to be sent to dialogflow instead of being treated as a normal command)
-- listcommands (Lists all commands that are currently registered with SpikeyBot~Commands)
-- getprefix (Used by chatbot so users can ask the bot, by mentioning it, what the prefix is)
-- whoami (Replies with the user's username, and full tag from different sources)
-- gettime (Replies with the server's timezone and time, as well as GMT)
-- sweep (Removes users from cache that we don't care about at the moment in order to free memory. Only Spikey can do this)
-- cookies (Alias for `imgur cookies`)
-- listbans (List all known bans for a user in all mutual servers. Currently disabled due to poor implementation causing rate-limits to get hit.)
-
-# Event Controlled
-- Added to guild
-  - Sends a message to the top text channel introducing the bot.
-- User in guild is banned
-  - Sends a message saying the user was banned and by whom.
-  - Disable with `togglebanmessages`.
 
 ***
 
@@ -78,7 +24,7 @@ This tutorial uses the Discord.js sharding system, which may become deprecated i
 1) Have a server/computer
     - SB is developed and tested solely on Debian Bullseye (amd64), but other OS's may work.
 2) Install [NodeJS](https://nodejs.org/)
-    - The bot is currently running on NodeJS [v16.16.0](https://nodejs.org/dist/v16.16.0/). Newer versions may work, but are untested.
+    - The bot is currently running on NodeJS [v16.17.1](https://nodejs.org/dist/v16.17.1/). Newer versions may work, but are untested.
 3) Download source code
     - Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.
 4) Install system dependencies
@@ -173,3 +119,58 @@ All arguments are optional for normal usage.
 | Settings     | 8020         | 8021             |
 | File Server  | 8022         | 8023             |
 | Shard Master | 8024         | 8025             |
+
+## Hidden Commands
+### These commands are not included in the normal help page or `help` command because they are either easter-eggs, developer commands, or just not useful for most users.
+- git (Get the git commit log, or run a git command)
+- js (Run sandboxed javascript code, currently disabled)
+- py (Run sandboxed python code, currently disabled)
+- py3 (Run sandboxed python3 code, currently disabled)
+- run (If dev.js is loaded, this will run unsafe scripts on the bot using eval)
+- thotpm (Semi-anonymously have the bot DM someone. Only a couple people can use this command)
+- pmuser (Sends the specified user a pm from the bot, but tells the recipient who the sender was)
+- uptime (Amount of time the bot has been running)
+- version (Current bot version)
+- game (Information about a user's current visible status)
+- hg save (Causes hungry games to save all data manually)
+- hg debug (Dumps current guild's hungry games data into a file)
+- hg debugevents (Dumps all currently loaded events for the guild into a JSON files for download)
+- hg makemewin (Replies with a message telling the user their chances of winning have not increased)
+- hg makemelose (Replies with a message telling the user their chances of losing have not increased)
+- hg rigged (Replies with an image of the emoji that says "rigged")
+- hg nums (Replies with number of currently simulating games, loaded games, and connected web clients across all shards)
+- vi (Alias for `play nice try vi`)
+- airhorn (Plays airhorn sound)
+- rickroll (Plays Rick Astley in voice channel)
+- kokomo (Alias for `play kokomo`)
+- felix (Alias for `play felix`, which plays a sound clip of Felix saying "Don't touch me, I'm violent")
+- updategame (Changes bot's status)
+- reboot (Triggers a graceful shutdown of the entire bot. Assumes the parent process will restart automatically)
+- reload (Gracefully unloads all sub-modules, and re-loads and initializes them)
+- mainreload (Gracefully unloads all main-modules, and re-loads and initializes them)
+- unload (Gracefully unloads specified sub-modules, and will not load them again until `load` is used)
+- load (Attempts to load the specified sub-modules)
+- record (Record audio in a voice channel. Mention people to only record specific people.)
+- perms (Sends a message with the bitfields of all permissions, as well as the sender's and the bot's permissions for the guild and channel)
+- lookup (Finds information about a given ID)
+- sendto (Given a user or channel ID, the bot will send the message anonymously. Only trusted people can do this)
+- saveall (Trigger all submodules to save their data)
+- thanks (Thanks the person that was mentioned, or says "You're welcome")
+- musicstats (Shows information about currently playing broadcasts)
+- uno stats (Shows information about current uno games)
+- chat (Forces the sent message to be sent to dialogflow instead of being treated as a normal command)
+- listcommands (Lists all commands that are currently registered with SpikeyBot~Commands)
+- getprefix (Used by chatbot so users can ask the bot, by mentioning it, what the prefix is)
+- whoami (Replies with the user's username, and full tag from different sources)
+- gettime (Replies with the server's timezone and time, as well as GMT)
+- sweep (Removes users from cache that we don't care about at the moment in order to free memory. Only Spikey can do this)
+- cookies (Alias for `imgur cookies`)
+- listbans (List all known bans for a user in all mutual servers. Currently disabled due to poor implementation causing rate-limits to get hit.)
+
+# Event Controlled
+- Added to guild
+  - Sends a message to the top text channel introducing the bot.
+- User in guild is banned
+  - Sends a message saying the user was banned and by whom.
+  - Disable with `togglebanmessages`.
+
