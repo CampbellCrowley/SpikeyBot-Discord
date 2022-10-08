@@ -52,7 +52,7 @@ class SendPlayerRankMessageAction extends ChannelAction {
           rankEmbed.addFields([{name: `${i + 1}`, value: thisMessage}]);
         }
         rankEmbed.addFields(
-            [{name: 3, value: rankList.join('\n').slice(0, 1024)}]);
+            [{name: '3', value: rankList.join('\n').slice(0, 1024)}]);
       } else {
         const thirdLength = Math.floor(rankList.length / 3);
         for (let i = 0; i < 2; i++) {
@@ -61,7 +61,7 @@ class SendPlayerRankMessageAction extends ChannelAction {
           rankEmbed.addFields([{name: `${i + 1}`, value: thisMessage}]);
         }
         rankEmbed.addFields(
-            [{name: 3, value: rankList.join('\n').slice(0, 1024)}]);
+            [{name: '3', value: rankList.join('\n').slice(0, 1024)}]);
       }
       if (!game.options.disableOutput) {
         channel.send({embeds: [rankEmbed]}).catch((err) => {
