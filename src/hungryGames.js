@@ -3614,7 +3614,7 @@ function HG() {
                  reaction.emoji.name == emoji.x);
             msg_.awaitReactions({filter, max: 1, time: maxReactAwaitTime})
                 .then((reactions) => {
-                  embed.setDescription('');
+                  embed.setDescription(null);
                   if (reactions.size == 0) {
                     msg_.reactions.removeAll().catch(() => {});
                     embed.setFooter(
