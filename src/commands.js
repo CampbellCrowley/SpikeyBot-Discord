@@ -991,7 +991,8 @@ function Command() {
                   suffix;
             } else if (commandValues.permissions) {
               return 'NoPerm:' +
-                  new self.Discord.PermissionsBitField(commandValues.permissions)
+                  new self.Discord
+                      .PermissionsBitField(commandValues.permissions)
                       .toArray()
                       .join(', ') +
                   suffix;
@@ -1012,7 +1013,8 @@ function Command() {
         return (isDisabled == 2 ? 'Disabled Individual' : 'Disabled') + suffix;
       } else if (bitfield) {
         return 'NoPerm:' +
-            new self.Discord.PermissionsBitField(bitfield).toArray().join(', ') +
+            new self.Discord.PermissionsBitField(bitfield).toArray().join(
+                ', ') +
             suffix;
       } else {
         return 'Disabled' + suffix;

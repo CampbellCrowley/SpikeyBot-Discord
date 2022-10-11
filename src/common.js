@@ -680,6 +680,24 @@ Common.prototype.avatarURL = 'https://kamino.spikeybot.com/';
  * @constant
  */
 Common.avatarURL = Common.prototype.avatarURL;
+/**
+ * Whether to use the encryption specified in auth.js to encrypt users'
+ *   avatars. Could make it more difficult to serve the images if enabled.
+ *
+ * @type {boolean}
+ * @constant
+ * @default
+ */
+Common.prototype.encryptAvatars = false;
+/**
+ * Whether to use the encryption specified in auth.js to encrypt users'
+ *   avatars. Could make it more difficult to serve the images if enabled.
+ *
+ * @type {boolean}
+ * @constant
+ * @default
+ */
+Common.encryptAvatars = Common.prototype.encryptAvatars;
 
 /**
  * The website path for more help and documentation.
@@ -807,8 +825,9 @@ Common.shardConfigRegex = Common.prototype.shardConfigRegex;
  * @param {string|object} data The data to write to the file.
  * @param {Function} [cb] Callback to fire on completion. Only parameter is
  * optional error.
+ * @param {boolean} encrypt Encrypt and append ".crypt" to filename if true
  */
-Common.mkAndWrite = function(filename, dir, data, cb) {
+Common.mkAndWrite = function(filename, dir, data, cb, encrypt = true) {
   if (!dir) dir = path.dirname(filename);
   mkdirp(dir)
       .then(() => {
@@ -816,32 +835,40 @@ Common.mkAndWrite = function(filename, dir, data, cb) {
           data = JSON.stringify(data);
         }
         const tmpfile = `${filename}.tmp`;
-        const encfile = `${filename}.crypt`;
-        const iv = crypto.createHash(hashCypher).update(filename).digest();
-        const cipher = crypto.createCipheriv(auth.fileAlgo, filePass, iv);
-        let encdata = cipher.update(data, 'utf-8', encencoding);
-        encdata += cipher.final(encencoding);
-        fs.writeFile(tmpfile, encdata, (err) => {
+        const destFile = (encrypt) ? `${filename}.crypt` : filename;
+
+        // Callback: After writing to tmp file, rename the tmp file to dest file
+        const afterWriteFile = (err) => {
           if (err) {
             if (this.error) this.error(`Failed to save file: ${tmpfile}`);
             console.error(err);
             if (typeof cb === 'function') cb(err);
             return;
           }
-          fs.rename(tmpfile, encfile, (err) => {
+          fs.rename(tmpfile, destFile, (err) => {
             if (err) {
               if (this.error) {
                 this.error(
-                    `Failed to rename tmp file: ${tmpfile} --> ${encfile}`);
+                    `Failed to rename tmp file: ${tmpfile} --> ${destFile}`);
               }
               console.error(err);
               if (typeof cb === 'function') cb(err);
               return;
             }
-            if (this.sendFile) this.sendFile(encfile);
+            if (this.sendFile) this.sendFile(destFile);
             if (typeof cb === 'function') cb();
           });
-        });
+        };
+
+        if (encrypt) {
+          const iv = crypto.createHash(hashCypher).update(filename).digest();
+          const cipher = crypto.createCipheriv(auth.fileAlgo, filePass, iv);
+          let encdata = cipher.update(data, 'utf-8', encencoding);
+          encdata += cipher.final(encencoding);
+          fs.writeFile(tmpfile, encdata, afterWriteFile);
+        } else /* unencrypted: write directly to tmp file */ {
+          fs.writeFile(tmpfile, data, afterWriteFile);
+        }
       })
       .catch((err) => {
         if (err.code !== 'EEXIST') {

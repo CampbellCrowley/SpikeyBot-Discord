@@ -893,7 +893,7 @@ function HG() {
           if (!err) return;
           self.error(`Failed to cache NPC avatar: ${filename}`);
           console.error(err);
-        });
+        }, self.common.encryptAvatars);
       });
       return url;
     });
@@ -5031,7 +5031,7 @@ function HG() {
               self.error(`Failed to cache avatar: ${filename}`);
               console.error(err);
             }
-          });
+          }, self.common.encryptAvatars);
         });
       }
       return image;
