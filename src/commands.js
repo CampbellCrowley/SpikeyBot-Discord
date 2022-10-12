@@ -991,7 +991,7 @@ function Command() {
                   suffix;
             } else if (commandValues.permissions) {
               return 'NoPerm:' +
-                  new self.Discord.Permissions(commandValues.permissions)
+                  new self.Discord.PermissionsBitField(commandValues.permissions)
                       .toArray()
                       .join(', ') +
                   suffix;
@@ -1012,7 +1012,7 @@ function Command() {
         return (isDisabled == 2 ? 'Disabled Individual' : 'Disabled') + suffix;
       } else if (bitfield) {
         return 'NoPerm:' +
-            new self.Discord.Permissions(bitfield).toArray().join(', ') +
+            new self.Discord.PermissionsBitField(bitfield).toArray().join(', ') +
             suffix;
       } else {
         return 'Disabled' + suffix;
@@ -1363,7 +1363,7 @@ function Command() {
               ' by default';
           if (found.options.defaultDisabled && found.options.permissions) {
             output += ' and enabled with the following permissions:\n' +
-                new self.Discord.Permissions(found.options.permissions)
+                new self.Discord.PermissionsBitField(found.options.permissions)
                     .toArray()
                     .join(', ');
           }
@@ -1409,7 +1409,7 @@ function Command() {
         tmp.push('`' + el[0] + (el[1].isMuted ? '~' : '') + '` allowed with:');
         if (el[1].permissions) {
           tmp.push(
-              new self.Discord.Permissions(el[1].permissions)
+              new self.Discord.PermissionsBitField(el[1].permissions)
                   .toArray()
                   .join(', '));
         }
