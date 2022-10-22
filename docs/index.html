@@ -114,7 +114,8 @@
 
 
     <section class="readme-section">
-        <article><p><a href="https://status.spikeybot.com"><img src="https://img.shields.io/uptimerobot/status/m781846555-8613c83984f05f6c963656da.svg?label=SpikeyBot.com" alt="SpikeyBot.com Status"></a>
+        <article><h3>SpikeyBot is no longer in active development, and cannot be added to your server.</h3>
+<p><a href="https://status.spikeybot.com"><img src="https://img.shields.io/uptimerobot/status/m781846555-8613c83984f05f6c963656da.svg?label=SpikeyBot.com" alt="SpikeyBot.com Status"></a>
 <a href="https://www.spikeybot.com"><img src="https://img.shields.io/badge/endpoint.svg?url=https://www.spikeybot.com/stats/shield" alt="Server Count"></a>
 <a href="https://discord.gg/ZbKfYSQ"><img src="https://discordapp.com/api/guilds/420045052690169856/embed.png" alt="Discord Support Server"></a>
 <a href="https://travis-ci.com/CampbellCrowley/SpikeyBot-Discord"><img src="https://travis-ci.org/CampbellCrowley/SpikeyBot-Discord.svg?branch=master" alt="Build Status"></a>
@@ -124,71 +125,8 @@
 <a href="https://www.patreon.com/CampbellCrowley"><img src="https://img.shields.io/badge/donate-patreon-F96854.svg" alt="Patreon"></a>
 <a href="https://www.paypal.me/SpikeyBot"><img src="https://img.shields.io/badge/donate-paypal-0070BA.svg" alt="PayPal"></a></p>
 <h3>Bot's website: <a href="https://www.spikeybot.com/">SpikeyBot.com</a></h3>
-<h3>Support my development: <a href="https://www.patreon.com/campbellcrowley/">Patreon</a> <a href="https://www.paypal.me/spikeybot">PayPal</a></h3>
 <h1>Commands</h1>
 <h6><a href="https://www.spikeybot.com/help/">Web Page with most commands available on the bot's website</a></h6>
-<h2>Hidden Commands</h2>
-<h3>These commands are not included in the normal help page or <code>help</code> command because they are either easter-eggs, developer commands, or just not useful for most users.</h3>
-<ul>
-<li>git (Get the git commit log, or run a git command)</li>
-<li>js (Run sandboxed javascript code, currently disabled)</li>
-<li>py (Run sandboxed python code, currently disabled)</li>
-<li>py3 (Run sandboxed python3 code, currently disabled)</li>
-<li>run (If dev.js is loaded, this will run unsafe scripts on the bot using eval)</li>
-<li>thotpm (Semi-anonymously have the bot DM someone. Only a couple people can use this command)</li>
-<li>pmuser (Sends the specified user a pm from the bot, but tells the recipient who the sender was)</li>
-<li>uptime (Amount of time the bot has been running)</li>
-<li>version (Current bot version)</li>
-<li>game (Information about a user's current visible status)</li>
-<li>hg save (Causes hungry games to save all data manually)</li>
-<li>hg debug (Dumps current guild's hungry games data into a file)</li>
-<li>hg debugevents (Dumps all currently loaded events for the guild into a JSON files for download)</li>
-<li>hg makemewin (Replies with a message telling the user their chances of winning have not increased)</li>
-<li>hg makemelose (Replies with a message telling the user their chances of losing have not increased)</li>
-<li>hg rigged (Replies with an image of the emoji that says &quot;rigged&quot;)</li>
-<li>hg nums (Replies with number of currently simulating games, loaded games, and connected web clients across all shards)</li>
-<li>vi (Alias for <code>play nice try vi</code>)</li>
-<li>airhorn (Plays airhorn sound)</li>
-<li>rickroll (Plays Rick Astley in voice channel)</li>
-<li>kokomo (Alias for <code>play kokomo</code>)</li>
-<li>felix (Alias for <code>play felix</code>, which plays a sound clip of Felix saying &quot;Don't touch me, I'm violent&quot;)</li>
-<li>updategame (Changes bot's status)</li>
-<li>reboot (Triggers a graceful shutdown of the entire bot. Assumes the parent process will restart automatically)</li>
-<li>reload (Gracefully unloads all sub-modules, and re-loads and initializes them)</li>
-<li>mainreload (Gracefully unloads all main-modules, and re-loads and initializes them)</li>
-<li>unload (Gracefully unloads specified sub-modules, and will not load them again until <code>load</code> is used)</li>
-<li>load (Attempts to load the specified sub-modules)</li>
-<li>record (Record audio in a voice channel. Mention people to only record specific people.)</li>
-<li>perms (Sends a message with the bitfields of all permissions, as well as the sender's and the bot's permissions for the guild and channel)</li>
-<li>lookup (Finds information about a given ID)</li>
-<li>sendto (Given a user or channel ID, the bot will send the message anonymously. Only trusted people can do this)</li>
-<li>saveall (Trigger all submodules to save their data)</li>
-<li>thanks (Thanks the person that was mentioned, or says &quot;You're welcome&quot;)</li>
-<li>musicstats (Shows information about currently playing broadcasts)</li>
-<li>uno stats (Shows information about current uno games)</li>
-<li>chat (Forces the sent message to be sent to dialogflow instead of being treated as a normal command)</li>
-<li>listcommands (Lists all commands that are currently registered with SpikeyBot~Commands)</li>
-<li>getprefix (Used by chatbot so users can ask the bot, by mentioning it, what the prefix is)</li>
-<li>whoami (Replies with the user's username, and full tag from different sources)</li>
-<li>gettime (Replies with the server's timezone and time, as well as GMT)</li>
-<li>sweep (Removes users from cache that we don't care about at the moment in order to free memory. Only Spikey can do this)</li>
-<li>cookies (Alias for <code>imgur cookies</code>)</li>
-<li>listbans (List all known bans for a user in all mutual servers. Currently disabled due to poor implementation causing rate-limits to get hit.)</li>
-</ul>
-<h1>Event Controlled</h1>
-<ul>
-<li>Added to guild
-<ul>
-<li>Sends a message to the top text channel introducing the bot.</li>
-</ul>
-</li>
-<li>User in guild is banned
-<ul>
-<li>Sends a message saying the user was banned and by whom.</li>
-<li>Disable with <code>togglebanmessages</code>.</li>
-</ul>
-</li>
-</ul>
 <hr>
 <h1>Self-Hosting</h1>
 <p>The bot is not designed to be easily hosted by others, but still may be done.<br>
@@ -197,12 +135,12 @@ This tutorial uses the Discord.js sharding system, which may become deprecated i
 <ol>
 <li>Have a server/computer
 <ul>
-<li>SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.</li>
+<li>SB is developed and tested solely on Debian Bullseye (amd64), but other OS's may work.</li>
 </ul>
 </li>
 <li>Install <a href="https://nodejs.org/">NodeJS</a>
 <ul>
-<li>The bot is currently running on NodeJS <a href="https://nodejs.org/dist/v12.18.0/">v12.18.0</a>. Other versions may work, but are untested.</li>
+<li>The bot is currently running on NodeJS <a href="https://nodejs.org/dist/v16.17.1/">v16.17.1</a>. Newer versions may work, but are untested.</li>
 </ul>
 </li>
 <li>Download source code
@@ -215,10 +153,11 @@ This tutorial uses the Discord.js sharding system, which may become deprecated i
 <li><code>sudo apt install make libtool autoconf g++ ffmpeg</code> are required for the default installation.</li>
 </ul>
 </li>
-<li>Install dependencies via NPM
+<li>Install dependencies via NPM (or Yarn)
 <ul>
-<li>Current version of NPM used is <code>v6.14.5</code>, but almost any version should be fine.</li>
-<li>In the <code>SpikeyBot-Discord</code> directory, run <code>npm install</code>.</li>
+<li>Current version of NPM used is <code>v8.19.1</code>, but almost any version should be fine.</li>
+<li>Current version of Yarn used is <code>v1.22.19</code> but almost any version should be fine.</li>
+<li>In the <code>SpikeyBot-Discord</code> directory, run <code>npm install</code> or <code>yarn</code>.</li>
 </ul>
 </li>
 <li>Get a bot token from Discord
@@ -229,7 +168,11 @@ This tutorial uses the Discord.js sharding system, which may become deprecated i
 </li>
 <li>Configure SpikeyBot
 <ul>
-<li>Create <code>auth.js</code> in the <code>SpikeyBot-Discord/</code> directory with a line that says <code>exports.release = 'BOT_TOKEN';</code>, where <code>BOT_TOKEN</code> is the bot token from Discord.</li>
+<li>Create <code>auth.js</code> in the <code>SpikeyBot-Discord/</code> directory with a line that says <code>exports.release = 'BOT_TOKEN';</code>, where <code>BOT_TOKEN</code> is the bot token from Discord.
+<ul>
+<li>See <code>./auth.js.example</code> for an example of what a complete file will look like.</li>
+</ul>
+</li>
 <li>Modify <code>./subModules.json</code> <code>&quot;release&quot;</code> section to have the subModules you want.</li>
 <li>If you wish to have access to developer commands that normally only SpikeyRobot has access to, replace the <code>spikeyId</code> in <code>./src/common.js</code> with your account ID.</li>
 </ul>
@@ -237,7 +180,11 @@ This tutorial uses the Discord.js sharding system, which may become deprecated i
 <li>Run SpikeyBot
 <ul>
 <li>Run <code>node src/SpikeyBot.js</code> in <code>SpikeyBot-Discord/</code> (working directory must be the project root).</li>
-<li>Errors about <code>gApiCredentials.json</code> missing can be suppressed by removing <code>./tts.js</code> and <code>./chatbot.js</code> from <code>./subModules.json</code> since these require special authentication from Google's API. (https://console.cloud.google.com/)</li>
+<li>Errors about <code>gApiCredentials.json</code> missing can be suppressed by removing <code>./tts.js</code> and <code>./chatbot.js</code> from <code>./subModules.json</code> since these require special authentication from Google's API. (https://console.cloud.google.com/)
+<ul>
+<li>NOTE: <code>./subModules.json.crypt</code> must be deleted now each time an edit is made to <code>./subModules.json</code>.</li>
+</ul>
+</li>
 <li>All website related subModules will not work, and related errors can be suppressed by removing all subModules that start with <code>./web/</code> from <code>./subModules.json</code>.</li>
 <li>If you are <strong>not</strong> running with <code>--shards</code> and wish to use the Hungry Games submodule, you must run node with <code>--experimental-worker</code>.</li>
 </ul>
@@ -379,7 +326,69 @@ The ShardingMaster is in turn configured in the <code>./config/shardMasterConfig
 <td>8025</td>
 </tr>
 </tbody>
-</table></article>
+</table>
+<h2>Hidden Commands</h2>
+<h3>These commands are not included in the normal help page or <code>help</code> command because they are either easter-eggs, developer commands, or just not useful for most users.</h3>
+<ul>
+<li>git (Get the git commit log, or run a git command)</li>
+<li>js (Run sandboxed javascript code, currently disabled)</li>
+<li>py (Run sandboxed python code, currently disabled)</li>
+<li>py3 (Run sandboxed python3 code, currently disabled)</li>
+<li>run (If dev.js is loaded, this will run unsafe scripts on the bot using eval)</li>
+<li>thotpm (Semi-anonymously have the bot DM someone. Only a couple people can use this command)</li>
+<li>pmuser (Sends the specified user a pm from the bot, but tells the recipient who the sender was)</li>
+<li>uptime (Amount of time the bot has been running)</li>
+<li>version (Current bot version)</li>
+<li>game (Information about a user's current visible status)</li>
+<li>hg save (Causes hungry games to save all data manually)</li>
+<li>hg debug (Dumps current guild's hungry games data into a file)</li>
+<li>hg debugevents (Dumps all currently loaded events for the guild into a JSON files for download)</li>
+<li>hg makemewin (Replies with a message telling the user their chances of winning have not increased)</li>
+<li>hg makemelose (Replies with a message telling the user their chances of losing have not increased)</li>
+<li>hg rigged (Replies with an image of the emoji that says &quot;rigged&quot;)</li>
+<li>hg nums (Replies with number of currently simulating games, loaded games, and connected web clients across all shards)</li>
+<li>vi (Alias for <code>play nice try vi</code>)</li>
+<li>airhorn (Plays airhorn sound)</li>
+<li>rickroll (Plays Rick Astley in voice channel)</li>
+<li>kokomo (Alias for <code>play kokomo</code>)</li>
+<li>felix (Alias for <code>play felix</code>, which plays a sound clip of Felix saying &quot;Don't touch me, I'm violent&quot;)</li>
+<li>updategame (Changes bot's status)</li>
+<li>reboot (Triggers a graceful shutdown of the entire bot. Assumes the parent process will restart automatically)</li>
+<li>reload (Gracefully unloads all sub-modules, and re-loads and initializes them)</li>
+<li>mainreload (Gracefully unloads all main-modules, and re-loads and initializes them)</li>
+<li>unload (Gracefully unloads specified sub-modules, and will not load them again until <code>load</code> is used)</li>
+<li>load (Attempts to load the specified sub-modules)</li>
+<li>record (Record audio in a voice channel. Mention people to only record specific people.)</li>
+<li>perms (Sends a message with the bitfields of all permissions, as well as the sender's and the bot's permissions for the guild and channel)</li>
+<li>lookup (Finds information about a given ID)</li>
+<li>sendto (Given a user or channel ID, the bot will send the message anonymously. Only trusted people can do this)</li>
+<li>saveall (Trigger all submodules to save their data)</li>
+<li>thanks (Thanks the person that was mentioned, or says &quot;You're welcome&quot;)</li>
+<li>musicstats (Shows information about currently playing broadcasts)</li>
+<li>uno stats (Shows information about current uno games)</li>
+<li>chat (Forces the sent message to be sent to dialogflow instead of being treated as a normal command)</li>
+<li>listcommands (Lists all commands that are currently registered with SpikeyBot~Commands)</li>
+<li>getprefix (Used by chatbot so users can ask the bot, by mentioning it, what the prefix is)</li>
+<li>whoami (Replies with the user's username, and full tag from different sources)</li>
+<li>gettime (Replies with the server's timezone and time, as well as GMT)</li>
+<li>sweep (Removes users from cache that we don't care about at the moment in order to free memory. Only Spikey can do this)</li>
+<li>cookies (Alias for <code>imgur cookies</code>)</li>
+<li>listbans (List all known bans for a user in all mutual servers. Currently disabled due to poor implementation causing rate-limits to get hit.)</li>
+</ul>
+<h1>Event Controlled</h1>
+<ul>
+<li>Added to guild
+<ul>
+<li>Sends a message to the top text channel introducing the bot.</li>
+</ul>
+</li>
+<li>User in guild is banned
+<ul>
+<li>Sends a message saying the user was banned and by whom.</li>
+<li>Disable with <code>togglebanmessages</code>.</li>
+</ul>
+</li>
+</ul></article>
     </section>
 
 
@@ -429,7 +438,7 @@ The ShardingMaster is in turn configured in the <code>./config/shardMasterConfig
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.11</a>
 	
-		on Tuesday, October 11, 2022 7:07 PM (-05:00)
+		on Saturday, October 22, 2022 11:22 AM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
