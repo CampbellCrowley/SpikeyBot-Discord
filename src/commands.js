@@ -1481,7 +1481,7 @@ function Command() {
       embed.setColor([255, 0, 255]);
       embed.setTitle('Command Permissions');
       for (let i = 0; i < finalSplits.length; i++) {
-        embed.addFields([{name: '\u200B', values: finalSplits[i]}]);
+        embed.addFields([{name: '\u200B', value: finalSplits[i]}]);
       }
       embed.setDescription(
           'Reset values to default with ' + msg.prefix +
