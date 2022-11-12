@@ -15,6 +15,9 @@ function Command() {
 
   /** @inheritdoc */
   this.initialize = function() {
+    /** REST API used for registering slash commands. */
+    self.rest =
+        new this.Discord.REST({version: '10'}).setToken(this.client.token);
     self.client.guilds.cache.forEach((g) => {
       const dir = self.common.guildSaveDir + g.id;
       const filename = dir + commandSettingsFile;
@@ -140,6 +143,29 @@ function Command() {
    * @type {object.<SingleCommand>}
    */
   let cmds = {};
+
+  /**
+   * Register all commands currently loaded as slash commands to the Discord
+   * API.
+   *
+   * @public
+   * @returns {Promise} REST API request Promise.
+   */
+  this.registerSlashCommands = function() {
+    const names = self.getAllNames();
+    const commands = names.map(
+        (el) => new self.Discord.SlashCommandBuilder()
+            .setName(el)
+            .setDescription('A SpikeyBot command.')
+            .addStringOption(
+                (option) => option.setName('input').setDescription(
+                    'Remaining command arguments'))
+            .toJSON());
+    self.log(`Registering slash commands: ${commands.length}`);
+    return self.rest.put(
+        self.Discord.Routes.applicationCommands(self.client.user.id),
+        {body: commands});
+  };
 
   /**
    * @classdesc Object storing information about a single command, it's handler,

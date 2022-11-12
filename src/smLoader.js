@@ -11,6 +11,13 @@ require('./mainModule.js')(SMLoader); // Extends the MainModule class.
  */
 function SMLoader() {
   const self = this;
+
+  /** Timeout of next slash command update to Discord API. */
+  let nextSlashCommandPush = null;
+  /**
+   * Delay after a load/unload event until we push the change to Discord API.
+   */
+  const slashCommandPushDelay = 5000;
   /** @inheritdoc */
   this.myName = 'SMLoader';
 
@@ -133,6 +140,24 @@ function SMLoader() {
    * @default
    */
   let saveTimeout = null;
+
+  /**
+   * @description A module has been loaded or unloaded, wait a moment for
+   * updates to finish, then push changes to Discord API.
+   * @private
+   */
+  function triggerSlashCommandUpdate() {
+    if (self.client.shard && self.client.shard.id != 0) return;
+    clearTimeout(nextSlashCommandPush);
+    nextSlashCommandPush = setTimeout(() => {
+      self.command.registerSlashCommands()
+          .then(() => self.log('Registered slash commands.'))
+          .catch((err) => {
+            self.error('Failed to register slash commands.');
+            console.error(err);
+          });
+    }, slashCommandPushDelay);
+  }
 
   /**
    * @description Save the current goal submodules to file.
@@ -391,6 +416,7 @@ function SMLoader() {
         el(message);
       });
     }
+    triggerSlashCommandUpdate();
   };
   /**
    * Loads submodules from file.
@@ -451,6 +477,7 @@ function SMLoader() {
       return;
     }
     cb(null);
+    triggerSlashCommandUpdate();
   };
   /**
    * @description Reloads submodules from file. Reloads currently loaded modules

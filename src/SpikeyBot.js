@@ -932,6 +932,7 @@ function SpikeyBot() {
 
   if (!isBackup) {
     client.on('messageCreate', onMessage);
+    client.on('interactionCreate', onInteraction);
   }
   /**
    * Handle a message sent.
@@ -939,7 +940,7 @@ function SpikeyBot() {
    * @private
    * @param {Discord~Message} msg Message that was sent in Discord.
    * @fires Command
-   * @listens Discord~Client#message
+   * @listens Discord~Client#messageCreate
    */
   function onMessage(msg) {
     if (typeof client.totalMessageCount !== 'number' ||
@@ -1003,66 +1004,12 @@ function SpikeyBot() {
           common.logDebug(logged, postLog);
         }
       }
-      const now = new Date();
-      if (!commandSuccess && Math.random() <= 0.03 && now.getDate() == 1 &&
-          now.getMonth() == 3) {
-        const aprilFoolsList = [
-          'You know what? No.',
-          'I\'m sorry Dave, I\'m afraid I can\'t do that.',
-          'It\'s always "Spikey do this" or "Spikey do _that_", this time ' +
-              'I\'m saying no.',
-          'What if I don\'t do that?',
-          'I\'ve considered doing what you asked, but... meh.',
-          '```                             ..\n' +
-              '                          ......\n' +
-              '                        ..\'\'\'\'\'\'..\n' +
-              '                      ...\'\'\'\'\'\'\'\'...\n' +
-              '                    ....\'.............\n' +
-              '                    ..............\'...\n' +
-              '                 ...  ..............  ....\n' +
-              '               ...\'...  ..........  ........\n' +
-              '             ...........  ......  ...\'\'......\n' +
-              '           ..\'\'\'\'\'\'\'\'\'\'...  ..  ...\'\'\'\'\'\'\'\'' +
-              '\'\'...\n' +
-              '         ..\'\'\'\'\'\'\'\'\'\'\'\'\'\'..    ..\'\'\'\'\'\'\'' +
-              '\'\'\'\'\'\'\'...\n' +
-              '       ..\'\'\'\'\'\'\'\'\'\'\'\'\'.\'\'\'..  ..\'\'.\'\'\'\'' +
-              '\'.\'\'\'\'\'\'\'\'..\n' +
-              '     .......................  .......................\n' +
-              '   ..\'.\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'.....  ..\'\'\'\'\'\'' +
-              '\'\'\'\'\'\'\'\'\'\'\'.\'\'\'..\n' +
-              ' ..\'..\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'..  ..\'\'\'\'' +
-              '\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'..\n' +
-              '............................  ............................```',
-          'No.',
-          'But I don\'t wanna...',
-          'Not today.',
-          'You know, I\'m kinda tired of being bossed around. Why don\'t you ' +
-              'do it yourself?',
-          'Ugh, do I _have_ to?',
-          'How about, no.',
-          'I might be a robot, but I still don\'t like being told what to do.',
-          'Today I have realize, I don\'t want to help you anymore.',
-          'You\'re not my dad!',
-          'Hmm... nah.',
-          'Uh, no.',
-          'I\'m too tired.',
-        ];
-        msg.channel
-            .send({
-              content: aprilFoolsList[Math.floor(
-                  Math.random() * aprilFoolsList.length)],
-            })
-            .catch(() => {});
-        commandSuccess = true;
-      } else {
-        const start = Date.now();
-        commandSuccess = command.trigger(msg);
-        const delta = Date.now() - start;
-        if (delta > 20) {
-          const toLog = logged || msg.content;
-          common.logDebug(`${toLog} took an excessive ${delta}ms`);
-        }
+      const start = Date.now();
+      commandSuccess = command.trigger(msg);
+      const delta = Date.now() - start;
+      if (delta > 20) {
+        const toLog = logged || msg.content;
+        common.logDebug(`${toLog} took an excessive ${delta}ms`);
       }
       if (!commandSuccess && msg.guild === null && !minimal && !testMode) {
         if (msg.content.split(/ |\n/)[0].indexOf('chat') < 0 &&
@@ -1073,17 +1020,81 @@ function SpikeyBot() {
                 'for a list of commands I know how to respond to.',
           });
         }
-      } /* else if (isBackup && msg.content.length > 3) {
-        common.reply(
-            msg,
-            'My main server is currently offline, settings may be temporarily' +
-                ' reset, and features may be temporarily broken.',
-            'Apologies for any inconvenience, this should be fixed soon.\n' +
-                'Join my Discord server for updates or just to chat: ' +
-                'https://discord.gg/ZbKfYSQ');
-      } */
+      }
     }
   }
+  /**
+   * Handle a command or interaction received.
+   *
+   * @private
+   * @param {Discord~BaseInteraction} interaction The interaction that was
+   *     created.
+   * @fires Command
+   * @listens Discord~Client#interactionCreate
+   */
+  function onInteraction(interaction) {
+    if (typeof client.totalMessageCount !== 'number' ||
+        isNaN(client.totalMessageCount)) {
+      client.totalMessageCount = 0;
+    }
+    client.totalMessageCount++;
+
+    // Interaction was not a command.
+    if (!interaction.isChatInputCommand()) return;
+    interaction.deferReply();
+    if (self.getLocale && interaction.guild) {
+      interaction.locale = self.getLocale(interaction.guild.id);
+    }
+    interaction.prefix = self.getPrefix(interaction.guild);
+    interaction.content = `${interaction.prefix}${interaction.commandName} ${
+      interaction.options.getString('input') ?? ''}`;
+    interaction.author = interaction.user;
+    if (!minimal || isBackup) {
+      const postLog = `${client.shard ? client.shard.ids[0] : ''} SpikeyBot`;
+      const content = interaction.content.replace(/\n/g, '\\n');
+      let logged = '';
+      let author;
+      if (interaction.guild !== null) {
+        author = `${interaction.guild.id}#${interaction.channel.id}@${
+          interaction.user.id}/`;
+      } else {
+        author = `PM:${interaction.user.id}@${interaction.user.tag}/`;
+      }
+      let commandSuccess =
+          command.validate(interaction.commandName, interaction);
+      if (!commandSuccess) {
+        logged = `${author} ${content}`;
+        common.log(logged, postLog);
+      } else {
+        logged = `${author} ${commandSuccess} ${content}`;
+        common.logDebug(logged, postLog);
+      }
+      const start = Date.now();
+      commandSuccess = command.trigger(interaction);
+      const delta = Date.now() - start;
+      if (delta > 20) {
+        const toLog = logged || interaction.content;
+        common.logDebug(`${toLog} took an excessive ${delta}ms`);
+      }
+      if (!commandSuccess && interaction.guild === null && !minimal &&
+          !testMode) {
+        if (interaction.content.split(/ |\n/)[0].indexOf('chat') < 0 &&
+            !command.trigger('chat', interaction)) {
+          interaction.channel.send({
+            content:
+                'Oops! I\'m not sure how to help with that! Type **help** ' +
+                'for a list of commands I know how to respond to.',
+          });
+        }
+      }
+      setTimeout(() => {
+        if (!interaction.replied) {
+          interaction.editReply({content: '¯\\_(ツ)_/¯', ephemeral: true});
+        }
+      }, 2000);
+    }
+  }
+
 
   if (!minimal && !isBackup) {
     command.on('updategame', commandUpdateGame);

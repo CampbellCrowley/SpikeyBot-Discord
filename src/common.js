@@ -304,6 +304,19 @@ function Common() {
       return null;
     }
     const trace = getTrace(0);
+    if (msg.reply) {
+      // This is actually an interaction.
+      return msg
+          .editReply({
+            content: '```\n' + text + '\n```' + (post || ''),
+            fetchReply: true,
+          })
+          .catch((err) => {
+            self.error(
+                'Failed to send reply to channel: ' + msg.channel.id, trace);
+            throw err;
+          });
+    }
     const perms = msg.channel.permissionsFor && msg.client &&
         msg.channel.permissionsFor(msg.client.user);
     if (perms && !perms.has(Discord.PermissionsBitField.Flags.SendMessages)) {
