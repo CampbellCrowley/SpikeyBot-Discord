@@ -304,7 +304,7 @@ function Common() {
       return null;
     }
     const trace = getTrace(0);
-    if (msg.reply) {
+    if (msg.editReply) {
       // This is actually an interaction.
       return msg
           .editReply({

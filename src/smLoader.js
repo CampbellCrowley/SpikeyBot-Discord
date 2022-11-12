@@ -147,7 +147,7 @@ function SMLoader() {
    * @private
    */
   function triggerSlashCommandUpdate() {
-    if (self.client.shard && self.client.shard.id != 0) return;
+    if (self.client.shard && self.client.shard.ids[0] != 0) return;
     clearTimeout(nextSlashCommandPush);
     nextSlashCommandPush = setTimeout(() => {
       self.command.registerSlashCommands()
