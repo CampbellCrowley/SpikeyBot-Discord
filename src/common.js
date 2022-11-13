@@ -306,16 +306,22 @@ function Common() {
     const trace = getTrace(0);
     if (msg.editReply) {
       // This is actually an interaction.
-      return msg
-          .editReply({
-            content: '```\n' + text + '\n```' + (post || ''),
-            fetchReply: true,
-          })
-          .catch((err) => {
-            self.error(
-                'Failed to send reply to channel: ' + msg.channel.id, trace);
-            throw err;
-          });
+      const res = {
+        content: '```\n' + text + '\n```' + (post || ''),
+        fetchReply: true,
+      };
+      let promise;
+      if (msg.deferred) {
+        promise = msg.editReply(res);
+      } else if (msg.replied) {
+        promise = msg.followUp(res);
+      } else {
+        promise = msg.reply(res);
+      }
+      return promise.catch((err) => {
+        self.error('Failed to send reply to channel: ' + msg.channel.id, trace);
+        console.error(err);
+      });
     }
     const perms = msg.channel.permissionsFor && msg.client &&
         msg.channel.permissionsFor(msg.client.user);

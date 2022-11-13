@@ -932,7 +932,15 @@ function SpikeyBot() {
 
   if (!isBackup) {
     client.on('messageCreate', onMessage);
-    client.on('interactionCreate', onInteraction);
+    client.on('interactionCreate', async (interaction) => {
+      await interaction.deferReply();
+      setTimeout(() => {
+        if (!interaction.replied) {
+          interaction.editReply({content: '¯\\_(ツ)_/¯'});
+        }
+      }, 2000);
+      await onInteraction(interaction);
+    });
   }
   /**
    * Handle a message sent.
@@ -1041,7 +1049,6 @@ function SpikeyBot() {
 
     // Interaction was not a command.
     if (!interaction.isChatInputCommand()) return;
-    interaction.deferReply();
     if (self.getLocale && interaction.guild) {
       interaction.locale = self.getLocale(interaction.guild.id);
     }
@@ -1087,11 +1094,6 @@ function SpikeyBot() {
           });
         }
       }
-      setTimeout(() => {
-        if (!interaction.replied) {
-          interaction.editReply({content: '¯\\_(ツ)_/¯', ephemeral: true});
-        }
-      }, 2000);
     }
   }
 
