@@ -481,7 +481,7 @@ function Polling() {
         index = i;
         max = r.count - 1;
       }
-      embed.addFields([{name: poll.choices[i], value: r.count - 1}]);
+      embed.addFields([{name: `${poll.choices[i]}`, value: `${r.count - 1}`}]);
     });
     if (index > -1) {
       embed.addFields([{
