@@ -9,7 +9,7 @@
   "include": [
     "src/**/*.js",
     "config/**/*.js",
-    "test/main-test.js",
+    "test/*.js",
     "strings/**/*.js",
     "*.js",
     ".*.js",

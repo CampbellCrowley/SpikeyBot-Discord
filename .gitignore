@@ -4,6 +4,7 @@ save/reboot.json.crypt
 save/reboot-*.json.crypt
 *.log
 auth.js
+subModules.json.crypt
 
 save/guilds/*
 save/users/*

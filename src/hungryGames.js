@@ -1585,6 +1585,10 @@ function HG() {
     let numAlive = 0;
     let numTeams = 0;
     const game = hg.getGame(id);
+    if (!game || !game.currentGame) {
+      self.error(`Failed to end day because game is unknown: ${id}`);
+      return;
+    }
     const current = game.currentGame;
     current.includedUsers.forEach((el) => el.living && numAlive++);
     if (game.options.teamSize > 0) {

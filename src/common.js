@@ -847,14 +847,37 @@ Common.shardConfigRegex = Common.prototype.shardConfigRegex;
  * @param {boolean} encrypt Encrypt and append ".crypt" to filename if true
  */
 Common.mkAndWrite = function(filename, dir, data, cb, encrypt = true) {
-  if (!dir) dir = path.dirname(filename);
+  if (!dir) {
+    dir = path.dirname(filename);
+    filename = path.basename(filename);
+  } else {
+    const tdir = dir.endsWith(path.sep) ? dir.slice(0, -1) : dir;
+    if (tdir == path.dirname(filename)) {
+      filename = path.basename(filename);
+    }
+  }
+  if (path.basename(filename) !== filename) {
+    if (this.error) this.error(`Invalid file name: ${filename} (dir: ${dir})`);
+    if (typeof cb === 'function') {
+      cb(new Error(`Invalid file name: ${filename} (dir: ${dir})`));
+    }
+    return;
+  }
+  const filepath = path.relative(process.cwd(), path.join(dir, filename));
+  if (!path.resolve(filepath).startsWith(process.cwd())) {
+    if (this.error) this.error(`Invalid file path: ${filepath}`);
+    if (typeof cb === 'function') {
+      cb(new Error(`Invalid file path: ${filepath}`));
+    }
+    return;
+  }
   mkdirp(dir)
       .then(() => {
         if (typeof data === 'object' && !Buffer.isBuffer(data)) {
           data = JSON.stringify(data);
         }
-        const tmpfile = `${filename}.tmp`;
-        const destFile = (encrypt) ? `${filename}.crypt` : filename;
+        const tmpfile = `${filepath}.tmp`;
+        const destFile = (encrypt) ? `${filepath}.crypt` : filepath;
 
         // Callback: After writing to tmp file, rename the tmp file to dest file
         const afterWriteFile = (err) => {
@@ -880,7 +903,7 @@ Common.mkAndWrite = function(filename, dir, data, cb, encrypt = true) {
         };
 
         if (encrypt) {
-          const iv = crypto.createHash(hashCypher).update(filename).digest();
+          const iv = crypto.createHash(hashCypher).update(filepath).digest();
           const cipher = crypto.createCipheriv(auth.fileAlgo, filePass, iv);
           let encdata = cipher.update(data, 'utf-8', encencoding);
           encdata += cipher.final(encencoding);
@@ -910,7 +933,24 @@ Common.prototype.mkAndWrite = Common.mkAndWrite;
  * @param {string} data The data to write to the file.
  */
 Common.mkAndWriteSync = function(filename, dir, data) {
-  if (!dir) dir = path.dirname(filename);
+  if (!dir) {
+    dir = path.dirname(filename);
+    filename = path.basename(filename);
+  } else {
+    const tdir = dir.endsWith(path.sep) ? dir.slice(0, -1) : dir;
+    if (tdir == path.dirname(filename)) {
+      filename = path.basename(filename);
+    }
+  }
+  if (path.basename(filename) !== filename) {
+    if (this.error) this.error(`Invalid file name: ${filename} (dir: ${dir})`);
+    return;
+  }
+  const filepath = path.relative(process.cwd(), path.join(dir, filename));
+  if (!path.resolve(filepath).startsWith(process.cwd())) {
+    if (this.error) this.error(`Invalid file path: ${filepath}`);
+    return;
+  }
   try {
     mkdirp.sync(dir);
   } catch (err) {
@@ -921,8 +961,8 @@ Common.mkAndWriteSync = function(filename, dir, data) {
   if (typeof data === 'object' && !Buffer.isBuffer(data)) {
     data = JSON.stringify(data);
   }
-  const encfile = `${filename}.crypt`;
-  const iv = crypto.createHash(hashCypher).update(filename).digest();
+  const encfile = `${filepath}.crypt`;
+  const iv = crypto.createHash(hashCypher).update(filepath).digest();
   const cipher = crypto.createCipheriv(auth.fileAlgo, filePass, iv);
   let encdata = cipher.update(data, 'utf-8', 'base64');
   encdata += cipher.final('base64');
@@ -1012,12 +1052,13 @@ Common.fileFetchDelay = 30000;
  */
 Common.readFile = function(filename, cb, encrypt = true) {
   if (!cb) throw new TypeError('readFile must have a callback function');
-  const encfile = encrypt ? `${filename}.crypt` : filename;
-  const lastFetch = Common.fileFetchHist[filename] || 0;
+  const filepath = path.relative(process.cwd(), filename);
+  const encfile = encrypt ? `${filepath}.crypt` : filepath;
+  const lastFetch = Common.fileFetchHist[filepath] || 0;
   const onread = (err, data) => {
     if (err || !encrypt) {
       if (encrypt) {
-        this.readFile(filename, cb, false);
+        this.readFile(filepath, cb, false);
         return;
       }
       cb(err, data);
@@ -1025,7 +1066,7 @@ Common.readFile = function(filename, cb, encrypt = true) {
     }
     let decdata = null;
     try {
-      const iv = crypto.createHash(hashCypher).update(filename).digest();
+      const iv = crypto.createHash(hashCypher).update(filepath).digest();
       const decipher = crypto.createDecipheriv(auth.fileAlgo, filePass, iv);
       decdata = decipher.update(data.toString(), encencoding, 'utf-8');
       decdata += decipher.final('utf-8');
@@ -1135,7 +1176,7 @@ Common.prototype.camelToSpaces = Common.camelToSpaces;
  * @global
  * @type {?sql.ConnectionConfig}
  */
-global.sqlCon;
+global.sqlCon = null;
 /**
  * Create initial connection with sql server. The connection is injected into
  * the global scope as {@link sqlCon}. If a connection still exists, calling

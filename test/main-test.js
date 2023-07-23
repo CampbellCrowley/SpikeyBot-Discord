@@ -19,22 +19,27 @@ const intents = [
 ];
 const client = new Discord.Client({intents: intents});
 
-/* eslint-disable */
-var oldSpawn = spawn;
-function mySpawn() {
+const oldSpawn = spawn;
+/**
+ * A wrapper for spawn that logs the arguments and return value.
+ *
+ * @param {...*} args The arguments to pass to spawn.
+ * @this {ChildProcess}
+ * @returns {ChildProcess} The return value of spawn.
+ */
+function mySpawn(...args) {
   console.log('spawn called');
-  console.log(arguments);
-  var result = oldSpawn.apply(this, arguments);
+  console.log(...args);
+  const result = oldSpawn.apply(this, args);
   return result;
 }
 spawn = mySpawn;
-/* eslint */
 
-let spawnOpts = {cwd: __dirname + '/..', stdio: 'pipe'};
-let log = fs.createWriteStream(__dirname + '/output.log');
+const spawnOpts = {cwd: __dirname + '/..', stdio: 'pipe'};
+const log = fs.createWriteStream(__dirname + '/output.log');
 console.log(__dirname, '<-- Dir | CWD -->', process.cwd());
-let node = __dirname.startsWith('/home/travis/build') ? 'node' : 'nodejs';
-let bot = spawn(
+const node = __dirname.startsWith('/home/travis/build') ? 'node' : 'nodejs';
+const bot = spawn(
     node,
     [
       '--experimental-worker',
@@ -44,17 +49,17 @@ let bot = spawn(
       '--test',
     ],
     spawnOpts);
-console.log("Spawned primary bot");
+console.log('Spawned primary bot');
 bot.stdout.pipe(log);
 bot.stderr.pipe(log);
-console.log("Piping to log");
+console.log('Piping to log');
 
 after(function() {
-  console.log("SHUTDOWN");
+  console.log('SHUTDOWN');
   bot.kill('SIGHUP');
   client.destroy();
   setTimeout(function() {
-    console.log("EXIT");
+    console.log('EXIT');
     process.exit(0);
   }, 1000);
 });
@@ -109,7 +114,9 @@ const mainTests = [
        'probably blocked me :(\n```']),
   new Test(
       'PM Spikey command', '~pmspikey I am running a unit test.',
-      ['^<@422623712534200321>\n```\nI sent your message to SpikeyRobot.\n```']),
+      [
+        '^<@422623712534200321>\n```\nI sent your message to SpikeyRobot.\n```',
+      ]),
   new Test('Flip command', '~flip', ['#embed']),
   new Test('Avatar command', '~avatar', ['#embed']),
   new Test('Ping command', '~ping', ['^My current ping']),
@@ -185,7 +192,7 @@ const hgTests = [
   new Test(
       'Enable no output mode', '~hg opt disableOutput true',
       [
-        '<@422623712534200321>\n```\nSet disableOutput to true from false\n```'
+        '<@422623712534200321>\n```\nSet disableOutput to true from false\n```',
       ]),
   new Test('Run a game with no output', '~hg go', ['#noerr', '#embed']),
   new Test('Wait for game to end', null, []),
@@ -215,7 +222,7 @@ const hgTests = [
         '<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
             'settings and all members included.\n```',
         '<@422623712534200321>\n```\nYou must specify who you wish for me ' +
-            'to exclude from the next game.\n```'
+            'to exclude from the next game.\n```',
       ]),
   new Test(
       'Reset All command', '~hg reset all',
@@ -227,7 +234,7 @@ const hgTests = [
         '<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
             'settings and all members included.\n```',
         '<@422623712534200321>\n```\nYou must specify who you wish for me ' +
-            'to include in the next game.\n```'
+            'to include in the next game.\n```',
       ]),
   new Test(
       'Reset All command', '~hg reset all',
@@ -257,14 +264,14 @@ let currentTestPart = -1;
 let testTimeout;
 let currentDone;
 
-let channelID = '439642818084995074';
+const channelID = '439642818084995074';
 let channel;
 
 /**
  * Start a test case by sending a command to the bot.
  *
  * @param {Test} test The test object with all data.
- * @param {function} done The function to call once the test is complete.
+ * @param {Function} done The function to call once the test is complete.
  */
 function sendCommand(test, done) {
   currentTest = test;
@@ -331,25 +338,26 @@ client.login(auth.test).catch((err) => {
 });
 client.on('message', testMessageContent);
 client.on('ready', () => {
-  console.log("Test bot ready");
+  console.log('Test bot ready');
   channel = client.channels.resolve(channelID);
 });
-console.log("Begin test bot");
+console.log('Begin test bot');
 
 /**
  * Start running an array of Tests.
  *
  * @param {Test[]} tests The tests to run.
+ * @this {Mocha.Context}
  */
 function runTests(tests) {
-  afterEach('Wait for extra...', function(done) {
+  afterEach('Wait for extra...', (done) => {
     this.timeout(4000);
     setTimeout(done, 3000);
   });
-  for (let i in tests) {
-    if (!tests[i] instanceof Test) continue;
-    (function(i) {
-      it(tests[i].title, function(done) {
+  for (const i in tests) {
+    if (!(tests[i] instanceof Test)) continue;
+    ((i) => {
+      it(tests[i].title, (done) => {
         if (!tests[i].responses || tests[i].responses.length == 0) {
           setTimeout(done, 15000);
           this.timeout(16000);

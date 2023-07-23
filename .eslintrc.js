@@ -8,6 +8,7 @@ module.exports = {
   'env': {
     'node': true,
     'es6': true,
+    'mocha': true,
   },
   'parser': '@typescript-eslint/parser',
   'parserOptions': {
@@ -64,7 +65,7 @@ module.exports = {
       },
     ],
     'jsdoc/check-alignment': 1,
-    'jsdoc/check-examples': 0, // Enable again once supported.
+    'jsdoc/check-examples': 0,  // Enable again once supported.
     'jsdoc/check-indentation': 0,
     'jsdoc/check-param-names': 'error',
     'jsdoc/check-syntax': 1,
@@ -73,7 +74,7 @@ module.exports = {
     'jsdoc/newline-after-description': 1,
     'jsdoc/no-undefined-types': 0,
     'jsdoc/require-description': 0,
-    'jsdoc/require-description-complete-sentence': 0, // @returns broken.
+    'jsdoc/require-description-complete-sentence': 0,  // @returns broken.
     'jsdoc/require-example': 0,
     'jsdoc/require-param': 1,
     'jsdoc/require-param-description': 1,
@@ -83,7 +84,7 @@ module.exports = {
     'jsdoc/require-returns-check': 1,
     'jsdoc/require-returns-description': 1,
     'jsdoc/require-returns-type': 1,
-    'jsdoc/valid-types': 0, // Enable again when bothered to fix the typing.
+    'jsdoc/valid-types': 0,  // Enable again when bothered to fix the typing.
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/indent': 'off',
     '@typescript-eslint/no-var-requires': 'off',
