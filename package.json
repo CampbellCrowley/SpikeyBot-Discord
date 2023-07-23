@@ -19,7 +19,7 @@
     "async": "^3.2.0",
     "bufferutil": "^4.0.2",
     "date-format": "^4.0.3",
-    "dialogflow": "^1.2.0",
+    "dialogflow": "^4.0.3",
     "diff": "^5.0.0",
     "discord.js": "^14.11.0",
     "fuzzy-search": "^3.2.1",
